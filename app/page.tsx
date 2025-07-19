@@ -7,6 +7,7 @@ export default function SignupPage() {
   const [accountType, setAccountType] = useState("patient");
 
   return (
+    <>
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
             <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -20,7 +21,7 @@ export default function SignupPage() {
           <div className="mb-6 text-center">
             <Image className="mx-auto mb-4"
             src="/labsphere-icon.svg" alt="Labsphere Logo" width={307} height={111} 
-              onError={(e) => { e.target.onerror :  = null; e.target.src="/labsphere-icon.svg"}} />
+              onError={(e) => { e.target.onerror = null; e.target.src="/labsphere-icon.svg"}} />
              <h2 className="text-3xl font-semibold text-gray-800 mb-2">Create an account</h2>
             <p className="text-gray-600 mt-2">Start your 30 days free trial</p>
           </div>
@@ -127,5 +128,6 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+</>
   );
 }
