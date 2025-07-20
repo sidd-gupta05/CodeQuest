@@ -1,308 +1,358 @@
+// "use client";
+// import { signIn } from "next-auth/react";
+// import Image from "next/image";
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
+
+// export default function SignupPage() {
+//   const [accountType, setAccountType] = useState("patient");
+//   const router = useRouter();
+
+//   const [form, setForm] = useState({
+//     firstName: "",
+//     lastName: "",
+//     email: "",
+//     mobile: "",
+//     password: "",
+//     confirmPassword: "",
+//   });
+
+//   const [errors, setErrors] = useState({});
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setForm({ ...form, [e.target.name]: e.target.value });
+//   };
+
+//   const validate = () => {
+//     const newErrors: any = {};
+
+//     if (!/^[A-Za-z]+$/.test(form.firstName)) {
+//       newErrors.firstName = "Only letters allowed";
+//     }
+
+//     if (!/^[A-Za-z]+$/.test(form.lastName)) {
+//       newErrors.lastName = "Only letters allowed";
+//     }
+
+//     if (!/^\d{10}$/.test(form.mobile)) {
+//       newErrors.mobile = "Enter a valid 10-digit number";
+//     }
+
+//     if (form.password.length < 8) {
+//       newErrors.password = "Password must be at least 8 characters";
+//     }
+
+//     if (form.password !== form.confirmPassword) {
+//       newErrors.confirmPassword = "Passwords do not match";
+//     }
+
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
+
+//   const handleSubmit = () => {
+//     if (validate()) {
+//       console.log("Form is valid:", form);
+//       router.push("/optionss");
+//     }
+//   };
+
+//   return (
+//     <>
+//       <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+//         <style jsx global>{`
+//           @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+//           body {
+//             font-family: "Inter", sans-serif;
+//           }
+//         `}</style>
+//         {/* Left side - Signup form */}
+//         <div className="bg-white flex items-center justify-center p-10 ">
+//           <div className="max-w-md w-full flex flex-col justify-center">
+//             <div className="mb-6 text-center">
+//               <Image
+//                 className="mx-auto mb-4"
+//                 src="/labsphere-icon.svg"
+//                 alt="Labsphere Logo"
+//                 width={307}
+//                 height={111}
+//                 onError={(e) => {
+//                   e.target.onerror = null;
+//                   e.target.src = "/labsphere-icon.svg";
+//                 }}
+//               />
+//               <h2 className="text-3xl font-semibold text-gray-800 mb-2">
+//                 Create an account
+//               </h2>
+//               <p className="text-gray-600 mt-2">
+//                 Start your 30 days free trial
+//               </p>
+//             </div>
+
+//             {/* Account Type Selection */}
+//             {/* <div className="mb-6">
+//               <label className="block text-teal-600 text-xl text-center font-semibold mb-2">
+//                 Choose Account Type
+//               </label>
+//               <div className="flex justify-around space-x-2">
+//                 <button
+//                   className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
+//                     accountType === "doctor"
+//                       ? "bg-teal-600 text-white"
+//                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+//                   }`}
+//                   onClick={() => {
+//                     setAccountType("doctor");
+//                     router.push("/doctor-registration");
+//                   }}
+//                 >
+//                   <span
+//                     className={`text-2xl mb-1 ${
+//                       accountType === "doctor" ? "text-white" : "text-teal-600"
+//                     }`}
+//                   >
+//                     &#x2695;
+//                   </span>
+//                   <span className="text-sm font-medium">Doctor</span>
+//                 </button>
+//                 <button
+//                   className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
+//                     accountType === "patient"
+//                       ? "bg-teal-600 text-white"
+//                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+//                   }`}
+//                   onClick={() => setAccountType("patient")}
+//                 >
+//                   <span
+//                     className={`text-2xl mb-1 ${
+//                       accountType === "patient" ? "text-white" : "text-teal-600"
+//                     }`}
+//                   >
+//                     &#x1F464;
+//                   </span>
+//                   <span className="text-sm font-medium">Patient</span>
+//                 </button>
+//                 <button
+//                   className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
+//                     accountType === "lab"
+//                       ? "bg-teal-600 text-white"
+//                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+//                   }`}
+//                   onClick={() => {
+//                     setAccountType("lab");
+//                     router.push("/lab-registration");
+//                   }}
+//                 >
+//                   <span
+//                     className={`text-2xl mb-1 ${
+//                       accountType === "lab" ? "text-white" : "text-teal-600"
+//                     }`}
+//                   >
+//                     &#x1F3D8;
+//                   </span>
+//                   <span className="text-sm font-medium">Lab</span>
+//                 </button>
+//               </div>
+//             </div> */}
+
+//             <form className="space-y-4">
+//               <div className="flex gap-4">
+//                 <div className="w-1/2">
+//                   <input
+//                     type="text"
+//                     name="firstName"
+//                     placeholder="Enter your first name"
+//                     required
+//                     value={form.firstName}
+//                     onChange={handleChange}
+//                     className="w-full border border-gray-300 rounded-md px-4 py-2"
+//                   />
+//                   {errors.firstName && (
+//                     <p className="text-xs text-red-500">{errors.firstName}</p>
+//                   )}
+//                 </div>
+//                 <div className="w-1/2">
+//                   <input
+//                     type="text"
+//                     name="lastName"
+//                     placeholder="Enter your last name"
+//                     required
+//                     value={form.lastName}
+//                     onChange={handleChange}
+//                     className="w-full border border-gray-300 rounded-md px-4 py-2"
+//                   />
+//                   {errors.lastName && (
+//                     <p className="text-xs text-red-500">{errors.lastName}</p>
+//                   )}
+//                 </div>
+//               </div>
+//               <input
+//                 type="email"
+//                 name="email"
+//                 placeholder="Enter your e-mail"
+//                 required
+//                 value={form.email}
+//                 onChange={handleChange}
+//                 className="w-full border border-gray-300 rounded-md px-4 py-2"
+//               />
+//               <div>
+//                 <input
+//                   type="text"
+//                   name="mobile"
+//                   placeholder="Enter your mobile number"
+//                   required
+//                   value={form.mobile}
+//                   onChange={handleChange}
+//                   className="w-full border border-gray-300 rounded-md px-4 py-2"
+//                 />
+//                 {errors.mobile && (
+//                   <p className="text-xs text-red-500">{errors.mobile}</p>
+//                 )}
+//               </div>
+//               <div>
+//                 <input
+//                   type="password"
+//                   name="password"
+//                   placeholder="Enter your password"
+//                   required
+//                   value={form.password}
+//                   onChange={handleChange}
+//                   className="w-full border border-gray-300 rounded-md px-4 py-2"
+//                 />
+//                 {errors.password && (
+//                   <p className="text-xs text-red-500">{errors.password}</p>
+//                 )}
+//               </div>
+//               <div>
+//                 <input
+//                   type="password"
+//                   name="confirmPassword"
+//                   placeholder="Confirm your password"
+//                   required
+//                   value={form.confirmPassword}
+//                   onChange={handleChange}
+//                   className="w-full border border-gray-300 rounded-md px-4 py-2"
+//                 />
+//                 {errors.confirmPassword && (
+//                   <p className="text-xs text-red-500">
+//                     {errors.confirmPassword}
+//                   </p>
+//                 )}
+//               </div>
+//               <button
+//                 type="button"
+//                 onClick={handleSubmit}
+//                 className="w-full bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer"
+//               >
+//                 Next
+//               </button>
+//             </form>
+
+//             <div className="flex items-center my-4">
+//               <div className="flex-grow h-px bg-gray-300" />
+//               <span className="mx-2 text-gray-400 text-sm">OR</span>
+//               <div className="flex-grow h-px bg-gray-300" />
+//             </div>
+
+//             <div className="flex gap-4 justify-center">
+//               <button
+//                 className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
+//                 onClick={() => signIn("google", { callbackUrl: "/optionss" })}
+//               >
+//                 <Image src="/google.svg" alt="Google" width={20} height={20} />{" "}
+//                 <span className="text-sm font-medium">Sign in with Google</span>
+//               </button>
+//               {/* <button className="p-2 border rounded-full cursor-pointer">
+//                 <Image
+//                   src="/facebook.svg"
+//                   alt="Facebook"
+//                   width={24}
+//                   height={24}
+//                 />
+//               </button>
+//               <button className="p-2 border rounded-full cursor-pointer">
+//                 <Image src="/apple.svg" alt="Apple" width={24} height={24} />
+//               </button> */}
+//             </div>
+
+//             <p className="text-center text-sm text-gray-600 mt-4">
+//               Already have an account?{" "}
+//               <a href="#" className="text-teal-600">
+//                 Log in
+//               </a>
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* Right side - Illustration and carousel */}
+//         <div
+//           className="flex items-center justify-center p-10 "
+//           style={{
+//             background:
+//               "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)",
+//           }}
+//         >
+//           <div className="text-center max-w-lg text-white pt-1 ">
+//             <Image
+//               src="/doctor-desk.svg"
+//               alt="Doctor at desk"
+//               width={750}
+//               height={850}
+//               className="mx-auto mb-6 hidden md:block"
+//             />
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
 "use client";
-import { signIn } from "next-auth/react";
+
 import Image from "next/image";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function SignupPage() {
-  const [accountType, setAccountType] = useState("patient");
+export default function LandingPage() {
   const router = useRouter();
 
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    mobile: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const validate = () => {
-    const newErrors: any = {};
-
-    if (!/^[A-Za-z]+$/.test(form.firstName)) {
-      newErrors.firstName = "Only letters allowed";
-    }
-
-    if (!/^[A-Za-z]+$/.test(form.lastName)) {
-      newErrors.lastName = "Only letters allowed";
-    }
-
-    if (!/^\d{10}$/.test(form.mobile)) {
-      newErrors.mobile = "Enter a valid 10-digit number";
-    }
-
-    if (form.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    if (form.password !== form.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = () => {
-    if (validate()) {
-      console.log("Form is valid:", form);
-      router.push("/optionss");
-    }
-  };
-
   return (
-    <>
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-        <style jsx global>{`
-          @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-          body {
-            font-family: "Inter", sans-serif;
-          }
-        `}</style>
-        {/* Left side - Signup form */}
-        <div className="bg-white flex items-center justify-center p-10 ">
-          <div className="max-w-md w-full flex flex-col justify-center">
-            <div className="mb-6 text-center">
-              <Image
-                className="mx-auto mb-4"
-                src="/labsphere-icon.svg"
-                alt="Labsphere Logo"
-                width={307}
-                height={111}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/labsphere-icon.svg";
-                }}
-              />
-              <h2 className="text-3xl font-semibold text-gray-800 mb-2">
-                Create an account
-              </h2>
-              <p className="text-gray-600 mt-2">
-                Start your 30 days free trial
-              </p>
-            </div>
-
-            {/* Account Type Selection */}
-            {/* <div className="mb-6">
-              <label className="block text-teal-600 text-xl text-center font-semibold mb-2">
-                Choose Account Type
-              </label>
-              <div className="flex justify-around space-x-2">
-                <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "doctor"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => {
-                    setAccountType("doctor");
-                    router.push("/doctor-registration");
-                  }}
-                >
-                  <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "doctor" ? "text-white" : "text-teal-600"
-                    }`}
-                  >
-                    &#x2695;
-                  </span>
-                  <span className="text-sm font-medium">Doctor</span>
-                </button>
-                <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "patient"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setAccountType("patient")}
-                >
-                  <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "patient" ? "text-white" : "text-teal-600"
-                    }`}
-                  >
-                    &#x1F464;
-                  </span>
-                  <span className="text-sm font-medium">Patient</span>
-                </button>
-                <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "lab"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => {
-                    setAccountType("lab");
-                    router.push("/lab-registration");
-                  }}
-                >
-                  <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "lab" ? "text-white" : "text-teal-600"
-                    }`}
-                  >
-                    &#x1F3D8;
-                  </span>
-                  <span className="text-sm font-medium">Lab</span>
-                </button>
-              </div>
-            </div> */}
-
-            <form className="space-y-4">
-              <div className="flex gap-4">
-                <div className="w-1/2">
-                  <input
-                    type="text"
-                    name="firstName"
-                    placeholder="Enter your first name"
-                    required
-                    value={form.firstName}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-md px-4 py-2"
-                  />
-                  {errors.firstName && (
-                    <p className="text-xs text-red-500">{errors.firstName}</p>
-                  )}
-                </div>
-                <div className="w-1/2">
-                  <input
-                    type="text"
-                    name="lastName"
-                    placeholder="Enter your last name"
-                    required
-                    value={form.lastName}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-md px-4 py-2"
-                  />
-                  {errors.lastName && (
-                    <p className="text-xs text-red-500">{errors.lastName}</p>
-                  )}
-                </div>
-              </div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your e-mail"
-                required
-                value={form.email}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-              />
-              <div>
-                <input
-                  type="text"
-                  name="mobile"
-                  placeholder="Enter your mobile number"
-                  required
-                  value={form.mobile}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2"
-                />
-                {errors.mobile && (
-                  <p className="text-xs text-red-500">{errors.mobile}</p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  required
-                  value={form.password}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2"
-                />
-                {errors.password && (
-                  <p className="text-xs text-red-500">{errors.password}</p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  required
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2"
-                />
-                {errors.confirmPassword && (
-                  <p className="text-xs text-red-500">
-                    {errors.confirmPassword}
-                  </p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="w-full bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer"
-              >
-                Next
-              </button>
-            </form>
-
-            <div className="flex items-center my-4">
-              <div className="flex-grow h-px bg-gray-300" />
-              <span className="mx-2 text-gray-400 text-sm">OR</span>
-              <div className="flex-grow h-px bg-gray-300" />
-            </div>
-
-            <div className="flex gap-4 justify-center">
-              <button
-                className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-                onClick={() => signIn("google", { callbackUrl: "/optionss" })}
-              >
-                <Image src="/google.svg" alt="Google" width={20} height={20} />{" "}
-                <span className="text-sm font-medium">Sign in with Google</span>
-              </button>
-              {/* <button className="p-2 border rounded-full cursor-pointer">
-                <Image
-                  src="/facebook.svg"
-                  alt="Facebook"
-                  width={24}
-                  height={24}
-                />
-              </button>
-              <button className="p-2 border rounded-full cursor-pointer">
-                <Image src="/apple.svg" alt="Apple" width={24} height={24} />
-              </button> */}
-            </div>
-
-            <p className="text-center text-sm text-gray-600 mt-4">
-              Already have an account?{" "}
-              <a href="#" className="text-teal-600">
-                Log in
-              </a>
-            </p>
-          </div>
+    <main className="min-h-screen bg-white flex flex-col">
+      {/* Header */}
+      <header className="w-full flex items-center justify-between px-6 py-4 border-b shadow-sm">
+        {/* Labsphere Logo */}
+        <div className="flex items-center gap-2">
+          <Image src="/logo.svg" alt="Labsphere Logo" width={50} height={50} />
+          <span className="text-xl font-bold text-gray-800">Labsphere</span>
         </div>
 
-        {/* Right side - Illustration and carousel */}
-        <div
-          className="flex items-center justify-center p-10 "
-          style={{
-            background:
-              "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)",
-          }}
+        {/* Login Button */}
+        <button
+          onClick={() => router.push("auth/login")}
+          className="px-5 py-2 bg-teal-600 text-white rounded-full font-semibold hover:bg-teal-700 transition"
         >
-          <div className="text-center max-w-lg text-white pt-1 ">
-            <Image
-              src="/doctor-desk.svg"
-              alt="Doctor at desk"
-              width={750}
-              height={850}
-              className="mx-auto mb-6 hidden md:block"
-            />
-          </div>
+          Login
+        </button>
+      </header>
+
+      {/* Hero Section */}
+      <section className="flex flex-col items-center justify-center flex-grow px-6 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+          Welcome to Labsphere
+        </h1>
+        <p className="text-gray-600 text-lg md:text-xl max-w-2xl">
+          Your all-in-one platform for managing laboratories, patient records,
+          diagnostics, and more.
+        </p>
+
+        <div className="mt-8 flex flex-col md:flex-row gap-4">
+          <button
+            onClick={() => router.push("auth/sign_in")}
+            className="px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition"
+          >
+            Get Started
+          </button>
         </div>
-      </div>
-    </>
+      </section>
+    </main>
   );
 }

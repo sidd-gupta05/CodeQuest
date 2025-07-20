@@ -69,7 +69,7 @@ export default function OptionsPage() {
                   }`}
                   onClick={() => {
                     setAccountType("patient");
-                    router.push("/patient");
+                    router.push("/dashboard");
                   }}
                 >
                   <span
