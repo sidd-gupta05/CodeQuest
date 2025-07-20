@@ -1,0 +1,61 @@
+"use client";
+
+import { useState } from "react";
+import { Menu } from "lucide-react";
+
+export default function DashboardPage() {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Sidebar */}
+      <aside
+        className={`
+          bg-gray-800 text-white w-full md:w-64 p-4 
+          md:block ${isSidebarOpen ? "block" : "hidden"}
+        `}
+      >
+        <h2 className="text-xl font-semibold mb-6">Navigation</h2>
+        <ul className="space-y-4">
+          <li>
+            <a href="#" className="hover:text-teal-400">
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="#" className="hover:text-teal-400">
+              Profile
+            </a>
+          </li>
+          <li>
+            <a href="#" className="hover:text-teal-400">
+              Settings
+            </a>
+          </li>
+          <li>
+            <a href="#" className="hover:text-teal-400">
+              Logout
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      {/* Sidebar Toggle Button (for mobile) */}
+      <div className="md:hidden bg-gray-100 p-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold">Dashboard</h1>
+        <button onClick={() => setSidebarOpen(!isSidebarOpen)}>
+          <Menu className="h-6 w-6 text-gray-800" />
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 p-6 bg-gray-100">
+        <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+        <p className="text-gray-700">
+          Welcome to your dashboard! You can manage your profile, settings, and
+          more here.
+        </p>
+      </main>
+    </div>
+  );
+}

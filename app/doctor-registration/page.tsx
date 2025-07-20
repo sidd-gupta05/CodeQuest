@@ -17,6 +17,14 @@ export default function DoctorRegistration() {
     setUploadedFile(null);
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Optional: Validate fields here before redirect
+
+    router.push("/dashboard");
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Left Section */}
@@ -37,7 +45,7 @@ export default function DoctorRegistration() {
             ← Back
           </button>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Practicing Location
@@ -45,6 +53,7 @@ export default function DoctorRegistration() {
               <input
                 type="text"
                 placeholder="Enter your location"
+                required
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
             </div>
@@ -56,6 +65,7 @@ export default function DoctorRegistration() {
               <input
                 type="text"
                 placeholder="Enter your PNR No."
+                required
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
             </div>
@@ -68,6 +78,8 @@ export default function DoctorRegistration() {
                 <input
                   type="file"
                   onChange={handleFileChange}
+                  required
+                  accept=".pdf,.jpg,.jpeg,.png"
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
                 <div className="flex flex-col items-center justify-center">
@@ -111,37 +123,6 @@ export default function DoctorRegistration() {
               Verify →
             </button>
           </form>
-
-          {/* Social Sign-in Buttons */}
-          <div className="flex items-center my-6">
-            <div className="flex-grow h-px bg-gray-300" />
-            <span className="mx-2 text-gray-400 text-sm">OR</span>
-            <div className="flex-grow h-px bg-gray-300" />
-          </div>
-
-          <div className="flex gap-4 justify-center">
-            <button className="p-2 border rounded-full cursor-pointer">
-              <Image
-                src="/facebook.svg"
-                alt="Facebook"
-                width={24}
-                height={24}
-              />
-            </button>
-            <button className="p-2 border rounded-full cursor-pointer">
-              <Image src="/google.svg" alt="Google" width={24} height={24} />
-            </button>
-            <button className="p-2 border rounded-full cursor-pointer">
-              <Image src="/apple.svg" alt="Apple" width={24} height={24} />
-            </button>
-          </div>
-
-          <p className="text-center text-sm text-gray-600 mt-4">
-            Already have an account?{" "}
-            <a href="#" className="text-teal-600">
-              Log in
-            </a>
-          </p>
         </div>
       </div>
 

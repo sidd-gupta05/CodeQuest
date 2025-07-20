@@ -17,6 +17,22 @@ export default function LabRegistration() {
     setUploadedFile(null);
   };
 
+  // 🔽 Handle form submission
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Optional: Validate if file is uploaded
+    if (!uploadedFile) {
+      alert("Please upload your NABL certificate.");
+      return;
+    }
+
+    // You can also collect & validate other fields here...
+
+    // Navigate to dashboard
+    router.push("/dashboard");
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Left Section */}
@@ -37,7 +53,8 @@ export default function LabRegistration() {
             ← Back
           </button>
 
-          <form className="space-y-6">
+          {/* 🔽 Add onSubmit to the form */}
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Lab Location */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -47,6 +64,7 @@ export default function LabRegistration() {
                 <input
                   type="text"
                   placeholder="Enter your location"
+                  required
                   className="w-full border border-gray-300 rounded-md px-4 py-2 pl-10"
                 />
               </div>
@@ -60,6 +78,7 @@ export default function LabRegistration() {
               <input
                 type="text"
                 placeholder="Enter your NABL Certificate No."
+                required
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
             </div>
@@ -73,6 +92,7 @@ export default function LabRegistration() {
                 <input
                   type="file"
                   onChange={handleFileChange}
+                  required
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                 />
                 <div className="flex flex-col items-center justify-center text-gray-600">
@@ -93,7 +113,7 @@ export default function LabRegistration() {
               )}
             </div>
 
-            {/* Submit Button */}
+            {/* 🔽 Submit Button */}
             <button
               type="submit"
               className="w-full bg-teal-600 text-white rounded-md py-2 font-semibold flex items-center justify-center gap-2 cursor-pointer"
@@ -101,39 +121,6 @@ export default function LabRegistration() {
               Verify <span>→</span>
             </button>
           </form>
-
-          {/* OR Separator */}
-          <div className="flex items-center my-6">
-            <div className="flex-grow h-px bg-gray-300" />
-            <span className="mx-2 text-gray-400 text-sm">OR</span>
-            <div className="flex-grow h-px bg-gray-300" />
-          </div>
-
-          {/* Social Buttons */}
-          <div className="flex gap-4 justify-center">
-            <button className="p-2 border rounded-full cursor-pointer">
-              <Image
-                src="/facebook.svg"
-                alt="Facebook"
-                width={24}
-                height={24}
-              />
-            </button>
-            <button className="p-2 border rounded-full cursor-pointer">
-              <Image src="/google.svg" alt="Google" width={24} height={24} />
-            </button>
-            <button className="p-2 border rounded-full cursor-pointer">
-              <Image src="/apple.svg" alt="Apple" width={24} height={24} />
-            </button>
-          </div>
-
-          {/* Already have account */}
-          <p className="text-center text-sm text-gray-600 mt-4">
-            Already have an account?{" "}
-            <a href="#" className="text-teal-600 font-medium">
-              Log in
-            </a>
-          </p>
         </div>
       </div>
 

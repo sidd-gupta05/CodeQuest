@@ -8,6 +8,55 @@ export default function SignupPage() {
   const [accountType, setAccountType] = useState("patient");
   const router = useRouter();
 
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const validate = () => {
+    const newErrors: any = {};
+
+    if (!/^[A-Za-z]+$/.test(form.firstName)) {
+      newErrors.firstName = "Only letters allowed";
+    }
+
+    if (!/^[A-Za-z]+$/.test(form.lastName)) {
+      newErrors.lastName = "Only letters allowed";
+    }
+
+    if (!/^\d{10}$/.test(form.mobile)) {
+      newErrors.mobile = "Enter a valid 10-digit number";
+    }
+
+    if (form.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validate()) {
+      console.log("Form is valid:", form);
+      router.push("/optionss");
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
@@ -41,12 +90,11 @@ export default function SignupPage() {
             </div>
 
             {/* Account Type Selection */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <label className="block text-teal-600 text-xl text-center font-semibold mb-2">
                 Choose Account Type
               </label>
               <div className="flex justify-around space-x-2">
-                {/* Doctor Button */}
                 <button
                   className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
                     accountType === "doctor"
@@ -64,11 +112,9 @@ export default function SignupPage() {
                     }`}
                   >
                     &#x2695;
-                  </span>{" "}
-                  {/* Caduceus icon */}
+                  </span>
                   <span className="text-sm font-medium">Doctor</span>
                 </button>
-                {/* Patient Button */}
                 <button
                   className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
                     accountType === "patient"
@@ -83,11 +129,9 @@ export default function SignupPage() {
                     }`}
                   >
                     &#x1F464;
-                  </span>{" "}
-                  {/* Person icon */}
+                  </span>
                   <span className="text-sm font-medium">Patient</span>
                 </button>
-                {/* Lab Button */}
                 <button
                   className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
                     accountType === "lab"
@@ -105,34 +149,99 @@ export default function SignupPage() {
                     }`}
                   >
                     &#x1F3D8;
-                  </span>{" "}
-                  {/* Building icon */}
+                  </span>
                   <span className="text-sm font-medium">Lab</span>
                 </button>
               </div>
-            </div>
+            </div> */}
 
             <form className="space-y-4">
-              <input
-                type="text"
-                placeholder="Enter your name"
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-              />
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="Enter your first name"
+                    required
+                    value={form.firstName}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  />
+                  {errors.firstName && (
+                    <p className="text-xs text-red-500">{errors.firstName}</p>
+                  )}
+                </div>
+                <div className="w-1/2">
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Enter your last name"
+                    required
+                    value={form.lastName}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  />
+                  {errors.lastName && (
+                    <p className="text-xs text-red-500">{errors.lastName}</p>
+                  )}
+                </div>
+              </div>
               <input
                 type="email"
+                name="email"
                 placeholder="Enter your e-mail"
+                required
+                value={form.email}
+                onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-              />
-              <p className="text-xs text-gray-500">
-                Must be at least 8 characters.
-              </p>
+              <div>
+                <input
+                  type="text"
+                  name="mobile"
+                  placeholder="Enter your mobile number"
+                  required
+                  value={form.mobile}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                />
+                {errors.mobile && (
+                  <p className="text-xs text-red-500">{errors.mobile}</p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required
+                  value={form.password}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                />
+                {errors.password && (
+                  <p className="text-xs text-red-500">{errors.password}</p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
+                  required
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-xs text-red-500">
+                    {errors.confirmPassword}
+                  </p>
+                )}
+              </div>
               <button
                 type="button"
+                onClick={handleSubmit}
                 className="w-full bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer"
               >
                 Next
@@ -147,12 +256,13 @@ export default function SignupPage() {
 
             <div className="flex gap-4 justify-center">
               <button
-                className="p-2 border rounded-full cursor-pointer"
-                onClick={() => signIn("google")}
+                className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
+                onClick={() => signIn("google", { callbackUrl: "/optionss" })}
               >
-                <Image src="/google.svg" alt="Google" width={24} height={24} />
+                <Image src="/google.svg" alt="Google" width={20} height={20} />{" "}
+                <span className="text-sm font-medium">Sign in with Google</span>
               </button>
-              <button className="p-2 border rounded-full cursor-pointer">
+              {/* <button className="p-2 border rounded-full cursor-pointer">
                 <Image
                   src="/facebook.svg"
                   alt="Facebook"
@@ -162,7 +272,7 @@ export default function SignupPage() {
               </button>
               <button className="p-2 border rounded-full cursor-pointer">
                 <Image src="/apple.svg" alt="Apple" width={24} height={24} />
-              </button>
+              </button> */}
             </div>
 
             <p className="text-center text-sm text-gray-600 mt-4">
