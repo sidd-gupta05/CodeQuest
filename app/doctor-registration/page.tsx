@@ -1,4 +1,5 @@
 "use client";
+import CarouselSection from "@/components/carousel-section";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -127,23 +128,7 @@ export default function DoctorRegistration() {
       </div>
 
       {/* Right Section */}
-      <div
-        className="flex items-center justify-center p-10"
-        style={{
-          background:
-            "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)",
-        }}
-      >
-        <div className="text-center text-white max-w-md ">
-          <Image
-            src="/doctor-registration-illustration.svg"
-            alt="Doctor Illustration"
-            width={750}
-            height={850}
-            className="mx-auto hidden md:block"
-          />
-        </div>
-      </div>
+      <CarouselSection prop="/doctor-registration-illustration.webp" />
     </div>
   );
 }

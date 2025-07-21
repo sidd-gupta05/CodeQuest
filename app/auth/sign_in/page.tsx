@@ -3,9 +3,10 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import CarouselSection from "@/components/carousel-section";
 
 export default function SignupPage() {
-  const [accountType, setAccountType] = useState("patient");
+  // const [accountType, setAccountType] = useState("patient");
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -17,14 +18,14 @@ export default function SignupPage() {
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const validate = () => {
-    const newErrors: any = {};
+    const newErrors: Record<string, string> = {};
 
     if (!/^[A-Za-z]+$/.test(form.firstName)) {
       newErrors.firstName = "Only letters allowed";
@@ -77,8 +78,9 @@ export default function SignupPage() {
                 width={307}
                 height={111}
                 onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/labsphere-icon.svg";
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = "/labsphere-icon.svg";
                 }}
               />
               <h2 className="text-3xl font-semibold text-gray-800 mb-2">
@@ -285,23 +287,7 @@ export default function SignupPage() {
         </div>
 
         {/* Right side - Illustration and carousel */}
-        <div
-          className="flex items-center justify-center p-10 "
-          style={{
-            background:
-              "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)",
-          }}
-        >
-          <div className="text-center max-w-lg text-white pt-1 ">
-            <Image
-              src="/doctor-desk.svg"
-              alt="Doctor at desk"
-              width={750}
-              height={850}
-              className="mx-auto mb-6 hidden md:block"
-            />
-          </div>
-        </div>
+            <CarouselSection prop={"/doctor-desk.webp"}/>
       </div>
     </>
   );
