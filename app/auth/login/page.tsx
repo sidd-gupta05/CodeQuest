@@ -124,7 +124,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-sm text-gray-600 mt-4">
-            Don't have an account?{" "}
+            Don&#39;t have an account?{" "}
             <a href="/auth/sign_in" className="text-teal-600">
               Sign up
             </a>
@@ -140,7 +140,7 @@ export default function LoginPage() {
         }}
       >
         <Image
-          src="/doctor-desk.svg"
+          src="/doctor-desk.webp"
           alt="Doctor at desk"
           width={500}
           height={600}

@@ -28,9 +28,10 @@ export default function OptionsPage() {
                 alt="Labsphere Logo"
                 width={307}
                 height={111}
-                onError={(e: any) => {
-                  e.target.onerror = null;
-                  e.target.src = "/labsphere-icon.svg";
+                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = "/labsphere-icon.svg";
                 }}
               />
             </div>
@@ -117,7 +118,7 @@ export default function OptionsPage() {
         >
           <div className="text-center max-w-lg text-white pt-1">
             <Image
-              src="/doctor-desk.svg"
+              src="/doctor-desk.webp"
               alt="Doctor at desk"
               width={750}
               height={850}
