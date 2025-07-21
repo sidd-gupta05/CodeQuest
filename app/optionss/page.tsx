@@ -49,7 +49,8 @@ export default function OptionsPage() {
                   }`}
                   onClick={() => {
                     setAccountType("doctor");
-                    router.push("/doctor-registration");
+                    localStorage.setItem("accountType", "doctor"); // Store selection
+                    router.push("/auth/sign_in");
                   }}
                 >
                   <span
@@ -70,7 +71,8 @@ export default function OptionsPage() {
                   }`}
                   onClick={() => {
                     setAccountType("patient");
-                    router.push("/dashboard");
+                    localStorage.setItem("accountType", "patient"); // Store selection
+                    router.push("/auth/sign_in");
                   }}
                 >
                   <span
@@ -91,7 +93,8 @@ export default function OptionsPage() {
                   }`}
                   onClick={() => {
                     setAccountType("lab");
-                    router.push("/lab-registration");
+                    localStorage.setItem("accountType", "lab"); // Store selection
+                    router.push("/auth/sign_in");
                   }}
                 >
                   <span

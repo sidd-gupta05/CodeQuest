@@ -327,7 +327,7 @@ export default function LandingPage() {
 
         {/* Login Button */}
         <button
-          onClick={() => router.push("auth/login")}
+          onClick={() => router.push("/optionss")}
           className="px-5 py-2 bg-teal-600 text-white rounded-full font-semibold hover:bg-teal-700 transition"
         >
           Login
@@ -346,7 +346,7 @@ export default function LandingPage() {
 
         <div className="mt-8 flex flex-col md:flex-row gap-4">
           <button
-            onClick={() => router.push("auth/sign_in")}
+            onClick={() => router.push("/optionss")}
             className="px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition"
           >
             Get Started

@@ -1,12 +1,13 @@
 "use client";
+
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CarouselSection from "@/components/carousel-section";
 
 export default function SignupPage() {
-  // const [accountType, setAccountType] = useState("patient");
+  const [accountType, setAccountType] = useState<string>("");
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -18,14 +19,14 @@ export default function SignupPage() {
     confirmPassword: "",
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<typeof form>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const validate = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Partial<typeof form> = {};
 
     if (!/^[A-Za-z]+$/.test(form.firstName)) {
       newErrors.firstName = "Only letters allowed";
@@ -54,9 +55,22 @@ export default function SignupPage() {
   const handleSubmit = () => {
     if (validate()) {
       console.log("Form is valid:", form);
-      router.push("/optionss");
+      if (accountType === "doctor") {
+        router.push("/doctor-registration");
+      } else if (accountType === "lab") {
+        router.push("/lab-registration");
+      } else {
+        router.push("/dashboard");
+      }
     }
   };
+
+  useEffect(() => {
+    const type = localStorage.getItem("accountType");
+    if (type) {
+      setAccountType(type);
+    }
+  }, []);
 
   return (
     <>
@@ -77,11 +91,6 @@ export default function SignupPage() {
                 alt="Labsphere Logo"
                 width={307}
                 height={111}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = "/labsphere-icon.svg";
-                }}
               />
               <h2 className="text-3xl font-semibold text-gray-800 mb-2">
                 Create an account
@@ -91,80 +100,13 @@ export default function SignupPage() {
               </p>
             </div>
 
-            {/* Account Type Selection */}
-            {/* <div className="mb-6">
-              <label className="block text-teal-600 text-xl text-center font-semibold mb-2">
-                Choose Account Type
-              </label>
-              <div className="flex justify-around space-x-2">
-                <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "doctor"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => {
-                    setAccountType("doctor");
-                    router.push("/doctor-registration");
-                  }}
-                >
-                  <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "doctor" ? "text-white" : "text-teal-600"
-                    }`}
-                  >
-                    &#x2695;
-                  </span>
-                  <span className="text-sm font-medium">Doctor</span>
-                </button>
-                <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "patient"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setAccountType("patient")}
-                >
-                  <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "patient" ? "text-white" : "text-teal-600"
-                    }`}
-                  >
-                    &#x1F464;
-                  </span>
-                  <span className="text-sm font-medium">Patient</span>
-                </button>
-                <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "lab"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => {
-                    setAccountType("lab");
-                    router.push("/lab-registration");
-                  }}
-                >
-                  <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "lab" ? "text-white" : "text-teal-600"
-                    }`}
-                  >
-                    &#x1F3D8;
-                  </span>
-                  <span className="text-sm font-medium">Lab</span>
-                </button>
-              </div>
-            </div> */}
-
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div className="flex gap-4">
                 <div className="w-1/2">
                   <input
                     type="text"
                     name="firstName"
                     placeholder="Enter your first name"
-                    required
                     value={form.firstName}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -178,7 +120,6 @@ export default function SignupPage() {
                     type="text"
                     name="lastName"
                     placeholder="Enter your last name"
-                    required
                     value={form.lastName}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -192,7 +133,6 @@ export default function SignupPage() {
                 type="email"
                 name="email"
                 placeholder="Enter your e-mail"
-                required
                 value={form.email}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -202,7 +142,6 @@ export default function SignupPage() {
                   type="text"
                   name="mobile"
                   placeholder="Enter your mobile number"
-                  required
                   value={form.mobile}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -216,7 +155,6 @@ export default function SignupPage() {
                   type="password"
                   name="password"
                   placeholder="Enter your password"
-                  required
                   value={form.password}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -230,7 +168,6 @@ export default function SignupPage() {
                   type="password"
                   name="confirmPassword"
                   placeholder="Confirm your password"
-                  required
                   value={form.confirmPassword}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -259,22 +196,22 @@ export default function SignupPage() {
             <div className="flex gap-4 justify-center">
               <button
                 className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-                onClick={() => signIn("google", { callbackUrl: "/optionss" })}
+                onClick={() => {
+                  const accountType = localStorage.getItem("accountType");
+                  let callbackUrl = "/dashboard";
+
+                  if (accountType === "doctor") {
+                    callbackUrl = "/doctor-registration";
+                  } else if (accountType === "lab") {
+                    callbackUrl = "/lab-registration";
+                  }
+
+                  signIn("google", { callbackUrl });
+                }}
               >
                 <Image src="/google.svg" alt="Google" width={20} height={20} />{" "}
                 <span className="text-sm font-medium">Sign in with Google</span>
               </button>
-              {/* <button className="p-2 border rounded-full cursor-pointer">
-                <Image
-                  src="/facebook.svg"
-                  alt="Facebook"
-                  width={24}
-                  height={24}
-                />
-              </button>
-              <button className="p-2 border rounded-full cursor-pointer">
-                <Image src="/apple.svg" alt="Apple" width={24} height={24} />
-              </button> */}
             </div>
 
             <p className="text-center text-sm text-gray-600 mt-4">

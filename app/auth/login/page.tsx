@@ -42,7 +42,7 @@ export default function LoginPage() {
     if (!validate()) return;
 
     console.log("Logging in with", form);
-    router.push("/optionss");
+    router.push("/dashboard");
 
     // Uncomment if using credentials auth
     // const res = await signIn("credentials", {
@@ -116,7 +116,7 @@ export default function LoginPage() {
           <div className="flex gap-4 justify-center">
             <button
               className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-              onClick={() => signIn("google", { callbackUrl: "/optionss" })}
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
             >
               <Image src="/google.svg" alt="Google" width={20} height={20} />
               <span className="text-sm font-medium">Login with Google</span>
@@ -126,7 +126,7 @@ export default function LoginPage() {
           <p className="text-center text-sm text-gray-600 mt-4">
             Don&#39;t have an account?{" "}
             <a href="/auth/sign_in" className="text-teal-600">
-              Sign up
+              Sign in
             </a>
           </p>
         </div>

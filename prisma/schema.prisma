@@ -14,3 +14,64 @@ datasource db {
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  firstName   String
+  lastName    String
+  phone       String   @unique
+  role        UserRole
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  doctor      Doctor?
+  lab         Lab?
+  patient     Patient?
+
+  @@map("users")
+}
+
+model Doctor {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  practicingLocation String
+  prnNumber       String
+  certificateUrl  String   // Supabase storage path
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("doctors")
+}
+
+model Lab {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  labLocation     String
+  nablCertificateNumber String
+  certificateUrl  String   // Supabase storage path
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("labs")
+}
+
+model Patient {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("patients")
+}
+
+enum UserRole {
+  PATIENT
+  DOCTOR
+  LAB
+}

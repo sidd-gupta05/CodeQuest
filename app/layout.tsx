@@ -18,15 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <header >
-          
-        </header>
+        <header></header>
         {children}
-        <footer className="bg-gray-800 text-white p-4 text-center">
+        {/* <footer className="bg-gray-800 text-white p-4 text-center">
           <p className="container mx-auto px-4 text-center text-gray-600">
             Copyright 2023 Lab-Sphere
           </p>
-        </footer>
+        </footer> */}
       </body>
     </html>
   );
