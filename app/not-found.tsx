@@ -7,7 +7,7 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white text-center px-4 py-12">
       <video
-        src="/4042.webm"
+        src="/404.webm"
         autoPlay
         loop
         muted

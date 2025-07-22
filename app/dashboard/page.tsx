@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -43,9 +44,9 @@ export default function DashboardPage() {
       {/* Sidebar Toggle Button (for mobile) */}
       <div className="md:hidden bg-gray-100 p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Dashboard</h1>
-        <button onClick={() => setSidebarOpen(!isSidebarOpen)}>
+        <Button onClick={() => setSidebarOpen(!isSidebarOpen)}>
           <Menu className="h-6 w-6 text-gray-800" />
-        </button>
+        </Button>
       </div>
 
       {/* Main Content */}

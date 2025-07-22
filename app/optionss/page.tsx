@@ -40,22 +40,84 @@ export default function OptionsPage() {
               <label className="block text-teal-600 text-xl text-center font-semibold mb-2">
                 Choose Account Type
               </label>
-              <div className="flex justify-around space-x-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                {/* Patient */}
                 <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "doctor"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  className={`group flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
+                    accountType === "patient"
+                      ? "text-white"
+                      : "text-gray-700 hover:text-white"
                   }`}
                   onClick={() => {
-                    setAccountType("doctor");
-                    localStorage.setItem("accountType", "doctor"); // Store selection
+                    setAccountType("patient");
+                    localStorage.setItem("accountType", "patient");
                     router.push("/auth/sign_in");
+                  }}
+                  style={{
+                    background:
+                      accountType === "patient"
+                        ? "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)"
+                        : undefined,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (accountType !== "patient") {
+                      e.currentTarget.style.background =
+                        "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (accountType !== "patient") {
+                      e.currentTarget.style.background = "";
+                    }
                   }}
                 >
                   <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "doctor" ? "text-white" : "text-teal-600"
+                    className={`text-2xl mb-1 transition-colors ${
+                      accountType === "patient"
+                        ? "text-white"
+                        : "text-teal-600 group-hover:text-white"
+                    }`}
+                  >
+                    &#x1F9D1;
+                  </span>
+                  <span className="text-sm font-medium">Patient</span>
+                </button>
+
+                {/* Doctor */}
+                <button
+                  className={`group flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
+                    accountType === "doctor"
+                      ? "text-white"
+                      : "text-gray-700 hover:text-white"
+                  }`}
+                  onClick={() => {
+                    setAccountType("doctor");
+                    localStorage.setItem("accountType", "doctor");
+                    router.push("/auth/sign_in");
+                  }}
+                  style={{
+                    background:
+                      accountType === "doctor"
+                        ? "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)"
+                        : undefined,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (accountType !== "doctor") {
+                      e.currentTarget.style.background =
+                        "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (accountType !== "doctor") {
+                      e.currentTarget.style.background = "";
+                    }
+                  }}
+                >
+                  <span
+                    className={`text-2xl mb-1 transition-colors ${
+                      accountType === "doctor"
+                        ? "text-white"
+                        : "text-teal-600 group-hover:text-white"
                     }`}
                   >
                     &#x2695;
@@ -63,46 +125,44 @@ export default function OptionsPage() {
                   <span className="text-sm font-medium">Doctor</span>
                 </button>
 
+                {/* Lab */}
                 <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === "patient"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => {
-                    setAccountType("patient");
-                    localStorage.setItem("accountType", "patient"); // Store selection
-                    router.push("/auth/sign_in");
-                  }}
-                >
-                  <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "patient" ? "text-white" : "text-teal-600"
-                    }`}
-                  >
-                    &#x1F464;
-                  </span>
-                  <span className="text-sm font-medium">Patient</span>
-                </button>
-
-                <button
-                  className={`flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
+                  className={`group flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
                     accountType === "lab"
-                      ? "bg-teal-600 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "text-white"
+                      : "text-gray-700 hover:text-white"
                   }`}
                   onClick={() => {
                     setAccountType("lab");
-                    localStorage.setItem("accountType", "lab"); // Store selection
+                    localStorage.setItem("accountType", "lab");
                     router.push("/auth/sign_in");
+                  }}
+                  style={{
+                    background:
+                      accountType === "lab"
+                        ? "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)"
+                        : undefined,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (accountType !== "lab") {
+                      e.currentTarget.style.background =
+                        "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (accountType !== "lab") {
+                      e.currentTarget.style.background = "";
+                    }
                   }}
                 >
                   <span
-                    className={`text-2xl mb-1 ${
-                      accountType === "lab" ? "text-white" : "text-teal-600"
+                    className={`text-2xl mb-1 transition-colors ${
+                      accountType === "lab"
+                        ? "text-white"
+                        : "text-teal-600 group-hover:text-white"
                     }`}
                   >
-                    &#x1F3D8;
+                    &#x1F52C;
                   </span>
                   <span className="text-sm font-medium">Lab</span>
                 </button>
