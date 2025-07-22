@@ -7,7 +7,7 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white text-center px-4 py-12">
       <video
-        src="/4042.webm"
+        src="/404.webm"
         autoPlay
         loop
         muted
@@ -20,7 +20,7 @@ export default function NotFoundPage() {
       </h1>
 
       <p className="mt-4 text-gray-600 text-base sm:text-lg xl:text-xl max-w-2xl">
-        The page you're looking for doesn’t exist or has been moved. Let’s get
+        The page you’re looking for doesn’t exist or has been moved. Let’s get
         you back on track!
       </p>
 

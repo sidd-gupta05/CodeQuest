@@ -1,8 +1,9 @@
 "use client";
 import CarouselSection from "@/components/carousel-section";
+import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function DoctorRegistration() {
   const router = useRouter();
@@ -13,6 +14,21 @@ export default function DoctorRegistration() {
       setUploadedFile(e.target.files[0]);
     }
   };
+
+    useEffect(() => {
+    // Check if user is authenticated
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/auth/sign_in");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleRemoveFile = () => {
     setUploadedFile(null);
@@ -118,6 +134,7 @@ export default function DoctorRegistration() {
             </div>
 
             <button
+            // TODO: Add form submission logic
               type="submit"
               className="w-full bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer"
             >
