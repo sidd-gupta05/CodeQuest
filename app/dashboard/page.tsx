@@ -1,11 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
+import { supabase } from "@/utils/supabase/client";
+import type { User } from "@supabase/supabase-js";
+
 import { Button } from "@/components/ui/button";
+
 
 export default function DashboardPage() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const [user, setUser] = useState<User | null>(null);
+console.log("User:", user);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">

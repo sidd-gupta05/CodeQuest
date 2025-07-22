@@ -20,7 +20,7 @@ export default function NotFoundPage() {
       </h1>
 
       <p className="mt-4 text-gray-600 text-base sm:text-lg xl:text-xl max-w-2xl">
-        The page you're looking for doesn’t exist or has been moved. Let’s get
+        The page you’re looking for doesn’t exist or has been moved. Let’s get
         you back on track!
       </p>
 

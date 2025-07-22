@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CarouselSection from "@/components/carousel-section";
+import { supabase } from "@/utils/supabase/client";
+
 
 export default function SignupPage() {
   const [accountType, setAccountType] = useState<string>("");
@@ -14,9 +16,10 @@ export default function SignupPage() {
     firstName: "",
     lastName: "",
     email: "",
-    mobile: "",
+    phone: "",
     password: "",
     confirmPassword: "",
+    createdAt: new Date().toISOString(),
   });
 
   const [errors, setErrors] = useState<Partial<typeof form>>({});
@@ -36,8 +39,8 @@ export default function SignupPage() {
       newErrors.lastName = "Only letters allowed";
     }
 
-    if (!/^\d{10}$/.test(form.mobile)) {
-      newErrors.mobile = "Enter a valid 10-digit number";
+    if (!/^\d{10}$/.test(form.phone)) {
+      newErrors.phone = "Enter a valid 10-digit number";
     }
 
     if (form.password.length < 8) {
@@ -52,16 +55,52 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
-    if (validate()) {
-      console.log("Form is valid:", form);
-      if (accountType === "doctor") {
-        router.push("/doctor-registration");
-      } else if (accountType === "lab") {
-        router.push("/lab-registration");
-      } else {
-        router.push("/dashboard");
+  const handleSubmit = async () => {
+    if (!validate()) return;
+
+    const role = accountType?.toUpperCase();
+    localStorage.setItem("accountType", role);
+
+    if (role === "DOCTOR" || role === "LAB") {
+      const { error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        options: {
+          data: {
+            first_name: form.firstName,
+            last_name: form.lastName,
+            phone: form.phone,
+            role,
+          },
+          emailRedirectTo:
+            role === "DOCTOR"
+              ? `${location.origin}/doctor-registration`
+              : `${location.origin}/lab-registration`,
+        },
+      });
+
+      if (error) {
+        console.error("Signup error:", error.message);
+        alert("Signup error: " + error.message);
+        return;
       }
+      // TODO: Redirect to verification page & something feels missing here
+      return;
+    }
+
+    if (role === "PATIENT") {
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: `+91${form.phone}`,
+        options: { channel: "sms" },
+      });
+
+      if (error) {
+        alert("OTP error: " + error.message);
+        return;
+      }
+
+      router.push(`/api/auth/verify?email=${form.email}&phone=${form.phone}`);
+      return;
     }
   };
 
@@ -140,14 +179,14 @@ export default function SignupPage() {
               <div>
                 <input
                   type="text"
-                  name="mobile"
-                  placeholder="Enter your mobile number"
-                  value={form.mobile}
+                  name="phone"
+                  placeholder="Enter your phone number"
+                  value={form.phone}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md px-4 py-2"
                 />
-                {errors.mobile && (
-                  <p className="text-xs text-red-500">{errors.mobile}</p>
+                {errors.phone && (
+                  <p className="text-xs text-red-500">{errors.phone}</p>
                 )}
               </div>
               <div>
@@ -224,7 +263,7 @@ export default function SignupPage() {
         </div>
 
         {/* Right side - Illustration and carousel */}
-            <CarouselSection prop={"/doctor-desk.webp"}/>
+        <CarouselSection prop={"/doctor-desk.webp"} />
       </div>
     </>
   );

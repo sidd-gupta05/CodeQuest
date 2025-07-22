@@ -1,8 +1,9 @@
 "use client";
 import CarouselSection from "@/components/carousel-section";
+import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function LabRegistration() {
   const router = useRouter();
@@ -17,6 +18,21 @@ export default function LabRegistration() {
   const handleRemoveFile = () => {
     setUploadedFile(null);
   };
+
+      useEffect(() => {
+      // Check if user is authenticated
+      const checkAuth = async () => {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+  
+        if (!user) {
+          router.push("/auth/sign_in");
+        }
+      };
+  
+      checkAuth();
+    }, [router]);
 
   // 🔽 Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
