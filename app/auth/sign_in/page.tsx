@@ -62,13 +62,13 @@ export default function SignupPage() {
     localStorage.setItem("accountType", role);
 
     if (role === "DOCTOR" || role === "LAB") {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
           data: {
-            first_name: form.firstName,
-            last_name: form.lastName,
+            firstName: form.firstName,
+            lastName: form.lastName,
             phone: form.phone,
             role,
           },
@@ -78,13 +78,31 @@ export default function SignupPage() {
               : `${location.origin}/lab-registration`,
         },
       });
-
+      
       if (error) {
         console.error("Signup error:", error.message);
         alert("Signup error: " + error.message);
         return;
       }
+
+      await fetch("/api/auth/register", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    firstName: form.firstName,
+    lastName: form.lastName,
+    email: form.email,
+    phone: form.phone,
+    password: form.password,
+    role: role,
+    supabaseId: data?.user?.id, // get this from supabase.auth.user() or signUp result
+  }),
+});
+
       // TODO: Redirect to verification page & something feels missing here
+      router.push(`/${role.toLowerCase()}-registration`);
       return;
     }
 

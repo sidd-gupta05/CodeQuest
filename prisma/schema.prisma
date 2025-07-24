@@ -24,7 +24,7 @@ model User {
   phone       String   @unique
   role        UserRole
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @up16/datedAt
+  updatedAt   DateTime @updatedAt
 
   doctor      Doctor?
   lab         Lab?

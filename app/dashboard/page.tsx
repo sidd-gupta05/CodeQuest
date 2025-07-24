@@ -6,16 +6,29 @@ import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [user, setUser] = useState<User | null>(null);
-console.log("User:", user);
   useEffect(() => {
+    // Check if user is authenticated
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
-  }, []);
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/optionss?redirectTo=/dashboard");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
