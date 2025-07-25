@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import CarouselSection from "@/components/carousel-section";
-import { supabase } from "@/utils/supabase/client";
-import Image from "next/image";
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import CarouselSection from '@/components/carousel-section';
+import { supabase } from '@/utils/supabase/client';
+import Image from 'next/image';
 
 export default function VerifyPage() {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(60); // 60 seconds for OTP resend --required
   const [resendLoading, setResendLoading] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const phone = searchParams.get("phone") || "";
+  const phone = searchParams.get('phone') || '';
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -39,19 +39,19 @@ export default function VerifyPage() {
 
   const handleVerify = async () => {
     setLoading(true);
-    setError("");
+    setError('');
 
     // 1) verify OTP via Supabase (which uses Twilio behind the scenes)
     const { error: otpError } = await supabase.auth.verifyOtp({
       phone: `+91${phone}`,
-      token: otp.join(""),
-      type: "sms", // or "whatsapp"
+      token: otp.join(''),
+      type: 'sms', // or "whatsapp"
     });
 
     if (otpError) {
       setLoading(false);
-      setError("Invalid OTP. Please try again.");
-      console.error("OTP verification failed:", otpError.message);
+      setError('Invalid OTP. Please try again.');
+      console.error('OTP verification failed:', otpError.message);
       return;
     }
 
@@ -62,43 +62,42 @@ export default function VerifyPage() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         supabaseId: user!.id,
-        firstName: localStorage.getItem("firstName"),
-        lastName: localStorage.getItem("lastName"),
+        firstName: localStorage.getItem('firstName'),
+        lastName: localStorage.getItem('lastName'),
         phone,
-        email: localStorage.getItem("email"),
-        role: localStorage.getItem("accountType"),
+        email: localStorage.getItem('email'),
+        role: localStorage.getItem('accountType'),
       }),
     });
 
     const role = user!.user_metadata.accountType;
-    if (role === "doctor") router.push("/doctor-registration");
-    else if (role === "lab") router.push("/lab-registration");
-    else router.push("/dashboard");
+    if (role === 'doctor') router.push('/doctor-registration');
+    else if (role === 'lab') router.push('/lab-registration');
+    else router.push('/dashboard');
   };
 
   const handleResendOtp = async () => {
     setResendLoading(true);
-    setError("");
+    setError('');
 
-    const res = await fetch("/api/send-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch('/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone }),
     });
 
     const result = await res.json();
     setResendLoading(false);
-    
 
     if (result.success) {
       setResendTimer(30);
     } else {
-      setError("Failed to resend OTP. Try again later.");
+      setError('Failed to resend OTP. Try again later.');
     }
   };
 
@@ -133,11 +132,11 @@ export default function VerifyPage() {
             disabled={loading}
             className="w-full bg-teal-600 text-white py-2 rounded-lg font-semibold disabled:opacity-50 cursor-pointer hover:bg-teal-700 transition duration-200"
           >
-            {loading ? "Verifying..." : "Verify OTP"}
+            {loading ? 'Verifying...' : 'Verify OTP'}
           </button>
 
           <div className="text-center mt-4 text-sm text-gray-600">
-            Didn&apos;t get the code?{" "}
+            Didn&apos;t get the code?{' '}
             {resendTimer > 0 ? (
               <span className="text-gray-400">Resend in {resendTimer}s</span>
             ) : (
@@ -146,7 +145,7 @@ export default function VerifyPage() {
                 disabled={resendLoading}
                 className="text-teal-600 font-semibold cursor-pointer hover:underline disabled:opacity-50"
               >
-                {resendLoading ? "Sending..." : "Resend OTP"}
+                {resendLoading ? 'Sending...' : 'Resend OTP'}
               </button>
             )}
           </div>
@@ -157,7 +156,7 @@ export default function VerifyPage() {
             <button
               className="cursor-pointer"
               onClick={() =>
-                supabase.auth.signInWithOAuth({ provider: "facebook" })
+                supabase.auth.signInWithOAuth({ provider: 'facebook' })
               }
             >
               <Image
@@ -172,7 +171,7 @@ export default function VerifyPage() {
             <button
               className="cursor-pointer"
               onClick={() =>
-                supabase.auth.signInWithOAuth({ provider: "google" })
+                supabase.auth.signInWithOAuth({ provider: 'google' })
               }
             >
               <Image
@@ -187,7 +186,7 @@ export default function VerifyPage() {
             <button
               className="cursor-pointer"
               onClick={() =>
-                supabase.auth.signInWithOAuth({ provider: "apple" })
+                supabase.auth.signInWithOAuth({ provider: 'apple' })
               }
             >
               <Image
@@ -202,7 +201,7 @@ export default function VerifyPage() {
           </div>
 
           <p className="mt-4 text-sm text-center">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <a
               href="/login"
               className="text-teal-600 font-medium hover:underline "

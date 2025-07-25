@@ -1,9 +1,19 @@
+<<<<<<< Updated upstream
 "use client";
 import CarouselSection from "@/components/carousel-section";
 import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+=======
+'use client';
+import CarouselSection from '@/components/carousel-section';
+import { supabase } from '@/utils/supabase/client';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+>>>>>>> Stashed changes
 
 export default function DoctorRegistration() {
   const router = useRouter();
@@ -23,7 +33,11 @@ export default function DoctorRegistration() {
       } = await supabase.auth.getUser();
 
       if (!user) {
+<<<<<<< Updated upstream
         router.push("/auth/sign_in");
+=======
+        router.push('/sign-in?redirectTo=/doctor-registration');
+>>>>>>> Stashed changes
       }
     };
 
@@ -37,9 +51,68 @@ export default function DoctorRegistration() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+<<<<<<< Updated upstream
+=======
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    console.log('User data:', user?.id, user?.email, user?.role);
+    if (error || !user) {
+      console.error('No user found:', error?.message);
+      return;
+    }
+
+    let certPath = '';
+
+    if (uploadedFile) {
+      const cleanFileName = uploadedFile.name.replace(/\s+/g, '_');
+      const { data: fileData, error: fileError } = await supabase.storage
+        .from('uploads')
+        .upload(
+          `doctor-certificates/${user.id}/${cleanFileName}`,
+          uploadedFile
+        );
+
+      if (fileError) {
+        console.error('File upload error:', fileError.message);
+        alert('Failed to upload certificate');
+        return;
+      }
+
+      certPath = fileData.path;
+    }
+
+    const form = e.target as HTMLFormElement;
+    const location = (form[0] as HTMLInputElement).value;
+    const pnr = (form[1] as HTMLInputElement).value;
+
+    const { error: insertError } = await supabase.from('doctors').insert({
+      id: uuidv4(),
+      userId: user.id,
+      practicingLocation: location,
+      prnNumber: pnr,
+      certificateUrl: certPath,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    if (insertError) {
+      alert('Failed to submit registration');
+      console.error('Insert error:', insertError.message);
+      return;
+    }
+
+    alert(
+      'Your application is being reviewed. You’ll hear back within 2 days.'
+    );
+    // router.push("/app/verify-pending"); // optional "waiting" screen
+
+>>>>>>> Stashed changes
     // Optional: Validate fields here before redirect
 
-    router.push("/dashboard");
+    router.push('/dashboard');
   };
 
   return (

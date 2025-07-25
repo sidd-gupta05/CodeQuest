@@ -1,24 +1,23 @@
-"use client";
+'use client';
 
-import { signIn } from "next-auth/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import CarouselSection from "@/components/carousel-section";
-import { supabase } from "@/utils/supabase/client";
-
+import { signIn } from 'next-auth/react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import CarouselSection from '@/components/carousel-section';
+import { supabase } from '@/utils/supabase/client';
 
 export default function SignupPage() {
-  const [accountType, setAccountType] = useState<string>("");
+  const [accountType, setAccountType] = useState<string>('');
   const router = useRouter();
 
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
     createdAt: new Date().toISOString(),
   });
 
@@ -32,23 +31,23 @@ export default function SignupPage() {
     const newErrors: Partial<typeof form> = {};
 
     if (!/^[A-Za-z]+$/.test(form.firstName)) {
-      newErrors.firstName = "Only letters allowed";
+      newErrors.firstName = 'Only letters allowed';
     }
 
     if (!/^[A-Za-z]+$/.test(form.lastName)) {
-      newErrors.lastName = "Only letters allowed";
+      newErrors.lastName = 'Only letters allowed';
     }
 
     if (!/^\d{10}$/.test(form.phone)) {
-      newErrors.phone = "Enter a valid 10-digit number";
+      newErrors.phone = 'Enter a valid 10-digit number';
     }
 
     if (form.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = 'Password must be at least 8 characters';
     }
 
     if (form.password !== form.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -59,10 +58,15 @@ export default function SignupPage() {
     if (!validate()) return;
 
     const role = accountType?.toUpperCase();
-    localStorage.setItem("accountType", role);
+    localStorage.setItem('accountType', role);
 
+<<<<<<< Updated upstream
     if (role === "DOCTOR" || role === "LAB") {
       const { error } = await supabase.auth.signUp({
+=======
+    if (role === 'DOCTOR' || role === 'LAB') {
+      const { data, error } = await supabase.auth.signUp({
+>>>>>>> Stashed changes
         email: form.email,
         password: form.password,
         options: {
@@ -73,29 +77,49 @@ export default function SignupPage() {
             role,
           },
           emailRedirectTo:
-            role === "DOCTOR"
+            role === 'DOCTOR'
               ? `${location.origin}/doctor-registration`
               : `${location.origin}/lab-registration`,
         },
       });
 
       if (error) {
-        console.error("Signup error:", error.message);
-        alert("Signup error: " + error.message);
+        console.error('Signup error:', error.message);
+        alert('Signup error: ' + error.message);
         return;
       }
+<<<<<<< Updated upstream
+=======
+
+      await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+          role: role,
+          supabaseId: data?.user?.id, // get this from supabase.auth.user() or signUp result
+        }),
+      });
+
+>>>>>>> Stashed changes
       // TODO: Redirect to verification page & something feels missing here
       return;
     }
 
-    if (role === "PATIENT") {
+    if (role === 'PATIENT') {
       const { error } = await supabase.auth.signInWithOtp({
         phone: `+91${form.phone}`,
-        options: { channel: "sms" },
+        options: { channel: 'sms' },
       });
 
       if (error) {
-        alert("OTP error: " + error.message);
+        alert('OTP error: ' + error.message);
         return;
       }
 
@@ -105,7 +129,7 @@ export default function SignupPage() {
   };
 
   useEffect(() => {
-    const type = localStorage.getItem("accountType");
+    const type = localStorage.getItem('accountType');
     if (type) {
       setAccountType(type);
     }
@@ -115,9 +139,9 @@ export default function SignupPage() {
     <>
       <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
         <style jsx global>{`
-          @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
           body {
-            font-family: "Inter", sans-serif;
+            font-family: 'Inter', sans-serif;
           }
         `}</style>
         {/* Left side - Signup form */}
@@ -236,25 +260,25 @@ export default function SignupPage() {
               <button
                 className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
                 onClick={() => {
-                  const accountType = localStorage.getItem("accountType");
-                  let callbackUrl = "/dashboard";
+                  const accountType = localStorage.getItem('accountType');
+                  let callbackUrl = '/dashboard';
 
-                  if (accountType === "doctor") {
-                    callbackUrl = "/doctor-registration";
-                  } else if (accountType === "lab") {
-                    callbackUrl = "/lab-registration";
+                  if (accountType === 'doctor') {
+                    callbackUrl = '/doctor-registration';
+                  } else if (accountType === 'lab') {
+                    callbackUrl = '/lab-registration';
                   }
 
-                  signIn("google", { callbackUrl });
+                  signIn('google', { callbackUrl });
                 }}
               >
-                <Image src="/google.svg" alt="Google" width={20} height={20} />{" "}
+                <Image src="/google.svg" alt="Google" width={20} height={20} />{' '}
                 <span className="text-sm font-medium">Sign in with Google</span>
               </button>
             </div>
 
             <p className="text-center text-sm text-gray-600 mt-4">
-              Already have an account?{" "}
+              Already have an account?{' '}
               <a href="/auth/login" className="text-teal-600">
                 Log in
               </a>
@@ -263,7 +287,7 @@ export default function SignupPage() {
         </div>
 
         {/* Right side - Illustration and carousel */}
-        <CarouselSection prop={"/doctor-desk.webp"} />
+        <CarouselSection prop={'/doctor-desk.webp'} />
       </div>
     </>
   );

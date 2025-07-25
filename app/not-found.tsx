@@ -1,5 +1,5 @@
-"use client";
-import { useRouter } from "next/navigation";
+'use client';
+import { useRouter } from 'next/navigation';
 
 export default function NotFoundPage() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function NotFoundPage() {
       </p>
 
       <button
-        onClick={() => router.push("/")}
+        onClick={() => router.push('/')}
         className="mt-6 px-6 py-3 bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
       >
         Back to Homepage

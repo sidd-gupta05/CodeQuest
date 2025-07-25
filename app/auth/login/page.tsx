@@ -1,19 +1,19 @@
-"use client";
-import Image from "next/image";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+'use client';
+import Image from 'next/image';
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const router = useRouter();
   const [form, setForm] = useState({
-    identifier: "",
-    password: "",
+    identifier: '',
+    password: '',
   });
 
   const [errors, setErrors] = useState({
-    identifier: "",
-    password: "",
+    identifier: '',
+    password: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,16 +21,16 @@ export default function LoginPage() {
   };
 
   const validate = () => {
-    const newErrors = { identifier: "", password: "" };
+    const newErrors = { identifier: '', password: '' };
     let valid = true;
 
     if (!form.identifier) {
-      newErrors.identifier = "Email or phone is required";
+      newErrors.identifier = 'Email or phone is required';
       valid = false;
     }
 
     if (!form.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = 'Password is required';
       valid = false;
     }
 
@@ -41,8 +41,8 @@ export default function LoginPage() {
   const handleSubmit = async () => {
     if (!validate()) return;
 
-    console.log("Logging in with", form);
-    router.push("/dashboard");
+    console.log('Logging in with', form);
+    router.push('/dashboard');
 
     // Uncomment if using credentials auth
     // const res = await signIn("credentials", {
@@ -116,7 +116,7 @@ export default function LoginPage() {
           <div className="flex gap-4 justify-center">
             <button
               className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
             >
               <Image src="/google.svg" alt="Google" width={20} height={20} />
               <span className="text-sm font-medium">Login with Google</span>
@@ -124,7 +124,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-sm text-gray-600 mt-4">
-            Don&#39;t have an account?{" "}
+            Don&#39;t have an account?{' '}
             <a href="/auth/sign_in" className="text-teal-600">
               Sign in
             </a>
@@ -136,7 +136,7 @@ export default function LoginPage() {
         className="hidden md:flex items-center justify-center p-10"
         style={{
           background:
-            "linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)",
+            'linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)',
         }}
       >
         <Image
