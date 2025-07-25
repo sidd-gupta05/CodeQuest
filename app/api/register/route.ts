@@ -1,19 +1,12 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server';
+import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
-  const supabase = createClient(cookies())
+  const supabase = createClient(cookies());
 
-  const body = await req.json()
-  const {
-    firstName,
-    lastName,
-    phone,
-    email,
-    role,
-    supabaseId,
-  } = body
+  const body = await req.json();
+  const { firstName, lastName, phone, email, role, supabaseId } = body;
 
   const { error: insertError } = await (await supabase).from('users').insert({
     id: supabaseId,
@@ -24,12 +17,15 @@ export async function POST(req: Request) {
     phone,
     role,
     createdAt: new Date().toISOString(),
-  })
+  });
 
   if (insertError) {
-    console.error('DB insert error:', insertError.message)
-    return NextResponse.json({ success: false, error: insertError.message }, { status: 500 })
+    console.error('DB insert error:', insertError.message);
+    return NextResponse.json(
+      { success: false, error: insertError.message },
+      { status: 500 }
+    );
   }
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ success: true });
 }

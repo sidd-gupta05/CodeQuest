@@ -1,13 +1,21 @@
-"use client";
+'use client';
 
+<<<<<<< Updated upstream
 import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 import { supabase } from "@/utils/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+=======
+import { useEffect, useState } from 'react';
+import { Menu } from 'lucide-react';
+import { supabase } from '@/utils/supabase/client';
+import type { User } from '@supabase/supabase-js';
+>>>>>>> Stashed changes
 
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -17,18 +25,22 @@ export default function DashboardPage() {
   useEffect(() => {
     // Check if user is authenticated
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
+<<<<<<< Updated upstream
+  }, []);
+=======
     const checkAuth = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (!user) {
-        router.push("/optionss?redirectTo=/dashboard");
+        router.push('/optionss?redirectTo=/dashboard');
       }
     };
 
     checkAuth();
   }, [router]);
+>>>>>>> Stashed changes
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -36,7 +48,7 @@ export default function DashboardPage() {
       <aside
         className={`
           bg-gray-800 text-white w-full md:w-64 p-4 
-          md:block ${isSidebarOpen ? "block" : "hidden"}
+          md:block ${isSidebarOpen ? 'block' : 'hidden'}
         `}
       >
         <h2 className="text-xl font-semibold mb-6">Navigation</h2>

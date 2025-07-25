@@ -1,13 +1,16 @@
-import { Inter } from "next/font/google";
-import "./globals.css";
+import { Inter } from 'next/font/google';
+import './globals.css';
 
 const inter = Inter({
-  subsets: ["latin"],
+  subsets: ['latin'],
 });
 
 export const metadata = {
-  title: "Lab-Sphere",
-  description: "A platform for collaborative for doctors and labs and patients",
+  title: 'Lab-Sphere',
+  description: 'A platform for collaborative for doctors and labs and patients',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

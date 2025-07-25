@@ -1,9 +1,19 @@
+<<<<<<< Updated upstream
 "use client";
 import CarouselSection from "@/components/carousel-section";
 import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+=======
+'use client';
+import CarouselSection from '@/components/carousel-section';
+import { supabase } from '@/utils/supabase/client';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+>>>>>>> Stashed changes
 import { v4 as uuidv4 } from "uuid";
 
 export default function DoctorRegistration() {
@@ -96,7 +106,7 @@ export default function DoctorRegistration() {
 
     // Optional: Validate fields here before redirect
 
-    router.push("/dashboard");
+    router.push('/dashboard');
   };
 
   return (
