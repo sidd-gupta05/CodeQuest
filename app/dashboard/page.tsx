@@ -1,18 +1,9 @@
 'use client';
 
-<<<<<<< Updated upstream
-import { useEffect, useState } from "react";
-import { Menu } from "lucide-react";
-import { supabase } from "@/utils/supabase/client";
-import type { User } from "@supabase/supabase-js";
-
-import { Button } from "@/components/ui/button";
-=======
 import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
->>>>>>> Stashed changes
 
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -24,10 +15,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     // Check if user is authenticated
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
-<<<<<<< Updated upstream
-  }, []);
-=======
+
     const checkAuth = async () => {
       const {
         data: { user },
@@ -40,7 +28,6 @@ export default function DashboardPage() {
 
     checkAuth();
   }, [router]);
->>>>>>> Stashed changes
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">

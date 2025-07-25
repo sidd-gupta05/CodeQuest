@@ -11,8 +11,7 @@
     "s": "npm run start",
     "lint": "next lint",
     "l": "npm run lint",
-    "format": "prettier --write .",
-    "f": "npm run format",
+
     "type-check": "tsc --noEmit",
     "t": "npm run type-check",
     "prisma-generate": "prisma generate",

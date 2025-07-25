@@ -60,9 +60,8 @@ export default function SignupPage() {
     const role = accountType?.toUpperCase();
     localStorage.setItem('accountType', role);
 
-    if (role === "DOCTOR" || role === "LAB") {
+    if (role === 'DOCTOR' || role === 'LAB') {
       const { error } = await supabase.auth.signUp({
-
         email: form.email,
         password: form.password,
         options: {
@@ -78,7 +77,7 @@ export default function SignupPage() {
               : `${location.origin}/lab-registration`,
         },
       });
-      
+
       if (error) {
         console.error('Signup error:', error.message);
         alert('Signup error: ' + error.message);
