@@ -7,6 +7,10 @@ import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
 
+
+import { Inter } from 'next/font/google';
+const interFont = Inter({ subsets: ['latin'], weight: '400' });
+
 export default function LandingPage() {
   const router = useRouter();
   const { ref, inView } = useInView({
@@ -165,35 +169,37 @@ export default function LandingPage() {
 
       <div
         ref={ref}
-        className="flex justify-center items-center bg-gray-100 w-full py-10"
+        className="flex justify-center items-center bg-white w-full py-10 "
       >
         <div className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center ">
           <div>
-            <h2 className="text-4xl font-extrabold text-black">
+            <h2 className="text-5xl font-extrabold text-black">
               {startCount && <CountUp end={10000} duration={2} separator="," />}
               +
             </h2>
-            <p className="text-gray-600 mt-2">Tests Processed</p>
+            <p className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}>Tests Processed</p>
           </div>
           <div>
-            <h2 className="text-4xl font-extrabold text-black">
+            <h2 className="text-5xl font-extrabold text-black">
               {startCount && <CountUp end={300} duration={2} />}+
             </h2>
-            <p className="text-gray-600 mt-2">Verified Labs</p>
+            <p className={`text-[#363D4F] mt-2 text-3xl ${interFont.className}`}>Verified Labs</p>
           </div>
           <div>
-            <h2 className="text-4xl font-extrabold text-black">
+            <h2 className="text-5xl font-extrabold text-black">
               {startCount && <CountUp end={50} duration={2} />}+
             </h2>
-            <p className="text-gray-600 mt-2">Cities Covered</p>
+            <p className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}>Cities Covered</p>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-center p-10">
+      <div className="flex items-center justify-center p-10 bg-gray-100">
         <div className="grid grid-cols-3 gap-8 w-5/6 p-8">
+        <div>
+
           {/* Row 1 */}
-          <div className="bg-white rounded-4xl p-6 shadow-2xl w-full max-w-md">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
             {/* Top Section */}
             <div>
               <p className="text-sm font-bold text-[#2B7C7E] uppercase">
@@ -207,12 +213,15 @@ export default function LandingPage() {
               </p>
               <h2 className="text-4xl font-bold text-[#2B7C7E] mt-3">₹499/-</h2>
             </div>
+        </div>
 
             {/* Divider */}
-            <div className="border-t border-dashed my-4"></div>
+            <div className=' justify-center flex'>
+            <div className="border-t-2 w-11/12 border-dashed text-white"></div>
+            </div>
 
             {/* Bottom Section */}
-            <div className="">
+            <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
               <div>
                 <p className="flex justify-between items-center text-xs text-gray-600 font-medium">
                   DISCOUNT CODE <strong className=""> LABSPHERE20</strong>
@@ -263,16 +272,20 @@ export default function LandingPage() {
           {/* Row 2 */}
           <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 text-white text-5xl font-bold text-left relative overflow-hidden">
             {/* Background SVG: OutGuard */}
-            <img
+            <Image
               src="/OutGuard.svg"
               alt="OutGuard"
+              width={44}
+              height={44}
               className="absolute bottom-0 right-0 w-44 h-44 opacity-70 [transform:rotate(360deg)]"
             />
 
             {/* Foreground SVG: InGuard */}
-            <img
+            <Image
               src="/InGuard.svg"
               alt="InGuard"
+              width={40}
+              height={40}
               className="absolute bottom-0 right-0 w-40 h-40 opacity-100 [transform:rotate(360deg)] z-10"
             />
 
@@ -335,7 +348,7 @@ export default function LandingPage() {
               <div>
                 <div className="text-xs text-gray-500">🟢 10:00 - 11:00</div>
                 <p className="text-sm font-semibold mt-1">
-                  Appointment for CBC at Siddharth's Place
+                  Appointment for CBC at Siddharth&apos;s Place
                 </p>
                 <p className="text-xs text-gray-500">
                   Antop Hill, Wadala, Mumbai
