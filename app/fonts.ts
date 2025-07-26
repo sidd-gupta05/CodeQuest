@@ -4,7 +4,10 @@ import { Inter } from 'next/font/google';
 
 export const interFont = Inter({ subsets: ['latin'], weight: '400' });
 
-export const urbanistFont = Urbanist({ subsets: ['latin'], weight: '400' });
+export const urbanistFontRegular = Urbanist({ subsets: ['latin'], weight: '500' });
+export const urbanistFontBold = Urbanist({ subsets: ['latin'], weight: '800' });
+export const urbanistFontLight = Urbanist({ subsets: ['latin'], weight: '300' });
+// Add more weights as needed, e.g. '500', '600', etc.
 
 export const clashFontSemiBold = localFont({
   src: '../public/fonts/ClashDisplay/ClashDisplay-Semibold.woff2', // Adjust path based on your file location

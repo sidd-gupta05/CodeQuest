@@ -8,7 +8,7 @@ import { useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
 
 // use below for applying font to all children in e.g className={`font-clash-semibold`}
-import { urbanistFont, clashFontSemiBold } from './fonts';
+import {  urbanistFontBold, urbanistFontRegular } from './fonts';
 // use below line to import custom styles for inline stlye={}
 import '@/public/css/lufga.css';
 import '@/public/css/clash-display.css'
@@ -305,11 +305,11 @@ export default function LandingPage() {
               </button>
             </div>
 
-            <div className="font-semibold text-sm sm:text-base text-black">
+            <div className="text-sm sm:text-base text-black" style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}>
               Design new UX flow for Michael
             </div>
 
-            <div className="text-gray-500 text-xs sm:text-sm">
+            <div className="text-gray-500 text-xs sm:text-sm" style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}>
               Start from screen 16
             </div>
           </div>
@@ -320,9 +320,10 @@ export default function LandingPage() {
         ref={ref}
         className="flex justify-center items-center bg-white w-full py-10 "
       >
-        <div className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center ">
+        <div className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center "
+        style={{ fontFamily: 'ClashDisplay-Medium, Urbanist, sans-serif' }}>
           <div>
-            <h2 className="text-5xl font-extrabold text-black">
+            <h2 className="text-5xl font-extrabold text-black" style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}>
               {startCount && <CountUp end={10000} duration={2} separator="," />}
               +
             </h2>
@@ -333,7 +334,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div>
-            <h2 className="text-5xl font-extrabold text-black">
+            <h2 className="text-5xl font-extrabold text-black" style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}>
               {startCount && <CountUp end={300} duration={2} />}+
             </h2>
             <p
@@ -343,7 +344,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div>
-            <h2 className="text-5xl font-extrabold text-black">
+            <h2 className="text-5xl font-extrabold text-black" style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}>
               {startCount && <CountUp end={50} duration={2} />}+
             </h2>
             <p
@@ -355,7 +356,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      <div className="bg-[#E9EBF1]">
+      <div className="bg-[#E9EBF1]"  style={{ fontFamily: 'Urbanist, sans-serif' }}>
         <div className="flex items-center justify-center p-10">
           <div className="grid grid-cols-3 gap-8 w-5/6 p-8">
             <div>
@@ -364,16 +365,16 @@ export default function LandingPage() {
               <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
                 {/* Top Section */}
                 <div>
-                  <p className="text-sm font-bold text-[#2B7C7E] uppercase">
+                  <p className={`text-sm text-[#2B7C7E] uppercase ${urbanistFontBold.className}`}>
                     Upgrade Discount
                   </p>
                   <h1 className="text-2xl font-semibold text-gray-900 mt-2">
                     Simplify Lab Management
                   </h1>
-                  <p className="text-gray-600 mt-1 text-sm">
+                  <p className={`text-gray-600 mt-1 text-md ${urbanistFontRegular.className}`}>
                     Manage bookings, reports & users in one place.
                   </p>
-                  <h2 className="text-4xl font-bold text-[#2B7C7E] mt-3">
+                  <h2 className={`text-4xl font-bold text-[#2B7C7E] mt-3 ${urbanistFontBold.className}`}>
                     ₹499/-
                   </h2>
                 </div>
@@ -384,9 +385,9 @@ export default function LandingPage() {
               </div>
 
               {/* Bottom Section */}
-              <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
+              <div className={`bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md ${urbanistFontBold.className}`}>
                 <div>
-                  <p className="flex justify-between items-center text-xs text-gray-600 font-medium">
+                  <p className="flex justify-between items-center text-xs text-gray-600 ">
                     DISCOUNT CODE <strong className=""> LABSPHERE20</strong>
                   </p>
                 </div>

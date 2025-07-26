@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${clashFontSemiBold.className} font-semibold`}>
+      <body className={`${clashFontSemiBold.className}`}>
         <header></header>
         {children}
         {/* <footer className="bg-gray-800 text-white p-4 text-center">
