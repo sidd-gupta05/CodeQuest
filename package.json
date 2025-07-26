@@ -17,7 +17,8 @@
     "pg": "npm run prisma-generate",
     "prisma-migrate": "prisma migrate dev",
     "pm": "npm run prisma-migrate",
-    "prepare": "husky install"
+    "test": "echo \"No tests yet\" && exit 0",
+    "prepare": "husky"
   },
   "dependencies": {
     "@prisma/client": "^6.12.0",

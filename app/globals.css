@@ -1,1 +1,11 @@
 @import 'tailwindcss';
+
+@theme inline {
+  --font-clash: var(--font-clash), sans-serif;
+  --font-clash-extralight: var(--font-clash-extralight), sans-serif;
+  --font-clash-light: var(--font-clash-light), sans-serif;
+  --font-clash-medium: var(--font-clash-medium), sans-serif;
+  --font-clash-semibold: var(--font-clash-semibold), sans-serif;
+  --font-clash-bold: var(--font-clash-bold), sans-serif;
+  --font-clash-variable: var(--font-clash-variable), sans-serif;
+}

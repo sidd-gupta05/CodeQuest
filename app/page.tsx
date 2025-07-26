@@ -7,7 +7,12 @@ import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
 
-import { Inter } from 'next/font/google';
+// use below for applying font to all children in e.g className={`font-clash-semibold`}
+import { urbanistFont, clashFontSemiBold } from './fonts';
+// use below line to import custom styles for inline stlye={}
+import '@/public/css/lufga.css';
+import '@/public/css/clash-display.css'
+
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -25,8 +30,6 @@ const labs = [
   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab3.png' },
   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab4.png' },
 ];
-
-const interFont = Inter({ subsets: ['latin'], weight: '400' });
 
 // const steps = [
 //   {
@@ -156,7 +159,7 @@ export default function LandingPage() {
       x: 0,
       opacity: 1,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         bounce: 0.4,
         duration: 0.8,
       },
@@ -168,12 +171,12 @@ export default function LandingPage() {
         duration: 0.5,
       },
     },
-  };
+  } as const;
 
   return (
     <>
       <main
-        className="min-h-screen flex flex-col text-white"
+        className={`min-h-screen flex flex-col text-white $`}
         style={{
           background:
             'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)',
@@ -233,7 +236,7 @@ export default function LandingPage() {
         </nav>
 
         {/* Hero Section */}
-        <section className="flex flex-col items-center justify-center px-6 lg:px-24 py-12 gap-12">
+        <section className={` flex flex-col items-center  justify-center px-6 lg:px-24 py-12 gap-12`}>
           <div className="flex flex-col items-center">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight text-center flex flex-wrap justify-center gap-2">
               <span className="text-white">Your</span>
@@ -246,7 +249,7 @@ export default function LandingPage() {
               Precision & Simplicity
             </p>
 
-            <p className="mt-6 text-black text-md md:text-lg font-semibold text-center">
+            <p className="mt-6 text-black text-md md:text-lg text-center" style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}>
               Book lab tests online, get accurate reports fast, and track
               everything in one secure platform
               <br />
@@ -272,8 +275,8 @@ export default function LandingPage() {
           />
 
           {/* Stats Box */}
-          <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-[32px] border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-bounce">
-            <span className="text-white drop-shadow-3xl">1000+</span>
+          <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-2xl border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-bounce">
+            <span className="text-white drop-shadow-3xl font-clash-semibold">1000+</span>
             <span className="text-white text-base sm:text-xl md:text-3xl lg:text-5xl font-semibold drop-shadow-3xl">
               labs enlisted
             </span>
@@ -324,7 +327,7 @@ export default function LandingPage() {
               +
             </h2>
             <p
-              className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}
+              className={`text-[#363D4F] text-3xl mt-2 `}
             >
               Tests Processed
             </p>
@@ -334,7 +337,7 @@ export default function LandingPage() {
               {startCount && <CountUp end={300} duration={2} />}+
             </h2>
             <p
-              className={`text-[#363D4F] mt-2 text-3xl ${interFont.className}`}
+              className={`text-[#363D4F] mt-2 text-3xl `}
             >
               Verified Labs
             </p>
@@ -344,7 +347,7 @@ export default function LandingPage() {
               {startCount && <CountUp end={50} duration={2} />}+
             </h2>
             <p
-              className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}
+              className={`text-[#363D4F] text-3xl mt-2 `}
             >
               Cities Covered
             </p>
@@ -510,7 +513,7 @@ export default function LandingPage() {
                 <div>
                   <div className="text-xs text-gray-500">🟢 10:00 - 11:00</div>
                   <p className="text-sm font-semibold mt-1">
-                    Appointment for CBC at Siddharth's Place
+                    Appointment for CBC at Siddharth&apos;s Place
                   </p>
                   <p className="text-xs text-gray-500">
                     Antop Hill, Wadala, Mumbai

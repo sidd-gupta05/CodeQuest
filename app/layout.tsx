@@ -1,9 +1,6 @@
-import { Inter } from 'next/font/google';
 import './globals.css';
+import { clashFontSemiBold } from './fonts';
 
-const inter = Inter({
-  subsets: ['latin'],
-});
 
 export const metadata = {
   title: 'Lab-Sphere',
@@ -20,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className}`}>
+      <body className={`${clashFontSemiBold.className} font-semibold`}>
         <header></header>
         {children}
         {/* <footer className="bg-gray-800 text-white p-4 text-center">
