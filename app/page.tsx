@@ -7,9 +7,64 @@ import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
 
-
 import { Inter } from 'next/font/google';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ArrowLeft,
+  ArrowRight,
+  UserPlus,
+  Calendar,
+  FileText,
+  Tag,
+} from 'lucide-react';
+
+const labs = [
+  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab.png' },
+  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab1.png' },
+  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab2.png' },
+  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab3.png' },
+  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab4.png' },
+];
+
 const interFont = Inter({ subsets: ['latin'], weight: '400' });
+
+// const steps = [
+//   {
+//     title: 'Register / Login',
+//     description:
+//       'Patients can login and signup to LabSphere for accessing all lab services easily.',
+//   },
+//   {
+//     title: 'Book Lab Test',
+//     description:
+//       'Book appointments with nearby labs according to available time slots for convenience.',
+//   },
+//   {
+//     title: 'Track Reports',
+//     description:
+//       'Track your report status. Receive reports directly on your phone, even urgently if required.',
+//   },
+//   {
+//     title: 'Affordable Pricing',
+//     description:
+//       'Get discounts and affordable lab test prices through LabSphere.',
+//   },
+// ];
+
+const variants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? '100%' : '-100%',
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? '-100%' : '100%',
+    opacity: 0,
+  }),
+};
 
 export default function LandingPage() {
   const router = useRouter();
@@ -23,6 +78,97 @@ export default function LandingPage() {
   useEffect(() => {
     if (inView) setStartCount(true);
   }, [inView]);
+
+  // const [step, setStep] = useState(1);
+
+  // const handleStepChange = (nextStep: number) => {
+  //   setStep(nextStep);
+  // };
+
+  // const [step, setStep] = useState(0);
+  // const [direction, setDirection] = useState(0); // +1 for next, -1 for prev
+
+  // const handleNext = () => {
+  //   if (step < steps.length - 1) {
+  //     setDirection(1);
+  //     setStep((prev) => prev + 1);
+  //   }
+  // };
+
+  // const handlePrevious = () => {
+  //   if (step > 0) {
+  //     setDirection(-1);
+  //     setStep((prev) => prev - 1);
+  //   }
+  // };
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const features = [
+    {
+      icon: <UserPlus className="w-16 h-16 text-blue-500" />,
+      title: 'Register & Login',
+      description:
+        'Patients can easily sign up and log in to LabSphere to manage their health profile and appointments seamlessly.',
+      bgColor: 'bg-blue-50',
+    },
+    {
+      icon: <Calendar className="w-16 h-16 text-green-500" />,
+      title: 'Book Lab Tests',
+      description:
+        'Book appointments at nearby path labs at your convenience. Our easy-to-use system helps you find a time that works for you.',
+      bgColor: 'bg-green-50',
+    },
+    {
+      icon: <FileText className="w-16 h-16 text-purple-500" />,
+      title: 'Track Your Reports',
+      description:
+        'Keep track of your lab reports in real-time. Get urgent reports delivered directly to your phone through the LabSphere platform.',
+      bgColor: 'bg-purple-50',
+    },
+    {
+      icon: <Tag className="w-16 h-16 text-red-500" />,
+      title: 'Discounts & Best Prices',
+      description:
+        'Take advantage of exclusive discounts and competitive pricing on a wide range of lab tests, making healthcare more affordable.',
+      bgColor: 'bg-red-50',
+    },
+  ];
+
+  // Function to go to the next slide
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % features.length);
+  };
+
+  // Function to go to the previous slide
+  const handlePrev = () => {
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + features.length) % features.length
+    );
+  };
+
+  const cardVariants = {
+    offscreen: {
+      x: -100,
+      opacity: 0,
+    },
+    onscreen: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        type: 'spring',
+        bounce: 0.4,
+        duration: 0.8,
+      },
+    },
+    exit: {
+      x: 100,
+      opacity: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
 
   return (
     <>
@@ -134,7 +280,7 @@ export default function LandingPage() {
           </div>
 
           {/* Calendar */}
-          <div className="absolute left-[-20px] sm:left-[400px] md:left-[-340px] bottom-[-20px] z-20">
+          <div className="absolute left-[-20px] sm:left-[400px] md:left-[-340px] bottom-[10px] z-20">
             <Image
               src="/calendar.png"
               alt="Calendar"
@@ -177,193 +323,308 @@ export default function LandingPage() {
               {startCount && <CountUp end={10000} duration={2} separator="," />}
               +
             </h2>
-            <p className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}>Tests Processed</p>
+            <p
+              className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}
+            >
+              Tests Processed
+            </p>
           </div>
           <div>
             <h2 className="text-5xl font-extrabold text-black">
               {startCount && <CountUp end={300} duration={2} />}+
             </h2>
-            <p className={`text-[#363D4F] mt-2 text-3xl ${interFont.className}`}>Verified Labs</p>
+            <p
+              className={`text-[#363D4F] mt-2 text-3xl ${interFont.className}`}
+            >
+              Verified Labs
+            </p>
           </div>
           <div>
             <h2 className="text-5xl font-extrabold text-black">
               {startCount && <CountUp end={50} duration={2} />}+
             </h2>
-            <p className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}>Cities Covered</p>
+            <p
+              className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}
+            >
+              Cities Covered
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-center p-10 bg-gray-100">
-        <div className="grid grid-cols-3 gap-8 w-5/6 p-8">
-        <div>
-
-          {/* Row 1 */}
-          <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
-            {/* Top Section */}
+      <div className="bg-[#E9EBF1]">
+        <div className="flex items-center justify-center p-10">
+          <div className="grid grid-cols-3 gap-8 w-5/6 p-8">
             <div>
-              <p className="text-sm font-bold text-[#2B7C7E] uppercase">
-                Upgrade Discount
-              </p>
-              <h1 className="text-2xl font-semibold text-gray-900 mt-2">
-                Simplify Lab Management
-              </h1>
-              <p className="text-gray-600 mt-1 text-sm">
-                Manage bookings, reports & users in one place.
-              </p>
-              <h2 className="text-4xl font-bold text-[#2B7C7E] mt-3">₹499/-</h2>
-            </div>
-        </div>
-
-            {/* Divider */}
-            <div className=' justify-center flex'>
-            <div className="border-t-2 w-11/12 border-dashed text-white"></div>
-            </div>
-
-            {/* Bottom Section */}
-            <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
-              <div>
-                <p className="flex justify-between items-center text-xs text-gray-600 font-medium">
-                  DISCOUNT CODE <strong className=""> LABSPHERE20</strong>
-                </p>
-              </div>
-              <Image src="/barcode.svg" alt="barcode" width={500} height={40} />
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 flex flex-col justify-center">
-            <h2 className="text-white font-bold text-lg leading-tight">
-              Clean,
-              <br />
-              Accessible
-              <br />
-              UI
-            </h2>
-            <p className="text-white text-xs mt-2">
-              Designed for doctors,
-              <br />
-              labs & patients.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-4xl p-4 shadow-2xl flex flex-col items-center justify-center">
-            <p className="text-[#2B7C7E] text-sm font-semibold mb-2">
-              Top Labs
-              <br />
-              at your doorstep
-            </p>
-            <Image
-              src="/drlab.png"
-              alt="Dr Lal"
-              width={100}
-              height={100}
-              className="rounded-md"
-            />
-            <p className="text-xs mt-2 text-center">
-              Dr Lal Path Lab
-              <br />
-              <span className="text-gray-500">Wadala, Mumbai</span>
-            </p>
-            <button className="mt-2 text-xs px-3 py-1 bg-[#2B7C7E] text-white rounded-full">
-              Book Appointment
-            </button>
-          </div>
-
-          {/* Row 2 */}
-          <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 text-white text-5xl font-bold text-left relative overflow-hidden">
-            {/* Background SVG: OutGuard */}
-            <Image
-              src="/OutGuard.svg"
-              alt="OutGuard"
-              width={44}
-              height={44}
-              className="absolute bottom-0 right-0 w-44 h-44 opacity-70 [transform:rotate(360deg)]"
-            />
-
-            {/* Foreground SVG: InGuard */}
-            <Image
-              src="/InGuard.svg"
-              alt="InGuard"
-              width={40}
-              height={40}
-              className="absolute bottom-0 right-0 w-40 h-40 opacity-100 [transform:rotate(360deg)] z-10"
-            />
-
-            <div className="relative z-20 py-4">
-              <div className="mb-4">Secure.</div>
-              <div className="mb-4">Scalable.</div>
-              <div>Seamless.</div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-4xl shadow-xl flex flex-col items-center justify-center p-6">
-            <Image src="/logo.svg" alt="logo" width={120} height={120} />
-            <div className="text-[#2B7C7E] text-5xl font-bold mt-4">
-              Labsphere
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl flex flex-col justify-center items-center text-white text-center">
-            <h2 className="font-bold text-lg">Mobile Compatible</h2>
-            <Image
-              src="/iphone.svg"
-              alt="iphone"
-              width={150}
-              height={200}
-              className="my-2"
-            />
-          </div>
-
-          {/* Row 3 */}
-          <div className="col-span-3 grid grid-cols-4 gap-6 w-full">
-            {/* Simple Dashboard - spans 2 columns */}
-            <div className="col-span-2 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white">
-              <h3 className="font-bold text-4xl mt-4">Simple Dashboard</h3>
-              <div className="bg-white rounded-lg mt-4 p-4 text-left">
-                <p className="text-3xl font-bold text-[#2B7C7E]">1000</p>
-                <p className="text-xs text-gray-600">
-                  New customers this month
-                </p>
-                <div className="w-full h-2 bg-gray-200 rounded mt-2">
-                  <div
-                    className="h-full bg-[#2B7C7E] rounded"
-                    style={{ width: '80%' }}
-                  ></div>
+              {/* Row 1 */}
+              {/* Row 1 */}
+              <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
+                {/* Top Section */}
+                <div>
+                  <p className="text-sm font-bold text-[#2B7C7E] uppercase">
+                    Upgrade Discount
+                  </p>
+                  <h1 className="text-2xl font-semibold text-gray-900 mt-2">
+                    Simplify Lab Management
+                  </h1>
+                  <p className="text-gray-600 mt-1 text-sm">
+                    Manage bookings, reports & users in one place.
+                  </p>
+                  <h2 className="text-4xl font-bold text-[#2B7C7E] mt-3">
+                    ₹499/-
+                  </h2>
                 </div>
               </div>
+              {/* Divider */}
+              <div className=" justify-center flex">
+                <div className="border-t-2 w-11/12 border-dashed text-white"></div>
+              </div>
+
+              {/* Bottom Section */}
+              <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
+                <div>
+                  <p className="flex justify-between items-center text-xs text-gray-600 font-medium">
+                    DISCOUNT CODE <strong className=""> LABSPHERE20</strong>
+                  </p>
+                </div>
+                <Image
+                  src="/barcode.svg"
+                  alt="barcode"
+                  width={500}
+                  height={40}
+                />
+              </div>
             </div>
 
-            <div className="col-span-1 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white text-center flex items-center justify-center">
-              <p className="text-4xl font-bold">
-                Your health
+            <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 flex flex-col justify-center">
+              <h2 className="text-white font-bold text-lg leading-tight">
+                Clean,
                 <br />
-                deserves speed
+                Accessible
                 <br />
-                precision &<br />
-                simplicity
+                UI
+              </h2>
+              <p className="text-white text-xs mt-2">
+                Designed for doctors,
+                <br />
+                labs & patients.
               </p>
             </div>
-            {/* Calendar Card - 1 column */}
-            <div className="col-span-1 bg-white rounded-4xl p-4 shadow-2xl flex flex-col justify-between">
-              <div>
-                <div className="text-xs text-gray-500">🟢 10:00 - 11:00</div>
-                <p className="text-sm font-semibold mt-1">
-                  Appointment for CBC at Siddharth&apos;s Place
-                </p>
-                <p className="text-xs text-gray-500">
-                  Antop Hill, Wadala, Mumbai
-                </p>
-              </div>
+
+            <div className="bg-white rounded-4xl p-4 shadow-2xl flex flex-col items-center justify-center">
+              <p className="text-[#2B7C7E] text-sm font-semibold mb-2">
+                Top Labs
+                <br />
+                at your doorstep
+              </p>
               <Image
-                src="/calendar.png"
-                alt="calendar"
-                width={250}
-                height={120}
-                className="mt-2 rounded-lg"
+                src="/drlab.png"
+                alt="Dr Lal"
+                width={100}
+                height={100}
+                className="rounded-md"
+              />
+              <p className="text-xs mt-2 text-center">
+                Dr Lal Path Lab
+                <br />
+                <span className="text-gray-500">Wadala, Mumbai</span>
+              </p>
+              <button className="mt-2 text-xs px-3 py-1 bg-[#2B7C7E] text-white rounded-full">
+                Book Appointment
+              </button>
+            </div>
+
+            {/* Row 2 */}
+            <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 text-white text-5xl font-bold text-left relative overflow-hidden">
+              {/* Background SVG: OutGuard */}
+              <Image
+                src="/OutGuard.svg"
+                alt="OutGuard"
+                width={44}
+                height={44}
+                className="absolute bottom-0 right-0 w-44 h-44 opacity-70 [transform:rotate(360deg)]"
+              />
+
+              {/* Foreground SVG: InGuard */}
+              <Image
+                src="/InGuard.svg"
+                alt="InGuard"
+                width={40}
+                height={40}
+                className="absolute bottom-0 right-0 w-40 h-40 opacity-100 [transform:rotate(360deg)] z-10"
+              />
+
+              <div className="relative z-20 py-4">
+                <div className="mb-4">Secure.</div>
+                <div className="mb-4">Scalable.</div>
+                <div>Seamless.</div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-4xl shadow-xl flex flex-col items-center justify-center p-6 w-full">
+              <Image src="/logo.svg" alt="logo" width={120} height={120} />
+              <div className="text-[#2B7C7E] text-5xl font-bold mt-4">
+                Labsphere
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl flex flex-col justify-center items-center text-white text-center">
+              <h2 className="font-bold text-lg">Mobile Compatible</h2>
+              <Image
+                src="/iphone.svg"
+                alt="iphone"
+                width={150}
+                height={200}
+                className="my-2"
               />
             </div>
 
-            {/* Your health - 1 column */}
+            <div className="col-span-3 grid grid-cols-4 gap-6 w-full">
+              <div className="col-span-2 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white">
+                <h3 className="font-bold text-4xl mt-4">Simple Dashboard</h3>
+                <div className="bg-white rounded-lg mt-4 p-4 text-left">
+                  <p className="text-3xl font-bold text-[#2B7C7E]">1000</p>
+                  <p className="text-xs text-gray-600">
+                    New customers this month
+                  </p>
+                  <div className="w-full h-2 bg-gray-200 rounded mt-2">
+                    <div
+                      className="h-full bg-[#2B7C7E] rounded"
+                      style={{ width: '80%' }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-span-1 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white text-center flex items-center justify-center">
+                <p className="text-4xl font-bold">
+                  Your health
+                  <br />
+                  deserves speed
+                  <br />
+                  precision &<br />
+                  simplicity
+                </p>
+              </div>
+              <div className="col-span-1 bg-white rounded-4xl p-4 shadow-2xl flex flex-col justify-between">
+                <div>
+                  <div className="text-xs text-gray-500">🟢 10:00 - 11:00</div>
+                  <p className="text-sm font-semibold mt-1">
+                    Appointment for CBC at Siddharth's Place
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Antop Hill, Wadala, Mumbai
+                  </p>
+                </div>
+                <Image
+                  src="/calendar.png"
+                  alt="calendar"
+                  width={250}
+                  height={120}
+                  className="mt-2 rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center py-16 bg-[#E9EBF1] px-4">
+          <h2 className="text-4xl sm:text-5xl font-bold text-center text-[#0F2E2E] mb-8 sm:mb-12">
+            Your nearby <span className="text-[#2B7C7E]">labs</span>
+          </h2>
+
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
+            {labs.map((lab, index) => (
+              <motion.div
+                key={index}
+                className="w-11/12 sm:w-[250px] rounded-3xl overflow-hidden shadow-md bg-[#91D8C1] p-[4px]"
+                initial="offscreen"
+                whileInView="onscreen"
+                exit="exit"
+                viewport={{ once: false, amount: 0.2 }}
+                variants={cardVariants}
+              >
+                <div className="rounded-[22px] flex flex-col items-center bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1]">
+                  {/* Image placed on top without border box */}
+                  <div className="relative w-full flex justify-center mt-6">
+                    <div className="w-[120px] h-[150px] relative">
+                      <Image
+                        src={lab.image}
+                        alt={lab.name}
+                        fill
+                        className="object-cover rounded-xl"
+                      />
+                    </div>
+                  </div>
+
+                  {/* White card part */}
+                  <div className="bg-white rounded-2xl px-4 pt-6 pb-4 mx-4 mb-4 w-[calc(100%-32px)] text-center shadow-lg">
+                    <div className="text-lg font-semibold text-[#0F2E2E] text-center">
+                      {lab.name}
+                    </div>
+                    <div className="text-sm text-gray-500 text-center">
+                      {lab.location}
+                    </div>
+                    <button className="mt-4 w-full bg-[#2B7C7E] text-white py-2 rounded-xl font-medium hover:bg-[#24686A] transition cursor-pointer">
+                      Book Appointment
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center py-8 bg-[#E9EBF1] px-2">
+        <h2 className="text-4xl sm:text-5xl font-bold text-center text-[#0F2E2E] mb-2 sm:mb-6">
+          How <span className="text-[#2B7C7E]">labs</span> works
+        </h2>
+      </div>
+
+      <div className="bg-gray-100 h-full flex flex-col items-center justify-center font-sans p-2">
+        <div className="w-full max-w-3xl mx-auto mt-15 mb-15">
+          {/* Carousel Container */}
+          <div className="relative overflow-hidden bg-white rounded-2xl shadow-2xl h-72">
+            {/* Sliding Wrapper */}
+            <div
+              className="flex transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {/* Individual Feature Slides */}
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className={`w-full flex-shrink-0 h-72 p-4 md:p-8 flex flex-col items-center justify-center text-center ${feature.bgColor}`}
+                >
+                  <div className="mb-2">{feature.icon}</div>
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">
+                    {feature.title}
+                  </h2>
+                  <p className="text-gray-600 max-w-md text-sm md:text-base">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-center mt-4 space-x-3">
+            <button
+              onClick={handlePrev}
+              className="group flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              aria-label="Previous Slide"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700 cursor-pointer transition-colors" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="group flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              aria-label="Next Slide"
+            >
+              <ArrowRight className="w-5 h-5 text-gray-700 cursor-pointer transition-colors" />
+            </button>
           </div>
         </div>
       </div>
