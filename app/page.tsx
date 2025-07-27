@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
+import Footer from '@/components/footer';
 
 import { Inter } from 'next/font/google';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -28,29 +29,6 @@ const labs = [
 
 const interFont = Inter({ subsets: ['latin'], weight: '400' });
 
-// const steps = [
-//   {
-//     title: 'Register / Login',
-//     description:
-//       'Patients can login and signup to LabSphere for accessing all lab services easily.',
-//   },
-//   {
-//     title: 'Book Lab Test',
-//     description:
-//       'Book appointments with nearby labs according to available time slots for convenience.',
-//   },
-//   {
-//     title: 'Track Reports',
-//     description:
-//       'Track your report status. Receive reports directly on your phone, even urgently if required.',
-//   },
-//   {
-//     title: 'Affordable Pricing',
-//     description:
-//       'Get discounts and affordable lab test prices through LabSphere.',
-//   },
-// ];
-
 const variants = {
   enter: (direction: number) => ({
     x: direction > 0 ? '100%' : '-100%',
@@ -66,6 +44,87 @@ const variants = {
   }),
 };
 
+const testimonials = [
+  {
+    id: 1,
+    name: 'Fig Nelson',
+    username: '@fignel_looson',
+    content:
+      'Stellar’s user-friendly dashboards have simplified our digital strategy management.',
+    avatar: '/avtar1.svg',
+    socialIcon: '/twitter.svg',
+  },
+  {
+    id: 2,
+    name: 'Sadie Berlin',
+    username: '@sadieberlin00',
+    content:
+      'Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we’ve gained invaluable insights.',
+    avatar: '/avtar2.svg',
+    socialIcon: '/instagram.svg',
+  },
+  {
+    id: 3,
+    name: 'Amaya Locosta',
+    username: '@amayalocosta',
+    content:
+      'We’ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
+    avatar: '/avtar3.svg',
+    socialIcon: '/facebook.svg',
+  },
+  {
+    id: 4,
+    name: 'Sadie Berlin',
+    username: '@sadieberlin00',
+    content:
+      'We’ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
+    avatar: '/avtar2.svg',
+    socialIcon: '/instagram.svg',
+  },
+  {
+    id: 5,
+    name: 'Fig Nelson',
+    username: '@fignel_looson',
+    content:
+      'Stellar’s user-friendly dashboards have simplified our digital strategy management.',
+    avatar: '/avtar1.svg',
+    socialIcon: '/twitter.svg',
+  },
+  {
+    id: 6,
+    name: 'Sadie Berlin',
+    username: '@sadieberlin00',
+    content:
+      'Stellar’s user-friendly dashboards have simplified our digital strategy management.',
+    avatar: '/avtar2.svg',
+    socialIcon: '/instagram.svg',
+  },
+];
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const fadeInUp = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: 'easeOut',
+    },
+  },
+};
+
 export default function LandingPage() {
   const router = useRouter();
   const { ref, inView } = useInView({
@@ -78,29 +137,6 @@ export default function LandingPage() {
   useEffect(() => {
     if (inView) setStartCount(true);
   }, [inView]);
-
-  // const [step, setStep] = useState(1);
-
-  // const handleStepChange = (nextStep: number) => {
-  //   setStep(nextStep);
-  // };
-
-  // const [step, setStep] = useState(0);
-  // const [direction, setDirection] = useState(0); // +1 for next, -1 for prev
-
-  // const handleNext = () => {
-  //   if (step < steps.length - 1) {
-  //     setDirection(1);
-  //     setStep((prev) => prev + 1);
-  //   }
-  // };
-
-  // const handlePrevious = () => {
-  //   if (step > 0) {
-  //     setDirection(-1);
-  //     setStep((prev) => prev - 1);
-  //   }
-  // };
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -135,12 +171,10 @@ export default function LandingPage() {
     },
   ];
 
-  // Function to go to the next slide
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % features.length);
   };
 
-  // Function to go to the previous slide
   const handlePrev = () => {
     setCurrentIndex(
       (prevIndex) => (prevIndex - 1 + features.length) % features.length
@@ -169,6 +203,8 @@ export default function LandingPage() {
       },
     },
   };
+
+  const MotionLink = motion(Link);
 
   return (
     <>
@@ -253,64 +289,64 @@ export default function LandingPage() {
               <strong>NO queues, no confusion</strong>
             </p>
           </div>
-        </section>
 
-        <div
-          className="absolute bottom-[-264px] left-1/2 z-10 w-full h-[200px] bg-gray-200 shadow-2xl border border-gray-300 hidden md:block"
-          style={{
-            transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
-            transformOrigin: 'bottom',
-          }}
-        />
-        <div className="relative w-full max-w-lg mx-auto">
-          <Image
-            src="/iphone.svg"
-            alt="Labsphere App"
-            width={5}
-            height={5}
-            className="w-full relative z-20"
+          <div
+            className="absolute bottom-[-264px] left-1/2 z-10 w-full h-[200px] bg-gray-200  border border-gray-300 hidden md:block"
+            style={{
+              transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
+              transformOrigin: 'bottom',
+            }}
           />
-
-          {/* Stats Box */}
-          <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-[32px] border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-bounce">
-            <span className="text-white drop-shadow-3xl">1000+</span>
-            <span className="text-white text-base sm:text-xl md:text-3xl lg:text-5xl font-semibold drop-shadow-3xl">
-              labs enlisted
-            </span>
-          </div>
-
-          {/* Calendar */}
-          <div className="absolute left-[-20px] sm:left-[400px] md:left-[-340px] bottom-[10px] z-20">
+          <div className="relative w-full max-w-lg mx-auto">
             <Image
-              src="/calendar.png"
-              alt="Calendar"
-              width={200}
-              height={200}
-              className="w-40 sm:w-60 md:w-[470px]"
+              src="/iphone.svg"
+              alt="Labsphere App"
+              width={5}
+              height={5}
+              className="w-full relative z-20"
             />
-          </div>
 
-          {/* Floating Info Card */}
-          <div className="absolute top-[20%] left-2 sm:left-[-100px] md:left-[-350px] bg-white text-black px-4 py-2 rounded-lg shadow-md w-[280px] sm:w-[320px] text-sm flex flex-col gap-1 z-30">
-            <div className="flex justify-between items-start">
-              <div className="flex items-center gap-2 text-gray-500 text-xs sm:text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                10:00–13:00
+            {/* Stats Box */}
+            <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-[32px] border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-bounce">
+              <span className="text-white drop-shadow-3xl">1000+</span>
+              <span className="text-white text-base sm:text-xl md:text-3xl lg:text-5xl font-semibold drop-shadow-3xl">
+                labs enlisted
+              </span>
+            </div>
+
+            {/* Calendar */}
+            <div className="absolute left-[-20px] sm:left-[400px] md:left-[-340px] bottom-[10px] z-20">
+              <Image
+                src="/calendar.png"
+                alt="Calendar"
+                width={200}
+                height={200}
+                className="w-40 sm:w-60 md:w-[470px]"
+              />
+            </div>
+
+            {/* Floating Info Card */}
+            <div className="absolute top-[20%] left-2 sm:left-[-100px] md:left-[-350px] bg-white text-black px-4 py-2 rounded-lg shadow-md w-[280px] sm:w-[320px] text-sm flex flex-col gap-1 z-30">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-2 text-gray-500 text-xs sm:text-sm">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  10:00–13:00
+                </div>
+                <button className="text-gray-400 hover:text-gray-600 text-xl leading-none cursor-pointer">
+                  ⋯
+                </button>
               </div>
-              <button className="text-gray-400 hover:text-gray-600 text-xl leading-none cursor-pointer">
-                ⋯
-              </button>
-            </div>
 
-            <div className="font-semibold text-sm sm:text-base text-black">
-              Design new UX flow for Michael
-            </div>
+              <div className="font-semibold text-sm sm:text-base text-black">
+                Design new UX flow for Michael
+              </div>
 
-            <div className="text-gray-500 text-xs sm:text-sm">
-              Start from screen 16
+              <div className="text-gray-500 text-xs sm:text-sm">
+                Start from screen 16
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       <div
@@ -357,7 +393,6 @@ export default function LandingPage() {
           <div className="grid grid-cols-3 gap-8 w-5/6 p-8">
             <div>
               {/* Row 1 */}
-              {/* Row 1 */}
               <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
                 {/* Top Section */}
                 <div>
@@ -375,6 +410,7 @@ export default function LandingPage() {
                   </h2>
                 </div>
               </div>
+
               {/* Divider */}
               <div className=" justify-center flex">
                 <div className="border-t-2 w-11/12 border-dashed text-white"></div>
@@ -537,7 +573,7 @@ export default function LandingPage() {
             {labs.map((lab, index) => (
               <motion.div
                 key={index}
-                className="w-11/12 sm:w-[250px] rounded-3xl overflow-hidden shadow-md bg-[#91D8C1] p-[4px]"
+                className="w-11/12 sm:w-[250px] rounded-3xl overflow-hidden shadow-md bg-[#91D8C1] p-[4px] hover:scale-102 hover:shadow-5xl"
                 initial="offscreen"
                 whileInView="onscreen"
                 exit="exit"
@@ -583,7 +619,7 @@ export default function LandingPage() {
       </div>
 
       <div className="bg-gray-100 h-full flex flex-col items-center justify-center font-sans p-2">
-        <div className="w-full max-w-3xl mx-auto mt-15 mb-15">
+        <div className="w-full max-w-3xl mx-auto mt-12 mb-12">
           {/* Carousel Container */}
           <div className="relative overflow-hidden bg-white rounded-2xl shadow-2xl h-72">
             {/* Sliding Wrapper */}
@@ -628,6 +664,90 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+
+      <div
+        className="min-h-screen pt-10 pb-20 px-4 md:px-12 lg:px-20"
+        style={{
+          backgroundImage: "url('/spidernet.svg')",
+          backgroundSize: '250px',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'top center',
+        }}
+      >
+        <motion.div
+          className="text-center max-w-4xl mx-auto mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          variants={staggerContainer}
+        >
+          <motion.h1
+            className="text-3xl md:text-5xl font-bold text-gray-800 leading-tight"
+            variants={fadeInUp}
+          >
+            <span>See what our</span>
+            <br />
+            <span className="text-[#2B7C7E]">customers </span>
+            <span>are saying</span>
+          </motion.h1>
+
+          <MotionLink
+            href={'/optionss'}
+            className="mt-8 inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-sm font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl"
+          >
+            Get Started
+          </MotionLink>
+        </motion.div>
+
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto cursor-pointer"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
+          {testimonials.map((item) => (
+            <motion.div
+              key={item.id}
+              className="bg-white h-[280px] md:h-[260px] p-6 rounded-xl shadow-md hover:shadow-2xl transition duration-300 flex flex-col" // Added flex-col to help with alignment
+              variants={fadeInUp}
+            >
+              <div className="flex-grow">
+                <h3 className="text-md font-semibold mb-2">
+                  Incredibly useful product
+                </h3>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-4">
+                  {item.content}
+                </p>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Image
+                    src={item.avatar}
+                    alt={item.name}
+                    width={50}
+                    height={50}
+                    className="rounded-full"
+                  />
+                  <div className="text-sm">
+                    <p className="font-medium text-gray-800">{item.name}</p>
+                    <p className="text-[#2B7C7E] text-xs">{item.username}</p>
+                  </div>
+                </div>
+                <Image
+                  src={item.socialIcon}
+                  alt="social"
+                  width={25}
+                  height={25}
+                  className="rounded-full cursor-pointer hover:opacity-80 transition-opacity bg-gray-200 border border-gray-300 shadow-md"
+                />
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      <Footer />
     </>
   );
 }
