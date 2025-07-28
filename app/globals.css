@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@plugin 'flowbite-react/plugin/tailwindcss';
+@source '../.flowbite-react/class-list.json';
 
 @theme inline {
   --font-clash: var(--font-clash), sans-serif;
@@ -9,3 +11,19 @@
   --font-clash-bold: var(--font-clash-bold), sans-serif;
   --font-clash-variable: var(--font-clash-variable), sans-serif;
 }
+
+/* Hide native calendar icon */
+input[type="date"].custom-date::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}
+
+input[type="date"].custom-date::-webkit-inner-spin-button,
+input[type="date"].custom-date::-webkit-clear-button {
+  display: none;
+}
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        display: none;
+        -webkit-appearance: none; /* For WebKit browsers like Chrome and Safari */
+    }
