@@ -1,6 +1,5 @@
 import './globals.css';
-import { clashFontSemiBold } from './fonts';
-
+import { clashFontRegular } from './fonts';
 
 export const metadata = {
   title: 'Lab-Sphere',
@@ -17,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${clashFontSemiBold.className}`}>
+      <body className={`${clashFontRegular.className}`}>
         <header></header>
         {children}
         {/* <footer className="bg-gray-800 text-white p-4 text-center">
