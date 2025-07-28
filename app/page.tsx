@@ -8,7 +8,12 @@ import { useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
 import Footer from '@/components/footer';
 
-import { Inter } from 'next/font/google';
+// use below for applying font to all children in e.g className={`font-clash-semibold`}
+import { urbanistFontBold, urbanistFontRegular } from './fonts';
+// use below line to import custom styles for inline stlye={}
+import '@/public/css/lufga.css';
+import '@/public/css/clash-display.css';
+
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -18,6 +23,7 @@ import {
   FileText,
   Tag,
 } from 'lucide-react';
+import { Inter } from 'next/font/google';
 
 const labs = [
   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab.png' },
@@ -209,7 +215,7 @@ export default function LandingPage() {
   return (
     <>
       <main
-        className="min-h-screen flex flex-col text-white"
+        className={`min-h-screen flex flex-col text-white $`}
         style={{
           background:
             'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)',
@@ -269,7 +275,9 @@ export default function LandingPage() {
         </nav>
 
         {/* Hero Section */}
-        <section className="flex flex-col items-center justify-center px-6 lg:px-24 py-12 gap-12">
+        <section
+          className={` flex flex-col items-center  justify-center px-6 lg:px-24 py-12 gap-12`}
+        >
           <div className="flex flex-col items-center">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight text-center flex flex-wrap justify-center gap-2">
               <span className="text-white">Your</span>
@@ -282,113 +290,127 @@ export default function LandingPage() {
               Precision & Simplicity
             </p>
 
-            <p className="mt-6 text-black text-md md:text-lg font-semibold text-center">
+            <p
+              className="mt-6 text-black text-md md:text-lg text-center"
+              style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}
+            >
               Book lab tests online, get accurate reports fast, and track
               everything in one secure platform
               <br />
               <strong>NO queues, no confusion</strong>
             </p>
           </div>
+        </section>
 
-          <div
-            className="absolute bottom-[-264px] left-1/2 z-10 w-full h-[200px] bg-gray-200  border border-gray-300 hidden md:block"
-            style={{
-              transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
-              transformOrigin: 'bottom',
-            }}
+        <div
+          className="absolute bottom-[-264px] left-1/2 z-10 w-full h-[200px] bg-gray-200 shadow-2xl border border-gray-300 hidden md:block"
+          style={{
+            transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
+            transformOrigin: 'bottom',
+          }}
+        />
+        <div className="relative w-full max-w-lg mx-auto">
+          <Image
+            src="/iphone.svg"
+            alt="Labsphere App"
+            width={5}
+            height={5}
+            className="w-full relative z-20"
           />
-          <div className="relative w-full max-w-lg mx-auto">
+
+          {/* Stats Box */}
+          <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-2xl border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-bounce">
+            <span className="text-white drop-shadow-3xl font-clash-semibold">
+              1000+
+            </span>
+            <span className="text-white text-base sm:text-xl md:text-3xl lg:text-5xl font-semibold drop-shadow-3xl">
+              labs enlisted
+            </span>
+          </div>
+
+          {/* Calendar */}
+          <div className="absolute left-[-20px] sm:left-[400px] md:left-[-340px] bottom-[10px] z-20">
             <Image
-              src="/iphone.svg"
-              alt="Labsphere App"
-              width={5}
-              height={5}
-              className="w-full relative z-20"
+              src="/calendar.png"
+              alt="Calendar"
+              width={200}
+              height={200}
+              className="w-40 sm:w-60 md:w-[470px]"
             />
+          </div>
 
-            {/* Stats Box */}
-            <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-[32px] border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-bounce">
-              <span className="text-white drop-shadow-3xl">1000+</span>
-              <span className="text-white text-base sm:text-xl md:text-3xl lg:text-5xl font-semibold drop-shadow-3xl">
-                labs enlisted
-              </span>
+          {/* Floating Info Card */}
+          <div className="absolute top-[20%] left-2 sm:left-[-100px] md:left-[-350px] bg-white text-black px-4 py-2 rounded-lg shadow-md w-[280px] sm:w-[320px] text-sm flex flex-col gap-1 z-30">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-2 text-gray-500 text-xs sm:text-sm">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                10:00–13:00
+              </div>
+              <button className="text-gray-400 hover:text-gray-600 text-xl leading-none cursor-pointer">
+                ⋯
+              </button>
             </div>
 
-            {/* Calendar */}
-            <div className="absolute left-[-20px] sm:left-[400px] md:left-[-340px] bottom-[10px] z-20">
-              <Image
-                src="/calendar.png"
-                alt="Calendar"
-                width={200}
-                height={200}
-                className="w-40 sm:w-60 md:w-[470px]"
-              />
+            <div
+              className="text-sm sm:text-base text-black"
+              style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
+            >
+              Design new UX flow for Michael
             </div>
 
-            {/* Floating Info Card */}
-            <div className="absolute top-[20%] left-2 sm:left-[-100px] md:left-[-350px] bg-white text-black px-4 py-2 rounded-lg shadow-md w-[280px] sm:w-[320px] text-sm flex flex-col gap-1 z-30">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2 text-gray-500 text-xs sm:text-sm">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  10:00–13:00
-                </div>
-                <button className="text-gray-400 hover:text-gray-600 text-xl leading-none cursor-pointer">
-                  ⋯
-                </button>
-              </div>
-
-              <div className="font-semibold text-sm sm:text-base text-black">
-                Design new UX flow for Michael
-              </div>
-
-              <div className="text-gray-500 text-xs sm:text-sm">
-                Start from screen 16
-              </div>
+            <div
+              className="text-gray-500 text-xs sm:text-sm"
+              style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
+            >
+              Start from screen 16
             </div>
           </div>
-        </section>
+        </div>
       </main>
 
       <div
         ref={ref}
         className="flex justify-center items-center bg-white w-full py-10 "
       >
-        <div className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center ">
+        <div
+          className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center "
+          style={{ fontFamily: 'ClashDisplay-Medium, Urbanist, sans-serif' }}
+        >
           <div>
-            <h2 className="text-5xl font-extrabold text-black">
+            <h2
+              className="text-5xl font-extrabold text-black"
+              style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}
+            >
               {startCount && <CountUp end={10000} duration={2} separator="," />}
               +
             </h2>
-            <p
-              className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}
-            >
-              Tests Processed
-            </p>
+            <p className={`text-[#363D4F] text-3xl mt-2 `}>Tests Processed</p>
           </div>
           <div>
-            <h2 className="text-5xl font-extrabold text-black">
+            <h2
+              className="text-5xl font-extrabold text-black"
+              style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}
+            >
               {startCount && <CountUp end={300} duration={2} />}+
             </h2>
-            <p
-              className={`text-[#363D4F] mt-2 text-3xl ${interFont.className}`}
-            >
-              Verified Labs
-            </p>
+            <p className={`text-[#363D4F] mt-2 text-3xl `}>Verified Labs</p>
           </div>
           <div>
-            <h2 className="text-5xl font-extrabold text-black">
+            <h2
+              className="text-5xl font-extrabold text-black"
+              style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}
+            >
               {startCount && <CountUp end={50} duration={2} />}+
             </h2>
-            <p
-              className={`text-[#363D4F] text-3xl mt-2 ${interFont.className}`}
-            >
-              Cities Covered
-            </p>
+            <p className={`text-[#363D4F] text-3xl mt-2 `}>Cities Covered</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#E9EBF1]">
+      <div
+        className="bg-[#E9EBF1]"
+        style={{ fontFamily: 'Urbanist, sans-serif' }}
+      >
         <div className="flex items-center justify-center p-10">
           <div className="grid grid-cols-3 gap-8 w-5/6 p-8">
             <div>
@@ -396,16 +418,22 @@ export default function LandingPage() {
               <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
                 {/* Top Section */}
                 <div>
-                  <p className="text-sm font-bold text-[#2B7C7E] uppercase">
+                  <p
+                    className={`text-sm text-[#2B7C7E] uppercase ${urbanistFontBold.className}`}
+                  >
                     Upgrade Discount
                   </p>
                   <h1 className="text-2xl font-semibold text-gray-900 mt-2">
                     Simplify Lab Management
                   </h1>
-                  <p className="text-gray-600 mt-1 text-sm">
+                  <p
+                    className={`text-gray-600 mt-1 text-md ${urbanistFontRegular.className}`}
+                  >
                     Manage bookings, reports & users in one place.
                   </p>
-                  <h2 className="text-4xl font-bold text-[#2B7C7E] mt-3">
+                  <h2
+                    className={`text-4xl font-bold text-[#2B7C7E] mt-3 ${urbanistFontBold.className}`}
+                  >
                     ₹499/-
                   </h2>
                 </div>
@@ -417,7 +445,9 @@ export default function LandingPage() {
               </div>
 
               {/* Bottom Section */}
-              <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
+              <div
+                className={`bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md ${urbanistFontBold.className}`}
+              >
                 <div>
                   <p className="flex justify-between items-center text-xs text-gray-600 font-medium">
                     DISCOUNT CODE <strong className=""> LABSPHERE20</strong>
