@@ -129,7 +129,7 @@ const fadeInUp = {
       ease: 'easeOut',
     },
   },
-};
+} as const;
 
 export default function LandingPage() {
   const router = useRouter();
@@ -208,7 +208,7 @@ export default function LandingPage() {
         duration: 0.5,
       },
     },
-  };
+  } as const;
 
   const MotionLink = motion(Link);
 
@@ -576,7 +576,7 @@ export default function LandingPage() {
                 <div>
                   <div className="text-xs text-gray-500">🟢 10:00 - 11:00</div>
                   <p className="text-sm font-semibold mt-1">
-                    Appointment for CBC at Siddharth's Place
+                    Appointment for CBC at Siddharth&apos;s Place
                   </p>
                   <p className="text-xs text-gray-500">
                     Antop Hill, Wadala, Mumbai
