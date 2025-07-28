@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react'
-// import '@/app/global.css'; // Ensure global styles are imported
+
 const LabSearch = () => {
   return (
     <>

@@ -1,9 +1,12 @@
-import Image from 'next/image';
-import Link from 'next/link';
+
+'use client';
 import React from 'react';
 import '@/public/css/lufga.css';
 import Navbar from '@/components/navbar';
 import LabSearch from '@/components/lab-search';
+import dynamic from 'next/dynamic';
+
+const MapBox = dynamic(() => import('@/components/MapContainer'), { ssr: false });
 
 const Page = () => {
   return (
@@ -28,13 +31,15 @@ const Page = () => {
           </p>
 
           <div className="relative mt-6 mx-auto max-w-5xl">
-            <Image
+            {/* <Image
               src="/map_placeholder.png" // Replace with actual map image or component
               alt="Map"
               width={1000}
               height={600}
               className="rounded-xl border border-blue-300 shadow-lg"
-            />
+            /> */}
+
+            <MapBox />
 
             {/* Optional: Add floating lab info card like in screenshot */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black shadow-xl rounded-xl p-4 w-64 z-10">
