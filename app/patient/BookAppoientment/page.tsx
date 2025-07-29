@@ -203,7 +203,6 @@ const Bookappoientment = () => {
 
       <section className="w-full max-w-7xl mx-auto px-2 sm:px-4 mt-4 sm:mt-15 bg-white mb-20 text-black">
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-          {/* Filters Section - Mobile Collapsible */}
           <div className="lg:hidden w-full">
             <details className="border rounded-lg shadow-sm bg-white">
               <summary className="p-4 font-bold text-lg cursor-pointer">
@@ -420,7 +419,7 @@ const Bookappoientment = () => {
               <h2 className="text-xl font-bold">Filter</h2>
               <button
                 onClick={clearAllFilters}
-                className="text-sm text-[#2A787A]"
+                className="text-sm text-[#2A787A] hover:text-[#1c3434] cursor-pointer"
               >
                 Clear All
               </button>
@@ -454,7 +453,7 @@ const Bookappoientment = () => {
                 {allAvailableTestTypes.length > 5 && (
                   <button
                     onClick={() => setShowAllTestTypes(!showAllTestTypes)}
-                    className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:underline"
+                    className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:text-[#1c3434]"
                   >
                     {showAllTestTypes ? 'View Less' : 'View More'}
                   </button>
@@ -465,7 +464,7 @@ const Bookappoientment = () => {
                 <h3 className="font-semibold mb-2">Availability</h3>
                 <ul className="space-y-1 text-gray-600">
                   <li>
-                    <label className="flex items-center">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="availability"
@@ -478,7 +477,7 @@ const Bookappoientment = () => {
                     </label>
                   </li>
                   <li>
-                    <label className="flex items-center">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="availability"
@@ -491,7 +490,7 @@ const Bookappoientment = () => {
                     </label>
                   </li>
                   <li>
-                    <label className="flex items-center">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="availability"
@@ -504,7 +503,7 @@ const Bookappoientment = () => {
                     </label>
                   </li>
                   <li>
-                    <label className="flex items-center">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="availability"
@@ -595,7 +594,7 @@ const Bookappoientment = () => {
                     <button
                       key={star}
                       onClick={() => handleFilterChange('rating', star)}
-                      className={`w-full text-left p-2 rounded-lg flex items-center border ${filters.rating === star ? 'bg-yellow-100 border-yellow-400' : 'hover:bg-gray-100'}`}
+                      className={`w-full text-left p-2 rounded-lg flex items-center border ${filters.rating === star ? 'bg-yellow-100 border-yellow-400' : 'hover:bg-gray-100 cursor-pointer'}`}
                     >
                       {[...Array(5)].map((_, i) => (
                         <Star
@@ -735,45 +734,45 @@ const Bookappoientment = () => {
                 </div>
               )}
             </div>
-
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-8">
-                <nav className="inline-flex rounded-md shadow">
-                  <button
-                    onClick={() =>
-                      handlePageChange(Math.max(1, currentPage - 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="px-3 py-1 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`px-3 py-1 border-t border-b border-gray-300 bg-white text-sm font-medium ${currentPage === page ? 'text-[#2A787A] bg-blue-50' : 'text-gray-500 hover:bg-gray-50'}`}
-                      >
-                        {page}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() =>
-                      handlePageChange(Math.min(totalPages, currentPage + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-1 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
-                </nav>
-              </div>
-            )}
           </main>
         </div>
       </section>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center my-10 px-4">
+          <nav className="inline-flex flex-wrap overflow-hidden">
+            <button
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-xl border border-gray-300 bg-white font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed "
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-2 sm:px-3 py-1 text-xs sm:text-sm border-1 border-b border-gray-300 font-medium  rounded-full ${
+                  currentPage === page
+                    ? 'text-[#2A787A] bg-blue-50'
+                    : 'text-gray-500 hover:bg-gray-50 bg-white'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              onClick={() =>
+                handlePageChange(Math.min(totalPages, currentPage + 1))
+              }
+              disabled={currentPage === totalPages}
+              className="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-xl border border-gray-300 bg-white font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      )}
 
       <Footer />
     </>
