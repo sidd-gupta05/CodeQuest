@@ -6,15 +6,15 @@ import Link from 'next/link';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import { Star, Heart, Search, MapPin, Calendar } from 'lucide-react';
+import LabSearch from '@/components/lab-search';
 
-import { labsData } from '@/data/labsData';
+import { labsData, allLabTests } from '@/data/labsData';
 
 interface Lab {
   id: number;
   name: string;
-  specialty: string;
+  testType: string;
   location: string;
-  consultationFees: number;
   nextAvailable: string;
   rating: number;
   votes: number;
@@ -23,16 +23,14 @@ interface Lab {
   isAvailable: boolean;
   isLoved: boolean;
   image: string;
-  languages: string[];
-  consultationTypes: string[];
+  collectionTypes: string[];
 }
 
 interface Filters {
-  specialty: string;
+  testType: string;
   availability: string;
-  price: number;
   experience: number;
-  consultationTypes: string[];
+  collectionTypes: string[];
   rating: number;
 }
 
@@ -49,16 +47,15 @@ const Bookappoientment = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [filters, setFilters] = useState<Filters>({
-    specialty: '',
+    testType: '',
     availability: '',
-    price: 3000,
     experience: 0,
-    consultationTypes: [],
+    collectionTypes: [],
     rating: 0,
   });
 
   const [sortBy, setSortBy] = useState<string>('rating');
-  const [showAllSpecialties, setShowAllSpecialties] = useState(false);
+  const [showAllTestTypes, setShowAllTestTypes] = useState(false);
 
   const handleLoveClick = (id: number) => {
     setLabs(
@@ -68,34 +65,25 @@ const Bookappoientment = () => {
     );
   };
 
-  const handleRating = (labId: number, newRating: number) => {
-    setLabs(
-      labs.map((lab) =>
-        lab.id === labId ? { ...lab, rating: newRating } : lab
-      )
-    );
-  };
-
   const handleFilterChange = (filterName: keyof Filters, value: any) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
-  const handleConsultationTypeChange = (type: string) => {
-    const currentTypes = filters.consultationTypes;
+  const handleCollectionTypeChange = (type: string) => {
+    const currentTypes = filters.collectionTypes;
     const newTypes = currentTypes.includes(type)
       ? currentTypes.filter((t) => t !== type)
       : [...currentTypes, type];
-    handleFilterChange('consultationTypes', newTypes);
+    handleFilterChange('collectionTypes', newTypes);
   };
 
   const clearAllFilters = () => {
     setFilters({
-      specialty: '',
+      testType: '',
       availability: '',
-      price: 3000,
       experience: 0,
-      consultationTypes: [],
+      collectionTypes: [],
       rating: 0,
     });
     setCurrentPage(1);
@@ -107,10 +95,9 @@ const Bookappoientment = () => {
       .forEach((checkbox) => (checkbox.checked = false));
   };
 
-  // Calculate specialty counts only once
-  const specialtyCounts = useMemo(() => {
+  const testTypeCounts = useMemo(() => {
     return labsData.reduce((acc: Record<string, number>, lab) => {
-      acc[lab.specialty] = (acc[lab.specialty] || 0) + 1;
+      acc[lab.testType] = (acc[lab.testType] || 0) + 1;
       return acc;
     }, {});
   }, []);
@@ -118,8 +105,8 @@ const Bookappoientment = () => {
   const filteredAndSortedLabs = useMemo(() => {
     let filtered = [...labs];
 
-    if (filters.specialty) {
-      filtered = filtered.filter((lab) => lab.specialty === filters.specialty);
+    if (filters.testType) {
+      filtered = filtered.filter((lab) => lab.testType === filters.testType);
     }
 
     if (filters.rating) {
@@ -127,8 +114,6 @@ const Bookappoientment = () => {
         (lab) => Math.floor(lab.rating) === filters.rating
       );
     }
-
-    filtered = filtered.filter((lab) => lab.consultationFees <= filters.price);
 
     if (filters.experience > 0) {
       filtered = filtered.filter((lab) => lab.experience >= filters.experience);
@@ -163,23 +148,22 @@ const Bookappoientment = () => {
       });
     }
 
-    if (filters.consultationTypes.length > 0) {
+    if (filters.collectionTypes.length > 0) {
       filtered = filtered.filter((lab) =>
-        filters.consultationTypes.every((type) =>
-          lab.consultationTypes.includes(type)
+        filters.collectionTypes.every((type) =>
+          lab.collectionTypes.includes(type)
         )
       );
     }
 
-    // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'price_asc':
-          return a.consultationFees - b.consultationFees;
-        case 'price_desc':
-          return b.consultationFees - a.consultationFees;
         case 'rating':
           return b.rating - a.rating;
+        case 'experience_asc':
+          return a.experience - b.experience;
+        case 'experience_desc':
+          return b.experience - a.experience;
         default:
           return b.rating - a.rating;
       }
@@ -188,7 +172,6 @@ const Bookappoientment = () => {
     return filtered;
   }, [labs, filters, sortBy]);
 
-  // Pagination logic
   const totalItems = filteredAndSortedLabs.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   const paginatedLabs = filteredAndSortedLabs.slice(
@@ -196,10 +179,10 @@ const Bookappoientment = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const allSpecialties = Object.keys(specialtyCounts);
-  const visibleSpecialties = showAllSpecialties
-    ? allSpecialties
-    : allSpecialties.slice(0, 5);
+  const allAvailableTestTypes = Object.keys(testTypeCounts);
+  const visibleTestTypes = showAllTestTypes
+    ? allAvailableTestTypes
+    : allAvailableTestTypes.slice(0, 5);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -208,100 +191,276 @@ const Bookappoientment = () => {
   return (
     <>
       <main
-        className=" flex flex-col text-white "
+        className="flex flex-col text-white"
         style={{
           background:
             'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)',
         }}
       >
         <Navbar />
-        <section className="mt-12 md:mt-20 text-center w-full px-4">
-          <h1 className="text-white text-4xl md:text-6xl font-bold mb-10">
-            Lab Search
-          </h1>
-
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 items-center bg-white px-4 py-2 rounded-2xl md:rounded-full shadow-lg w-full max-w-3xl mx-auto">
-            <div className="flex items-center flex-1 w-full sm:w-auto">
-              <Search className="text-gray-400 mr-2" />
-              <input
-                type="text"
-                placeholder="Search for nearby Pathlabs"
-                className="w-full px-4 py-2 rounded-full outline-none text-black"
-              />
-            </div>
-            <div className="flex items-center flex-1 w-full sm:w-auto">
-              <MapPin className="text-gray-400 mr-2" />
-              <input
-                type="text"
-                placeholder="Location"
-                className="w-full px-4 py-2 rounded-full outline-none text-black"
-              />
-            </div>
-            <div className="flex items-center flex-1 w-full sm:w-auto">
-              <Calendar className="text-gray-400 mr-2" />
-              <input
-                type="date"
-                className="w-full px-4 py-2 rounded-full outline-none text-black"
-              />
-            </div>
-            <button className="bg-[#2A787A] hover:bg-[#236464] text-white px-6 py-3 rounded-full flex items-center justify-center gap-2 w-full sm:w-auto">
-              <Search size={20} /> Search
-            </button>
-          </div>
-        </section>
+        <LabSearch />
       </main>
 
-      <section className="w-full max-w-7xl mx-auto mt-15 p-4 bg-white mb-20 text-black">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Filters Section */}
-          <aside className="w-full md:w-1/4 lg:w-1/5 p-4 border rounded-lg shadow-sm bg-white h-fit sticky top-5">
+      <section className="w-full max-w-7xl mx-auto px-2 sm:px-4 mt-4 sm:mt-15 bg-white mb-20 text-black">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+          {/* Filters Section - Mobile Collapsible */}
+          <div className="lg:hidden w-full">
+            <details className="border rounded-lg shadow-sm bg-white">
+              <summary className="p-4 font-bold text-lg cursor-pointer">
+                Filters
+              </summary>
+              <div className="p-4 border-t">
+                <div className="flex justify-between items-center mb-4">
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-sm text-[#2A787A] hover:text-[#1c3434] cursor-pointer"
+                  >
+                    Clear All
+                  </button>
+                </div>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold mb-2">Test Type</h3>
+                    <ul className="space-y-1 text-gray-600">
+                      {visibleTestTypes.map((testType) => (
+                        <li
+                          key={testType}
+                          className="flex justify-between items-center cursor-pointer hover:text-[#2A787A]"
+                          onClick={() =>
+                            handleFilterChange('testType', testType)
+                          }
+                        >
+                          <span
+                            className={
+                              filters.testType === testType
+                                ? 'font-bold text-[#2A787A]'
+                                : ''
+                            }
+                          >
+                            {testType}
+                          </span>
+                          <span className="text-xs bg-gray-200 py-0.5 px-1.5 rounded">
+                            {testTypeCounts[testType]}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {allAvailableTestTypes.length > 5 && (
+                      <button
+                        onClick={() => setShowAllTestTypes(!showAllTestTypes)}
+                        className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:underline"
+                      >
+                        {showAllTestTypes ? 'View Less' : 'View More'}
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Availability</h3>
+                    <ul className="space-y-1 text-gray-600">
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="availability"
+                            className="mr-2"
+                            onChange={() =>
+                              handleFilterChange('availability', 'today')
+                            }
+                          />{' '}
+                          Available Today
+                        </label>
+                      </li>
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="availability"
+                            className="mr-2"
+                            onChange={() =>
+                              handleFilterChange('availability', 'tomorrow')
+                            }
+                          />{' '}
+                          Available Tomorrow
+                        </label>
+                      </li>
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="availability"
+                            className="mr-2"
+                            onChange={() =>
+                              handleFilterChange('availability', 'next7')
+                            }
+                          />{' '}
+                          Available in next 7 days
+                        </label>
+                      </li>
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="availability"
+                            className="mr-2"
+                            onChange={() =>
+                              handleFilterChange('availability', 'next30')
+                            }
+                          />{' '}
+                          Available in next 30 days
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Experience</h3>
+                    <ul className="space-y-1 text-gray-600">
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="experience"
+                            className="mr-2"
+                            onChange={() => handleFilterChange('experience', 2)}
+                          />{' '}
+                          2+ Years
+                        </label>
+                      </li>
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="experience"
+                            className="mr-2"
+                            onChange={() => handleFilterChange('experience', 5)}
+                          />{' '}
+                          5+ Years
+                        </label>
+                      </li>
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="experience"
+                            className="mr-2"
+                            onChange={() =>
+                              handleFilterChange('experience', 10)
+                            }
+                          />{' '}
+                          10+ Years
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Collection Type</h3>
+                    <ul className="space-y-1 text-gray-600">
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            className="mr-2"
+                            onChange={() =>
+                              handleCollectionTypeChange('Home Collection')
+                            }
+                          />{' '}
+                          Home Collection
+                        </label>
+                      </li>
+                      <li>
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            className="mr-2"
+                            onChange={() =>
+                              handleCollectionTypeChange('Visiting to Lab')
+                            }
+                          />{' '}
+                          Visiting to Lab
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2">Ratings</h3>
+                    <div className="space-y-1">
+                      {[5, 4, 3, 2, 1].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => handleFilterChange('rating', star)}
+                          className={`w-full text-left p-2 rounded-lg flex items-center border ${filters.rating === star ? 'bg-yellow-100 border-yellow-400' : 'hover:bg-gray-100'}`}
+                        >
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              size={16}
+                              className={
+                                i < star
+                                  ? 'text-yellow-400 fill-current'
+                                  : 'text-gray-300'
+                              }
+                            />
+                          ))}
+                          <span className="ml-2 text-sm">{star} Star & Up</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          {/* Filters Section - Desktop */}
+          <aside className="hidden lg:block w-full lg:w-1/4 xl:w-1/5 p-4 border rounded-lg shadow-sm bg-white h-fit sticky top-5">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Filter</h2>
               <button
                 onClick={clearAllFilters}
-                className="text-sm text-[#2A787A] "
+                className="text-sm text-[#2A787A]"
               >
                 Clear All
               </button>
             </div>
 
-            {/* Filter Groups */}
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold mb-2">Specialty</h3>
+                <h3 className="font-semibold mb-2">Test Type</h3>
                 <ul className="space-y-1 text-gray-600">
-                  {visibleSpecialties.map((specialty) => (
+                  {visibleTestTypes.map((testType) => (
                     <li
-                      key={specialty}
+                      key={testType}
                       className="flex justify-between items-center cursor-pointer hover:text-[#2A787A]"
-                      onClick={() => handleFilterChange('specialty', specialty)}
+                      onClick={() => handleFilterChange('testType', testType)}
                     >
                       <span
                         className={
-                          filters.specialty === specialty
+                          filters.testType === testType
                             ? 'font-bold text-[#2A787A]'
                             : ''
                         }
                       >
-                        {specialty}
+                        {testType}
                       </span>
                       <span className="text-xs bg-gray-200 py-0.5 px-1.5 rounded">
-                        {specialtyCounts[specialty]}
+                        {testTypeCounts[testType]}
                       </span>
                     </li>
                   ))}
                 </ul>
-                {allSpecialties.length > 5 && (
+                {allAvailableTestTypes.length > 5 && (
                   <button
-                    onClick={() => setShowAllSpecialties(!showAllSpecialties)}
+                    onClick={() => setShowAllTestTypes(!showAllTestTypes)}
                     className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:underline"
                   >
-                    {showAllSpecialties ? 'View Less' : 'View More'}
+                    {showAllTestTypes ? 'View Less' : 'View More'}
                   </button>
                 )}
               </div>
 
-              {/*Availability*/}
               <div>
                 <h3 className="font-semibold mb-2">Availability</h3>
                 <ul className="space-y-1 text-gray-600">
@@ -360,27 +519,6 @@ const Bookappoientment = () => {
                 </ul>
               </div>
 
-              {/* Pricing */}
-              <div>
-                <h3 className="font-semibold mb-2">Pricing</h3>
-                <input
-                  type="range"
-                  min="500"
-                  max="3000"
-                  step="100"
-                  value={filters.price}
-                  onChange={(e) =>
-                    handleFilterChange('price', Number(e.target.value))
-                  }
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span>₹500</span>
-                  <span>₹{filters.price}</span>
-                </div>
-              </div>
-
-              {/* Experience */}
               <div>
                 <h3 className="font-semibold mb-2">Experience</h3>
                 <ul className="space-y-1 text-gray-600">
@@ -420,9 +558,8 @@ const Bookappoientment = () => {
                 </ul>
               </div>
 
-              {/* Consultation Type */}
               <div>
-                <h3 className="font-semibold mb-2">Consultation Type</h3>
+                <h3 className="font-semibold mb-2">Collection Type</h3>
                 <ul className="space-y-1 text-gray-600">
                   <li>
                     <label className="flex items-center">
@@ -430,10 +567,10 @@ const Bookappoientment = () => {
                         type="checkbox"
                         className="mr-2"
                         onChange={() =>
-                          handleConsultationTypeChange('Audio Call')
+                          handleCollectionTypeChange('Home Collection')
                         }
                       />{' '}
-                      Audio Call
+                      Home Collection
                     </label>
                   </li>
                   <li>
@@ -442,40 +579,15 @@ const Bookappoientment = () => {
                         type="checkbox"
                         className="mr-2"
                         onChange={() =>
-                          handleConsultationTypeChange('Video Call')
+                          handleCollectionTypeChange('Visiting to Lab')
                         }
                       />{' '}
-                      Video Call
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="mr-2"
-                        onChange={() =>
-                          handleConsultationTypeChange('In-Person')
-                        }
-                      />{' '}
-                      In-Person
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="mr-2"
-                        onChange={() =>
-                          handleConsultationTypeChange('Instant Counseling')
-                        }
-                      />{' '}
-                      Instant Counseling
+                      Visiting to Lab
                     </label>
                   </li>
                 </ul>
               </div>
 
-              {/* Ratings Filter */}
               <div>
                 <h3 className="font-semibold mb-2">Ratings</h3>
                 <div className="space-y-1">
@@ -505,10 +617,10 @@ const Bookappoientment = () => {
           </aside>
 
           {/* Results Section */}
-          <main className="w-full md:w-3/4 lg:w-4/5">
-            <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <main className="w-full lg:w-3/4 xl:w-4/5">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
               <h2 className="text-xl font-bold text-gray-700">
-                Showing {filteredAndSortedLabs.length} Doctors For You
+                Showing {filteredAndSortedLabs.length} Labs For You
               </h2>
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1">
@@ -520,14 +632,17 @@ const Bookappoientment = () => {
                     className="border rounded-md p-1 bg-white"
                   >
                     <option value="rating">Rating</option>
-                    <option value="price_asc">Price (Low to High)</option>
-                    <option value="price_desc">Price (High to Low)</option>
+                    <option value="experience_asc">
+                      Experience (Low to High)
+                    </option>
+                    <option value="experience_desc">
+                      Experience (High to Low)
+                    </option>
                   </select>
                 </div>
               </div>
             </div>
 
-            {/* Lab/Doctor Cards */}
             <div className="space-y-4">
               {paginatedLabs.length > 0 ? (
                 paginatedLabs.map((lab) => (
@@ -538,16 +653,16 @@ const Bookappoientment = () => {
                     <img
                       src={lab.image}
                       alt={lab.name}
-                      className="w-24 h-24 rounded-lg object-cover"
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
                     />
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <div>
+                    <div className="flex-1 w-full">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div className="w-full sm:w-auto">
                           <h3 className="text-lg font-bold text-[#2A787A]">
                             {lab.name}
                           </h3>
                           <p className="text-sm text-gray-600">
-                            {lab.specialty}
+                            {lab.testType}
                           </p>
                           <p className="text-sm text-gray-500">
                             {lab.location}{' '}
@@ -559,7 +674,7 @@ const Bookappoientment = () => {
                             </a>
                           </p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 mt-2 sm:mt-0">
                           {lab.nextAvailable !== 'Not Available' ? (
                             <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full whitespace-nowrap">
                               ● Available
@@ -584,26 +699,17 @@ const Bookappoientment = () => {
                       <div className="flex flex-col sm:flex-row justify-between items-start mt-4 gap-4">
                         <div>
                           <p className="text-sm font-semibold">
-                            Consultation Fees
-                          </p>
-                          <p className="text-xl font-bold text-gray-800">
-                            ₹{lab.consultationFees}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold">
                             Next available at
                           </p>
                           <p className="text-md font-bold text-[#2A787A]">
                             {lab.nextAvailable}
                           </p>
                         </div>
-                        <button className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#236464] text-white px-6 py-2 rounded-lg">
+                        <button className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#236464] text-white px-4 sm:px-6 py-2 rounded-lg">
                           Book Appointment
                         </button>
                       </div>
                       <div className="border-t mt-4 pt-2 flex flex-wrap justify-between items-center text-sm text-gray-500 gap-2">
-                        <p>Speaks: {lab.languages.join(', ')}</p>
                         <div className="flex items-center gap-1">
                           <Star
                             size={16}
@@ -615,35 +721,13 @@ const Bookappoientment = () => {
                         </div>
                         <p>{lab.experience} Years of Experience</p>
                       </div>
-                      <div className="mt-2">
-                        <p className="text-sm font-semibold mb-1">
-                          Rate this Doctor:
-                        </p>
-                        <div className="flex">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              onClick={() => handleRating(lab.id, star)}
-                            >
-                              <Star
-                                size={20}
-                                className={
-                                  star <= lab.rating
-                                    ? 'text-yellow-400 fill-current'
-                                    : 'text-gray-300'
-                                }
-                              />
-                            </button>
-                          ))}
-                        </div>
-                      </div>
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="text-center py-10">
                   <p className="text-gray-600 font-semibold">
-                    No doctors found matching your criteria.
+                    No labs found matching your criteria.
                   </p>
                   <p className="text-sm text-gray-500">
                     Try adjusting your filters.
@@ -652,7 +736,6 @@ const Bookappoientment = () => {
               )}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center mt-8">
                 <nav className="inline-flex rounded-md shadow">

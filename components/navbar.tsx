@@ -8,19 +8,19 @@ function Navbar() {
 
   return (
     <div>
-      <nav className="backdrop-blur-md bg-gradient-to-r from-[#1e5f61]/60 to-[#0c2d34]/60 border border-white/20 rounded-full px-6 py-2 mx-auto mt-6 max-w-[95%] shadow-lg w-full flex items-center justify-between">
+      <nav className="backdrop-blur-md bg-gradient-to-r from-[#1e5f61]/60 to-[#0c2d34]/60 border border-white/20 rounded-full px-6 py-2 mx-auto mt-6 max-w-[95%] shadow-lg w-full flex items-center justify-between h-20">
         {/* Left: Logo */}
         <div className="flex items-center gap-2 min-w-[120px]">
           <Link
             href="/"
-            className="text-white font-semibold flex items-center gap-2"
+            className="text-white font-semibold flex items-center gap-2 text-xl"
           >
             <Image
               src="/logo2.svg"
               alt="Labsphere Logo"
               width={20}
               height={20}
-              className="w-7 h-7"
+              className="w-8 h-8"
             />
             Labsphere
           </Link>
@@ -60,7 +60,7 @@ function Navbar() {
           <li>
             <Link
               href="/patient/BookAppoientment"
-              className="hover:text-teal-300 transition"
+              className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Book Appointment
             </Link>
@@ -68,7 +68,7 @@ function Navbar() {
           <li>
             <Link
               href="/patient/Trackreport"
-              className="hover:text-teal-300 transition"
+              className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Track report
             </Link>
@@ -76,13 +76,16 @@ function Navbar() {
           <li>
             <Link
               href="/patient/pricing"
-              className="hover:text-teal-300 transition"
+              className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Pricing
             </Link>
           </li>
           <li>
-            <Link href="/contacts" className="hover:text-teal-300 transition">
+            <Link
+              href="/contacts"
+              className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
+            >
               Contact Us
             </Link>
           </li>
@@ -108,7 +111,7 @@ function Navbar() {
           <Link href="/contacts">Contact Us</Link>
           <Link
             href="/optionss"
-            className="text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
+            className="text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition text-xl"
           >
             Sign Up
           </Link>

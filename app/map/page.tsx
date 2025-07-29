@@ -1,12 +1,14 @@
-
 'use client';
 import React from 'react';
 import '@/public/css/lufga.css';
 import Navbar from '@/components/navbar';
 import LabSearch from '@/components/lab-search';
 import dynamic from 'next/dynamic';
+import Footer from '@/components/footer';
 
-const MapBox = dynamic(() => import('@/components/MapContainer'), { ssr: false });
+const MapBox = dynamic(() => import('@/components/MapContainer'), {
+  ssr: false,
+});
 
 const Page = () => {
   return (
@@ -30,7 +32,7 @@ const Page = () => {
             Showing 450 Doctors For You
           </p>
 
-          <div className="relative mt-6 mx-auto max-w-5xl">
+          <div className="relative mt-6 mx-auto max-w-5xl my-20">
             {/* <Image
               src="/map_placeholder.png" // Replace with actual map image or component
               alt="Map"
@@ -42,12 +44,12 @@ const Page = () => {
             <MapBox />
 
             {/* Optional: Add floating lab info card like in screenshot */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black shadow-xl rounded-xl p-4 w-64 z-10">
-            
-            </div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black shadow-xl rounded-xl p-4 w-64 z-10"></div>
           </div>
         </section>
       </main>
+
+      <Footer />
     </>
   );
 };

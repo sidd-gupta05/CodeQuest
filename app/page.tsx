@@ -75,7 +75,7 @@ const testimonials: Testimonial[] = [
     name: 'Fig Nelson',
     username: '@fignel_looson',
     content:
-      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
+      'Stellar\'s user-friendly dashboards have simplified our digital strategy management.',
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
@@ -84,7 +84,7 @@ const testimonials: Testimonial[] = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      "Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we've gained invaluable insights.",
+      'Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we\'ve gained invaluable insights.',
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -93,7 +93,7 @@ const testimonials: Testimonial[] = [
     name: 'Amaya Locosta',
     username: '@amayalocosta',
     content:
-      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
+      'We\'ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
     avatar: '/avtar3.svg',
     socialIcon: '/facebook.svg',
   },
@@ -102,7 +102,7 @@ const testimonials: Testimonial[] = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
+      'We\'ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -111,7 +111,7 @@ const testimonials: Testimonial[] = [
     name: 'Fig Nelson',
     username: '@fignel_looson',
     content:
-      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
+      'Stellar\'s user-friendly dashboards have simplified our digital strategy management.',
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
@@ -120,7 +120,7 @@ const testimonials: Testimonial[] = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
+      'Stellar\'s user-friendly dashboards have simplified our digital strategy management.',
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
