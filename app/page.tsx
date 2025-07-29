@@ -7,13 +7,9 @@ import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
 import Footer from '@/components/footer';
-
-// use below for applying font to all children in e.g className={`font-clash-semibold`}
 import { urbanistFontBold, urbanistFontRegular } from './fonts';
-// use below line to import custom styles for inline stlye={}
 import '@/public/css/lufga.css';
 import '@/public/css/clash-display.css';
-
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -26,7 +22,29 @@ import {
 import { Inter } from 'next/font/google';
 import Navbar from '@/components/navbar';
 
-const labs = [
+interface Lab {
+  name: string;
+  location: string;
+  image: string;
+}
+
+interface Testimonial {
+  id: number;
+  name: string;
+  username: string;
+  content: string;
+  avatar: string;
+  socialIcon: string;
+}
+
+interface Feature {
+  icon: JSX.Element;
+  title: string;
+  description: string;
+  bgColor: string;
+}
+
+const labs: Lab[] = [
   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab.png' },
   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab1.png' },
   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab2.png' },
@@ -51,13 +69,13 @@ const variants = {
   }),
 };
 
-const testimonials = [
+const testimonials: Testimonial[] = [
   {
     id: 1,
     name: 'Fig Nelson',
     username: '@fignel_looson',
     content:
-      'Stellar’s user-friendly dashboards have simplified our digital strategy management.',
+      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
@@ -66,7 +84,7 @@ const testimonials = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      'Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we’ve gained invaluable insights.',
+      "Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we've gained invaluable insights.",
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -75,7 +93,7 @@ const testimonials = [
     name: 'Amaya Locosta',
     username: '@amayalocosta',
     content:
-      'We’ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
+      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
     avatar: '/avtar3.svg',
     socialIcon: '/facebook.svg',
   },
@@ -84,7 +102,7 @@ const testimonials = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      'We’ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
+      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -93,7 +111,7 @@ const testimonials = [
     name: 'Fig Nelson',
     username: '@fignel_looson',
     content:
-      'Stellar’s user-friendly dashboards have simplified our digital strategy management.',
+      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
@@ -102,7 +120,7 @@ const testimonials = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      'Stellar’s user-friendly dashboards have simplified our digital strategy management.',
+      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -132,6 +150,65 @@ const fadeInUp = {
   },
 } as const;
 
+const cardVariants = {
+  offscreen: {
+    x: -100,
+    opacity: 0,
+  },
+  onscreen: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      bounce: 0.4,
+      duration: 0.8,
+    },
+  },
+  exit: {
+    x: 100,
+    opacity: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+} as const;
+
+const animationVariants = {
+  fromTopLeft: {
+    visible: { opacity: 1, x: 0, y: 0 },
+    hidden: { opacity: 0, x: -50, y: -50 },
+  },
+  fromLeftMid: {
+    visible: { opacity: 1, x: 0 },
+    hidden: { opacity: 0, x: -50 },
+  },
+  fromBottomLeft: {
+    visible: { opacity: 1, x: 0, y: 0 },
+    hidden: { opacity: 0, x: -50, y: 50 },
+  },
+  fromTop: { visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: -50 } },
+  fromCenter: {
+    visible: { opacity: 1, scale: 1 },
+    hidden: { opacity: 0, scale: 0.8 },
+  },
+  fromBottom: {
+    visible: { opacity: 1, y: 0 },
+    hidden: { opacity: 0, y: 50 },
+  },
+  fromTopRight: {
+    visible: { opacity: 1, x: 0, y: 0 },
+    hidden: { opacity: 0, x: 50, y: -50 },
+  },
+  fromMidRight: {
+    visible: { opacity: 1, x: 0 },
+    hidden: { opacity: 0, x: 50 },
+  },
+  fromBottomRight: {
+    visible: { opacity: 1, x: 0, y: 0 },
+    hidden: { opacity: 0, x: 50, y: 50 },
+  },
+};
+
 export default function LandingPage() {
   const router = useRouter();
   const { ref, inView } = useInView({
@@ -140,14 +217,9 @@ export default function LandingPage() {
   });
 
   const [startCount, setStartCount] = useState(false);
-
-  useEffect(() => {
-    if (inView) setStartCount(true);
-  }, [inView]);
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const features = [
+  const features: Feature[] = [
     {
       icon: <UserPlus className="w-16 h-16 text-blue-500" />,
       title: 'Register & Login',
@@ -178,6 +250,10 @@ export default function LandingPage() {
     },
   ];
 
+  useEffect(() => {
+    if (inView) setStartCount(true);
+  }, [inView]);
+
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % features.length);
   };
@@ -188,35 +264,19 @@ export default function LandingPage() {
     );
   };
 
-  const cardVariants = {
-    offscreen: {
-      x: -100,
-      opacity: 0,
-    },
-    onscreen: {
-      x: 0,
-      opacity: 1,
-      transition: {
-        type: 'spring',
-        bounce: 0.4,
-        duration: 0.8,
-      },
-    },
-    exit: {
-      x: 100,
-      opacity: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  } as const;
-
   const MotionLink = motion(Link);
+
+  const animationProps = {
+    initial: 'hidden',
+    whileInView: 'visible',
+    viewport: { once: false },
+    transition: { duration: 0.6 },
+  };
 
   return (
     <>
       <main
-        className={`min-h-screen flex flex-col text-white $`}
+        className={`min-h-screen flex flex-col text-white`}
         style={{
           background:
             'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)',
@@ -226,7 +286,7 @@ export default function LandingPage() {
 
         {/* Hero Section */}
         <section
-          className={` flex flex-col items-center  justify-center px-6 lg:px-24 py-12 gap-12`}
+          className={`flex flex-col items-center justify-center px-6 lg:px-24 py-12 gap-12`}
         >
           <div className="flex flex-col items-center">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight text-center flex flex-wrap justify-center gap-2">
@@ -252,8 +312,15 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <Link
+          href={'/optionss'}
+          className="inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-xl font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl mx-auto mb-10 transform hover:scale-110"
+        >
+          Get Started
+        </Link>
+
         <div
-          className="absolute bottom-[-264px] left-1/2 z-10 w-full h-[200px] bg-gray-200 shadow-2xl border border-gray-300 hidden md:block"
+          className="absolute bottom-[-355px] left-1/2 z-10 w-full h-[200px] bg-gray-200 border border-gray-300 hidden md:block"
           style={{
             transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
             transformOrigin: 'bottom',
@@ -263,13 +330,13 @@ export default function LandingPage() {
           <Image
             src="/iphone.svg"
             alt="Labsphere App"
-            width={5}
-            height={5}
+            width={500}
+            height={500}
             className="w-full relative z-20"
           />
 
           {/* Stats Box */}
-          <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-2xl border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-bounce">
+          <div className="absolute top-1/100 right-2 sm:right-4 md:right-[-250px] bg-white/10 backdrop-blur-3xl text-white text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-extrabold px-3 sm:px-4 md:px-8 lg:px-10 py-3 sm:py-4 md:py-6 rounded-2xl border-2 border-white shadow-lg w-60 sm:w-72 md:w-96 h-[130px] sm:h-[160px] md:h-[200px] flex flex-col items-center justify-center text-center leading-none z-30 animate-[bounce_2.5s_infinite]">
             <span className="text-white drop-shadow-3xl font-clash-semibold">
               1000+
             </span>
@@ -283,14 +350,14 @@ export default function LandingPage() {
             <Image
               src="/calendar.png"
               alt="Calendar"
-              width={200}
+              width={470}
               height={200}
               className="w-40 sm:w-60 md:w-[470px]"
             />
           </div>
 
           {/* Floating Info Card */}
-          <div className="absolute top-[20%] left-2 sm:left-[-100px] md:left-[-350px] bg-white text-black px-4 py-2 rounded-lg shadow-md w-[280px] sm:w-[320px] text-sm flex flex-col gap-1 z-30">
+          <div className="absolute top-[25%] sm:top-[10%] left-2 sm:left-[-100px] md:left-[-350px] bg-white text-black px-4 py-2 rounded-lg shadow-md w-[280px] sm:w-[320px] text-sm flex flex-col gap-1 z-30">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-2 text-gray-500 text-xs sm:text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -320,10 +387,10 @@ export default function LandingPage() {
 
       <div
         ref={ref}
-        className="flex justify-center items-center bg-white w-full py-10 "
+        className="flex justify-center items-center bg-white w-full py-10"
       >
         <div
-          className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center "
+          className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center"
           style={{ fontFamily: 'ClashDisplay-Medium, Urbanist, sans-serif' }}
         >
           <div>
@@ -334,7 +401,7 @@ export default function LandingPage() {
               {startCount && <CountUp end={10000} duration={2} separator="," />}
               +
             </h2>
-            <p className={`text-[#363D4F] text-3xl mt-2 `}>Tests Processed</p>
+            <p className={`text-[#363D4F] text-3xl mt-2`}>Tests Processed</p>
           </div>
           <div>
             <h2
@@ -343,7 +410,7 @@ export default function LandingPage() {
             >
               {startCount && <CountUp end={300} duration={2} />}+
             </h2>
-            <p className={`text-[#363D4F] mt-2 text-3xl `}>Verified Labs</p>
+            <p className={`text-[#363D4F] mt-2 text-3xl`}>Verified Labs</p>
           </div>
           <div>
             <h2
@@ -352,7 +419,7 @@ export default function LandingPage() {
             >
               {startCount && <CountUp end={50} duration={2} />}+
             </h2>
-            <p className={`text-[#363D4F] text-3xl mt-2 `}>Cities Covered</p>
+            <p className={`text-[#363D4F] text-3xl mt-2`}>Cities Covered</p>
           </div>
         </div>
       </div>
@@ -361,12 +428,16 @@ export default function LandingPage() {
         className="bg-[#E9EBF1]"
         style={{ fontFamily: 'Urbanist, sans-serif' }}
       >
-        <div className="flex items-center justify-center p-10">
-          <div className="grid grid-cols-3 gap-8 w-5/6 p-8">
+        <div className="flex items-center justify-center p-4 sm:p-6 md:p-10">
+          <div className="w-full sm:w-5/6 p-4 sm:p-6 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {/* Column 1 */}
             <div>
-              {/* Row 1 */}
-              <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md">
-                {/* Top Section */}
+              {/* Row 1 - Discount Card: Animate from TOP-LEFT */}
+              <motion.div
+                {...animationProps}
+                variants={animationVariants.fromTopLeft}
+                className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md mx-auto"
+              >
                 <div>
                   <p
                     className={`text-sm text-[#2B7C7E] uppercase ${urbanistFontBold.className}`}
@@ -387,20 +458,21 @@ export default function LandingPage() {
                     ₹499/-
                   </h2>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Divider */}
-              <div className=" justify-center flex">
+              <div className="justify-center flex">
                 <div className="border-t-2 w-11/12 border-dashed text-white"></div>
               </div>
 
-              {/* Bottom Section */}
-              <div
-                className={`bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md ${urbanistFontBold.className}`}
+              {/* Row 2 - Discount Code: Animate from LEFT-MID */}
+              <motion.div
+                {...animationProps}
+                variants={animationVariants.fromLeftMid}
+                className={`bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md mx-auto ${urbanistFontBold.className}`}
               >
                 <div>
                   <p className="flex justify-between items-center text-xs text-gray-600 font-medium">
-                    DISCOUNT CODE <strong className=""> LABSPHERE20</strong>
+                    DISCOUNT CODE <strong>LABSPHERE20</strong>
                   </p>
                 </div>
                 <Image
@@ -409,26 +481,36 @@ export default function LandingPage() {
                   width={500}
                   height={40}
                 />
-              </div>
+              </motion.div>
             </div>
 
-            <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 flex flex-col justify-center">
-              <h2 className="text-white font-bold text-lg leading-tight">
+            {/* Column 2 - Gradient CTA: Animate from TOP */}
+            <motion.div
+              {...animationProps}
+              variants={animationVariants.fromTop}
+              className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 flex flex-col justify-center"
+            >
+              <h2 className="text-white font-bold text-5xl leading-tight">
                 Clean,
                 <br />
                 Accessible
                 <br />
                 UI
               </h2>
-              <p className="text-white text-xs mt-2">
+              <p className="text-white text-2xl mt-2">
                 Designed for doctors,
                 <br />
                 labs & patients.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="bg-white rounded-4xl p-4 shadow-2xl flex flex-col items-center justify-center">
-              <p className="text-[#2B7C7E] text-sm font-semibold mb-2">
+            {/* Column 3 - Top Labs: Animate from TOP-RIGHT */}
+            <motion.div
+              {...animationProps}
+              variants={animationVariants.fromTopRight}
+              className="bg-white rounded-4xl p-4 shadow-2xl flex flex-col items-center justify-center"
+            >
+              <p className="text-[#2B7C7E] text-xl font-semibold mb-2 text-center">
                 Top Labs
                 <br />
                 at your doorstep
@@ -440,19 +522,22 @@ export default function LandingPage() {
                 height={100}
                 className="rounded-md"
               />
-              <p className="text-xs mt-2 text-center">
+              <p className="text-xl mt-2 text-center">
                 Dr Lal Path Lab
                 <br />
-                <span className="text-gray-500">Wadala, Mumbai</span>
+                <span className="text-gray-500 text-xl">Wadala, Mumbai</span>
               </p>
-              <button className="mt-2 text-xs px-3 py-1 bg-[#2B7C7E] text-white rounded-full">
+              <button className="mt-2 text-xl px-3 py-1 bg-[#2B7C7E] text-white rounded-full">
                 Book Appointment
               </button>
-            </div>
+            </motion.div>
 
-            {/* Row 2 */}
-            <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 text-white text-5xl font-bold text-left relative overflow-hidden">
-              {/* Background SVG: OutGuard */}
+            {/* Row 2 - Secure/Scalable: Animate from BOTTOM-LEFT */}
+            <motion.div
+              {...animationProps}
+              variants={animationVariants.fromBottomLeft}
+              className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 text-white text-5xl font-bold text-left relative overflow-hidden"
+            >
               <Image
                 src="/OutGuard.svg"
                 alt="OutGuard"
@@ -460,8 +545,6 @@ export default function LandingPage() {
                 height={44}
                 className="absolute bottom-0 right-0 w-44 h-44 opacity-70 [transform:rotate(360deg)]"
               />
-
-              {/* Foreground SVG: InGuard */}
               <Image
                 src="/InGuard.svg"
                 alt="InGuard"
@@ -469,50 +552,80 @@ export default function LandingPage() {
                 height={40}
                 className="absolute bottom-0 right-0 w-40 h-40 opacity-100 [transform:rotate(360deg)] z-10"
               />
-
               <div className="relative z-20 py-4">
                 <div className="mb-4">Secure.</div>
                 <div className="mb-4">Scalable.</div>
                 <div>Seamless.</div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-white rounded-4xl shadow-xl flex flex-col items-center justify-center p-6 w-full">
+            {/* Logo Block: Animate from CENTER */}
+            <motion.div
+              {...animationProps}
+              variants={animationVariants.fromCenter}
+              className="hidden sm:flex bg-white rounded-4xl shadow-xl flex flex-col items-center justify-center p-6 w-full"
+            >
               <Image src="/logo.svg" alt="logo" width={120} height={120} />
               <div className="text-[#2B7C7E] text-5xl font-bold mt-4">
                 Labsphere
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl flex flex-col justify-center items-center text-white text-center">
-              <h2 className="font-bold text-lg">Mobile Compatible</h2>
-              <Image
-                src="/iphone.svg"
-                alt="iphone"
-                width={150}
-                height={200}
-                className="my-2"
-              />
-            </div>
+            {/* Mobile Compatible: Animate from MID-RIGHT */}
+            <motion.div
+              {...animationProps}
+              variants={animationVariants.fromMidRight}
+              className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl flex flex-col justify-center items-center text-white text-center"
+            >
+              <h2 className="font-bold text-3xl">Mobile Compatible</h2>
+              <Image src="/iphone.svg" alt="iphone" width={200} height={250} />
+            </motion.div>
 
-            <div className="col-span-3 grid grid-cols-4 gap-6 w-full">
-              <div className="col-span-2 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white">
+            {/* Dashboard & Appointment Row */}
+            <div className="col-span-1 sm:col-span-2 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full">
+              {/* Dashboard: Animate from BOTTOM */}
+              <motion.div
+                {...animationProps}
+                variants={animationVariants.fromBottom}
+                className="col-span-1 sm:col-span-2 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white"
+              >
                 <h3 className="font-bold text-4xl mt-4">Simple Dashboard</h3>
-                <div className="bg-white rounded-lg mt-4 p-4 text-left">
-                  <p className="text-3xl font-bold text-[#2B7C7E]">1000</p>
-                  <p className="text-xs text-gray-600">
+                <div className="bg-white rounded-lg mt-4 p-4 text-left w-3/4 mx-auto">
+                  <p className="text-5xl font-bold text-[#2B7C7E]">1000</p>
+                  <p className="text-xl text-gray-600">
                     New customers this month
                   </p>
-                  <div className="w-full h-2 bg-gray-200 rounded mt-2">
-                    <div
-                      className="h-full bg-[#2B7C7E] rounded"
-                      style={{ width: '80%' }}
-                    ></div>
+                  <div className="flex items-center gap-2 my-8">
+                    <div className="w-32 h-2 bg-gray-200 rounded">
+                      <div
+                        className="h-full bg-[#2B7C7E] rounded"
+                        style={{ width: '40%' }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-semibold text-[#2B7C7E]">
+                      40%
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-5">
+                    <div className="w-48 h-2 bg-gray-200 rounded">
+                      <div
+                        className="h-full bg-[#2B7C7E] rounded"
+                        style={{ width: '80%' }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-semibold text-[#2B7C7E]">
+                      80%
+                    </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="col-span-1 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white text-center flex items-center justify-center">
+              {/* "Your Health" card: Animate from CENTER */}
+              <motion.div
+                {...animationProps}
+                variants={animationVariants.fromCenter}
+                className="hidden sm:flex col-span-1 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white text-center flex items-center justify-center"
+              >
                 <p className="text-4xl font-bold">
                   Your health
                   <br />
@@ -521,25 +634,31 @@ export default function LandingPage() {
                   precision &<br />
                   simplicity
                 </p>
-              </div>
-              <div className="col-span-1 bg-white rounded-4xl p-4 shadow-2xl flex flex-col justify-between">
+              </motion.div>
+
+              {/* Appointment card: Animate from BOTTOM-RIGHT */}
+              <motion.div
+                {...animationProps}
+                variants={animationVariants.fromBottomRight}
+                className="col-span-1 bg-white rounded-4xl p-4 shadow-2xl flex flex-col justify-between"
+              >
                 <div>
                   <div className="text-xs text-gray-500">🟢 10:00 - 11:00</div>
-                  <p className="text-sm font-semibold mt-1">
+                  <p className="text-md font-semibold mt-1">
                     Appointment for CBC at Siddharth&apos;s Place
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-md text-gray-500">
                     Antop Hill, Wadala, Mumbai
                   </p>
                 </div>
                 <Image
                   src="/calendar.png"
                   alt="calendar"
-                  width={250}
-                  height={120}
-                  className="mt-2 rounded-lg"
+                  width={400}
+                  height={600}
+                  className="mt-4 rounded-lg w-full h-full"
                 />
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -689,7 +808,7 @@ export default function LandingPage() {
           {testimonials.map((item) => (
             <motion.div
               key={item.id}
-              className="bg-white h-[280px] md:h-[260px] p-6 rounded-xl shadow-md hover:shadow-2xl transition duration-300 flex flex-col" // Added flex-col to help with alignment
+              className="bg-white h-[280px] md:h-[260px] p-6 rounded-xl shadow-md hover:shadow-2xl transition duration-300 flex flex-col"
               variants={fadeInUp}
             >
               <div className="flex-grow">
