@@ -1,12 +1,21 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-import { Star, Heart, Search, MapPin, Calendar } from 'lucide-react';
+import {
+  Star,
+  Heart,
+  Search,
+  MapPin,
+  Calendar,
+  MoreHorizontal,
+} from 'lucide-react';
 import LabSearch from '@/components/lab-search';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'next/navigation';
 
 import { labsData, allLabTests } from '@/data/labsData';
 
@@ -43,8 +52,14 @@ const getToday = () => {
 const ITEMS_PER_PAGE = 7;
 
 const Bookappoientment = () => {
+  const searchParams = useSearchParams();
   const [labs, setLabs] = useState<Lab[]>(labsData);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchFilters, setSearchFilters] = useState({
+    searchQuery: '',
+    location: '',
+    date: '',
+  });
 
   const [filters, setFilters] = useState<Filters>({
     testType: '',
@@ -56,6 +71,15 @@ const Bookappoientment = () => {
 
   const [sortBy, setSortBy] = useState<string>('rating');
   const [showAllTestTypes, setShowAllTestTypes] = useState(false);
+
+  useEffect(() => {
+    const searchQuery = searchParams.get('search') || '';
+    const location = searchParams.get('location') || '';
+    const date = searchParams.get('date') || '';
+
+    setSearchFilters({ searchQuery, location, date });
+    setCurrentPage(1);
+  }, [searchParams]);
 
   const handleLoveClick = (id: number) => {
     setLabs(
@@ -105,6 +129,30 @@ const Bookappoientment = () => {
   const filteredAndSortedLabs = useMemo(() => {
     let filtered = [...labs];
 
+    // Apply search filters
+    if (searchFilters.searchQuery) {
+      const query = searchFilters.searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (lab) =>
+          lab.name.toLowerCase().includes(query) ||
+          lab.testType.toLowerCase().includes(query)
+      );
+    }
+
+    if (searchFilters.location) {
+      const locationQuery = searchFilters.location.toLowerCase();
+      filtered = filtered.filter((lab) =>
+        lab.location.toLowerCase().includes(locationQuery)
+      );
+    }
+
+    if (searchFilters.date) {
+      filtered = filtered.filter(
+        (lab) => lab.nextAvailable === searchFilters.date
+      );
+    }
+
+    // Apply existing filters
     if (filters.testType) {
       filtered = filtered.filter((lab) => lab.testType === filters.testType);
     }
@@ -170,7 +218,7 @@ const Bookappoientment = () => {
     });
 
     return filtered;
-  }, [labs, filters, sortBy]);
+  }, [labs, searchFilters, filters, sortBy]);
 
   const totalItems = filteredAndSortedLabs.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -188,6 +236,45 @@ const Bookappoientment = () => {
     setCurrentPage(page);
   };
 
+  const getPageNumbers = (currentPage, totalPages) => {
+    const pageNumbers = [];
+    const maxPagesToShow = 3;
+
+    pageNumbers.push(1);
+
+    let startPage = Math.max(2, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(
+      totalPages - 1,
+      currentPage + Math.floor(maxPagesToShow / 2)
+    );
+
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      if (startPage === 2) {
+        endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
+      } else if (endPage === totalPages - 1) {
+        startPage = Math.max(2, endPage - maxPagesToShow + 1);
+      }
+    }
+
+    if (startPage > 2) {
+      pageNumbers.push(null);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    if (endPage < totalPages - 1) {
+      pageNumbers.push(null);
+    }
+
+    if (totalPages > 1 && !pageNumbers.includes(totalPages)) {
+      pageNumbers.push(totalPages);
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <>
       <main
@@ -201,7 +288,7 @@ const Bookappoientment = () => {
         <LabSearch />
       </main>
 
-      <section className="w-full max-w-7xl mx-auto px-2 sm:px-4 mt-4 sm:mt-15 bg-white mb-20 text-black">
+      <section className="w-full max-w-7xl mx-auto px-2 sm:px-4 mt-4 sm:mt-15 bg-white mb-20 text-black select-none ">
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           <div className="lg:hidden w-full">
             <details className="border rounded-lg shadow-sm bg-white">
@@ -413,8 +500,7 @@ const Bookappoientment = () => {
             </details>
           </div>
 
-          {/* Filters Section - Desktop */}
-          <aside className="hidden lg:block w-full lg:w-1/4 xl:w-1/5 p-4 border rounded-lg shadow-sm bg-white h-fit sticky top-5">
+          <aside className="hidden lg:block w-full lg:w-1/4 xl:w-1/5 p-4 border rounded-lg shadow-sm bg-white h-fit top-5">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Filter</h2>
               <button
@@ -527,17 +613,6 @@ const Bookappoientment = () => {
                         type="radio"
                         name="experience"
                         className="mr-2"
-                        onChange={() => handleFilterChange('experience', 2)}
-                      />{' '}
-                      2+ Years
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="experience"
-                        className="mr-2"
                         onChange={() => handleFilterChange('experience', 5)}
                       />{' '}
                       5+ Years
@@ -552,6 +627,17 @@ const Bookappoientment = () => {
                         onChange={() => handleFilterChange('experience', 10)}
                       />{' '}
                       10+ Years
+                    </label>
+                  </li>
+                  <li>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="experience"
+                        className="mr-2"
+                        onChange={() => handleFilterChange('experience', 20)}
+                      />{' '}
+                      20+ Years
                     </label>
                   </li>
                 </ul>
@@ -616,12 +702,13 @@ const Bookappoientment = () => {
           </aside>
 
           {/* Results Section */}
-          <main className="w-full lg:w-3/4 xl:w-4/5">
+          <main className="w-full lg:w-3/4 xl:w-4/5 overflow-hidden">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
               <h2 className="text-xl font-bold text-gray-700">
                 Showing {filteredAndSortedLabs.length} Labs For You
               </h2>
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                {' '}
                 <div className="flex items-center gap-1">
                   <label htmlFor="sort">Sort By</label>
                   <select
@@ -639,134 +726,179 @@ const Bookappoientment = () => {
                     </option>
                   </select>
                 </div>
+                {/* The new map button */}
+                <a
+                  href="/map"
+                  className="bg-[#2A787A] p-3 rounded-2xl hover:bg-[#1e5f61] transition-colors"
+                  aria-label="View on map"
+                >
+                  <MapPin className="h-5 w-5 text-white " />
+                </a>
               </div>
             </div>
 
             <div className="space-y-4">
-              {paginatedLabs.length > 0 ? (
-                paginatedLabs.map((lab) => (
-                  <div
-                    key={lab.id}
-                    className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
-                  >
-                    <img
-                      src={lab.image}
-                      alt={lab.name}
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
-                    />
-                    <div className="flex-1 w-full">
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                        <div className="w-full sm:w-auto">
-                          <h3 className="text-lg font-bold text-[#2A787A]">
-                            {lab.name}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {lab.testType}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {lab.location}{' '}
-                            <a
-                              href="#"
-                              className="text-[#2A787A] hover:underline"
-                            >
-                              Get Direction
-                            </a>
-                          </p>
+              <AnimatePresence>
+                {paginatedLabs.length > 0 ? (
+                  paginatedLabs.map((lab) => (
+                    <motion.div
+                      key={lab.id}
+                      layout
+                      initial={{ opacity: 0, x: -100 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      exit={{
+                        opacity: 0,
+                        x: -100,
+                        transition: { duration: 0.3 },
+                      }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{ duration: 0.5, ease: 'easeInOut' }}
+                      className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
+                    >
+                      <img
+                        src={lab.image}
+                        alt={lab.name}
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
+                      />
+                      <div className="flex-1 w-full">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                          <div className="w-full sm:w-auto">
+                            <h3 className="text-lg font-bold text-[#2A787A]">
+                              {lab.name}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {lab.testType}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              <MapPin
+                                style={{
+                                  display: 'inline-block',
+                                  verticalAlign: 'middle',
+                                  marginRight: '5px',
+                                }}
+                                size={18}
+                              />
+                              {lab.location}{' '}
+                              <a
+                                href="/map"
+                                className="text-[#2A787A] px-7 hover:text-[#132425] cursor-pointer"
+                              >
+                                Get Direction
+                              </a>
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                            {lab.nextAvailable !== 'Not Available' ? (
+                              <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full whitespace-nowrap">
+                                ● Available
+                              </span>
+                            ) : (
+                              <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-full whitespace-nowrap">
+                                ● Unavailable
+                              </span>
+                            )}
+                            <button onClick={() => handleLoveClick(lab.id)}>
+                              <Heart
+                                size={24}
+                                className={
+                                  lab.isLoved
+                                    ? 'text-red-500 fill-current'
+                                    : 'text-gray-400'
+                                }
+                              />
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                          {lab.nextAvailable !== 'Not Available' ? (
-                            <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full whitespace-nowrap">
-                              ● Available
-                            </span>
-                          ) : (
-                            <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-full whitespace-nowrap">
-                              ● Unavailable
-                            </span>
-                          )}
-                          <button onClick={() => handleLoveClick(lab.id)}>
-                            <Heart
-                              size={24}
-                              className={
-                                lab.isLoved
-                                  ? 'text-red-500 fill-current'
-                                  : 'text-gray-400'
-                              }
-                            />
+                        <div className="flex flex-col sm:flex-row justify-between items-start mt-4 gap-4">
+                          <div>
+                            <p className="text-sm font-semibold">
+                              Next available at
+                            </p>
+                            <p className="text-md font-bold text-[#2A787A]">
+                              {lab.nextAvailable}
+                            </p>
+                          </div>
+                          <button className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#1e3232] text-white px-4 sm:px-6 py-2 rounded-lg cursor-pointer">
+                            Book Appointment
                           </button>
                         </div>
-                      </div>
-                      <div className="flex flex-col sm:flex-row justify-between items-start mt-4 gap-4">
-                        <div>
-                          <p className="text-sm font-semibold">
-                            Next available at
-                          </p>
-                          <p className="text-md font-bold text-[#2A787A]">
-                            {lab.nextAvailable}
-                          </p>
+                        <div className="border-t mt-4 pt-2 flex flex-wrap justify-between items-center text-sm text-gray-500 gap-2">
+                          <div className="flex items-center gap-1">
+                            <Star
+                              size={16}
+                              className="text-yellow-400 fill-current"
+                            />
+                            <span className="font-bold text-gray-700">
+                              {lab.rating}
+                            </span>
+                          </div>
+                          <p>{lab.experience} Years of Experience</p>
                         </div>
-                        <button className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#236464] text-white px-4 sm:px-6 py-2 rounded-lg">
-                          Book Appointment
-                        </button>
                       </div>
-                      <div className="border-t mt-4 pt-2 flex flex-wrap justify-between items-center text-sm text-gray-500 gap-2">
-                        <div className="flex items-center gap-1">
-                          <Star
-                            size={16}
-                            className="text-yellow-400 fill-current"
-                          />
-                          <span className="font-bold text-gray-700">
-                            {lab.rating}
-                          </span>
-                        </div>
-                        <p>{lab.experience} Years of Experience</p>
-                      </div>
+                    </motion.div>
+                  ))
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <div className="text-center py-10">
+                      <p className="text-gray-600 font-semibold">
+                        No labs found matching your criteria.
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Try adjusting your filters.
+                      </p>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-10">
-                  <p className="text-gray-600 font-semibold">
-                    No labs found matching your criteria.
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Try adjusting your filters.
-                  </p>
-                </div>
-              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </main>
         </div>
       </section>
 
       {totalPages > 1 && (
-        <div className="flex justify-center my-10 px-4">
-          <nav className="inline-flex flex-wrap overflow-hidden">
+        <div className="flex justify-center my-10 px-4 select-none ">
+          <nav className="inline-flex flex-wrap overflow-hidden space-x-2">
             <button
               onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-xl border border-gray-300 bg-white font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed "
+              className="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-xl border-2 border-gray-300 bg-white font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Prev
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-2 sm:px-3 py-1 text-xs sm:text-sm border-1 border-b border-gray-300 font-medium  rounded-full ${
-                  currentPage === page
-                    ? 'text-[#2A787A] bg-blue-50'
-                    : 'text-gray-500 hover:bg-gray-50 bg-white'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+
+            {getPageNumbers(currentPage, totalPages).map((page, index) =>
+              page === null ? (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="sm:px-3 py-1 text-xs sm:text-sm text-gray-500 flex items-center justify-center"
+                >
+                  <MoreHorizontal className="h-4 w-4" />{' '}
+                </span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-2 sm:px-3 py-1 text-xs sm:text-sm border-2 border-b border-gray-300 font-medium rounded-full cursor-pointer ${
+                    currentPage === page
+                      ? 'text-white bg-[#2A787A]'
+                      : 'text-gray-500 hover:bg-gray-50 bg-white'
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
+
             <button
               onClick={() =>
                 handlePageChange(Math.min(totalPages, currentPage + 1))
               }
               disabled={currentPage === totalPages}
-              className="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-xl border border-gray-300 bg-white font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-xl border-2 border-gray-300 bg-white font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>

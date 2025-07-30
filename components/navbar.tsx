@@ -8,12 +8,12 @@ function Navbar() {
 
   return (
     <div>
-      <nav className="backdrop-blur-md bg-gradient-to-r from-[#1e5f61]/60 to-[#0c2d34]/60 border border-white/20 rounded-full px-6 py-2 mx-auto mt-6 max-w-[95%] shadow-lg w-full flex items-center justify-between h-20">
+      <nav className="backdrop-blur-md bg-gradient-to-r from-[#1e5f61]/60 to-[#0c2d34]/60 border border-white/20 rounded-full px-6 py-2 mx-auto mt-6 max-w-[95%] shadow-lg w-full flex items-center justify-between h-20 select-none">
         {/* Left: Logo */}
         <div className="flex items-center gap-2 min-w-[120px]">
           <Link
             href="/"
-            className="text-white font-semibold flex items-center gap-2 text-xl"
+            className="text-white font-semibold flex items-center gap-2 text-xl select-none pointer-events-none"
           >
             <Image
               src="/logo2.svg"
@@ -56,10 +56,11 @@ function Navbar() {
         </div>
 
         {/* Center: Navigation Links */}
-        <ul className="hidden md:flex gap-8 text-white font-medium text-base justify-center flex-1">
+        {/* Adjusted gap for medium and larger screens */}
+        <ul className="hidden md:flex gap-4 lg:gap-8 text-white font-medium text-base justify-center flex-1">
           <li>
             <Link
-              href="/patient/BookAppoientment"
+              href="/BookAppoientment"
               className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Book Appointment
@@ -67,7 +68,7 @@ function Navbar() {
           </li>
           <li>
             <Link
-              href="/patient/Trackreport"
+              href="/Trackreport"
               className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Track report
@@ -75,7 +76,7 @@ function Navbar() {
           </li>
           <li>
             <Link
-              href="/patient/pricing"
+              href="/pricing"
               className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Pricing

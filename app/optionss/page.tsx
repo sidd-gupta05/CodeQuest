@@ -10,7 +10,7 @@ export default function OptionsPage() {
 
   return (
     <>
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 select-none ">
         <style jsx global>{`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
           body {

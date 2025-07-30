@@ -75,7 +75,7 @@ const testimonials: Testimonial[] = [
     name: 'Fig Nelson',
     username: '@fignel_looson',
     content:
-      'Stellar\'s user-friendly dashboards have simplified our digital strategy management.',
+      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
@@ -84,7 +84,7 @@ const testimonials: Testimonial[] = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      'Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we\'ve gained invaluable insights.',
+      "Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we've gained invaluable insights.",
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -93,7 +93,7 @@ const testimonials: Testimonial[] = [
     name: 'Amaya Locosta',
     username: '@amayalocosta',
     content:
-      'We\'ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
+      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
     avatar: '/avtar3.svg',
     socialIcon: '/facebook.svg',
   },
@@ -102,7 +102,7 @@ const testimonials: Testimonial[] = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      'We\'ve gained invaluable insights and improved our SEO ranking, resulting in significant business growth.',
+      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -111,7 +111,7 @@ const testimonials: Testimonial[] = [
     name: 'Fig Nelson',
     username: '@fignel_looson',
     content:
-      'Stellar\'s user-friendly dashboards have simplified our digital strategy management.',
+      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
@@ -120,7 +120,7 @@ const testimonials: Testimonial[] = [
     name: 'Sadie Berlin',
     username: '@sadieberlin00',
     content:
-      'Stellar\'s user-friendly dashboards have simplified our digital strategy management.',
+      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -288,7 +288,7 @@ export default function LandingPage() {
         <section
           className={`flex flex-col items-center justify-center px-6 lg:px-24 py-12 gap-12`}
         >
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center select-none pointer-events-none">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight text-center flex flex-wrap justify-center gap-2">
               <span className="text-white">Your</span>
               <span className="bg-white/20 text-white px-4 py-1 rounded-full backdrop-blur-md font-semibold">
@@ -314,19 +314,19 @@ export default function LandingPage() {
 
         <Link
           href={'/optionss'}
-          className="inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-xl font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl mx-auto mb-10 transform hover:scale-110"
+          className="inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-xl font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl mx-auto mb-10 transform hover:scale-110 select-none"
         >
           Get Started
         </Link>
 
         <div
-          className="absolute bottom-[-355px] left-1/2 z-10 w-full h-[200px] bg-gray-200 border border-gray-300 hidden md:block"
+          className="absolute bottom-[-300px] left-1/2 z-10 w-full h-[200px] bg-gray-200 border border-gray-300 hidden md:block select-none pointer-events-none"
           style={{
             transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
             transformOrigin: 'bottom',
           }}
         />
-        <div className="relative w-full max-w-lg mx-auto">
+        <div className="relative w-full max-w-lg mx-auto select-none pointer-events-none">
           <Image
             src="/iphone.svg"
             alt="Labsphere App"
@@ -387,7 +387,7 @@ export default function LandingPage() {
 
       <div
         ref={ref}
-        className="flex justify-center items-center bg-white w-full py-10"
+        className="flex justify-center items-center bg-white w-full py-10 select-none pointer-events-none"
       >
         <div
           className="flex flex-col sm:flex-row justify-between w-full max-w-5xl px-6 text-center"
@@ -428,7 +428,7 @@ export default function LandingPage() {
         className="bg-[#E9EBF1]"
         style={{ fontFamily: 'Urbanist, sans-serif' }}
       >
-        <div className="flex items-center justify-center p-4 sm:p-6 md:p-10">
+        <div className="flex items-center justify-center p-4 sm:p-6 md:p-10 select-none pointer-events-none">
           <div className="w-full sm:w-5/6 p-4 sm:p-6 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {/* Column 1 */}
             <div>
@@ -664,7 +664,7 @@ export default function LandingPage() {
         </div>
 
         <div className="flex flex-col items-center py-16 bg-[#E9EBF1] px-4">
-          <h2 className="text-4xl sm:text-5xl font-bold text-center text-[#0F2E2E] mb-8 sm:mb-12">
+          <h2 className="text-4xl sm:text-5xl font-bold text-center text-[#0F2E2E] mb-8 sm:mb-12 select-none pointer-events-none">
             Your nearby <span className="text-[#2B7C7E]">labs</span>
           </h2>
 
@@ -682,7 +682,7 @@ export default function LandingPage() {
                 <div className="rounded-[22px] flex flex-col items-center bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1]">
                   {/* Image placed on top without border box */}
                   <div className="relative w-full flex justify-center mt-6">
-                    <div className="w-[120px] h-[150px] relative">
+                    <div className="w-[120px] h-[150px] relative select-none pointer-events-none">
                       <Image
                         src={lab.image}
                         alt={lab.name}
@@ -694,13 +694,13 @@ export default function LandingPage() {
 
                   {/* White card part */}
                   <div className="bg-white rounded-2xl px-4 pt-6 pb-4 mx-4 mb-4 w-[calc(100%-32px)] text-center shadow-lg">
-                    <div className="text-lg font-semibold text-[#0F2E2E] text-center">
+                    <div className="text-lg font-semibold text-[#0F2E2E] text-center select-none pointer-events-none">
                       {lab.name}
                     </div>
-                    <div className="text-sm text-gray-500 text-center">
+                    <div className="text-sm text-gray-500 text-center select-none pointer-events-none">
                       {lab.location}
                     </div>
-                    <button className="mt-4 w-full bg-[#2B7C7E] text-white py-2 rounded-xl font-medium hover:bg-[#24686A] transition cursor-pointer">
+                    <button className="mt-4 w-full bg-[#2B7C7E] text-white py-2 rounded-xl font-medium hover:bg-[#24686A] transition cursor-pointer select-none ">
                       Book Appointment
                     </button>
                   </div>
@@ -711,13 +711,13 @@ export default function LandingPage() {
         </div>
       </div>
 
-      <div className="flex flex-col items-center py-8 bg-[#E9EBF1] px-2">
+      <div className="flex flex-col items-center py-8 bg-[#E9EBF1] px-2 select-none pointer-events-none">
         <h2 className="text-4xl sm:text-5xl font-bold text-center text-[#0F2E2E] mb-2 sm:mb-6">
           How <span className="text-[#2B7C7E]">labs</span> works
         </h2>
       </div>
 
-      <div className="bg-gray-100 h-full flex flex-col items-center justify-center font-sans p-2">
+      <div className="bg-gray-100 h-full flex flex-col items-center justify-center font-sans p-2 select-none ">
         <div className="w-full max-w-3xl mx-auto mt-12 mb-12">
           {/* Carousel Container */}
           <div className="relative overflow-hidden bg-white rounded-2xl shadow-2xl h-72">
@@ -745,7 +745,7 @@ export default function LandingPage() {
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center justify-center mt-4 space-x-3">
+          <div className="flex items-center justify-center mt-4 space-x-3 select-none">
             <button
               onClick={handlePrev}
               className="group flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-gray-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
@@ -767,7 +767,7 @@ export default function LandingPage() {
       <div
         className="min-h-screen pt-10 pb-20 px-4 md:px-12 lg:px-20"
         style={{
-          backgroundImage: "url('/spidernet.svg')",
+          backgroundImage: "url('/spidernet.png')",
           backgroundSize: '250px',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'top center',
@@ -781,7 +781,7 @@ export default function LandingPage() {
           variants={staggerContainer}
         >
           <motion.h1
-            className="text-3xl md:text-5xl font-bold text-gray-800 leading-tight"
+            className="text-3xl md:text-5xl font-bold text-gray-800 leading-tight select-none pointer-events-none"
             variants={fadeInUp}
           >
             <span>See what our</span>
@@ -792,7 +792,7 @@ export default function LandingPage() {
 
           <MotionLink
             href={'/optionss'}
-            className="mt-8 inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-sm font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl animate-bounce"
+            className="mt-8 inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-sm font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl animate-bounce select-none "
           >
             Get Started
           </MotionLink>
@@ -808,7 +808,7 @@ export default function LandingPage() {
           {testimonials.map((item) => (
             <motion.div
               key={item.id}
-              className="bg-white h-[280px] md:h-[260px] p-6 rounded-xl shadow-md hover:shadow-2xl transition duration-300 flex flex-col"
+              className="bg-white h-[280px] md:h-[260px] p-6 rounded-xl shadow-md hover:shadow-2xl transition duration-300 flex flex-col select-none "
               variants={fadeInUp}
             >
               <div className="flex-grow">

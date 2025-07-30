@@ -1,11 +1,29 @@
+// components/lab-search.tsx
+'use client';
+
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const LabSearch = () => {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [location, setLocation] = useState('');
+  const [date, setDate] = useState('');
+
+  const handleSearch = () => {
+    const queryParams = new URLSearchParams();
+    if (searchQuery) queryParams.append('search', searchQuery);
+    if (location) queryParams.append('location', location);
+    if (date) queryParams.append('date', date);
+
+    router.push(`/BookAppoientment?${queryParams.toString()}`);
+  };
+
   return (
     <>
-      <section className="text-center mt-10">
-        <h1 className="text-7xl font-extrabold text-[#2B7C7E] drop-shadow-sm my-10">
+      <section className="text-center mt-10 select-none">
+        <h1 className="text-7xl font-extrabold text-[#2B7C7E] drop-shadow-sm my-10 select-none pointer-events-none">
           Lab Search
         </h1>
 
@@ -27,6 +45,8 @@ const LabSearch = () => {
                 type="text"
                 placeholder="Search for nearby Pathlabs"
                 className="pl-10 pr-3 py-2 border-r-0 sm:border-r-2 border-[#E6E8EE] w-full sm:w-72 text-black focus:outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
@@ -43,6 +63,8 @@ const LabSearch = () => {
                 type="text"
                 placeholder="Location"
                 className="pl-10 pr-3 py-2 border-r-0 sm:border-r-2 border-[#E6E8EE] w-full text-black focus:outline-none"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
               />
             </div>
 
@@ -50,6 +72,8 @@ const LabSearch = () => {
               <input
                 type="date"
                 className="pl-2 pr-3 py-2 w-full text-[#6b7684] focus:outline-none"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
               />
             </div>
 
@@ -58,6 +82,7 @@ const LabSearch = () => {
               style={{
                 fontFamily: 'ClashDisplay-SemiBold, Urbanist, sans-serif',
               }}
+              onClick={handleSearch}
             >
               <Image src="/search.svg" alt="Search" width={18} height={18} />
               Search

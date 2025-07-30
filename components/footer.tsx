@@ -5,7 +5,7 @@ const Footer = () => {
     <footer className="bg-[#05303B] text-white px-6 py-16 md:px-12 lg:px-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
         {/* Left: Description */}
-        <div className="md:w-1/3 text-sm leading-relaxed text-left">
+        <div className="md:w-1/3 text-sm leading-relaxed text-left select-none pointer-events-none">
           <h2 className="font-semibold text-sm tracking-widest uppercase">
             LABSPHERE – SIMPLIFYING DIAGNOSTICS, AMPLIFYING CARE
           </h2>
@@ -17,7 +17,7 @@ const Footer = () => {
         </div>
 
         {/* Center: Navigation Links */}
-        <div className="text-left">
+        <div className="text-left select-none ">
           <h3 className="font-semibold text-sm tracking-widest uppercase mb-4">
             VISIT
           </h3>
@@ -38,7 +38,7 @@ const Footer = () => {
         </div>
 
         {/* Right: Social Icons */}
-        <div className="flex space-x-4 w-full md:w-auto">
+        <div className="flex space-x-4 w-full md:w-auto select-none ">
           <a
             href="https://twitter.com"
             target="_blank"

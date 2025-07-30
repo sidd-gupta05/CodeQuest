@@ -100,7 +100,7 @@ export default function DoctorRegistration() {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 select-none ">
       {/* Left Section */}
       <div className="bg-white flex items-center justify-center p-10">
         <div className="max-w-md w-full flex flex-col justify-center">
