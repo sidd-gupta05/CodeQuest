@@ -1,4 +1,5 @@
 import React from 'react';
+import { Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -38,7 +39,7 @@ const Footer = () => {
         </div>
 
         {/* Right: Social Icons */}
-        <div className="flex space-x-4 w-full md:w-auto select-none ">
+        <div className="flex space-x-4 w-full md:w-auto select-none">
           <a
             href="https://twitter.com"
             target="_blank"
@@ -46,7 +47,7 @@ const Footer = () => {
             aria-label="Follow LabSphere on Twitter"
             className="hover:opacity-75 transition-opacity"
           >
-            <img src="/twitter2.svg" alt="Twitter" className="h-5 w-5" />
+            <Twitter className="h-5 w-5" />
           </a>
           <a
             href="https://instagram.com"
@@ -55,7 +56,7 @@ const Footer = () => {
             aria-label="Follow LabSphere on Instagram"
             className="hover:opacity-75 transition-opacity"
           >
-            <img src="/instagram2.svg" alt="Instagram" className="h-5 w-5" />
+            <Instagram className="h-5 w-5" />
           </a>
           <a
             href="https://linkedin.com"
@@ -64,7 +65,7 @@ const Footer = () => {
             aria-label="Follow LabSphere on LinkedIn"
             className="hover:opacity-75 transition-opacity"
           >
-            <img src="/linkedin.svg" alt="LinkedIn" className="h-5 w-5" />
+            <Linkedin className="h-5 w-5" />
           </a>
         </div>
       </div>

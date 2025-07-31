@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
+import dynamic from 'next/dynamic';
 import {
   Star,
   Heart,
@@ -12,6 +13,7 @@ import {
   MapPin,
   Calendar,
   MoreHorizontal,
+  Rows2,
 } from 'lucide-react';
 import LabSearch from '@/components/lab-search';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -60,6 +62,7 @@ const Bookappoientment = () => {
     location: '',
     date: '',
   });
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
   const [filters, setFilters] = useState<Filters>({
     testType: '',
@@ -119,6 +122,10 @@ const Bookappoientment = () => {
       .forEach((checkbox) => (checkbox.checked = false));
   };
 
+  const MapBox = dynamic(() => import('@/components/MapContainer'), {
+    ssr: false,
+  });
+
   const testTypeCounts = useMemo(() => {
     return labsData.reduce((acc: Record<string, number>, lab) => {
       acc[lab.testType] = (acc[lab.testType] || 0) + 1;
@@ -129,7 +136,6 @@ const Bookappoientment = () => {
   const filteredAndSortedLabs = useMemo(() => {
     let filtered = [...labs];
 
-    // Apply search filters
     if (searchFilters.searchQuery) {
       const query = searchFilters.searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -236,7 +242,7 @@ const Bookappoientment = () => {
     setCurrentPage(page);
   };
 
-  const getPageNumbers = (currentPage, totalPages) => {
+  const getPageNumbers = (currentPage: number, totalPages: number) => {
     const pageNumbers = [];
     const maxPagesToShow = 3;
 
@@ -289,577 +295,623 @@ const Bookappoientment = () => {
       </main>
 
       <section className="w-full max-w-7xl mx-auto px-2 sm:px-4 mt-4 sm:mt-15 bg-white mb-20 text-black select-none ">
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-          <div className="lg:hidden w-full">
-            <details className="border rounded-lg shadow-sm bg-white">
-              <summary className="p-4 font-bold text-lg cursor-pointer">
-                Filters
-              </summary>
-              <div className="p-4 border-t">
-                <div className="flex justify-between items-center mb-4">
-                  <button
-                    onClick={clearAllFilters}
-                    className="text-sm text-[#2A787A] hover:text-[#1c3434] cursor-pointer"
-                  >
-                    Clear All
-                  </button>
-                </div>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="font-semibold mb-2">Test Type</h3>
-                    <ul className="space-y-1 text-gray-600">
-                      {visibleTestTypes.map((testType) => (
-                        <li
-                          key={testType}
-                          className="flex justify-between items-center cursor-pointer hover:text-[#2A787A]"
-                          onClick={() =>
-                            handleFilterChange('testType', testType)
-                          }
-                        >
-                          <span
-                            className={
-                              filters.testType === testType
-                                ? 'font-bold text-[#2A787A]'
-                                : ''
+        {viewMode === 'list' ? (
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+            <div className="lg:hidden w-full">
+              <details className="border rounded-lg shadow-sm bg-white">
+                <summary className="p-4 font-bold text-lg cursor-pointer">
+                  Filters
+                </summary>
+                <div className="p-4 border-t">
+                  <div className="flex justify-between items-center mb-4">
+                    <button
+                      onClick={clearAllFilters}
+                      className="text-sm text-[#2A787A] hover:text-[#1c3434] cursor-pointer"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold mb-2">Test Type</h3>
+                      <ul className="space-y-1 text-gray-600">
+                        {visibleTestTypes.map((testType) => (
+                          <li
+                            key={testType}
+                            className="flex justify-between items-center cursor-pointer hover:text-[#2A787A]"
+                            onClick={() =>
+                              handleFilterChange('testType', testType)
                             }
                           >
-                            {testType}
-                          </span>
-                          <span className="text-xs bg-gray-200 py-0.5 px-1.5 rounded">
-                            {testTypeCounts[testType]}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                    {allAvailableTestTypes.length > 5 && (
-                      <button
-                        onClick={() => setShowAllTestTypes(!showAllTestTypes)}
-                        className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:underline"
-                      >
-                        {showAllTestTypes ? 'View Less' : 'View More'}
-                      </button>
-                    )}
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold mb-2">Availability</h3>
-                    <ul className="space-y-1 text-gray-600">
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="availability"
-                            className="mr-2"
-                            onChange={() =>
-                              handleFilterChange('availability', 'today')
-                            }
-                          />{' '}
-                          Available Today
-                        </label>
-                      </li>
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="availability"
-                            className="mr-2"
-                            onChange={() =>
-                              handleFilterChange('availability', 'tomorrow')
-                            }
-                          />{' '}
-                          Available Tomorrow
-                        </label>
-                      </li>
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="availability"
-                            className="mr-2"
-                            onChange={() =>
-                              handleFilterChange('availability', 'next7')
-                            }
-                          />{' '}
-                          Available in next 7 days
-                        </label>
-                      </li>
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="availability"
-                            className="mr-2"
-                            onChange={() =>
-                              handleFilterChange('availability', 'next30')
-                            }
-                          />{' '}
-                          Available in next 30 days
-                        </label>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold mb-2">Experience</h3>
-                    <ul className="space-y-1 text-gray-600">
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="experience"
-                            className="mr-2"
-                            onChange={() => handleFilterChange('experience', 2)}
-                          />{' '}
-                          2+ Years
-                        </label>
-                      </li>
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="experience"
-                            className="mr-2"
-                            onChange={() => handleFilterChange('experience', 5)}
-                          />{' '}
-                          5+ Years
-                        </label>
-                      </li>
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="experience"
-                            className="mr-2"
-                            onChange={() =>
-                              handleFilterChange('experience', 10)
-                            }
-                          />{' '}
-                          10+ Years
-                        </label>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold mb-2">Collection Type</h3>
-                    <ul className="space-y-1 text-gray-600">
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="mr-2"
-                            onChange={() =>
-                              handleCollectionTypeChange('Home Collection')
-                            }
-                          />{' '}
-                          Home Collection
-                        </label>
-                      </li>
-                      <li>
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="mr-2"
-                            onChange={() =>
-                              handleCollectionTypeChange('Visiting to Lab')
-                            }
-                          />{' '}
-                          Visiting to Lab
-                        </label>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold mb-2">Ratings</h3>
-                    <div className="space-y-1">
-                      {[5, 4, 3, 2, 1].map((star) => (
-                        <button
-                          key={star}
-                          onClick={() => handleFilterChange('rating', star)}
-                          className={`w-full text-left p-2 rounded-lg flex items-center border ${filters.rating === star ? 'bg-yellow-100 border-yellow-400' : 'hover:bg-gray-100'}`}
-                        >
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={16}
+                            <span
                               className={
-                                i < star
-                                  ? 'text-yellow-400 fill-current'
-                                  : 'text-gray-300'
+                                filters.testType === testType
+                                  ? 'font-bold text-[#2A787A]'
+                                  : ''
                               }
-                            />
-                          ))}
-                          <span className="ml-2 text-sm">{star} Star & Up</span>
+                            >
+                              {testType}
+                            </span>
+                            <span className="text-xs bg-gray-200 py-0.5 px-1.5 rounded">
+                              {testTypeCounts[testType]}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                      {allAvailableTestTypes.length > 5 && (
+                        <button
+                          onClick={() => setShowAllTestTypes(!showAllTestTypes)}
+                          className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:underline"
+                        >
+                          {showAllTestTypes ? 'View Less' : 'View More'}
                         </button>
-                      ))}
+                      )}
                     </div>
-                  </div>
-                </div>
-              </div>
-            </details>
-          </div>
 
-          <aside className="hidden lg:block w-full lg:w-1/4 xl:w-1/5 p-4 border rounded-lg shadow-sm bg-white h-fit top-5">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Filter</h2>
-              <button
-                onClick={clearAllFilters}
-                className="text-sm text-[#2A787A] hover:text-[#1c3434] cursor-pointer"
-              >
-                Clear All
-              </button>
-            </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Availability</h3>
+                      <ul className="space-y-1 text-gray-600">
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="availability"
+                              className="mr-2"
+                              onChange={() =>
+                                handleFilterChange('availability', 'today')
+                              }
+                            />{' '}
+                            Available Today
+                          </label>
+                        </li>
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="availability"
+                              className="mr-2"
+                              onChange={() =>
+                                handleFilterChange('availability', 'tomorrow')
+                              }
+                            />{' '}
+                            Available Tomorrow
+                          </label>
+                        </li>
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="availability"
+                              className="mr-2"
+                              onChange={() =>
+                                handleFilterChange('availability', 'next7')
+                              }
+                            />{' '}
+                            Available in next 7 days
+                          </label>
+                        </li>
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="availability"
+                              className="mr-2"
+                              onChange={() =>
+                                handleFilterChange('availability', 'next30')
+                              }
+                            />{' '}
+                            Available in next 30 days
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-2">Test Type</h3>
-                <ul className="space-y-1 text-gray-600">
-                  {visibleTestTypes.map((testType) => (
-                    <li
-                      key={testType}
-                      className="flex justify-between items-center cursor-pointer hover:text-[#2A787A]"
-                      onClick={() => handleFilterChange('testType', testType)}
-                    >
-                      <span
-                        className={
-                          filters.testType === testType
-                            ? 'font-bold text-[#2A787A]'
-                            : ''
-                        }
-                      >
-                        {testType}
-                      </span>
-                      <span className="text-xs bg-gray-200 py-0.5 px-1.5 rounded">
-                        {testTypeCounts[testType]}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                {allAvailableTestTypes.length > 5 && (
-                  <button
-                    onClick={() => setShowAllTestTypes(!showAllTestTypes)}
-                    className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:text-[#1c3434]"
-                  >
-                    {showAllTestTypes ? 'View Less' : 'View More'}
-                  </button>
-                )}
-              </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Experience</h3>
+                      <ul className="space-y-1 text-gray-600">
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="experience"
+                              className="mr-2"
+                              onChange={() =>
+                                handleFilterChange('experience', 2)
+                              }
+                            />{' '}
+                            2+ Years
+                          </label>
+                        </li>
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="experience"
+                              className="mr-2"
+                              onChange={() =>
+                                handleFilterChange('experience', 5)
+                              }
+                            />{' '}
+                            5+ Years
+                          </label>
+                        </li>
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="radio"
+                              name="experience"
+                              className="mr-2"
+                              onChange={() =>
+                                handleFilterChange('experience', 10)
+                              }
+                            />{' '}
+                            10+ Years
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
 
-              <div>
-                <h3 className="font-semibold mb-2">Availability</h3>
-                <ul className="space-y-1 text-gray-600">
-                  <li>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="availability"
-                        className="mr-2"
-                        onChange={() =>
-                          handleFilterChange('availability', 'today')
-                        }
-                      />{' '}
-                      Available Today
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="availability"
-                        className="mr-2"
-                        onChange={() =>
-                          handleFilterChange('availability', 'tomorrow')
-                        }
-                      />{' '}
-                      Available Tomorrow
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="availability"
-                        className="mr-2"
-                        onChange={() =>
-                          handleFilterChange('availability', 'next7')
-                        }
-                      />{' '}
-                      Available in next 7 days
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="availability"
-                        className="mr-2"
-                        onChange={() =>
-                          handleFilterChange('availability', 'next30')
-                        }
-                      />{' '}
-                      Available in next 30 days
-                    </label>
-                  </li>
-                </ul>
-              </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Collection Type</h3>
+                      <ul className="space-y-1 text-gray-600">
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="checkbox"
+                              className="mr-2"
+                              onChange={() =>
+                                handleCollectionTypeChange('Home Collection')
+                              }
+                            />{' '}
+                            Home Collection
+                          </label>
+                        </li>
+                        <li>
+                          <label className="flex items-center">
+                            <input
+                              type="checkbox"
+                              className="mr-2"
+                              onChange={() =>
+                                handleCollectionTypeChange('Visiting to Lab')
+                              }
+                            />{' '}
+                            Visiting to Lab
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
 
-              <div>
-                <h3 className="font-semibold mb-2">Experience</h3>
-                <ul className="space-y-1 text-gray-600">
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="experience"
-                        className="mr-2"
-                        onChange={() => handleFilterChange('experience', 5)}
-                      />{' '}
-                      5+ Years
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="experience"
-                        className="mr-2"
-                        onChange={() => handleFilterChange('experience', 10)}
-                      />{' '}
-                      10+ Years
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="experience"
-                        className="mr-2"
-                        onChange={() => handleFilterChange('experience', 20)}
-                      />{' '}
-                      20+ Years
-                    </label>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Collection Type</h3>
-                <ul className="space-y-1 text-gray-600">
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="mr-2"
-                        onChange={() =>
-                          handleCollectionTypeChange('Home Collection')
-                        }
-                      />{' '}
-                      Home Collection
-                    </label>
-                  </li>
-                  <li>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="mr-2"
-                        onChange={() =>
-                          handleCollectionTypeChange('Visiting to Lab')
-                        }
-                      />{' '}
-                      Visiting to Lab
-                    </label>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Ratings</h3>
-                <div className="space-y-1">
-                  {[5, 4, 3, 2, 1].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => handleFilterChange('rating', star)}
-                      className={`w-full text-left p-2 rounded-lg flex items-center border ${filters.rating === star ? 'bg-yellow-100 border-yellow-400' : 'hover:bg-gray-100 cursor-pointer'}`}
-                    >
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className={
-                            i < star
-                              ? 'text-yellow-400 fill-current'
-                              : 'text-gray-300'
-                          }
-                        />
-                      ))}
-                      <span className="ml-2 text-sm">{star} Star & Up</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          {/* Results Section */}
-          <main className="w-full lg:w-3/4 xl:w-4/5 overflow-hidden">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-              <h2 className="text-xl font-bold text-gray-700">
-                Showing {filteredAndSortedLabs.length} Labs For You
-              </h2>
-              <div className="flex items-center gap-2">
-                {' '}
-                <div className="flex items-center gap-1">
-                  <label htmlFor="sort">Sort By</label>
-                  <select
-                    id="sort"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="border rounded-md p-1 bg-white"
-                  >
-                    <option value="rating">Rating</option>
-                    <option value="experience_asc">
-                      Experience (Low to High)
-                    </option>
-                    <option value="experience_desc">
-                      Experience (High to Low)
-                    </option>
-                  </select>
-                </div>
-                {/* The new map button */}
-                <a
-                  href="/map"
-                  className="bg-[#2A787A] p-3 rounded-2xl hover:bg-[#1e5f61] transition-colors"
-                  aria-label="View on map"
-                >
-                  <MapPin className="h-5 w-5 text-white " />
-                </a>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <AnimatePresence>
-                {paginatedLabs.length > 0 ? (
-                  paginatedLabs.map((lab) => (
-                    <motion.div
-                      key={lab.id}
-                      layout
-                      initial={{ opacity: 0, x: -100 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      exit={{
-                        opacity: 0,
-                        x: -100,
-                        transition: { duration: 0.3 },
-                      }}
-                      viewport={{ once: true, amount: 0.2 }}
-                      transition={{ duration: 0.5, ease: 'easeInOut' }}
-                      className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
-                    >
-                      <img
-                        src={lab.image}
-                        alt={lab.name}
-                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
-                      />
-                      <div className="flex-1 w-full">
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                          <div className="w-full sm:w-auto">
-                            <h3 className="text-lg font-bold text-[#2A787A]">
-                              {lab.name}
-                            </h3>
-                            <p className="text-sm text-gray-600">
-                              {lab.testType}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              <MapPin
-                                style={{
-                                  display: 'inline-block',
-                                  verticalAlign: 'middle',
-                                  marginRight: '5px',
-                                }}
-                                size={18}
-                              />
-                              {lab.location}{' '}
-                              <a
-                                href="/map"
-                                className="text-[#2A787A] px-7 hover:text-[#132425] cursor-pointer"
-                              >
-                                Get Direction
-                              </a>
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                            {lab.nextAvailable !== 'Not Available' ? (
-                              <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full whitespace-nowrap">
-                                ● Available
-                              </span>
-                            ) : (
-                              <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-full whitespace-nowrap">
-                                ● Unavailable
-                              </span>
-                            )}
-                            <button onClick={() => handleLoveClick(lab.id)}>
-                              <Heart
-                                size={24}
+                    <div>
+                      <h3 className="font-semibold mb-2">Ratings</h3>
+                      <div className="space-y-1">
+                        {[5, 4, 3, 2, 1].map((star) => (
+                          <button
+                            key={star}
+                            onClick={() => handleFilterChange('rating', star)}
+                            className={`w-full text-left p-2 rounded-lg flex items-center border ${filters.rating === star ? 'bg-yellow-100 border-yellow-400' : 'hover:bg-gray-100'}`}
+                          >
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                size={16}
                                 className={
-                                  lab.isLoved
-                                    ? 'text-red-500 fill-current'
-                                    : 'text-gray-400'
+                                  i < star
+                                    ? 'text-yellow-400 fill-current'
+                                    : 'text-gray-300'
                                 }
                               />
+                            ))}
+                            <span className="ml-2 text-sm">
+                              {star} Star & Up
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <aside className="hidden lg:block w-full lg:w-1/4 xl:w-1/5 p-4 border rounded-lg shadow-sm bg-white h-fit top-5">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Filter</h2>
+                <button
+                  onClick={clearAllFilters}
+                  className="text-sm text-[#2A787A] hover:text-[#1c3434] cursor-pointer"
+                >
+                  Clear All
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-semibold mb-2">Test Type</h3>
+                  <ul className="space-y-1 text-gray-600">
+                    {visibleTestTypes.map((testType) => (
+                      <li
+                        key={testType}
+                        className="flex justify-between items-center cursor-pointer hover:text-[#2A787A]"
+                        onClick={() => handleFilterChange('testType', testType)}
+                      >
+                        <span
+                          className={
+                            filters.testType === testType
+                              ? 'font-bold text-[#2A787A]'
+                              : ''
+                          }
+                        >
+                          {testType}
+                        </span>
+                        <span className="text-xs bg-gray-200 py-0.5 px-1.5 rounded">
+                          {testTypeCounts[testType]}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  {allAvailableTestTypes.length > 5 && (
+                    <button
+                      onClick={() => setShowAllTestTypes(!showAllTestTypes)}
+                      className="text-sm text-[#2A787A] mt-2 cursor-pointer hover:text-[#1c3434]"
+                    >
+                      {showAllTestTypes ? 'View Less' : 'View More'}
+                    </button>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">Availability</h3>
+                  <ul className="space-y-1 text-gray-600">
+                    <li>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="availability"
+                          className="mr-2"
+                          onChange={() =>
+                            handleFilterChange('availability', 'today')
+                          }
+                        />{' '}
+                        Available Today
+                      </label>
+                    </li>
+                    <li>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="availability"
+                          className="mr-2"
+                          onChange={() =>
+                            handleFilterChange('availability', 'tomorrow')
+                          }
+                        />{' '}
+                        Available Tomorrow
+                      </label>
+                    </li>
+                    <li>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="availability"
+                          className="mr-2"
+                          onChange={() =>
+                            handleFilterChange('availability', 'next7')
+                          }
+                        />{' '}
+                        Available in next 7 days
+                      </label>
+                    </li>
+                    <li>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="availability"
+                          className="mr-2"
+                          onChange={() =>
+                            handleFilterChange('availability', 'next30')
+                          }
+                        />{' '}
+                        Available in next 30 days
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">Experience</h3>
+                  <ul className="space-y-1 text-gray-600">
+                    <li>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="experience"
+                          className="mr-2"
+                          onChange={() => handleFilterChange('experience', 5)}
+                        />{' '}
+                        5+ Years
+                      </label>
+                    </li>
+                    <li>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="experience"
+                          className="mr-2"
+                          onChange={() => handleFilterChange('experience', 10)}
+                        />{' '}
+                        10+ Years
+                      </label>
+                    </li>
+                    <li>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="experience"
+                          className="mr-2"
+                          onChange={() => handleFilterChange('experience', 20)}
+                        />{' '}
+                        20+ Years
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">Collection Type</h3>
+                  <ul className="space-y-1 text-gray-600">
+                    <li>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="mr-2"
+                          onChange={() =>
+                            handleCollectionTypeChange('Home Collection')
+                          }
+                        />{' '}
+                        Home Collection
+                      </label>
+                    </li>
+                    <li>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="mr-2"
+                          onChange={() =>
+                            handleCollectionTypeChange('Visiting to Lab')
+                          }
+                        />{' '}
+                        Visiting to Lab
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-2">Ratings</h3>
+                  <div className="space-y-1">
+                    {[5, 4, 3, 2, 1].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => handleFilterChange('rating', star)}
+                        className={`w-full text-left p-2 rounded-lg flex items-center border ${filters.rating === star ? 'bg-yellow-100 border-yellow-400' : 'hover:bg-gray-100 cursor-pointer'}`}
+                      >
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={16}
+                            className={
+                              i < star
+                                ? 'text-yellow-400 fill-current'
+                                : 'text-gray-300'
+                            }
+                          />
+                        ))}
+                        <span className="ml-2 text-sm">{star} Star & Up</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            {/* Results Section */}
+            <main className="w-full lg:w-3/4 xl:w-4/5 overflow-hidden">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+                <h2 className="text-xl font-bold text-gray-700">
+                  Showing {filteredAndSortedLabs.length} Labs For You
+                </h2>
+                <div className="flex items-center gap-2">
+                  {' '}
+                  <div className="flex items-center gap-1">
+                    <label htmlFor="sort">Sort By</label>
+                    <select
+                      id="sort"
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="border rounded-md p-1 bg-white"
+                    >
+                      <option value="rating">Rating</option>
+                      <option value="experience_asc">
+                        Experience (Low to High)
+                      </option>
+                      <option value="experience_desc">
+                        Experience (High to Low)
+                      </option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-3 rounded-2xl transition-colors ${viewMode === 'list' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                    aria-label="View as list"
+                  >
+                    <Rows2 className="h-5 w-5 text-white" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('map')}
+                    className={`p-3 rounded-2xl transition-colors ${viewMode === 'map' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                    aria-label="View on map"
+                  >
+                    <MapPin className="h-5 w-5 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <AnimatePresence>
+                  {paginatedLabs.length > 0 ? (
+                    paginatedLabs.map((lab) => (
+                      <motion.div
+                        key={lab.id}
+                        layout
+                        initial={{ opacity: 0, x: -100 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        exit={{
+                          opacity: 0,
+                          x: -100,
+                          transition: { duration: 0.3 },
+                        }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.5, ease: 'easeInOut' }}
+                        className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
+                      >
+                        <img
+                          src={lab.image}
+                          alt={lab.name}
+                          className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
+                        />
+                        <div className="flex-1 w-full">
+                          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                            <div className="w-full sm:w-auto">
+                              <h3 className="text-lg font-bold text-[#2A787A]">
+                                {lab.name}
+                              </h3>
+                              <p className="text-sm text-gray-600">
+                                {lab.testType}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                <MapPin
+                                  style={{
+                                    display: 'inline-block',
+                                    verticalAlign: 'middle',
+                                    marginRight: '5px',
+                                  }}
+                                  size={18}
+                                />
+                                {lab.location}{' '}
+                                <a
+                                  href="/map"
+                                  className="text-[#2A787A] px-7 hover:text-[#132425] cursor-pointer"
+                                >
+                                  Get Direction
+                                </a>
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                              {lab.nextAvailable !== 'Not Available' ? (
+                                <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full whitespace-nowrap">
+                                  ● Available
+                                </span>
+                              ) : (
+                                <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-full whitespace-nowrap">
+                                  ● Unavailable
+                                </span>
+                              )}
+                              <button onClick={() => handleLoveClick(lab.id)}>
+                                <Heart
+                                  size={24}
+                                  className={
+                                    lab.isLoved
+                                      ? 'text-red-500 fill-current'
+                                      : 'text-gray-400'
+                                  }
+                                />
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flex flex-col sm:flex-row justify-between items-start mt-4 gap-4">
+                            <div>
+                              <p className="text-sm font-semibold">
+                                Next available at
+                              </p>
+                              <p className="text-md font-bold text-[#2A787A]">
+                                {lab.nextAvailable}
+                              </p>
+                            </div>
+                            <button className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#1e3232] text-white px-4 sm:px-6 py-2 rounded-lg cursor-pointer">
+                              Book Appointment
                             </button>
                           </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row justify-between items-start mt-4 gap-4">
-                          <div>
-                            <p className="text-sm font-semibold">
-                              Next available at
-                            </p>
-                            <p className="text-md font-bold text-[#2A787A]">
-                              {lab.nextAvailable}
-                            </p>
+                          <div className="border-t mt-4 pt-2 flex flex-wrap justify-between items-center text-sm text-gray-500 gap-2">
+                            <div className="flex items-center gap-1">
+                              <Star
+                                size={16}
+                                className="text-yellow-400 fill-current"
+                              />
+                              <span className="font-bold text-gray-700">
+                                {lab.rating}
+                              </span>
+                            </div>
+                            <p>{lab.experience} Years of Experience</p>
                           </div>
-                          <button className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#1e3232] text-white px-4 sm:px-6 py-2 rounded-lg cursor-pointer">
-                            Book Appointment
-                          </button>
                         </div>
-                        <div className="border-t mt-4 pt-2 flex flex-wrap justify-between items-center text-sm text-gray-500 gap-2">
-                          <div className="flex items-center gap-1">
-                            <Star
-                              size={16}
-                              className="text-yellow-400 fill-current"
-                            />
-                            <span className="font-bold text-gray-700">
-                              {lab.rating}
-                            </span>
-                          </div>
-                          <p>{lab.experience} Years of Experience</p>
-                        </div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <div className="text-center py-10">
+                        <p className="text-gray-600 font-semibold">
+                          No labs found matching your criteria.
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Try adjusting your filters.
+                        </p>
                       </div>
                     </motion.div>
-                  ))
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <div className="text-center py-10">
-                      <p className="text-gray-600 font-semibold">
-                        No labs found matching your criteria.
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Try adjusting your filters.
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  )}
+                </AnimatePresence>
+              </div>
+            </main>
+          </div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-700">
+                Showing Labs on Map
+              </h2>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-3 rounded-2xl transition-colors ${viewMode === 'list' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                  aria-label="View as list"
+                >
+                  <Rows2 className="h-5 w-5 text-white" />
+                </button>
+                <button
+                  onClick={() => setViewMode('map')}
+                  className={`p-3 rounded-2xl transition-colors ${viewMode === 'map' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                  aria-label="View on map"
+                >
+                  <MapPin className="h-5 w-5 text-white" />
+                </button>
+              </div>
             </div>
-          </main>
-        </div>
+            <main>
+              <section className="text-center mt-10">
+                <div className="relative mt-6 mx-auto max-w-5xl my-20">
+                  <MapBox />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black shadow-xl rounded-xl p-4 w-64 z-10"></div>
+                </div>
+              </section>
+            </main>
+          </>
+        )}
       </section>
 
-      {totalPages > 1 && (
+      {viewMode === 'list' && totalPages > 1 && (
         <div className="flex justify-center my-10 px-4 select-none ">
           <nav className="inline-flex flex-wrap overflow-hidden space-x-2">
             <button
