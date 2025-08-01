@@ -35,6 +35,11 @@ interface Lab {
   isLoved: boolean;
   image: string;
   collectionTypes: string[];
+  timeSlots: {
+    Morning: string[];
+    Afternoon: string[];
+    Evening: string[];
+  };
 }
 
 interface Filters {
@@ -848,12 +853,50 @@ const Bookappoientment = () => {
                               <p className="text-md font-bold text-[#2A787A]">
                                 {lab.nextAvailable}
                               </p>
+                              {lab.timeSlots && (
+                                <div className="mt-2">
+                                  <p className="text-sm font-semibold mb-1">
+                                    Available Time Slots:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {Object.entries(lab.timeSlots).map(
+                                      ([period, slots]) => (
+                                        <div key={period} className="mb-2">
+                                          <span className="text-xs font-medium text-gray-600">
+                                            {period}:
+                                          </span>
+                                          <div className="flex flex-wrap gap-1 mt-1">
+                                            {slots.map((slot, index) =>
+                                              slot !== '-' ? (
+                                                <span
+                                                  key={index}
+                                                  className="text-xs bg-gray-100 px-2 py-1 rounded cursor-pointer"
+                                                >
+                                                  {slot}
+                                                </span>
+                                              ) : null
+                                            )}
+                                          </div>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                            <button className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#1e3232] text-white px-4 sm:px-6 py-2 rounded-lg cursor-pointer">
+                            <Link
+                              href={{
+                                pathname: '/Booking',
+                                query: {
+                                  labId: lab.id,
+                                },
+                              }}
+                              className="w-full sm:w-auto bg-[#2A787A] hover:bg-[#1e3232] text-white px-4 sm:px-6 py-2 rounded-lg cursor-pointer md:mt-22"
+                            >
                               Book Appointment
-                            </button>
+                            </Link>
                           </div>
-                          <div className="border-t mt-4 pt-2 flex flex-wrap justify-between items-center text-sm text-gray-500 gap-2">
+                          <div className="border-t mt-4 pt-2 flex flex-wrap justify-between items-center text-sm text-gray-500 gap-2 ">
                             <div className="flex items-center gap-1">
                               <Star
                                 size={16}
