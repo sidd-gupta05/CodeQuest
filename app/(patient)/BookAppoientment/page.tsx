@@ -741,17 +741,29 @@ const Bookappoientment = () => {
                   </div>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-3 rounded-2xl transition-colors ${viewMode === 'list' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                    className={`p-3 rounded-2xl transition-colors ${
+                      viewMode === 'list'
+                        ? 'bg-[#1e5f61]'
+                        : 'bg-gray-100 hover:bg-[#1e5f61]'
+                    }`}
                     aria-label="View as list"
                   >
-                    <Rows2 className="h-5 w-5 text-white" />
+                    <Rows2
+                      className={`h-5 w-5 transition-colors ${viewMode === 'list' ? 'text-white' : 'text-black hover:text-white'}`}
+                    />
                   </button>
                   <button
                     onClick={() => setViewMode('map')}
-                    className={`p-3 rounded-2xl transition-colors ${viewMode === 'map' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                    className={`p-3 rounded-2xl transition-colors ${
+                      viewMode === 'map'
+                        ? 'bg-[#1e5f61]'
+                        : 'bg-gray-100 hover:bg-[#1e5f61]'
+                    }`}
                     aria-label="View on map"
                   >
-                    <MapPin className="h-5 w-5 text-white" />
+                    <MapPin
+                      className={`h-5 w-5 transition-colors ${viewMode === 'map' ? 'text-white' : 'text-black hover:text-white'}`}
+                    />
                   </button>
                 </div>
               </div>
@@ -885,25 +897,37 @@ const Bookappoientment = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-3 rounded-2xl transition-colors ${viewMode === 'list' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                  className={`p-3 rounded-2xl transition-colors ${
+                    viewMode === 'list'
+                      ? 'bg-[#1e5f61]'
+                      : 'bg-gray-100 hover:bg-[#1e5f61]'
+                  }`}
                   aria-label="View as list"
                 >
-                  <Rows2 className="h-5 w-5 text-white" />
+                  <Rows2
+                    className={`h-5 w-5 transition-colors ${viewMode === 'list' ? 'text-white' : 'text-black hover:text-white'}`}
+                  />
                 </button>
+
                 <button
                   onClick={() => setViewMode('map')}
-                  className={`p-3 rounded-2xl transition-colors ${viewMode === 'map' ? 'bg-[#1e5f61]' : 'bg-[#2A787A] hover:bg-[#1e5f61]'}`}
+                  className={`p-3 rounded-2xl transition-colors ${
+                    viewMode === 'map'
+                      ? 'bg-[#1e5f61]'
+                      : 'bg-gray-100 hover:bg-[#1e5f61]'
+                  }`}
                   aria-label="View on map"
                 >
-                  <MapPin className="h-5 w-5 text-white" />
+                  <MapPin
+                    className={`h-5 w-5 transition-colors ${viewMode === 'map' ? 'text-white' : 'text-black hover:text-white'}`}
+                  />
                 </button>
               </div>
             </div>
             <main>
               <section className="text-center mt-10">
-                <div className="relative mt-6 mx-auto max-w-5xl my-20">
+                <div className="relative mt-6 mx-auto max-w-5xl w-[1024] h-[600] my-20">
                   <MapBox />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black shadow-xl rounded-xl p-4 w-64 z-10"></div>
                 </div>
               </section>
             </main>
