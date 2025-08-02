@@ -1001,10 +1001,10 @@ const TestSelection = ({
         </div>
       </div>
 
-      <div className="w-full max-w-4xl flex justify-between items-center mt-8 px-2 select-none">
+      <div className="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center mt-8 px-2 select-none gap-4 sm:gap-0">
         <button
           onClick={onBack}
-          className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg cursor-pointer"
+          className="w-full sm:w-auto bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg cursor-pointer"
         >
           <ChevronLeft size={22} />
           Back
@@ -1012,7 +1012,7 @@ const TestSelection = ({
         <button
           onClick={handleSelectAddons}
           disabled={selectedTests.length === 0}
-          className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer ${
+          className={`w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer ${
             selectedTests.length === 0
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
@@ -1146,10 +1146,10 @@ const AddOns = ({
         ))}
       </div>
 
-      <div className="w-full max-w-4xl flex justify-between items-center mt-8 px-2 select-none">
+      <div className="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center mt-8 px-2 select-none gap-4 sm:gap-0">
         <button
           onClick={onBack}
-          className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg cursor-pointer"
+          className="w-full sm:w-auto bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg cursor-pointer"
         >
           <ChevronLeft size={22} />
           Back
@@ -1157,7 +1157,7 @@ const AddOns = ({
         <button
           onClick={onNext}
           disabled={selectedAddons.length === 0}
-          className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer ${
+          className={`w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer ${
             selectedAddons.length === 0
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'

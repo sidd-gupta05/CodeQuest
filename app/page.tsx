@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Inter } from 'next/font/google';
 import Navbar from '@/components/navbar';
+import { labsData } from '@/data/labsData';
 
 interface Lab {
   name: string;
@@ -44,12 +45,20 @@ interface Feature {
   bgColor: string;
 }
 
-const labs: Lab[] = [
-  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab.png' },
-  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab1.png' },
-  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab2.png' },
-  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab3.png' },
-  { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab4.png' },
+// const labs: Lab[] = [
+//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab.png' },
+//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab1.png' },
+//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab2.png' },
+//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab3.png' },
+//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab4.png' },
+// ];
+
+const localImages = [
+  '/drlab.png',
+  '/drlab1.png',
+  '/drlab2.png',
+  '/drlab3.png',
+  '/drlab4.png',
 ];
 
 const interFont = Inter({ subsets: ['latin'], weight: '400' });
@@ -72,55 +81,55 @@ const variants = {
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: 'Fig Nelson',
-    username: '@fignel_looson',
+    name: 'Rajesh Sharma',
+    username: '@rajesh_sharma',
     content:
-      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
+      'The lab booking process was incredibly smooth and saved me hours of waiting time. Got my reports within 24 hours!',
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
   {
     id: 2,
-    name: 'Sadie Berlin',
-    username: '@sadieberlin00',
+    name: 'Priya Patel',
+    username: '@priyapatel_',
     content:
-      "Stellar has truly transformed our online presence. With its powerful analytics and seamless integration, we've gained invaluable insights.",
+      'As a working professional, the home collection service has been a lifesaver. Professional staff and accurate reports every time.',
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
   {
     id: 3,
-    name: 'Amaya Locosta',
-    username: '@amayalocosta',
+    name: 'Amit Singh',
+    username: '@amitsingh',
     content:
-      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
+      'The app made it so easy to compare labs and book tests. Saved 30% on my full body checkup compared to walk-in rates.',
     avatar: '/avtar3.svg',
     socialIcon: '/facebook.svg',
   },
   {
     id: 4,
-    name: 'Sadie Berlin',
-    username: '@sadieberlin00',
+    name: 'Neha Gupta',
+    username: '@nehagupta88',
     content:
-      "We've gained invaluable insights and improved our SEO ranking, resulting in significant business growth.",
+      'Impressed with the transparency in pricing and the quality of service. Will definitely recommend to my family and friends.',
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
   {
     id: 5,
-    name: 'Fig Nelson',
-    username: '@fignel_looson',
+    name: 'Vikram Joshi',
+    username: '@vikramjoshi',
     content:
-      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
+      'The doctor consultation after my test results was very helpful. Complete healthcare solution in one platform.',
     avatar: '/avtar1.svg',
     socialIcon: '/twitter.svg',
   },
   {
     id: 6,
-    name: 'Sadie Berlin',
-    username: '@sadieberlin00',
+    name: 'Ananya Reddy',
+    username: '@ananya_reddy',
     content:
-      "Stellar's user-friendly dashboards have simplified our digital strategy management.",
+      'Used the emergency services when my father needed urgent tests. The support team was very responsive and helpful.',
     avatar: '/avtar2.svg',
     socialIcon: '/instagram.svg',
   },
@@ -272,6 +281,11 @@ export default function LandingPage() {
     viewport: { once: false },
     transition: { duration: 0.6 },
   };
+
+  const displayedLabs = labsData.slice(0, 5).map((lab, index) => ({
+    ...lab,
+    image: localImages[index % localImages.length], // Cycle through your local images
+  }));
 
   return (
     <>
@@ -669,9 +683,9 @@ export default function LandingPage() {
           </h2>
 
           <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
-            {labs.map((lab, index) => (
+            {displayedLabs.map((lab, index) => (
               <motion.div
-                key={index}
+                key={lab.id}
                 className="w-11/12 sm:w-[250px] rounded-3xl overflow-hidden shadow-md bg-[#91D8C1] p-[4px] hover:scale-102 hover:shadow-5xl"
                 initial="offscreen"
                 whileInView="onscreen"
@@ -679,7 +693,7 @@ export default function LandingPage() {
                 viewport={{ once: false, amount: 0.2 }}
                 variants={cardVariants}
               >
-                <div className="rounded-[22px] flex flex-col items-center bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1]">
+                <div className="rounded-[22px] flex flex-col items-center bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] h-full">
                   {/* Image placed on top without border box */}
                   <div className="relative w-full flex justify-center mt-6">
                     <div className="w-[120px] h-[150px] relative select-none pointer-events-none">
@@ -688,21 +702,44 @@ export default function LandingPage() {
                         alt={lab.name}
                         fill
                         className="object-cover rounded-xl"
+                        priority={index < 3}
                       />
                     </div>
                   </div>
 
                   {/* White card part */}
-                  <div className="bg-white rounded-2xl px-4 pt-6 pb-4 mx-4 mb-4 w-[calc(100%-32px)] text-center shadow-lg">
-                    <div className="text-lg font-semibold text-[#0F2E2E] text-center select-none pointer-events-none">
-                      {lab.name}
+                  <div className="bg-white rounded-2xl px-4 pt-6 pb-4 mx-4 mb-4 w-[calc(100%-32px)] text-center shadow-lg flex flex-col h-full">
+                    <div className="flex-grow">
+                      <div className="text-lg font-semibold text-[#0F2E2E] text-center select-none pointer-events-none">
+                        {lab.name}
+                      </div>
+                      <div className="text-sm text-gray-500 text-center select-none pointer-events-none mt-2">
+                        {lab.location}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500 text-center select-none pointer-events-none">
-                      {lab.location}
+
+                    <div className="mt-auto pt-4">
+                      {lab.nextAvailable === 'Not Available' ? (
+                        <button
+                          className="w-full bg-gray-300 text-gray-500 py-2 rounded-xl font-medium cursor-not-allowed select-none"
+                          disabled
+                        >
+                          Unavailable
+                        </button>
+                      ) : (
+                        <Link
+                          href={{
+                            pathname: '/Booking',
+                            query: { labId: lab.id },
+                          }}
+                          className="block w-full"
+                        >
+                          <button className="w-full bg-[#2B7C7E] text-white py-2 rounded-xl font-medium hover:bg-[#24686A] transition cursor-pointer select-none">
+                            Book Appointment
+                          </button>
+                        </Link>
+                      )}
                     </div>
-                    <button className="mt-4 w-full bg-[#2B7C7E] text-white py-2 rounded-xl font-medium hover:bg-[#24686A] transition cursor-pointer select-none ">
-                      Book Appointment
-                    </button>
                   </div>
                 </div>
               </motion.div>
