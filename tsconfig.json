@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/auth/sign_in/page.tsx"
-  ],
+, "app/dashboard/lab/profile/page.jsx"  ],
   "exclude": ["node_modules"]
 }

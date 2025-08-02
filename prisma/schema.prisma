@@ -1,77 +1,130 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  password    String
-  firstName   String
-  lastName    String
-  phone       String   @unique
-  role        UserRole
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  doctor      Doctor?
-  lab         Lab?
-  patient     Patient?
+  lab       Lab?
+  patient   Patient?
 
   @@map("users")
 }
 
-model Doctor {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  practicingLocation String
-  prnNumber       String
-  certificateUrl  String   // Supabase storage path
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@map("doctors")
-}
 
 model Lab {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  labLocation     String
+  id                    String       @id @default(uuid())
+  userId                String       @unique
+  labLocation           String
   nablCertificateNumber String
-  certificateUrl  String   // Supabase storage path
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  certificateUrl        String
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  details               LabDetails?
+  timeSlots             TimeSlot[]
+  appointments          Appointment[]
 
   @@map("labs")
 }
+model LabDetails {
+  id              String     @id @default(uuid())
+  labId           String     @unique
+  collectionTypes String[]
+  experienceYears Int?
+  imageUrl        String?
+  isLoved         Boolean?   @default(false)
+  latitude        Float      @default(0.0)
+  longitude       Float      @default(0.0)
+  nextAvailable   DateTime?
+  rating          Float?
+  testType        String?
+
+  lab             Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
+  timeSlots       TimeSlot[]
+
+  @@map("lab_details")
+}
+
+model TimeSlot {
+  id         String      @id @default(uuid())
+  labId      String
+  date       DateTime
+  time       String
+  isBooked   Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+
+  lab        Lab         @relation(fields: [labId], references: [id], onDelete: Cascade)
+  slots      Slot[]
+
+  @@unique([labId, date, time])
+  LabDetails LabDetails[]
+}
+model Slot {
+  id         String   @id @default(uuid())
+  timeSlotId String
+  timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+}
+
 
 model Patient {
-  id              String   @id @default(uuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  location        String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id          String       @id @default(uuid())
+  userId      String       @unique
+  address     String
+  dateOfBirth DateTime
+  gender      String
+  latitude    Float        @default(0.0)
+  longitude   Float        @default(0.0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
-  @@map("patients")
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+}
+
+model Appointment {
+  id         String     @id @default(uuid())
+  patientId  String
+  labId      String
+  date       DateTime
+  time       String
+  status     String     @default("Pending")
+  createdAt  DateTime   @default(now())
+
+  patient    Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  lab        Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
+  payments   Payment[]
+}
+
+model Payment {
+  id            String       @id @default(uuid())
+  appointmentId String
+  status        String
+  amount        Float
+  paidAt        DateTime?
+  createdAt     DateTime     @default(now())
+
+  appointment   Appointment  @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {
   PATIENT
-  DOCTOR
+  // DOCTOR
   LAB
 }

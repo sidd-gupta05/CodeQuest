@@ -77,6 +77,37 @@ export default function SignupPage() {
               : `${location.origin}/lab-registration`,
         },
       });
+            // After successful supabase.auth.signUp
+      const {
+        data: { user },
+        error: getUserError,
+      } = await supabase.auth.getUser();
+
+      if (getUserError || !user) {
+        console.error('Could not get authenticated user', getUserError);
+        return;
+      }
+
+      // Insert into your own `users` table
+      const { error: insertUserError } = await supabase.from('users').insert({
+        id: user.id, // must match Supabase Auth UUID
+        email: form.email,
+        password: '', // store only if you manage passwords (with hashing)
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        role: role,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
+      if (insertUserError) {
+        console.error(
+          'Error inserting into users table:',
+          insertUserError.message
+        );
+        return;
+      }
 
       if (error) {
         console.error('Signup error:', error.message);

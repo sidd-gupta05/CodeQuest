@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
-  const router = useRouter();
+  const router = useRouter();  
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [user, setUser] = useState<User | null>(null);
@@ -20,6 +20,8 @@ export default function DashboardPage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      console.log('Current user:', user?.id, user?.email, user?.user_metadata.role);
+      setUser(user);
 
       if (!user) {
         router.push('/optionss?redirectTo=/dashboard');
@@ -46,7 +48,7 @@ export default function DashboardPage() {
             </a>
           </li>
           <li>
-            <a href="#" className="hover:text-teal-400">
+            <a href={"/dashboard"+(localStorage.getItem('accountType') === 'LAB' ? '/lab/profile' : '/profile')} className="hover:text-teal-400">
               Profile
             </a>
           </li>
@@ -78,6 +80,7 @@ export default function DashboardPage() {
           Welcome to your dashboard! You can manage your profile, settings, and
           more here.
         </p>
+        <p>Your role is {localStorage.getItem('accountType') || 'User'}</p>
       </main>
     </div>
   );

@@ -36,7 +36,7 @@ export const allLabTests = {
     'Bilirubin (Total, Direct, Indirect)',
     'SGOT / AST',
     'SGPT / ALT',
-    'ALP (Alkaline Phosphatase)',
+    'ALP (Alka Phosphatase)',
     'GGT',
     'Albumin',
     'Globulin',
