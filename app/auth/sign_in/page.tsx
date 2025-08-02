@@ -100,8 +100,7 @@ export default function SignupPage() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
-
-      if (insertUserError) {
+            if (insertUserError) {
         console.error(
           'Error inserting into users table:',
           insertUserError.message

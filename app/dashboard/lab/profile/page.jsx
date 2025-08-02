@@ -13,49 +13,85 @@ import {
   PlusCircle,
   MinusCircle,
   Clock, // For time input
+  LocateFixed, // For fetching location
+  CheckSquare,
 } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
-// Reusable Input Component (using Tailwind classes for styling)
-const InputField = ({ label, type = 'text', id, value, onChange, icon: Icon, placeholder, step, min, required }) => (
-  <div className="mb-4">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
-      {Icon && <Icon className="inline-block w-4 h-4 mr-2 text-indigo-500" />}
-      {label}
-      {required && <span className="text-red-500 ml-1">*</span>}
-    </label>
+import InputField from '@/components/InputField';
+import { supabase } from '@/utils/supabase/client';
+
+// Reusable Checkbox Component
+const CheckboxField = ({ label, id, checked, onChange, icon: Icon }) => (
+  <div className="mb-4 flex items-center">
     <input
-      type={type}
+      type="checkbox"
       id={id}
       name={id}
-      value={value}
+      checked={checked}
       onChange={onChange}
-      placeholder={placeholder}
-      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out"
-      step={step}
-      min={min}
-      required={required}
+      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
     />
+    <label htmlFor={id} className="ml-2 block text-sm text-gray-900">
+      {Icon && <Icon className="inline-block w-4 h-4 mr-2 text-indigo-500" />}
+      {label}
+    </label>
   </div>
 );
 
 // Main LabForm component
 const LabForm = () => {
   const [formData, setFormData] = useState({
-    labName: '', // Replaces userId
+    labName: '',
     testType: '',
-    timeSlots: [{ date: '', time: '' }], // Array of objects for date and time
+    timeSlots: [{ date: '', time: '' }],
     experienceYears: '',
-    imageUrl: '',
-    collectionTypes: '', // Comma-separated string
+    imageUrl: '', // This will store the URL after upload
+    collectionTypes: '',
+    latitude: '',
+    longitude: '',
+    isAvailable: true, // New field
   });
+
+  const [uploadedFile, setUploadedFile] = useState(null); // For file input
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null); // For image preview
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
 
+
+  const handleFetchLocation = () => {
+    setMessage('');
+    setIsError(false);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prevData) => ({
+            ...prevData,
+            latitude: position.coords.latitude.toFixed(6),
+            longitude: position.coords.longitude.toFixed(6),
+          }));
+          setMessage('Location fetched successfully!');
+          setIsError(false);
+        },
+        (error) => {
+          setMessage(`Error fetching location: ${error.message}`);
+          setIsError(true);
+          console.error('Geolocation error:', error);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    } else {
+      setMessage('Geolocation is not supported by your browser.');
+      setIsError(true);
+    }
+  };
+
   // Effect to fetch lab data if labId or labName is in the URL query
   useEffect(() => {
+    
     const fetchLabData = async () => {
       setFetching(true);
       setMessage('');
@@ -83,17 +119,28 @@ const LabForm = () => {
           setFormData({
             labName: data.labName || '',
             testType: data.testType || '',
-            // Map fetched time slots to the form's format
-            timeSlots: data.timeSlots && data.timeSlots.length > 0
-              ? data.timeSlots.map(slot => ({
-                  date: slot.date ? new Date(slot.date).toISOString().split('T')[0] : '', // Format for input type="date"
-                  time: slot.time || '',
-                }))
-              : [{ date: '', time: '' }], // Ensure at least one empty slot field
+            timeSlots:
+              data.timeSlots && data.timeSlots.length > 0
+                ? data.timeSlots.map((slot) => ({
+                    date: slot.date
+                      ? new Date(slot.date).toISOString().split('T')[0]
+                      : '',
+                    time: slot.time || '',
+                  }))
+                : [{ date: '', time: '' }],
             experienceYears: data.experienceYears || '',
-            imageUrl: data.imageUrl || '',
-            collectionTypes: Array.isArray(data.collectionTypes) ? data.collectionTypes.join(', ') : '',
+            imageUrl: data.imageUrl || '', // Set fetched image URL
+            collectionTypes: Array.isArray(data.collectionTypes)
+              ? data.collectionTypes.join(', ')
+              : '',
+            latitude: data.latitude || '',
+            longitude: data.longitude || '',
+            isAvailable: data.isAvailable ?? true, // Set fetched availability, default to true
           });
+          // If an image URL is fetched, set it for preview
+          if (data.imageUrl) {
+            setImagePreviewUrl(data.imageUrl);
+          }
           setMessage('Lab data loaded successfully!');
           setIsError(false);
         }
@@ -108,12 +155,11 @@ const LabForm = () => {
 
     fetchLabData();
   }, []); // Run once on component mount
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -140,11 +186,59 @@ const LabForm = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setUploadedFile(file);
+      setImagePreviewUrl(URL.createObjectURL(file)); // Create a local URL for preview
+    } else {
+      setUploadedFile(null);
+      setImagePreviewUrl(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
     setIsError(false);
+
+    // TODO: Unable to get labId from localStorage, so fetching user data directly
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+    
+        localStorage.setItem('labId', user?.id || '');
+        console.log('User data:', user?.id, user?.role);
+        if (error || !user) {
+          console.error('No user found:', error?.message);
+          return;
+        }
+
+
+         let finalImageUrl = formData.imageUrl; // default
+    
+        if (uploadedFile) {
+          const cleanFileName = uploadedFile.name.replace(/\s+/g, '_');
+          const { data: fileData, error: fileError } = await supabase.storage
+            .from('uploads')
+            .upload(`lab/${user?.id}/${cleanFileName}`, uploadedFile);
+
+          if (fileError) {
+            console.error('File upload error:', fileError.message);
+            alert('Failed to upload certificate');
+            return;
+          }
+
+          console.log('Simulating file upload:', uploadedFile.name);
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+          finalImageUrl = `https://unrlzieuyrsibokkqqbm.supabase.co/storage/v1/object/public/uploads/labs/${user?.id}/${uploadedFile.name.replace(/\s+/g, '_')}`;
+          setFinalImageUrl(finalImageUrl);
+          console.log('Simulated uploaded image URL:', finalImageUrl);
+
+        }
+    
 
     try {
       // Prepare data for API
@@ -153,14 +247,19 @@ const LabForm = () => {
         testType: formData.testType || null,
         // Filter out empty time slots and send as array of objects
         nextAvailable: formData.timeSlots
-          .filter(slot => slot.date && slot.time) // Only send slots with both date and time
-          .map(slot => ({
+          .filter((slot) => slot.date && slot.time) // Only send slots with both date and time
+          .map((slot) => ({
             date: slot.date, // Date string (YYYY-MM-DD)
             time: slot.time, // Time string (HH:MM)
           })),
-        experienceYears: formData.experienceYears ? parseInt(formData.experienceYears) : null,
-        imageUrl: formData.imageUrl || null,
+        experienceYears: formData.experienceYears
+          ? parseInt(formData.experienceYears)
+          : null,
+        imageUrl: finalImageUrl || null, // Use the uploaded URL or existing one
         collectionTypes: formData.collectionTypes ? formData.collectionTypes.split(',').map(item => item.trim()) : [],
+        latitude: formData.latitude ? parseFloat(formData.latitude) : null,
+        longitude: formData.longitude ? parseFloat(formData.longitude) : null,
+        isAvailable: formData.isAvailable,
       };
 
       console.log('Submitting payload:', payload);
@@ -190,6 +289,9 @@ const LabForm = () => {
         experienceYears: '',
         imageUrl: '',
         collectionTypes: '',
+        latitude: '',
+        longitude: '',
+        isAvailable: true, // Reset availability to true
       });
     } catch (error) {
       setMessage(error.message || 'Failed to add/update lab data.');
@@ -223,7 +325,7 @@ const LabForm = () => {
               name="labName"
               value={formData.labName}
               onChange={handleChange}
-              icon={FlaskConical} // Using FlaskConical for Lab Name
+              icon={FlaskConical}
               placeholder="e.g., Central Lab Diagnostics"
               required
             />
@@ -233,7 +335,7 @@ const LabForm = () => {
               name="testType"
               value={formData.testType}
               onChange={handleChange}
-              icon={Tag} // Using Tag for test type
+              icon={Tag}
               placeholder="e.g., Blood Test, MRI"
             />
 
@@ -291,15 +393,101 @@ const LabForm = () => {
               placeholder="e.g., 10"
               min="0"
             />
-            <InputField
-              label="Image URL"
-              id="imageUrl"
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              icon={Image}
-              placeholder="e.g., https://example.com/lab.jpg"
-            />
+
+            {/* Lab Location Fields */}
+            <div className="md:col-span-2 mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                <MapPin className="inline-block w-4 h-4 mr-2 text-indigo-500" />
+                Lab Location
+              </label>
+              <div className="flex space-x-2 mb-2">
+                <input
+                  type="number"
+                  id="latitude"
+                  name="latitude"
+                  value={formData.latitude}
+                  onChange={handleChange}
+                  placeholder="Latitude"
+                  className="mt-1 block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out"
+                  step="any"
+                />
+                <input
+                  type="number"
+                  id="longitude"
+                  name="longitude"
+                  value={formData.longitude}
+                  onChange={handleChange}
+                  placeholder="Longitude"
+                  className="mt-1 block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out"
+                  step="any"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleFetchLocation}
+                className="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"
+              >
+                <LocateFixed className="w-4 h-4 mr-2" />
+                Fetch Current Location
+              </button>
+            </div>
+
+            {/* Available Checkbox */}
+            <div className="md:col-span-2">
+              <CheckboxField
+                label="Available"
+                id="isAvailable"
+                name="isAvailable"
+                checked={formData.isAvailable}
+                onChange={handleChange}
+                icon={CheckSquare}
+              />
+            </div>
+
+            {/* Image Upload Field */}
+            <div className="md:col-span-2 mb-4">
+              <label htmlFor="imageUpload" className="block text-sm font-medium text-gray-700 mb-1">
+                <Image className="inline-block w-4 h-4 mr-2 text-indigo-500" />
+                Lab Image
+              </label>
+              <input
+                type="file"
+                id="imageUpload"
+                name="imageUpload"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="mt-1 block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-indigo-50 file:text-indigo-700
+                hover:file:bg-indigo-100"
+              />
+              {imagePreviewUrl && (
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Image Preview:</p>
+                  <img
+                    src={imagePreviewUrl}
+                    alt="Lab Preview"
+                    className="w-full max-w-xs h-auto rounded-md shadow-md object-cover"
+                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/300x200/cccccc/333333?text=Image+Error"; }}
+                  />
+                </div>
+              )}
+               {/* Display existing image URL if no new file is selected and URL exists */}
+               {!uploadedFile && formData.imageUrl && (
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Current Image:</p>
+                  <img
+                    src={formData.imageUrl}
+                    alt="Current Lab Image"
+                    className="w-full max-w-xs h-auto rounded-md shadow-md object-cover"
+                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/300x200/cccccc/333333?text=Image+Error"; }}
+                  />
+                </div>
+              )}
+            </div>
+
             <InputField
               label="Collection Types (comma-separated)"
               id="collectionTypes"

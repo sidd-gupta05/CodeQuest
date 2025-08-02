@@ -67,7 +67,7 @@ const Bookappoientment = () => {
     location: '',
     date: '',
   });
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list' as 'list' | 'map');
 
   const [filters, setFilters] = useState<Filters>({
     testType: '',
@@ -97,6 +97,7 @@ const Bookappoientment = () => {
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFilterChange = (filterName: keyof Filters, value: any) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
     setCurrentPage(1);
@@ -121,10 +122,10 @@ const Bookappoientment = () => {
     setCurrentPage(1);
     document
       .querySelectorAll('input[type="radio"]')
-      .forEach((radio) => (radio.checked = false));
+      .forEach((radio) => ((radio as HTMLInputElement).checked = false));
     document
       .querySelectorAll('input[type="checkbox"]')
-      .forEach((checkbox) => (checkbox.checked = false));
+      .forEach((checkbox) => ((checkbox as HTMLInputElement).checked = false));
   };
 
   const MapBox = dynamic(() => import('@/components/MapContainer'), {
@@ -791,10 +792,12 @@ const Bookappoientment = () => {
                         transition={{ duration: 0.5, ease: 'easeInOut' }}
                         className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
                       >
-                        <img
+                        <Image
                           src={lab.image}
                           alt={lab.name}
-                          className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
+                          width={80}
+                          height={80}
+                          className="sm:w-24 sm:h-24 rounded-lg object-cover"
                         />
                         <div className="flex-1 w-full">
                           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">

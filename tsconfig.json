@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/auth/sign_in/page.tsx"
-, "app/dashboard/lab/profile/page.jsx"  ],
+, "app/dashboard/lab/profile/page.jsx", "components/InputField.jsx"  ],
   "exclude": ["node_modules"]
 }
