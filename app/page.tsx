@@ -45,14 +45,6 @@ interface Feature {
   bgColor: string;
 }
 
-// const labs: Lab[] = [
-//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab.png' },
-//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab1.png' },
-//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab2.png' },
-//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab3.png' },
-//   { name: 'Dr Lal Path Lab', location: 'Wadala, Mumbai', image: '/drlab4.png' },
-// ];
-
 const localImages = [
   '/drlab.png',
   '/drlab1.png',
