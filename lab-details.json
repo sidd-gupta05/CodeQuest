@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Lab #1",
+    "testType": "General Tests",
+    "location": "kurla",
+    "nextAvailable": "N/A",
+    "rating": 0,
+    "votes": 0,
+    "totalVotes": 0,
+    "experience": 0,
+    "isAvailable": true,
+    "isLoved": false,
+    "image": "https://placehold.co/100x100/E8F7F7/333333?text=LAB",
+    "collectionTypes": ["Home Collection", "Visiting to Lab"],
+    "timeSlots": {
+      "Morning": ["-", "-", "-", "-"],
+      "Afternoon": ["-", "-", "-", "-"],
+      "Evening": ["-", "-", "-", "-"]
+    }
+  },
+  {
+    "id": 2,
+    "name": "Lab #2",
+    "testType": "Blood Test",
+    "location": "kurla",
+    "nextAvailable": "2206-04-05",
+    "rating": 0,
+    "votes": 0,
+    "totalVotes": 0,
+    "experience": 0,
+    "isAvailable": true,
+    "isLoved": false,
+    "image": "https://placehold.co/100x100/E8F7F7/333333?text=LAB",
+    "collectionTypes": ["Home Collection", "Visiting to Lab"],
+    "timeSlots": {
+      "Morning": ["05:04", "08:05", "-", "-"],
+      "Afternoon": ["-", "-", "-", "-"],
+      "Evening": ["19:28", "-", "-", "-"]
+    }
+  },
+  {
+    "id": 3,
+    "name": "Lab #3",
+    "testType": "MRI",
+    "location": "sakinaka, mumbai",
+    "nextAvailable": "N/A",
+    "rating": 0,
+    "votes": 0,
+    "totalVotes": 0,
+    "experience": 15,
+    "isAvailable": true,
+    "isLoved": true,
+    "image": "https://unrlzieuyrsibokkqqbm.supabase.co/storage/v1/object/public/uploads/labs/0588d1cf-777b-4550-a5c6-20d226b6b368/patient_verify.png",
+    "collectionTypes": ["Home"],
+    "timeSlots": {
+      "Morning": ["-", "-", "-", "-"],
+      "Afternoon": ["-", "-", "-", "-"],
+      "Evening": ["-", "-", "-", "-"]
+    }
+  },
+  {
+    "id": 4,
+    "name": "Lab #4",
+    "testType": "Tumorology",
+    "location": "andheri",
+    "nextAvailable": "2025-08-08",
+    "rating": 0,
+    "votes": 0,
+    "totalVotes": 0,
+    "experience": 15,
+    "isAvailable": true,
+    "isLoved": true,
+    "image": "https://unrlzieuyrsibokkqqbm.supabase.co/storage/v1/object/public/uploads/labs/f79f581b-87e6-4c87-97a6-d6a41639a64d/boys-abyss-1.webp",
+    "collectionTypes": ["Clinic", "Home"],
+    "timeSlots": {
+      "Morning": ["08:00", "10:00", "-", "-"],
+      "Afternoon": ["12:30", "12:00", "-", "-"],
+      "Evening": ["21:30", "-", "-", "-"]
+    }
+  }
+]

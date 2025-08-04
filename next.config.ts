@@ -4,7 +4,9 @@ import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    remotePatterns: [new URL('https://placehold.co')],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'placehold.co' }
+    ],
     dangerouslyAllowSVG: true,
     domains: ['placehold.co'],
   },

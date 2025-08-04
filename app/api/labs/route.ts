@@ -79,28 +79,19 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+
+export async function GET(req: Request) {
+
+  if (req.headers.get('x-service-key') !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+}
+
   try {
-    const supabase = await createClient(cookies());
-    const { data: { user }, error } = await supabase.auth.getUser();
-
-    if (!user || error) {
-      return new Response(JSON.stringify({ error: 'Not authenticated' }), { status: 401 });
-    }
-
-    const lab = await db.lab.findUnique({
-      where: { userId: user.id },
-      include: {
-        details: true,
-        timeSlots: true,
-      },
+    const labs = await db.lab.findMany({
+      include: { details: true, timeSlots: true }
     });
 
-    if (!lab) {
-      return new Response(JSON.stringify({ error: 'Lab not found' }), { status: 404 });
-    }
-
-    return new Response(JSON.stringify(lab), { status: 200 });
+    return new Response(JSON.stringify(labs), { status: 200 });
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });

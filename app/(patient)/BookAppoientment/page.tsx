@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/navbar';
@@ -19,7 +19,10 @@ import LabSearch from '@/components/lab-search';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 
-import { labsData, allLabTests } from '@/data/labsData';
+// import { labsData, allLabTests } from '@/data/labsData';
+import { labsData } from '@/lab-details';
+import { mapLabs } from '@/data/mapper';
+import { set } from 'date-fns';
 
 interface Lab {
   id: number;
@@ -60,14 +63,16 @@ const ITEMS_PER_PAGE = 7;
 
 const Bookappoientment = () => {
   const searchParams = useSearchParams();
-  const [labs, setLabs] = useState<Lab[]>(labsData);
+  const [labs, setLabs] = useState<Lab[]>();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFilters, setSearchFilters] = useState({
     searchQuery: '',
     location: '',
     date: '',
   });
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list' as 'list' | 'map');
+  const [viewMode, setViewMode] = useState<'list' | 'map'>(
+    'list' as 'list' | 'map'
+  );
 
   const [filters, setFilters] = useState<Filters>({
     testType: '',
@@ -88,6 +93,30 @@ const Bookappoientment = () => {
     setSearchFilters({ searchQuery, location, date });
     setCurrentPage(1);
   }, [searchParams]);
+
+  useEffect(() => {
+    async function fetchLabs() {
+      const res = await fetch('http://localhost:3000/api/labs', {
+        method: 'GET',
+        headers: {
+          'x-service-key': process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(
+          `Failed to fetch lab details: ${res.status} ${res.statusText}`
+        );
+      }
+
+      const data = await res.json(); // 1️⃣ raw DB format
+      const labsForUI = mapLabs(data);
+      console.log(labsForUI[0]);
+    }
+    
+
+    setLabs(labsData);
+  });
 
   const handleLoveClick = (id: number) => {
     setLabs(

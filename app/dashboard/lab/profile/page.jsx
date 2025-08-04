@@ -73,15 +73,15 @@ const LabForm = () => {
             latitude: position.coords.latitude.toFixed(6),
             longitude: position.coords.longitude.toFixed(6),
           }));
-          setMessage('Location fetched successfully!');
+          setMessage('Real-time location fetched successfully!');
           setIsError(false);
         },
         (error) => {
-          setMessage(`Error fetching location: ${error.message}`);
+          setMessage(`Error fetching real-time location: ${error.message}`);
           setIsError(true);
           console.error('Geolocation error:', error);
         },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Ensure no cached location is used
       );
     } else {
       setMessage('Geolocation is not supported by your browser.');
@@ -218,23 +218,25 @@ const LabForm = () => {
 
 
          let finalImageUrl = formData.imageUrl; // default
-    
-        if (uploadedFile) {
-          const cleanFileName = uploadedFile.name.replace(/\s+/g, '_');
-          const { data: fileData, error: fileError } = await supabase.storage
-            .from('uploads')
+         console.log(finalImageUrl)
+         
+         if (uploadedFile) {
+           const cleanFileName = uploadedFile.name.replace(/\s+/g, '_');
+           const { data: fileData, error: fileError } = await supabase.storage
+           .from('uploads')
             .upload(`lab/${user?.id}/${cleanFileName}`, uploadedFile);
 
-          if (fileError) {
-            console.error('File upload error:', fileError.message);
-            alert('Failed to upload certificate');
-            return;
-          }
-
-          console.log('Simulating file upload:', uploadedFile.name);
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-          finalImageUrl = `https://unrlzieuyrsibokkqqbm.supabase.co/storage/v1/object/public/uploads/labs/${user?.id}/${uploadedFile.name.replace(/\s+/g, '_')}`;
-          setFinalImageUrl(finalImageUrl);
+            if (fileError) {
+              console.error('File upload error:', fileError.message);
+              alert('Failed to upload certificate');
+              return;
+            }
+            
+            console.log('Simulating file upload:', uploadedFile.name);
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+            finalImageUrl = `https://unrlzieuyrsibokkqqbm.supabase.co/storage/v1/object/public/uploads/labs/${user?.id}/${uploadedFile.name.replace(/\s+/g, '_')}`;
+            // finalImageUrl(finalImageUrl);
+            console.log(finalImageUrl)
           console.log('Simulated uploaded image URL:', finalImageUrl);
 
         }
