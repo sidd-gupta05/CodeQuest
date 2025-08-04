@@ -891,7 +891,7 @@ const Bookappoientment = () => {
                                   labId: lab.id,
                                 },
                               }}
-                              className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg cursor-pointer md:mt-22 ${
+                              className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg cursor-pointer md:mt-22 text-center ${
                                 lab.nextAvailable === 'Not Available'
                                   ? 'bg-gray-300 text-gray-500 pointer-events-none'
                                   : 'bg-[#2A787A] hover:bg-[#1e3232] text-white'
