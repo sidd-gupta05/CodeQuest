@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Stepper from '@/components/stepper';
 import Calendar from '@/components/calendar';
 import Image from 'next/image';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface Lab {
   id: number;
@@ -290,6 +291,7 @@ interface PatientDetailsProps {
   selectedLab: Lab;
   appointmentDate: string;
   appointmentTime: string;
+  onPatientDetailsChange: (details: any) => void;
 }
 
 const PatientDetails = ({
@@ -298,6 +300,7 @@ const PatientDetails = ({
   selectedLab,
   appointmentDate,
   appointmentTime,
+  onPatientDetailsChange,
 }: PatientDetailsProps) => {
   const [patientData, setPatientData] = useState({
     firstName: '',
@@ -315,6 +318,7 @@ const PatientDetails = ({
       ...prev,
       [name]: value,
     }));
+    onPatientDetailsChange({ ...patientData, [name]: value });
   };
 
   const isFormValid =
@@ -501,6 +505,7 @@ interface AddOnsProps {
   selectedLab: Lab;
   appointmentDate: string;
   appointmentTime: string;
+  onAddonsChange: (addons: string[]) => void;
 }
 
 const AddOns = ({
@@ -509,8 +514,17 @@ const AddOns = ({
   selectedLab,
   appointmentDate,
   appointmentTime,
+  onAddonsChange,
 }: AddOnsProps) => {
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+
+  const handleAddonToggle = (addonName: string) => {
+    const newAddons = selectedAddons.includes(addonName)
+      ? selectedAddons.filter((a) => a !== addonName)
+      : [...selectedAddons, addonName];
+    setSelectedAddons(newAddons);
+    onAddonsChange(newAddons);
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
@@ -582,13 +596,7 @@ const AddOns = ({
         ].map((addon, index) => (
           <button
             key={index}
-            onClick={() =>
-              setSelectedAddons((prev) =>
-                prev.includes(addon.name)
-                  ? prev.filter((a) => a !== addon.name)
-                  : [...prev, addon.name]
-              )
-            }
+            onClick={() => handleAddonToggle(addon.name)}
             className={`flex justify-between items-center p-4 border rounded-lg transition-colors ${
               selectedAddons.includes(addon.name)
                 ? 'border-[#37AFA2] bg-teal-50 shadow-md'
@@ -625,12 +633,7 @@ const AddOns = ({
         </button>
         <button
           onClick={onNext}
-          disabled={selectedAddons.length === 0}
-          className={`w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer ${
-            selectedAddons.length === 0
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
-          }`}
+          className="w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer bg-[#37AFA2] hover:bg-[#2f9488] text-white"
         >
           Proceed to Payment
           <ChevronRight size={22} />
@@ -648,7 +651,265 @@ interface PaymentProps {
   appointmentTime: string;
   selectedTests: string[];
   selectedAddons: string[];
+  patientDetails: any;
 }
+
+// const Payment = ({
+//   onBack,
+//   onNext,
+//   selectedLab,
+//   appointmentDate,
+//   appointmentTime,
+//   selectedTests,
+//   selectedAddons,
+//   patientDetails,
+// }: PaymentProps) => {
+//   const [paymentLoading, setPaymentLoading] = useState(false);
+
+//   // Calculate total amount
+//   const calculateTotal = () => {
+//     const testCost = selectedTests.length * 500; // ₹500 per test
+//     const addonCost = selectedAddons.reduce((total, addon) => {
+//       if (addon === 'Express Delivery') return total + 500;
+//       if (addon === 'Superfast Delivery') return total + 350;
+//       return total + 200; // Default for other add-ons
+//     }, 0);
+//     return testCost + addonCost;
+//   };
+
+//   const totalAmount = calculateTotal();
+
+//   const loadScript = (src: string) => {
+//     return new Promise((resolve) => {
+//       const script = document.createElement('script');
+//       script.src = src;
+//       script.onload = () => resolve(true);
+//       script.onerror = () => resolve(false);
+//       document.body.appendChild(script);
+//     });
+//   };
+
+//   const initializeRazorpayPayment = async () => {
+//     setPaymentLoading(true);
+
+//     try {
+//       // Load Razorpay script
+//       const res = await loadScript(
+//         'https://checkout.razorpay.com/v1/checkout.js'
+//       );
+//       if (!res) {
+//         alert('Razorpay SDK failed to load. Are you online?');
+//         return;
+//       }
+
+//       // Create order on your backend
+//       const response = await fetch('/api/create-razorpay-order', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//           amount: totalAmount * 100, // Razorpay expects amount in paise
+//           currency: 'INR',
+//           receipt: `lab_${selectedLab.id}_${Date.now()}`,
+//         }),
+//       });
+
+//       const orderData = await response.json();
+
+//       if (!orderData.id) {
+//         throw new Error('Failed to create order');
+//       }
+
+//       const options = {
+//         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+//         amount: orderData.amount.toString(),
+//         currency: orderData.currency,
+//         name: 'HealthCare Labs',
+//         description: 'Lab Test Booking Payment',
+//         order_id: orderData.id,
+//         handler: async function (response: any) {
+//           // Verify payment on your backend
+//           const verificationResponse = await fetch('/api/verify-payment', {
+//             method: 'POST',
+//             headers: {
+//               'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//               razorpay_payment_id: response.razorpay_payment_id,
+//               razorpay_order_id: response.razorpay_order_id,
+//               razorpay_signature: response.razorpay_signature,
+//             }),
+//           });
+
+//           const verificationData = await verificationResponse.json();
+
+//           if (verificationData.success) {
+//             onNext(); // Move to confirmation step
+//           } else {
+//             alert('Payment verification failed. Please contact support.');
+//           }
+//         },
+//         theme: {
+//           color: '#37AFA2',
+//         },
+//       };
+
+//       const rzp = new (window as any).Razorpay(options);
+//       rzp.open();
+//     } catch (error) {
+//       console.error('Payment error:', error);
+//       alert('Payment failed. Please try again.');
+//     } finally {
+//       setPaymentLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
+//       <div className="flex items-start justify-between">
+//         <div className="flex items-start sm:items-center">
+//           <img
+//             src={selectedLab.image}
+//             alt={selectedLab.name}
+//             className="w-16 h-16 rounded-full mr-4 border-2 border-gray-100"
+//           />
+//           <div>
+//             <div className="flex flex-col sm:flex-row sm:items-center">
+//               <h2 className="text-xl font-bold text-gray-800">
+//                 {selectedLab.name}
+//               </h2>
+//               <span className="mt-1 sm:mt-0 sm:ml-3 bg-orange-400 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center w-fit">
+//                 <Star size={14} className="mr-1 fill-current" />
+//                 {selectedLab.rating}
+//               </span>
+//             </div>
+//             <div className="flex items-center text-gray-500 mt-1">
+//               <MapPin size={16} className="mr-1.5" />
+//               <p>{selectedLab.location}</p>
+//             </div>
+//           </div>
+//         </div>
+//         <div className="text-right flex-col hidden sm:flex">
+//           <p className="text-lg font-bold text-gray-800">
+//             Appointment Date: {appointmentDate}
+//           </p>
+//           <p className="text-lg font-bold text-gray-800">
+//             Time Slot: {appointmentTime}
+//           </p>
+//         </div>
+//       </div>
+//       <div className="text-right sm:hidden mt-4">
+//         <p className="text-sm font-bold text-gray-800">
+//           Date: {appointmentDate}
+//         </p>
+//         <p className="text-sm font-bold text-gray-800">
+//           Time: {appointmentTime}
+//         </p>
+//       </div>
+//       <div className="border-b border-gray-200 my-6"></div>
+
+//       <div className="mb-6">
+//         <h3 className="font-bold text-gray-800 text-lg mb-4">Order Summary</h3>
+
+//         <div className="bg-gray-50 rounded-lg p-4 mb-4">
+//           <h4 className="font-semibold text-gray-800 mb-2">Patient Details</h4>
+//           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+//             <p>
+//               <span className="text-gray-600">Name:</span>{' '}
+//               {patientDetails.firstName} {patientDetails.lastName}
+//             </p>
+//             <p>
+//               <span className="text-gray-600">Gender:</span>{' '}
+//               {patientDetails.gender}
+//             </p>
+//             <p>
+//               <span className="text-gray-600">Age:</span> {patientDetails.age}
+//             </p>
+//             <p>
+//               <span className="text-gray-600">Address:</span>{' '}
+//               {patientDetails.address}
+//             </p>
+//           </div>
+//         </div>
+
+//         <div className="bg-gray-50 rounded-lg p-4 mb-4">
+//           <h4 className="font-semibold text-gray-800 mb-2">Selected Tests</h4>
+//           <ul className="list-disc list-inside pl-4">
+//             {selectedTests.map((test, index) => (
+//               <li key={index} className="text-gray-700">
+//                 {test} <span className="font-semibold">(₹500)</span>
+//               </li>
+//             ))}
+//           </ul>
+//         </div>
+
+//         {selectedAddons.length > 0 && (
+//           <div className="bg-gray-50 rounded-lg p-4 mb-4">
+//             <h4 className="font-semibold text-gray-800 mb-2">
+//               Selected Add-ons
+//             </h4>
+//             <ul className="list-disc list-inside pl-4">
+//               {selectedAddons.map((addon, index) => {
+//                 let price = 200;
+//                 if (addon === 'Express Delivery') price = 500;
+//                 if (addon === 'Superfast Delivery') price = 350;
+//                 return (
+//                   <li key={index} className="text-gray-700">
+//                     {addon} <span className="font-semibold">(₹{price})</span>
+//                   </li>
+//                 );
+//               })}
+//             </ul>
+//           </div>
+//         )}
+
+//         <div className="bg-gray-50 rounded-lg p-4">
+//           <div className="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
+//             <span className="text-gray-600">Subtotal:</span>
+//             <span className="font-semibold">₹{totalAmount}</span>
+//           </div>
+//           <div className="flex justify-between items-center">
+//             <span className="text-gray-600">Total:</span>
+//             <span className="font-bold text-lg text-[#37AFA2]">
+//               ₹{totalAmount}
+//             </span>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center mt-8 px-2 select-none gap-4 sm:gap-0">
+//         <button
+//           onClick={onBack}
+//           className="w-full sm:w-auto bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg cursor-pointer"
+//         >
+//           <ChevronLeft size={22} />
+//           Back
+//         </button>
+//         <button
+//           onClick={initializeRazorpayPayment}
+//           disabled={paymentLoading}
+//           className={`w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer ${
+//             paymentLoading
+//               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+//               : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
+//           }`}
+//         >
+//           {paymentLoading ? 'Processing...' : `Pay ₹${totalAmount}`}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// interface ConfirmationProps {
+//   selectedLab: Lab;
+//   appointmentDate: string;
+//   appointmentTime: string;
+//   selectedTests: string[];
+//   selectedAddons: string[];
+//   patientDetails: any;
+// }
 
 const Payment = ({
   onBack,
@@ -658,21 +919,10 @@ const Payment = ({
   appointmentTime,
   selectedTests,
   selectedAddons,
+  patientDetails,
 }: PaymentProps) => {
   const [paymentLoading, setPaymentLoading] = useState(false);
 
-  // Add the loadScript function here
-  const loadScript = (src: string) => {
-    return new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  // Calculate total amount
   const calculateTotal = () => {
     const testCost = selectedTests.length * 500; // ₹500 per test
     const addonCost = selectedAddons.reduce((total, addon) => {
@@ -685,96 +935,124 @@ const Payment = ({
 
   const totalAmount = calculateTotal();
 
-  const initializeRazorpayPayment = async () => {
-    setPaymentLoading(true);
-
-    try {
-      // Load Razorpay script
-      const res = await loadScript(
-        'https://checkout.razorpay.com/v1/checkout.js'
-      );
-      if (!res) {
-        alert('Razorpay SDK failed to load. Are you online?');
-        return;
-      }
-
-      // Create order on your backend
-      const response = await fetch('/api/create-razorpay-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: totalAmount * 100, // Razorpay expects amount in paise
-          currency: 'INR',
-          receipt: `lab_${selectedLab.id}_${Date.now()}`,
-        }),
-      });
-
-      const orderData = await response.json();
-
-      if (!orderData.id) {
-        throw new Error('Failed to create order');
-      }
-
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: orderData.amount.toString(),
-        currency: orderData.currency,
-        name: 'HealthCare Labs',
-        description: 'Lab Test Booking Payment',
-        order_id: orderData.id,
-        handler: async function (response: any) {
-          // Verify payment on your backend
-          const verificationResponse = await fetch('/api/verify-payment', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-            }),
-          });
-
-          const verificationData = await verificationResponse.json();
-
-          if (verificationData.success) {
-            onNext(); // Move to confirmation step
-          } else {
-            alert('Payment verification failed. Please contact support.');
-          }
-        },
-        theme: {
-          color: '#37AFA2',
-        },
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
-    } finally {
-      setPaymentLoading(false);
-    }
+  const handleProceedWithoutPayment = () => {
+    // Skip payment and go directly to confirmation
+    onNext();
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
-      {/* ... rest of your payment component UI ... */}
-      <button
-        onClick={initializeRazorpayPayment}
-        disabled={paymentLoading || totalAmount === 0}
-        className={`w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer ${
-          paymentLoading || totalAmount === 0
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
-        }`}
-      >
-        {paymentLoading ? 'Processing...' : `Pay ₹${totalAmount}`}
-      </button>
+      <div className="flex items-start justify-between">
+        <div className="flex items-start sm:items-center">
+          <img
+            src={selectedLab.image}
+            alt={selectedLab.name}
+            className="w-16 h-16 rounded-full mr-4 border-2 border-gray-100"
+          />
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center">
+              <h2 className="text-xl font-bold text-gray-800">
+                {selectedLab.name}
+              </h2>
+              <span className="mt-1 sm:mt-0 sm:ml-3 bg-orange-400 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center w-fit">
+                <Star size={14} className="mr-1 fill-current" />
+                {selectedLab.rating}
+              </span>
+            </div>
+            <div className="flex items-center text-gray-500 mt-1">
+              <MapPin size={16} className="mr-1.5" />
+              <p>{selectedLab.location}</p>
+            </div>
+          </div>
+        </div>
+        <div className="text-right flex-col hidden sm:flex">
+          <p className="text-lg font-bold text-gray-800">
+            Appointment Date: {appointmentDate}
+          </p>
+          <p className="text-lg font-bold text-gray-800">
+            Time Slot: {appointmentTime}
+          </p>
+        </div>
+      </div>
+      <div className="text-right sm:hidden mt-4">
+        <p className="text-sm font-bold text-gray-800">
+          Date: {appointmentDate}
+        </p>
+        <p className="text-sm font-bold text-gray-800">
+          Time: {appointmentTime}
+        </p>
+      </div>
+      <div className="border-b border-gray-200 my-6"></div>
+
+      <div className="mb-6">
+        <h3 className="font-bold text-gray-800 text-lg mb-4">Order Summary</h3>
+
+        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+          <h4 className="font-semibold text-gray-800 mb-2">Patient Details</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <p>
+              <span className="text-gray-600">Name:</span>{' '}
+              {patientDetails.firstName} {patientDetails.lastName}
+            </p>
+            <p>
+              <span className="text-gray-600">Gender:</span>{' '}
+              {patientDetails.gender}
+            </p>
+            <p>
+              <span className="text-gray-600">Age:</span> {patientDetails.age}
+            </p>
+            <p>
+              <span className="text-gray-600">Address:</span>{' '}
+              {patientDetails.address}
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+          <h4 className="font-semibold text-gray-800 mb-2">Selected Tests</h4>
+          <ul className="list-disc list-inside pl-4">
+            {selectedTests.map((test, index) => (
+              <li key={index} className="text-gray-700">
+                {test} <span className="font-semibold">(₹500)</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {selectedAddons.length > 0 && (
+          <div className="bg-gray-50 rounded-lg p-4 mb-4">
+            <h4 className="font-semibold text-gray-800 mb-2">
+              Selected Add-ons
+            </h4>
+            <ul className="list-disc list-inside pl-4">
+              {selectedAddons.map((addon, index) => {
+                let price = 200;
+                if (addon === 'Express Delivery') price = 500;
+                if (addon === 'Superfast Delivery') price = 350;
+                return (
+                  <li key={index} className="text-gray-700">
+                    {addon} <span className="font-semibold">(₹{price})</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
+            <span className="text-gray-600">Subtotal:</span>
+            <span className="font-semibold">₹{totalAmount}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">Total:</span>
+            <span className="font-bold text-lg text-[#37AFA2]">
+              ₹{totalAmount}
+            </span>
+          </div>
+        </div>
+      </div>
+
       <div className="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center mt-8 px-2 select-none gap-4 sm:gap-0">
         <button
           onClick={onBack}
@@ -784,17 +1062,116 @@ const Payment = ({
           Back
         </button>
         <button
-          onClick={onNext}
-          // disabled={selectedAddons.length === 0}
-          className="w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer "
-          //   // selectedAddons.length === 0
-          //     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          //     : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
-          // }`}
+          onClick={handleProceedWithoutPayment}
+          className="w-full sm:w-auto py-3 px-6 rounded-lg flex items-center justify-center gap-1 shadow-lg font-bold transition-colors cursor-pointer bg-[#37AFA2] hover:bg-[#2f9488] text-white"
         >
-          Proceed to Payment
+          Proceed to Confirmation
           <ChevronRight size={22} />
         </button>
+      </div>
+    </div>
+  );
+};
+
+const Confirmation = ({
+  selectedLab,
+  appointmentDate,
+  appointmentTime,
+  selectedTests,
+  selectedAddons,
+  patientDetails,
+}: ConfirmationProps) => {
+  return (
+    <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
+      <div className="flex flex-col items-center text-center">
+        <div className="mb-6 p-4 bg-white rounded-lg border border-gray-200">
+          <QRCodeSVG
+            value={JSON.stringify({
+              labId: selectedLab.id,
+              labName: selectedLab.name,
+              date: appointmentDate,
+              time: appointmentTime,
+              tests: selectedTests,
+              patient: patientDetails,
+              timestamp: new Date().toISOString(),
+            })}
+            size={200}
+            level="H"
+            includeMargin={true}
+            fgColor="#37AFA2"
+            imageSettings={{
+              src: '/logo.svg',
+              height: 40,
+              width: 40,
+              excavate: true,
+            }}
+          />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          Booking Confirmed!
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Your lab tests have been successfully booked.
+        </p>
+        <div className="w-full max-w-md bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 className="font-semibold text-lg text-gray-800 mb-4">
+            Booking Details
+          </h3>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Patient Name:</span>
+              <span className="font-medium">
+                {patientDetails.firstName} {patientDetails.lastName}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Age/Gender:</span>
+              <span className="font-medium">
+                {patientDetails.age}/{patientDetails.gender}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Lab Name:</span>
+              <span className="font-medium">{selectedLab.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Date:</span>
+              <span className="font-medium">{appointmentDate}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Time:</span>
+              <span className="font-medium">{appointmentTime}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-gray-600 mb-1">Tests:</span>
+              <ul className="list-disc list-inside text-left">
+                {selectedTests.map((test, index) => (
+                  <li key={index} className="font-medium">
+                    {test}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {selectedAddons.length > 0 && (
+              <div className="flex flex-col">
+                <span className="text-gray-600 mb-1">Add-ons:</span>
+                <ul className="list-disc list-inside text-left">
+                  {selectedAddons.map((addon, index) => (
+                    <li key={index} className="font-medium">
+                      {addon}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+        <Link
+          href="/"
+          className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg shadow-lg cursor-pointer"
+        >
+          Back to Home
+        </Link>
       </div>
     </div>
   );
@@ -810,6 +1187,7 @@ const Booking = () => {
   const [direction, setDirection] = useState(0);
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [patientDetails, setPatientDetails] = useState<any>({});
 
   useEffect(() => {
     const labId = searchParams.get('labId');
@@ -1000,11 +1378,23 @@ const Booking = () => {
             )}
 
             {currentStep === 2 && (
-              <motion.div key="step2" /* ... */>
+              <motion.div
+                key="step2"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <TestSelection
                   onBack={handlePrevStep}
                   onNext={() => {
-                    setSelectedTests(selectedTests); // Make sure this is being set
+                    setSelectedTests(selectedTests);
                     handleNextStep();
                   }}
                   selectedLab={selectedLab}
@@ -1034,21 +1424,32 @@ const Booking = () => {
                   selectedLab={selectedLab}
                   appointmentDate={formattedDate}
                   appointmentTime={selectedTime}
+                  onPatientDetailsChange={setPatientDetails}
                 />
               </motion.div>
             )}
 
             {currentStep === 4 && (
-              <motion.div key="step4" /* ... */>
+              <motion.div
+                key="step4"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <AddOns
                   onBack={handlePrevStep}
-                  onNext={() => {
-                    setSelectedAddons(selectedAddons);
-                    handleNextStep();
-                  }}
+                  onNext={handleNextStep}
                   selectedLab={selectedLab}
                   appointmentDate={formattedDate}
                   appointmentTime={selectedTime}
+                  onAddonsChange={setSelectedAddons}
                 />
               </motion.div>
             )}
@@ -1075,89 +1476,10 @@ const Booking = () => {
                   appointmentTime={selectedTime}
                   selectedTests={selectedTests}
                   selectedAddons={selectedAddons}
+                  patientDetails={patientDetails}
                 />
               </motion.div>
             )}
-
-            {/* Step 6 - Confirmation */}
-            {/* {currentStep === 6 && (
-              <motion.div
-                key="step6"
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: 'spring', stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
-                }}
-                className="w-full max-w-4xl"
-              >
-                <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-12 w-12 text-green-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                      Booking Confirmed!
-                    </h2>
-                    <p className="text-gray-600 mb-6">
-                      Your lab tests have been successfully booked.
-                    </p>
-
-                    <div className="w-full max-w-md bg-gray-50 rounded-lg p-6 mb-6">
-                      <h3 className="font-semibold text-lg text-gray-800 mb-4">
-                        Booking Details
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Lab Name:</span>
-                          <span className="font-medium">
-                            {selectedLab?.name}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Date:</span>
-                          <span className="font-medium">{formattedDate}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Time:</span>
-                          <span className="font-medium">{selectedTime}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Tests:</span>
-                          <span className="font-medium text-right">
-                            {selectedTests.join(', ')}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Link
-                      href="/"
-                      className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg shadow-lg cursor-pointer"
-                    >
-                      Back to Home
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            )} */}
 
             {currentStep === 6 && (
               <motion.div
@@ -1173,114 +1495,14 @@ const Booking = () => {
                 }}
                 className="w-full max-w-4xl"
               >
-                               {' '}
-                <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
-                                   {' '}
-                  <div className="flex flex-col items-center text-center">
-                                       {' '}
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                                           {' '}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-12 w-12 text-green-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                                               {' '}
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                                             {' '}
-                      </svg>
-                                         {' '}
-                    </div>
-                                       {' '}
-                    <Image
-                      src="/QR.png"
-                      alt="QR Code"
-                      width={150}
-                      height={150}
-                    />
-                                       {' '}
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                                            Booking Confirmed!                  
-                       {' '}
-                    </h2>
-                                       {' '}
-                    <p className="text-gray-600 mb-6">
-                                            Your lab tests have been
-                      successfully booked.                    {' '}
-                    </p>
-                                       {' '}
-                    <div className="w-full max-w-md bg-gray-50 rounded-lg p-6 mb-6">
-                                           {' '}
-                      <h3 className="font-semibold text-lg text-gray-800 mb-4">
-                                                Booking Details                
-                             {' '}
-                      </h3>
-                                           {' '}
-                      <div className="space-y-3">
-                                               {' '}
-                        <div className="flex justify-between">
-                                                   {' '}
-                          <span className="text-gray-600">Lab Name:</span>     
-                                             {' '}
-                          <span className="font-medium">
-                                                        {selectedLab?.name}     
-                                               {' '}
-                          </span>
-                                                 {' '}
-                        </div>
-                                               {' '}
-                        <div className="flex justify-between">
-                                                   {' '}
-                          <span className="text-gray-600">Date:</span>         
-                                         {' '}
-                          <span className="font-medium">{formattedDate}</span> 
-                                               {' '}
-                        </div>
-                                               {' '}
-                        <div className="flex justify-between">
-                                                   {' '}
-                          <span className="text-gray-600">Time:</span>         
-                                         {' '}
-                          <span className="font-medium">{selectedTime}</span>   
-                                             {' '}
-                        </div>
-                                               {' '}
-                        <div className="flex justify-between">
-                                                   {' '}
-                          <span className="text-gray-600">Tests:</span>         
-                                         {' '}
-                          <span className="font-medium text-right">
-                                                       {' '}
-                            {selectedTests.join(', ')}                       
-                             {' '}
-                          </span>
-                                                 {' '}
-                        </div>
-                                             {' '}
-                      </div>
-                                         {' '}
-                    </div>
-                                       {' '}
-                    <Link
-                      _
-                      href="/"
-                      className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg shadow-lg cursor-pointer"
-                    >
-                                            Back to Home                  
-                       {' '}
-                    </Link>
-                                     {' '}
-                  </div>
-                                 {' '}
-                </div>
-                             {' '}
+                <Confirmation
+                  selectedLab={selectedLab}
+                  appointmentDate={formattedDate}
+                  appointmentTime={selectedTime}
+                  selectedTests={selectedTests}
+                  selectedAddons={selectedAddons}
+                  patientDetails={patientDetails}
+                />
               </motion.div>
             )}
           </AnimatePresence>
