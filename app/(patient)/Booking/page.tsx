@@ -1192,6 +1192,7 @@ const Booking = () => {
   useEffect(() => {
     const labId = searchParams.get('labId');
     if (labId) {
+      // TODO: connect to your labs data source
       const lab = labsData.find((lab) => lab.id === parseInt(labId));
       if (lab) {
         setSelectedLab(lab);
