@@ -82,9 +82,6 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
 
-  if (req.headers.get('x-service-key') !== process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-}
 
   try {
     const labs = await db.lab.findMany({

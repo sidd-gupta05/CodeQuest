@@ -63,8 +63,8 @@ const ITEMS_PER_PAGE = 7;
 
 const Bookappoientment = () => {
   const searchParams = useSearchParams();
-  const [labs, setLabs] = useState<Lab[]>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [labs, setLabs] = useState<Lab[]>([]); // Define labs state
   const [searchFilters, setSearchFilters] = useState({
     searchQuery: '',
     location: '',
@@ -94,29 +94,48 @@ const Bookappoientment = () => {
     setCurrentPage(1);
   }, [searchParams]);
 
-  useEffect(() => {
-    async function fetchLabs() {
-      const res = await fetch('http://localhost:3000/api/labs', {
-        method: 'GET',
-        headers: {
-          'x-service-key': process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-        },
-      });
+async function fetchLabs() {
+  try {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const res = await fetch(`http://localhost:3000/api/labs`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-service-key': process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+      },
+    });
 
-      if (!res.ok) {
-        throw new Error(
-          `Failed to fetch lab details: ${res.status} ${res.statusText}`
-        );
-      }
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({})); // Try to get error details
+      throw new Error(
+        `Failed to fetch lab details: ${res.status} ${res.statusText}`,
+        { cause: errorData } // Attach additional error details
+      );
+    }
 
-      const data = await res.json(); // 1️⃣ raw DB format
-      const labsForUI = mapLabs(data);
-      console.log(labsForUI[0]);
+    const data = await res.json();
+    console.log('Fetched labs:', data[0].image);
+    const labsForUI = mapLabs(data);
+    setLabs(labsForUI);
+    
+    // For debugging, consider using a logger that's disabled in production
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetched labs:', labsForUI[0]);
     }
     
+    return labsForUI; // Return the data in case caller needs it
+  } catch (err) {
+    console.error('Error fetching labs:', err);
+    // Consider adding error state or user notification
+    setLabs([]); // Reset labs or set error state
+    throw err; // Re-throw if caller needs to handle the error
+  }
+}
 
-    setLabs(labsData);
-  });
+  // Initial state with static data
+  useEffect(() => {
+    fetchLabs();
+  }, []); // ✅ runs only once on mount
 
   const handleLoveClick = (id: number) => {
     setLabs(
@@ -169,7 +188,7 @@ const Bookappoientment = () => {
   }, []);
 
   const filteredAndSortedLabs = useMemo(() => {
-    let filtered = [...labs];
+    let filtered = [...(labs ?? [])];
 
     if (searchFilters.searchQuery) {
       const query = searchFilters.searchQuery.toLowerCase();
@@ -923,7 +942,7 @@ const Bookappoientment = () => {
                                   labId: lab.id,
                                 },
                               }}
-                              className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg cursor-pointer md:mt-22 ${
+                              className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg cursor-pointer md:mt-22 text-center ${
                                 lab.nextAvailable === 'Not Available'
                                   ? 'bg-gray-300 text-gray-500 pointer-events-none'
                                   : 'bg-[#2A787A] hover:bg-[#1e3232] text-white'

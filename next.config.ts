@@ -5,10 +5,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'placehold.co' }
+      { protocol: 'https', hostname: 'placehold.co' },
+      { protocol: 'https', hostname: '**.supabase.co' }
     ],
     dangerouslyAllowSVG: true,
-    domains: ['placehold.co'],
+    domains: ['placehold.co', 'unrlzieuyrsibokkqqbm.supabase.co'],
   },
 };
 

@@ -18,16 +18,15 @@ export async function fetchLabDetailsAndSave() {
     }
 
 const data = await res.json();        // 1️⃣ raw DB format
-const labsForUI = mapLabs(data); 
-console.log(labsForUI);
-// 2️⃣ transform into UI format
-// fs.writeFileSync(                     // 3️⃣ save as pretty JSON
-//   'lab-details.json',
-//   JSON.stringify(labsForUI, null, 2),
-//   'utf-8'
-// );
+const labsForUI = mapLabs(data);      // 2️⃣ transform into UI format
+fs.writeFileSync(                     // 3️⃣ save as pretty JSON
+  'lab-details.json',
+  JSON.stringify(labsForUI, null, 2),
+  'utf-8'
+);
 
-    // console.log('✅ Lab details saved to lab-details.json');
+
+    console.log('✅ Lab details saved to lab-details.json');
   } catch (err) {
     console.error('❌ Error fetching lab details:', err);
   }

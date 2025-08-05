@@ -8,9 +8,10 @@ const Stepper = ({ currentStep }: StepperProps) => {
   const steps = [
     { number: 1, title: 'Date & Time' },
     { number: 2, title: 'Test Selection' },
-    { number: 3, title: 'Add ons' },
-    { number: 4, title: 'Payment' },
-    { number: 5, title: 'Confirmation' },
+    { number: 3, title: 'Patient details' },
+    { number: 4, title: 'Add ons' },
+    { number: 5, title: 'Payment' },
+    { number: 6, title: 'Confirmation' },
   ];
 
   return (
