@@ -16,7 +16,7 @@ const Calendar = ({ selectedDate, onDateChange }: CalendarProps) => {
 
   const handlePrevMonth = () => {
     if (currentMonth === 0) {
-      setCurrentMonth(11);
+      setCurrentMonth(11);   
       setCurrentYear(currentYear - 1);
     } else {
       setCurrentMonth(currentMonth - 1);
