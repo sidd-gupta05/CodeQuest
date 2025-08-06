@@ -52,6 +52,14 @@ export default function DashboardPage() {
               Profile
             </a>
           </li>
+          { localStorage.getItem('accountType') === 'PATIENT' && 
+           
+          <li>
+            <a href={('/BookAppoientment')} className="hover:text-teal-400">
+              Book Appointment
+            </a>
+          </li>
+          }
           <li>
             <a href="#" className="hover:text-teal-400">
               Settings
