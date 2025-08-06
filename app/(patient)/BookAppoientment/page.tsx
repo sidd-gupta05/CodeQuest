@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, use } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/navbar';
@@ -19,10 +19,7 @@ import LabSearch from '@/components/lab-search';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 
-// import { labsData, allLabTests } from '@/data/labsData';
-import { labsData } from '@/lab-details';
-import { mapLabs } from '@/data/mapper';
-import { set } from 'date-fns';
+import { labsData, allLabTests } from '@/data/labsData';
 
 interface Lab {
   id: number;
@@ -51,6 +48,7 @@ interface Filters {
   experience: number;
   collectionTypes: string[];
   rating: number;
+  distance: number;
 }
 
 const getToday = () => {
@@ -63,16 +61,14 @@ const ITEMS_PER_PAGE = 7;
 
 const Bookappoientment = () => {
   const searchParams = useSearchParams();
+  const [labs, setLabs] = useState<Lab[]>(labsData);
   const [currentPage, setCurrentPage] = useState(1);
-  const [labs, setLabs] = useState<Lab[]>([]); // Define labs state
   const [searchFilters, setSearchFilters] = useState({
     searchQuery: '',
     location: '',
     date: '',
   });
-  const [viewMode, setViewMode] = useState<'list' | 'map'>(
-    'list' as 'list' | 'map'
-  );
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
   const [filters, setFilters] = useState<Filters>({
     testType: '',
@@ -80,6 +76,7 @@ const Bookappoientment = () => {
     experience: 0,
     collectionTypes: [],
     rating: 0,
+    distance: 25,
   });
 
   const [sortBy, setSortBy] = useState<string>('rating');
@@ -94,49 +91,6 @@ const Bookappoientment = () => {
     setCurrentPage(1);
   }, [searchParams]);
 
-async function fetchLabs() {
-  try {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const res = await fetch(`http://localhost:3000/api/labs`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-service-key': process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-      },
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({})); // Try to get error details
-      throw new Error(
-        `Failed to fetch lab details: ${res.status} ${res.statusText}`,
-        { cause: errorData } // Attach additional error details
-      );
-    }
-
-    const data = await res.json();
-    console.log('Fetched labs:', data[0].image);
-    const labsForUI = mapLabs(data);
-    setLabs(labsForUI);
-    
-    // For debugging, consider using a logger that's disabled in production
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Fetched labs:', labsForUI[0]);
-    }
-    
-    return labsForUI; // Return the data in case caller needs it
-  } catch (err) {
-    console.error('Error fetching labs:', err);
-    // Consider adding error state or user notification
-    setLabs([]); // Reset labs or set error state
-    throw err; // Re-throw if caller needs to handle the error
-  }
-}
-
-  // Initial state with static data
-  useEffect(() => {
-    fetchLabs();
-  }, []); // ✅ runs only once on mount
-
   const handleLoveClick = (id: number) => {
     setLabs(
       labs.map((lab) =>
@@ -145,7 +99,6 @@ async function fetchLabs() {
     );
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFilterChange = (filterName: keyof Filters, value: any) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
     setCurrentPage(1);
@@ -166,14 +119,15 @@ async function fetchLabs() {
       experience: 0,
       collectionTypes: [],
       rating: 0,
+      distance: 25,
     });
     setCurrentPage(1);
     document
       .querySelectorAll('input[type="radio"]')
-      .forEach((radio) => ((radio as HTMLInputElement).checked = false));
+      .forEach((radio) => (radio.checked = false));
     document
       .querySelectorAll('input[type="checkbox"]')
-      .forEach((checkbox) => ((checkbox as HTMLInputElement).checked = false));
+      .forEach((checkbox) => (checkbox.checked = false));
   };
 
   const MapBox = dynamic(() => import('@/components/MapContainer'), {
@@ -188,7 +142,7 @@ async function fetchLabs() {
   }, []);
 
   const filteredAndSortedLabs = useMemo(() => {
-    let filtered = [...(labs ?? [])];
+    let filtered = [...labs];
 
     if (searchFilters.searchQuery) {
       const query = searchFilters.searchQuery.toLowerCase();
@@ -212,7 +166,6 @@ async function fetchLabs() {
       );
     }
 
-    // Apply existing filters
     if (filters.testType) {
       filtered = filtered.filter((lab) => lab.testType === filters.testType);
     }
@@ -254,6 +207,11 @@ async function fetchLabs() {
             return true;
         }
       });
+    }
+
+    if (filters.distance > 0) {
+      // Distance filtering placeholder - would need actual implementation
+      filtered = filtered.filter((lab) => true); // Currently not filtering by distance
     }
 
     if (filters.collectionTypes.length > 0) {
@@ -458,6 +416,32 @@ async function fetchLabs() {
                           </label>
                         </li>
                       </ul>
+                    </div>
+
+                    {/* Distance Range Slider */}
+                    <div>
+                      <h3 className="font-semibold mb-2">Distance Range</h3>
+                      <div className="px-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="50"
+                          value={filters.distance}
+                          step="1"
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          onChange={(e) =>
+                            handleFilterChange(
+                              'distance',
+                              parseInt(e.target.value)
+                            )
+                          }
+                        />
+                        <div className="flex justify-between text-sm text-gray-600 mt-1">
+                          <span>0 km</span>
+                          <span>{filters.distance} km</span>
+                          <span>50 km</span>
+                        </div>
+                      </div>
                     </div>
 
                     <div>
@@ -671,6 +655,29 @@ async function fetchLabs() {
                   </ul>
                 </div>
 
+                {/* Distance Range Slider */}
+                <div>
+                  <h3 className="font-semibold mb-2">Distance Range</h3>
+                  <div className="px-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="50"
+                      value={filters.distance}
+                      step="1"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      onChange={(e) =>
+                        handleFilterChange('distance', parseInt(e.target.value))
+                      }
+                    />
+                    <div className="flex justify-between text-sm text-gray-600 mt-1">
+                      <span>0 km</span>
+                      <span>{filters.distance} km</span>
+                      <span>50 km</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <h3 className="font-semibold mb-2">Experience</h3>
                   <ul className="space-y-1 text-gray-600">
@@ -840,12 +847,10 @@ async function fetchLabs() {
                         transition={{ duration: 0.5, ease: 'easeInOut' }}
                         className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
                       >
-                        <Image
+                        <img
                           src={lab.image}
                           alt={lab.name}
-                          width={80}
-                          height={80}
-                          className="sm:w-24 sm:h-24 rounded-lg object-cover"
+                          className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
                         />
                         <div className="flex-1 w-full">
                           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
