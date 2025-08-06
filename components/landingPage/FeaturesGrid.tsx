@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { UserPlus, Calendar, FileText, Tag } from 'lucide-react';
+import Image from 'next/image';
 
 const animationVariants = {
   fromTopLeft: {
@@ -132,7 +133,7 @@ export default function FeaturesGrid() {
                 DISCOUNT CODE <strong>LABSPHERE20</strong>
               </p>
             </div>
-            <img src="/barcode.svg" alt="barcode" width={500} height={40} />
+            <Image src="/barcode.svg" alt="barcode" width={500} height={40} />
           </motion.div>
         </div>
 
@@ -167,7 +168,7 @@ export default function FeaturesGrid() {
             <br />
             at your doorstep
           </p>
-          <img
+          <Image
             src="/drlab.png"
             alt="Dr Lal"
             width={100}
@@ -190,15 +191,19 @@ export default function FeaturesGrid() {
           variants={animationVariants.fromBottomLeft}
           className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl shadow-2xl p-4 text-white text-5xl font-bold text-left relative overflow-hidden"
         >
-          <img
+          <Image
             src="/OutGuard.svg"
             alt="OutGuard"
-            className="absolute bottom-0 right-0 w-44 h-44 opacity-70 [transform:rotate(360deg)]"
+            width={176}
+            height={176}
+            className="absolute bottom-0 right-0 opacity-70 [transform:rotate(360deg)]"
           />
-          <img
+          <Image
             src="/InGuard.svg"
             alt="InGuard"
-            className="absolute bottom-0 right-0 w-40 h-40 opacity-100 [transform:rotate(360deg)] z-10"
+            width={160}
+            height={160}
+            className="absolute bottom-0 right-0 opacity-100 [transform:rotate(360deg)] z-10"
           />
           <div className="relative z-20 py-4">
             <div className="mb-4">Secure.</div>
@@ -213,7 +218,7 @@ export default function FeaturesGrid() {
           variants={animationVariants.fromCenter}
           className="hidden sm:flex bg-white rounded-4xl shadow-xl flex flex-col items-center justify-center p-6 w-full"
         >
-          <img src="/logo.svg" alt="logo" width={120} height={120} />
+          <Image src="/logo.svg" alt="logo" width={120} height={120} />
           <div className="text-[#2B7C7E] text-5xl font-bold mt-4">
             Labsphere
           </div>
@@ -226,7 +231,7 @@ export default function FeaturesGrid() {
           className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl flex flex-col justify-center items-center text-white text-center"
         >
           <h2 className="font-bold text-3xl">Mobile Compatible</h2>
-          <img src="/iphone.svg" alt="iphone" width={200} height={250} />
+          <Image src="/iphone.svg" alt="iphone" width={200} height={250} />
         </motion.div>
 
         {/* Dashboard & Appointment Row */}
@@ -297,7 +302,7 @@ export default function FeaturesGrid() {
                 Antop Hill, Wadala, Mumbai
               </p>
             </div>
-            <img
+            <Image
               src="/calendar.png"
               alt="calendar"
               width={400}

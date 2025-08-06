@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**.supabase.co' }
     ],
     dangerouslyAllowSVG: true,
-    domains: ['placehold.co', 'unrlzieuyrsibokkqqbm.supabase.co'],
+    
   },
 };
 

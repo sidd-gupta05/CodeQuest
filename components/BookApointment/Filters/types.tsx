@@ -6,8 +6,6 @@ export interface Lab {
   location: string;
   nextAvailable: string;
   rating: number;
-  votes: number;
-  totalVotes: number;
   experience: number;
   isAvailable: boolean;
   isLoved: boolean;

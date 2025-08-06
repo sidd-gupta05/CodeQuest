@@ -41,6 +41,8 @@ export default function OptionsPage() {
                 Choose Account Type
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                
+                {/* //TODO Below Button can be made into component with some props*/}
                 {/* Patient */}
                 <button
                   className={`group flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
@@ -81,48 +83,6 @@ export default function OptionsPage() {
                     &#x1F9D1;
                   </span>
                   <span className="text-sm font-medium">Patient</span>
-                </button>
-
-                {/* Doctor */}
-                <button
-                  className={`group flex-1 flex flex-col items-center p-4 rounded-lg shadow-sm transition-all duration-200 cursor-pointer ${
-                    accountType === 'doctor'
-                      ? 'text-white'
-                      : 'text-gray-700 hover:text-white'
-                  }`}
-                  onClick={() => {
-                    setAccountType('doctor');
-                    localStorage.setItem('accountType', 'doctor');
-                    router.push('/auth/sign_in');
-                  }}
-                  style={{
-                    background:
-                      accountType === 'doctor'
-                        ? 'linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)'
-                        : undefined,
-                  }}
-                  onMouseEnter={(e) => {
-                    if (accountType !== 'doctor') {
-                      e.currentTarget.style.background =
-                        'linear-gradient(26.61deg, #05303B 0.93%, #2B7C7E 101.37%)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (accountType !== 'doctor') {
-                      e.currentTarget.style.background = '';
-                    }
-                  }}
-                >
-                  <span
-                    className={`text-2xl mb-1 transition-colors ${
-                      accountType === 'doctor'
-                        ? 'text-white'
-                        : 'text-teal-600 group-hover:text-white'
-                    }`}
-                  >
-                    &#x2695;
-                  </span>
-                  <span className="text-sm font-medium">Doctor</span>
                 </button>
 
                 {/* Lab */}
