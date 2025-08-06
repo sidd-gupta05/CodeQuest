@@ -7,7 +7,7 @@ function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div>
+    <>
       <nav className="backdrop-blur-md bg-gradient-to-r from-[#1e5f61]/60 to-[#0c2d34]/60 border border-white/20 rounded-full px-6 py-2 mx-auto mt-6 max-w-[95%] shadow-lg w-full flex items-center justify-between h-20 select-none">
         {/* Left: Logo */}
         <div className="flex items-center gap-2 min-w-[120px]">
@@ -118,7 +118,7 @@ function Navbar() {
           </Link>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
