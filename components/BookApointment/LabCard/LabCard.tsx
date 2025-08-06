@@ -6,6 +6,7 @@ import { LabInfo } from './LabInfo';
 import { LabAvailability } from './LabAvailability';
 import { LabActions } from './LabActions';
 import { Star } from 'lucide-react';
+import Image from 'next/image';
 
 interface LabCardProps {
   lab: Lab;
@@ -22,10 +23,12 @@ export const LabCard: React.FC<LabCardProps> = ({ lab, onLoveClick }) => (
     transition={{ duration: 0.5, ease: 'easeInOut' }}
     className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
   >
-    <img
+    <Image
       src={lab.image}
       alt={lab.name}
-      className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover"
+      width={80}
+      height={80}
+      className="sm:w-24 sm:h-24 rounded-lg object-cover"
     />
     <div className="flex-1 w-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">

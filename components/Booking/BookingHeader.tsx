@@ -1,6 +1,7 @@
 'use client';
 
 import { Star, MapPin } from 'lucide-react';
+import Image from 'next/image';
 
 interface BookingHeaderProps {
   selectedLab: any;
@@ -16,10 +17,12 @@ export default function BookingHeader({
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-start sm:items-center">
-        <img
+        <Image
           src={selectedLab.image}
           alt={selectedLab.name}
-          className="w-16 h-16 rounded-full mr-4 border-2 border-gray-100"
+          width={64}
+          height={64}
+          className="rounded-full mr-4 border-2 border-gray-100"
         />
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center">
