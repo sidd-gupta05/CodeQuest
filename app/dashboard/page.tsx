@@ -13,23 +13,30 @@ export default function DashboardPage() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [user, setUser] = useState<User | null>(null);
-  useEffect(() => {
-    // Check if user is authenticated
+  // useEffect(() => {
+  //   // Check if user is authenticated
 
-    const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      console.log('Current user:', user?.id, user?.email, user?.user_metadata.role);
-      setUser(user);
+  //   const checkAuth = async () => {
+  //     const {
+  //       data: { user },
+  //     } = await supabase.auth.getUser();
+  //     console.log('Current user:', user?.id, user?.email, user?.user_metadata.role);
+  //     setUser(user);
 
-      if (!user) {
-        router.push('/optionss?redirectTo=/dashboard');
-      }
-    };
+  //     if (!user) {
+  //       router.push('/optionss?redirectTo=/dashboard');
+  //     }
+  //   };
 
-    checkAuth();
-  }, [router]);
+  //   checkAuth();
+  // }, [router]);
+
+    const handleLogout = async () => {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+    });
+    window.location.href = '/';
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -48,12 +55,12 @@ export default function DashboardPage() {
             </a>
           </li>
           <li>
-            <a href={"/dashboard"+(localStorage.getItem('accountType') === 'LAB' ? '/lab/profile' : '/profile')} className="hover:text-teal-400">
+            <a href={"/dashboard"+(user?.role === 'LAB' ? '/lab/profile' : '/profile')} className="hover:text-teal-400">
               Profile
             </a>
           </li>
-          { localStorage.getItem('accountType') === 'PATIENT' && 
-           
+          { user?.role === 'PATIENT' &&
+
           <li>
             <a href={('/BookAppoientment')} className="hover:text-teal-400">
               Book Appointment
@@ -67,7 +74,9 @@ export default function DashboardPage() {
           </li>
           <li>
             <a href="#" className="hover:text-teal-400">
-              Logout
+              <button onClick={handleLogout}>
+                Logout
+              </button>
             </a>
           </li>
         </ul>
@@ -88,7 +97,7 @@ export default function DashboardPage() {
           Welcome to your dashboard! You can manage your profile, settings, and
           more here.
         </p>
-        <p>Your role is {localStorage.getItem('accountType') || 'User'}</p>
+        <p>Your role is {user?.role || 'User'}</p>
       </main>
     </div>
   );

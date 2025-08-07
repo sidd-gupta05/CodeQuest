@@ -60,7 +60,7 @@ function Navbar() {
         <ul className="hidden md:flex gap-4 lg:gap-8 text-white font-medium text-base justify-center flex-1">
           <li>
             <Link
-              href="/BookAppoientment"
+              href="/BookAppointment"
               className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Book Appointment
@@ -106,7 +106,7 @@ function Navbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden flex flex-col items-center bg-[#0c2d34] text-white gap-4 py-4 mt-2 rounded-3xl mx-auto w-[95%] shadow-lg">
-          <Link href="/BookAppoientment">Book Appointment</Link>
+          <Link href="/BookAppointment">Book Appointment</Link>
           <Link href="/Trackreport">Track report</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/contacts">Contact Us</Link>
