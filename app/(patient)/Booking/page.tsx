@@ -10,8 +10,6 @@ import Stepper from '@/components/stepper';
 import Calendar from '@/components/calendar';
 import Link from 'next/link';
 import { Star, MapPin, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
-import Script from 'next/script';
-
 import {
   AddOns,
   Payment,
