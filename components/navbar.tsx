@@ -60,7 +60,7 @@ function Navbar() {
         <ul className="hidden md:flex gap-4 lg:gap-8 text-white font-medium text-base justify-center flex-1">
           <li>
             <Link
-              href="/BookAppoientment"
+              href="/BookAppointment"
               className="text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2"
             >
               Book Appointment
