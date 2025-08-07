@@ -17,7 +17,13 @@ const LabSearch = () => {
     if (location) queryParams.append('location', location);
     if (date) queryParams.append('date', date);
 
-    router.push(`/BookAppoientment?${queryParams.toString()}`);
+    router.push(`/BookAppointment?${queryParams.toString()}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   return (
@@ -43,6 +49,7 @@ const LabSearch = () => {
                 className="pl-10 pr-3 py-2 border-r-0 sm:border-r-2 border-[#E6E8EE] w-full sm:w-72 text-black focus:outline-none bg-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
             </div>
 
@@ -56,6 +63,7 @@ const LabSearch = () => {
                 className="pl-10 pr-3 py-2 border-r-0 sm:border-r-2 border-[#E6E8EE] w-full text-black focus:outline-none bg-transparent"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
             </div>
 
@@ -69,6 +77,7 @@ const LabSearch = () => {
                 className="pl-10 pr-3 py-2 w-full text-[#6b7684] focus:outline-none bg-transparent"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
             </div>
             {/* Search Button with Search Icon */}

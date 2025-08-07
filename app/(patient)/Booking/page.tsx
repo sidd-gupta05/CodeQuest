@@ -10,8 +10,16 @@ import Stepper from '@/components/stepper';
 import Calendar from '@/components/calendar';
 import Link from 'next/link';
 import { Star, MapPin, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import Script from 'next/script';
 
-import { AddOns, Payment, TestSelection, PatientDetails, TimeSlots, Confirmation } from '@/components/Booking';
+import {
+  AddOns,
+  Payment,
+  TestSelection,
+  PatientDetails,
+  TimeSlots,
+  Confirmation,
+} from '@/components/Booking';
 import Image from 'next/image';
 
 export default function Booking() {
@@ -232,17 +240,15 @@ export default function Booking() {
               >
                 <TestSelection
                   onBack={handlePrevStep}
-                  onNext={() => {
-                    setSelectedTests(selectedTests);
-                    handleNextStep();
-                  }}
+                  onNext={handleNextStep} // Remove the manual setSelectedTests here
                   selectedLab={selectedLab}
                   appointmentDate={formattedDate}
                   appointmentTime={selectedTime}
+                  selectedTests={selectedTests} // Pass the current selected tests
+                  onTestsChange={setSelectedTests} // Pass the setter function
                 />
               </motion.div>
             )}
-
             {currentStep === 3 && (
               <motion.div
                 key="step3"
@@ -267,7 +273,6 @@ export default function Booking() {
                 />
               </motion.div>
             )}
-
             {currentStep === 4 && (
               <motion.div
                 key="step4"
@@ -292,7 +297,6 @@ export default function Booking() {
                 />
               </motion.div>
             )}
-
             {currentStep === 5 && (
               <motion.div
                 key="step5"
@@ -319,7 +323,6 @@ export default function Booking() {
                 />
               </motion.div>
             )}
-
             {currentStep === 6 && (
               <motion.div
                 key="step6"

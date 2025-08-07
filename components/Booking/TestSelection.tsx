@@ -11,6 +11,8 @@ interface TestSelectionProps {
   selectedLab: any;
   appointmentDate: string;
   appointmentTime: string;
+  selectedTests: string[]; 
+  onTestsChange: (tests: string[]) => void; 
 }
 
 export default function TestSelection({
@@ -19,8 +21,10 @@ export default function TestSelection({
   selectedLab,
   appointmentDate,
   appointmentTime,
+  selectedTests,
+  onTestsChange,
 }: TestSelectionProps) {
-  const [selectedTests, setSelectedTests] = useState<string[]>([]);
+  // const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -48,12 +52,12 @@ export default function TestSelection({
   );
 
   const handleTestToggle = (testName: string) => {
-    setSelectedTests((prev) =>
-      prev.includes(testName)
-        ? prev.filter((test) => test !== testName)
-        : [...prev, testName]
-    );
+    const updatedTests = selectedTests.includes(testName)
+      ? selectedTests.filter((test: string) => test !== testName)
+      : [...selectedTests, testName];
+    onTestsChange(updatedTests); 
   };
+
 
   const handleSelectAddons = () => {
     onNext();
