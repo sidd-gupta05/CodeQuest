@@ -1,23 +1,23 @@
-// 'use client';
+'use client';
 
-// import { useState } from 'react';
-// import BookingHeader from './BookingHeader';
-// import BookingNavigation from './BookingNavigation';
+import { useState, useEffect } from 'react';
+import BookingHeader from './BookingHeader';
+import { loadRazorpayScript } from '@/utils/loadScript';
 
-// interface PaymentProps {
-//   onBack: () => void;
-//   onNext: () => void;
-//   selectedLab: any;
-//   appointmentDate: string;
-//   appointmentTime: string;
-//   selectedTests: string[];
-//   selectedAddons: string[];
-//   patientDetails: any;
-// }
+interface PaymentProps {
+  onBack: () => void;
+  onNext: () => void;
+  selectedLab: any;
+  appointmentDate: string;
+  appointmentTime: string;
+  selectedTests: string[];
+  selectedAddons: string[];
+  patientDetails: any;
+}
 
-// export default function Payment({
-//   onBack,
-//   onNext,
+export default function Payment({
+  onBack,
+  onNext,
 //   selectedLab,
 //   appointmentDate,
 //   appointmentTime,
@@ -134,8 +134,11 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BookingHeader from './BookingHeader';
+import BookingNavigation from './BookingNavigation';
+import { loadRazorpayScript } from '@/utils/loadScript';
+import { initializeRazorpayPayment } from '@/utils/razorpay';
 
 interface PaymentProps {
   onBack: () => void;
@@ -159,6 +162,16 @@ export default function Payment({
   patientDetails,
 }: PaymentProps) {
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadRazorpay = async () => {
+      const loaded = await loadRazorpayScript();
+      setRazorpayLoaded(loaded);
+    };
+    loadRazorpay();
+  }, []);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const calculateTotal = () => {
     const testCost = selectedTests.length * 500;
@@ -172,10 +185,182 @@ export default function Payment({
 
   const totalAmount = calculateTotal();
 
-  const handlePayment = async () => {
-    setPaymentLoading(true);
+  // const handlePayment = async () => {
+  //   setPaymentLoading(true);
 
+  //   try {
+  //     const orderResponse = await fetch('/api/create-razorpay-order', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         amount: totalAmount * 100,
+  //         currency: 'INR',
+  //         receipt: `order_${Date.now()}`,
+  //         notes: {
+  //           labId: selectedLab.id,
+  //           patientId: patientDetails.id,
+  //           tests: selectedTests.join(', '),
+  //         },
+  //       }),
+  //     });
+
+  //     // First check if response is OK
+  //     if (!orderResponse.ok) {
+  //       // Try to get error message from response
+  //       let errorMsg = 'Failed to create order';
+  //       try {
+  //         const errorData = await orderResponse.json();
+  //         errorMsg = errorData.error || errorData.message || errorMsg;
+  //       } catch (e) {
+  //         // If we can't parse JSON, use the status text
+  //         errorMsg = orderResponse.statusText;
+  //       }
+  //       throw new Error(errorMsg);
+  //     }
+
+  //     // Then try to parse JSON
+  //     let orderData;
+  //     try {
+  //       orderData = await orderResponse.json();
+  //     } catch (e) {
+  //       throw new Error('Invalid response from server');
+  //     }
+
+  //     // Rest of your payment handling code...
+  //     const script = document.createElement('script');
+  //     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+  //     script.async = true;
+
+  //     script.onload = () => {
+  //       const options = {
+  //         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+  //         amount: orderData.amount,
+  //         currency: orderData.currency,
+  //         name: 'Lab Booking System',
+  //         description: `Booking for ${selectedTests.length} tests`,
+  //         order_id: orderData.id,
+  //         handler: async function (response: any) {
+  //           const verificationResponse = await fetch('/api/verify-payment', {
+  //             method: 'POST',
+  //             headers: {
+  //               'Content-Type': 'application/json',
+  //             },
+  //             body: JSON.stringify(response),
+  //           });
+
+  //           if (!verificationResponse.ok) {
+  //             throw new Error('Payment verification failed');
+  //           }
+
+  //           const verificationData = await verificationResponse.json();
+  //           if (verificationData.success) {
+  //             onNext();
+  //           } else {
+  //             alert('Payment verification failed');
+  //           }
+  //         },
+  //         prefill: {
+  //           name: `${patientDetails.firstName} ${patientDetails.lastName}`,
+  //           email: patientDetails.email || '',
+  //           contact: patientDetails.phone || '',
+  //         },
+  //         theme: {
+  //           color: '#37AFA2',
+  //         },
+  //       };
+
+  //       // @ts-ignore
+  //       const rzp = new window.Razorpay(options);
+  //       rzp.open();
+  //     };
+
+  //     document.body.appendChild(script);
+  //   } catch (error) {
+  //     console.error('Payment error:', error);
+  //     alert(
+  //       `Payment failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+  //     );
+  //   } finally {
+  //     setPaymentLoading(false);
+  //   }
+  // };
+
+  const handlePayment = async () => {
     try {
+      setPaymentLoading(true);
+      
+      if (!razorpayLoaded) {
+        throw new Error('Razorpay SDK failed to load');
+      }
+
+      // Create order
+      const response = await fetch('/api/razorpay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: totalAmount * 100, // Convert to paise
+          currency: 'INR',
+          receipt: `order_${Date.now()}`,
+          notes: {
+            labId: selectedLab.id,
+            patientId: patientDetails.id,
+            tests: selectedTests.join(', '),
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create order');
+      }
+
+      const data = await response.json();
+
+      // Initialize Razorpay
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'Labsphere',
+        description: `Booking for ${selectedTests.length} tests`,
+        order_id: data.id,
+        handler: async function (response: any) {
+          const verifyResponse = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          const verifyData = await verifyResponse.json();
+          
+          if (verifyData.success) {
+            onNext(); // Proceed to confirmation
+          } else {
+            throw new Error('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: `${patientDetails.firstName} ${patientDetails.lastName}`,
+          email: patientDetails.email || '',
+          contact: patientDetails.phone || '',
+        },
+        theme: {
+          color: '#37AFA2',
+        },
+      };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
       const orderResponse = await fetch('/api/create-razorpay-order', {
         method: 'POST',
         headers: {
@@ -193,29 +378,14 @@ export default function Payment({
         }),
       });
 
-      // First check if response is OK
       if (!orderResponse.ok) {
-        // Try to get error message from response
-        let errorMsg = 'Failed to create order';
-        try {
-          const errorData = await orderResponse.json();
-          errorMsg = errorData.error || errorData.message || errorMsg;
-        } catch (e) {
-          // If we can't parse JSON, use the status text
-          errorMsg = orderResponse.statusText;
-        }
-        throw new Error(errorMsg);
+        const errorData = await orderResponse.json();
+        throw new Error(errorData.error || 'Failed to create order');
       }
 
-      // Then try to parse JSON
-      let orderData;
-      try {
-        orderData = await orderResponse.json();
-      } catch (e) {
-        throw new Error('Invalid response from server');
-      }
+      const orderData = await orderResponse.json();
 
-      // Rest of your payment handling code...
+      // Load Razorpay script
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
@@ -228,7 +398,7 @@ export default function Payment({
           name: 'Lab Booking System',
           description: `Booking for ${selectedTests.length} tests`,
           order_id: orderData.id,
-          handler: async function (response: any) {
+          handler: async (response: any) => {
             const verificationResponse = await fetch('/api/verify-payment', {
               method: 'POST',
               headers: {
@@ -259,8 +429,7 @@ export default function Payment({
         };
 
         // @ts-ignore
-        const rzp = new window.Razorpay(options);
-        rzp.open();
+        new window.Razorpay(options).open();
       };
 
       document.body.appendChild(script);
