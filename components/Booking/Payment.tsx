@@ -100,7 +100,6 @@ export default function Payment({
         image: '/logo.svg',
         order_id: orderData.id,
         handler: async function (response: any) {
-          // Verify payment on server
           const verificationResponse = await fetch(
             '/api/razorpay/verify-payment',
             {
