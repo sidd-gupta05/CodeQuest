@@ -1,5 +1,9 @@
+// app/api/send-confirmation/route.ts
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import QRCode from 'qrcode';
+import fs from 'fs';
+import path from 'path';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -14,9 +18,42 @@ export async function POST(request: Request) {
       );
     }
 
-    // Use your Resend account email for testing
-    const testEmail = 'siddharthgupta2482005@gmail.com'; // Your Resend account email
-    const targetEmail = 'siddharth2482005@gmail.com'; // The email you want to reach
+    // Ensure qrcodes directory exists
+    const qrDir = path.join(process.cwd(), 'public', 'qrcodes');
+    if (!fs.existsSync(qrDir)) {
+      fs.mkdirSync(qrDir, { recursive: true });
+    }
+
+    // Generate QR code data
+    const qrData = JSON.stringify({
+      bookingId: bookingDetails.bookingId,
+      labId: bookingDetails.lab.id,
+      labName: bookingDetails.lab.name,
+      date: bookingDetails.date,
+      time: bookingDetails.time,
+      tests: bookingDetails.tests,
+      addons: bookingDetails.addons,
+      patient: bookingDetails.patient,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Generate and save QR code
+    const qrPath = path.join(qrDir, `${bookingDetails.bookingId}.png`);
+    await QRCode.toFile(qrPath, qrData, {
+      errorCorrectionLevel: 'H',
+      margin: 1,
+      color: {
+        dark: '#37AFA2',
+        light: '#ffffff',
+      },
+      width: 200,
+      type: 'png',
+    });
+
+    const qrPublicUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/qrcodes/${bookingDetails.bookingId}.png`;
+
+    const testEmail = 'siddharthgupta2482005@gmail.com';
+    const targetEmail = 'siddharth2482005@gmail.com';
 
     const emailHtml = `
     <!DOCTYPE html>
@@ -66,20 +103,41 @@ export async function POST(request: Request) {
         .test-item {
           margin-left: 20px;
         }
+        .qr-container {
+          text-align: center;
+          margin: 20px 0;
+          padding: 10px;
+          background: white;
+          border-radius: 8px;
+          display: inline-block;
+          border: 1px solid #ddd;
+        }
+        .qr-label {
+          font-size: 12px;
+          color: #777;
+          margin-top: 5px;
+        }
       </style>
     </head>
     <body>
       <div class="header">Your Lab Appointment is Confirmed!</div>
-      
+
       <div class="card">
         <div class="section-title">Appointment Details</div>
-        
+
         <p><strong>Booking ID:</strong> <span class="booking-id">${bookingDetails.bookingId}</span></p>
         <p><strong>Patient Name:</strong> ${bookingDetails.patient.firstName} ${bookingDetails.patient.lastName}</p>
         <p><strong>Lab Name:</strong> ${bookingDetails.lab.name}</p>
         <p><strong>Appointment Date:</strong> ${bookingDetails.date}</p>
         <p><strong>Appointment Time:</strong> ${bookingDetails.time}</p>
-        
+
+        <div style="text-align: center; margin: 20px 0;">
+          <div class="qr-container">
+            <img src="${qrPublicUrl}" alt="Booking QR Code" width="200" height="200" style="display: block; margin: 0 auto;" />
+            <div class="qr-label">Scan for booking details</div>
+          </div>
+        </div>
+
         <div class="section-title">Tests Scheduled:</div>
         <ul>
           ${bookingDetails.tests
@@ -90,7 +148,7 @@ export async function POST(request: Request) {
             )
             .join('')}
         </ul>
-        
+
         ${
           bookingDetails.addons?.length > 0
             ? `
@@ -108,15 +166,15 @@ export async function POST(request: Request) {
             : ''
         }
       </div>
-      
-      <p>You can track your report using the QR code provided in your booking confirmation or by visiting:</p>
+
+      <p>You can track your report using the QR code above or by visiting:</p>
       <p>
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL}/Trackreport?bookingId=${bookingDetails.bookingId}" 
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL}/Trackreport?bookingId=${bookingDetails.bookingId}"
            style="color: #37AFA2; text-decoration: underline;">
           Track My Report
         </a>
       </p>
-      
+
       <div class="footer">
         <p>If you have any questions, please contact our support team at support@labsphere.com</p>
         <p>© ${new Date().getFullYear()} LabSphere. All rights reserved.</p>

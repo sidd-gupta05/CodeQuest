@@ -47,7 +47,7 @@ export default function HeroSection() {
           </Link>
 
           <div
-            className="absolute bottom-[-385px] left-1/2 z-10 w-full h-[200px] bg-gray-200 border border-gray-300 hidden md:block select-none pointer-events-none"
+            className="absolute bottom-[-435px] left-1/2 z-10 w-full h-[200px] bg-gray-200 border border-gray-300 hidden md:block select-none pointer-events-none"
             style={{
               transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
               transformOrigin: 'bottom',

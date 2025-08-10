@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import BookingHeader from './BookingHeader';
 import BookingNavigation from './BookingNavigation';
 import Script from 'next/script';
+import { ChevronLeft, ChevronRight, CreditCard } from 'lucide-react';
 
 interface PaymentProps {
   onBack: () => void;
@@ -236,8 +237,9 @@ export default function Payment({
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
           <button
             onClick={onBack}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors cursor-pointer"
           >
+            <ChevronLeft className="w-5 h-5" />
             Back
           </button>
 
@@ -246,18 +248,26 @@ export default function Payment({
               <button
                 onClick={handlePayment}
                 disabled={paymentLoading}
-                className="px-4 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
               >
-                {paymentLoading ? 'Processing...' : 'Pay Now'}
+                {paymentLoading ? (
+                  'Processing...'
+                ) : (
+                  <>
+                    <CreditCard className="w-5 h-5" />
+                    Pay Now
+                  </>
+                )}
               </button>
             )}
 
             {paymentSuccess && (
               <button
                 onClick={onNext}
-                className="px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors cursor-pointer"
               >
                 Proceed to Confirmation
+                <ChevronRight className="w-5 h-5" />
               </button>
             )}
           </div>
