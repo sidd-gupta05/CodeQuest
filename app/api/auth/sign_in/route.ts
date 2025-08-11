@@ -1,20 +1,21 @@
 // app/api/auth/sign_in/route.ts
 import { NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
-
 export async function POST(req: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
+  const supabase = createClient(cookies());
   const form = await req.json();
+  console.log('Received form data:', form);
 
-  const role = form.accountType?.toUpperCase();
-  if (!['LAB', 'PATIENT'].includes(role)) {
+  const role =  form.role?.toUpperCase();
+  console.log(role)
+  if (!role) {
     return NextResponse.json({ error: 'Invalid account type' }, { status: 400 });
   }
 
   if (role === 'LAB') {
     // 1. Sign up using email/password
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { error: signUpError } = await (await supabase).auth.signUp({
       email: form.email,
       password: form.password,
       options: {
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
     });
 
     if (signUpError) {
+      console.log(signUpError.message)
       return NextResponse.json({ error: signUpError.message }, { status: 400 });
     }
 
@@ -36,14 +38,14 @@ export async function POST(req: Request) {
     const {
       data: { user },
       error: getUserError,
-    } = await supabase.auth.getUser();
+    } = await (await supabase).auth.getUser();
 
     if (getUserError || !user) {
       return NextResponse.json({ error: 'Could not fetch user' }, { status: 500 });
     }
 
     // 3. Insert into users table (optional - use your own table schema)
-    const { error: insertUserError } = await supabase.from('users').upsert({
+    const { error: insertUserError } = await (await supabase).from('users').upsert({
       id: user.id,
       email: form.email,
       firstName: form.firstName,
@@ -69,7 +71,7 @@ export async function POST(req: Request) {
 
   if (role === 'PATIENT') {
     // 4. Sign in with OTP (phone-based)
-    const { error: otpError } = await supabase.auth.signInWithOtp({
+    const { error: otpError } = await (await supabase).auth.signInWithOtp({
       phone: `+91${form.phone}`,
       options: { channel: 'sms' },
     });
@@ -80,7 +82,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      redirect: `/api/auth/verify?email=${form.email}&phone=${form.phone}`,
+      redirect: `/api/auth/verify?phone=${form.phone}`,
     });
   }
 
