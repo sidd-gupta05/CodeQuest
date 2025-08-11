@@ -40,7 +40,7 @@ export default function OptionsPage() {
               <label className="block text-teal-600 text-xl text-center font-semibold mb-2">
                 Choose Account Type
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 
                 {/* //TODO Below Button can be made into component with some props*/}
                 {/* Patient */}

@@ -34,7 +34,6 @@ export default function Payment({
 }: PaymentProps) {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   useEffect(() => {
     // Load Razorpay script dynamically
@@ -119,7 +118,7 @@ export default function Payment({
 
           const verificationData = await verificationResponse.json();
           if (verificationData.success) {
-            setPaymentSuccess(true);
+            onNext(); // Automatically redirect to next page on success
           } else {
             alert('Payment verification failed. Please try again.');
           }
@@ -243,34 +242,20 @@ export default function Payment({
             Back
           </button>
 
-          <div className="flex gap-4">
-            {!paymentSuccess && (
-              <button
-                onClick={handlePayment}
-                disabled={paymentLoading}
-                className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-              >
-                {paymentLoading ? (
-                  'Processing...'
-                ) : (
-                  <>
-                    <CreditCard className="w-5 h-5" />
-                    Pay Now
-                  </>
-                )}
-              </button>
+          <button
+            onClick={handlePayment}
+            disabled={paymentLoading}
+            className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {paymentLoading ? (
+              'Processing...'
+            ) : (
+              <>
+                <CreditCard className="w-5 h-5" />
+                Pay Now
+              </>
             )}
-
-            {paymentSuccess && (
-              <button
-                onClick={onNext}
-                className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors cursor-pointer"
-              >
-                Proceed to Confirmation
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            )}
-          </div>
+          </button>
         </div>
       </div>
     </>

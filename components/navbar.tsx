@@ -13,7 +13,7 @@ function Navbar() {
         <div className="flex items-center gap-2 min-w-[120px]">
           <Link
             href="/"
-            className="text-white font-semibold flex items-center gap-2 text-xl select-none pointer-events-none"
+            className="text-white font-semibold flex items-center gap-2 text-xl select-none cursor-pointer"
           >
             <Image
               src="/logo2.svg"
