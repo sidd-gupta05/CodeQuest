@@ -1,35 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
-  const router = useRouter();  
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  const [user, setUser] = useState<User | null>(null);
-  useEffect(() => {
-    // Check if user is authenticated
-
-    const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      console.log('Current user:', user?.id, user?.email, user?.user_metadata.role);
+  useEffect (() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
-
-      if (!user) {
-        router.push('/optionss?redirectTo=/dashboard');
-      }
     };
 
-    checkAuth();
-  }, [router]);
+    fetchUser();
+  }, []);
+
+  const [user, setUser] = useState<User | null>(null);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+    const handleLogout = async () => {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+    });
+    window.location.href = '/';
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -48,12 +45,12 @@ export default function DashboardPage() {
             </a>
           </li>
           <li>
-            <a href={"/dashboard"+(localStorage.getItem('accountType') === 'LAB' ? '/lab/profile' : '/profile')} className="hover:text-teal-400">
+            <a href={"/dashboard"+(user?.user_metadata['role'] === 'LAB' ? '/lab/profile' : '/profile')} className="hover:text-teal-400">
               Profile
             </a>
           </li>
-          { localStorage.getItem('accountType') === 'PATIENT' && 
-           
+          { user?.role === 'PATIENT' &&
+
           <li>
             <a href={('/BookAppoientment')} className="hover:text-teal-400">
               Book Appointment
@@ -66,9 +63,9 @@ export default function DashboardPage() {
             </a>
           </li>
           <li>
-            <a href="#" className="hover:text-teal-400">
-              Logout
-            </a>
+              <button onClick={handleLogout}>
+                Logout
+              </button>
           </li>
         </ul>
       </aside>
@@ -88,7 +85,7 @@ export default function DashboardPage() {
           Welcome to your dashboard! You can manage your profile, settings, and
           more here.
         </p>
-        <p>Your role is {localStorage.getItem('accountType') || 'User'}</p>
+        <p>Your role is {user?.user_metadata['role'] || 'User'}</p>
       </main>
     </div>
   );
