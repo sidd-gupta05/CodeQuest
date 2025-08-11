@@ -95,7 +95,7 @@ function Navbar() {
         {/* Right: Sign Up */}
         <div className="min-w-[120px] hidden md:flex justify-end">
           <Link
-            href="/optionss"
+            href="/auth/sign_in"
             className="text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
           >
             Sign Up
@@ -111,7 +111,7 @@ function Navbar() {
           <Link href="/pricing">Pricing</Link>
           <Link href="/contacts">Contact Us</Link>
           <Link
-            href="/optionss"
+            href="/auth/sign_in"
             className="text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition text-xl"
           >
             Sign Up
