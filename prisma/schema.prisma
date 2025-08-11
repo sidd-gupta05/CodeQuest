@@ -12,14 +12,15 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String
+  password  String?
   firstName String
   lastName  String
-  phone     String   @unique
-  role      UserRole
+  phone     String?   @unique
+  role      UserRole?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   patient   Patient?
+  lab       Lab?
   lab       Lab?
 
   @@map("users")
@@ -28,12 +29,19 @@ model User {
 model Lab {
   id                    String        @id @default(uuid())
   userId                String        @unique
+  id                    String        @id @default(uuid())
+  userId                String        @unique
   labLocation           String
   nablCertificateNumber String
   certificateUrl        String
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
   appointments          Appointment[]
+  timeSlots             TimeSlot[]
+  details               LabDetails?
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   timeSlots             TimeSlot[]
   details               LabDetails?
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -41,9 +49,11 @@ model Lab {
   @@map("labs")
 }
 
+
 model LabDetails {
   id                   String                 @id @default(uuid())
   labId                String                 @unique
+  labName              String
   collectionTypes      String[]
   experienceYears      Int?
   imageUrl             String?
@@ -69,9 +79,19 @@ model TimeSlot {
   slots                Slot[]
   lab                  Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
   LabDetailsToTimeSlot LabDetailsToTimeSlot[]
+  id                   String                 @id @default(uuid())
+  labId                String
+  date                 DateTime
+  time                 String
+  isBooked             Boolean                @default(false)
+  createdAt            DateTime               @default(now())
+  slots                Slot[]
+  lab                  Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
+  LabDetailsToTimeSlot LabDetailsToTimeSlot[]
 
   @@unique([labId, date, time])
 }
+
 
 model Slot {
   id         String   @id @default(uuid())
@@ -89,7 +109,17 @@ model Patient {
   longitude    Float         @default(0.0)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  address      String
+  dateOfBirth  DateTime
+  gender       String
+  latitude     Float         @default(0.0)
+  longitude    Float         @default(0.0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   appointments Appointment[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -104,14 +134,38 @@ model Appointment {
   lab       Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
   patient   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
   payments  Payment[]
+  id        String    @id @default(uuid())
+  patientId String
+  labId     String
+  date      DateTime
+  time      String
+  status    String    @default("Pending")
+  createdAt DateTime  @default(now())
+  lab       Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
+  patient   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  payments  Payment[]
 }
 
 model Payment {
+  id            String      @id @default(uuid())
   id            String      @id @default(uuid())
   appointmentId String
   status        String
   amount        Float
   paidAt        DateTime?
+  createdAt     DateTime    @default(now())
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+}
+
+model LabDetailsToTimeSlot {
+  A           String
+  B           String
+  lab_details LabDetails @relation(fields: [A], references: [id], onDelete: Cascade)
+  TimeSlot    TimeSlot   @relation(fields: [B], references: [id], onDelete: Cascade)
+
+  @@id([A, B], map: "_LabDetailsToTimeSlot_AB_pkey")
+  @@index([B], map: "_LabDetailsToTimeSlot_B_index")
+  @@map("_LabDetailsToTimeSlot")
   createdAt     DateTime    @default(now())
   appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
 }
