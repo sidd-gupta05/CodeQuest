@@ -6,30 +6,6 @@ import { supabase } from '@/utils/supabase/client';
 import CarouselSection from '@/components/carousel-section'; // Assuming this component exists
 import Image from 'next/image';
 
-// A simple spinner component for loading states
-const Spinner = ({ className = 'h-5 w-5' }: { className?: string }) => (
-  <svg
-    className={`animate-spin ${className}`}
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
-    ></circle>
-    <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-    ></path>
-  </svg>
-);
-
 export default function VerifyPage() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [loading, setLoading] = useState(false);
@@ -87,61 +63,53 @@ export default function VerifyPage() {
     }
   };
 
-  const handleVerify = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault(); // Prevent default form submission
     setLoading(true);
     setError('');
 
-    if (otp.join('').length !== 6) {
-      setError('Please enter the complete 6-digit OTP.');
+        const code = otp.join(""); // combine digits
+
+    if (code.length !== 6) {
+      setError("Please enter the complete 6-digit OTP.");
       setLoading(false);
       return;
     }
 
-    // 1) Verify OTP with Supabase
-    const { error: otpError } = await supabase.auth.verifyOtp({
-      phone: `+91${phone}`,
-      token: otp.join(''),
-      type: 'sms',
-    });
-
-    if (otpError) {
-      setLoading(false);
-      setError('Invalid or expired OTP. Please try again.');
-      console.error('OTP verification failed:', otpError.message);
-      return;
-    }
-
-    // 2) Register the user in your custom 'users' table
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not found after verification.');
-
-      await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          supabaseId: user.id,
-          firstName: localStorage.getItem('firstName'),
-          lastName: localStorage.getItem('lastName'),
-          phone,
-          email: localStorage.getItem('email'),
-          role: localStorage.getItem('accountType'),
-        }),
+    const payload = JSON.parse(searchParams.get("payload") || "{}");
+    // Add OTP code to payload
+        const requestBody = {
+      firstName: searchParams.get("firstName"),
+      lastName: searchParams.get("lastName"),
+      email: searchParams.get("email"),
+      phone: `+91${searchParams.get("phone")}`, // 👈 make sure phone includes +91
+      role: searchParams.get("role"),
+      code, // ✅ attach OTP code
+    };
+      const res = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
       });
 
-      // 3) Redirect based on role
-      const role = localStorage.getItem('accountType');
-      if (role === 'doctor') router.push('/doctor-registration');
-      else if (role === 'lab') router.push('/lab-registration');
-      else router.push('/dashboard');
-    } catch (regError) {
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "OTP verification failed");
+      } else {
+        // ✅ OTP verified successfully
+              console.log("Success:", data);
+      // Example redirect after successful verification:
+      router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Request failed", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-      setError('Failed to finalize your registration. Please contact support.');
-      console.error('Registration API or redirection failed:', regError);
     }
+    
   };
 
   const handleResendOtp = async () => {
@@ -193,12 +161,12 @@ export default function VerifyPage() {
               <strong className="text-gray-700">+91 {phone}</strong>
             </p>
 
-            <form onSubmit={handleVerify} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex justify-center gap-3" onPaste={handlePaste}>
                 {otp.map((val, idx) => (
                   <input
                     key={idx}
-                    ref={(el) => (inputRefs.current[idx] = el)}
+                    ref={(el) => { inputRefs.current[idx] = el; }}
                     id={`otp-${idx}`}
                     type="tel"
                     maxLength={1}
@@ -229,7 +197,7 @@ export default function VerifyPage() {
             </form>
 
             <div className="text-center mt-6 text-sm text-gray-600">
-              Didn't receive the code?{' '}
+              Didn&apos;t receive the code?{' '}
               {resendTimer > 0 ? (
                 <span className="text-gray-400">Resend in {resendTimer}s</span>
               ) : (
@@ -242,53 +210,11 @@ export default function VerifyPage() {
                 </button>
               )}
             </div>
-
-            <div className="relative my-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500">OR</span>
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-4">
-              {[
-                // { provider: 'google', icon: 'google.svg' },
-                // { provider: 'facebook', icon: 'facebook.svg' },
-                // { provider: 'apple', icon: 'apple.svg' },
-              ].map(({ provider, icon }) => (
-                <button
-                  key={provider}
-                  onClick={() =>
-                    supabase.auth.signInWithOAuth({ provider: provider as any })
-                  }
-                  className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-full hover:bg-gray-50 focus:outline-none transition"
-                  aria-label={`Sign in with ${provider}`}
-                >
-                  <Image
-                    src={`/${icon}`}
-                    alt={`${provider} logo`}
-                    width={20}
-                    height={20}
-                  />
-                </button>
-              ))}
-            </div>
-
-            {/* <p className="mt-8 text-sm text-center text-gray-600">
-              Already have an account?{' '}
-              <a
-                href="/login"
-                className="font-medium text-teal-600 hover:underline"
-              >
-                Log in
-              </a>
-            </p> */}
           </div>
         </div>
 
         {/* Right Section */}
+        {/* TODO: Please Make CarouselSection a true carousel and do sublayout of it for optimization*/}
         <CarouselSection prop="/doctor-registration-illustration.webp" />
       </div>
     </>

@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
@@ -13,19 +13,23 @@ export default function DashboardPage() {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+
+      const role = user?.user_metadata?.role || 'Role not defined';
+      console.log('User role:', role);
+      setRole(role);
     };
 
     fetchUser();
   }, []);
 
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const handleLogout = async () => {
     await fetch('/api/auth/logout', {
       method: 'POST',
     });
-    window.location.href = '/';
   };
 
   return (
@@ -45,11 +49,11 @@ export default function DashboardPage() {
             </a>
           </li>
           <li>
-            <a href={"/dashboard"+(user?.user_metadata['role'] === 'LAB' ? '/lab/profile' : '/profile')} className="hover:text-teal-400">
+            <a href={"/dashboard"+(role === 'LAB' ? '/lab/profile' : '/profile')} className="hover:text-teal-400">
               Profile
             </a>
           </li>
-          { user?.role === 'PATIENT' &&
+          { role === 'PATIENT' &&
 
           <li>
             <a href={('/BookAppoientment')} className="hover:text-teal-400">
@@ -63,7 +67,8 @@ export default function DashboardPage() {
             </a>
           </li>
           <li>
-              <button onClick={handleLogout}>
+            {/* TODO: Some CSS is needed here! */}
+              <button className='cursor-pointer' onClick={()=>{handleLogout()}}>
                 Logout
               </button>
           </li>
@@ -85,7 +90,7 @@ export default function DashboardPage() {
           Welcome to your dashboard! You can manage your profile, settings, and
           more here.
         </p>
-        <p>Your role is {user?.user_metadata['role'] || 'User'}</p>
+        <p>Your role is {role}</p>
       </main>
     </div>
   );

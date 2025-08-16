@@ -40,7 +40,7 @@ export default function HeroSection() {
           </div>
 
           <Link
-            href={'/optionss'}
+            href={'/auth/sign_in'}
             className="inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-xl font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl mx-auto mb-10 transform hover:scale-110 select-none"
           >
             Get Started

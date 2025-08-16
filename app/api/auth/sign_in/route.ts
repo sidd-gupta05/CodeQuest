@@ -2,13 +2,16 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
+
 export async function POST(req: Request) {
-  const supabase = createClient(cookies());
+  const supabase = await createClient(cookies());
   const form = await req.json();
+
   console.log('Received form data:', form);
 
   const role =  form.role?.toUpperCase();
   console.log(role)
+  
   if (!role) {
     return NextResponse.json({ error: 'Invalid account type' }, { status: 400 });
   }
@@ -24,6 +27,8 @@ export async function POST(req: Request) {
           lastName: form.lastName,
           phone: form.phone,
           role,
+          // TODO: Hash the password before storing
+          password: form.password,
         },
         emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/lab-registration`,
       },
@@ -71,7 +76,7 @@ export async function POST(req: Request) {
 
   if (role === 'PATIENT') {
     // 4. Sign in with OTP (phone-based)
-    const { error: otpError } = await (await supabase).auth.signInWithOtp({
+    const { error: otpError } = await supabase.auth.signInWithOtp({
       phone: `+91${form.phone}`,
       options: { channel: 'sms' },
     });
@@ -80,9 +85,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: otpError.message }, { status: 400 });
     }
 
+    // TODO: Might have to store form data in Session rather than search query
     return NextResponse.json({
       success: true,
-      redirect: `/api/auth/verify?phone=${form.phone}`,
+      redirect: `/api/auth/verify?firstName=${form.firstName}&lastName=${form.lastName}&email=${form.email}&phone=${form.phone}&role=${role}`,
+      payload: {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        phone: form.phone,
+        role,
+        password: form.password, // if needed
+      },
     });
   }
 

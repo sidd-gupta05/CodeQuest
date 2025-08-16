@@ -1,10 +1,37 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { supabase } from '@/utils/supabase/client';
+import type { User } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
 
 function Navbar() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+    });
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+
+      const role = user?.user_metadata?.role || 'Role not defined';
+      console.log('User role:', role);
+      setRole(role);
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <>
@@ -94,12 +121,18 @@ function Navbar() {
 
         {/* Right: Sign Up */}
         <div className="min-w-[120px] hidden md:flex justify-end">
-          <Link
-            href="/optionss"
-            className="text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
+          <button
+            onClick={() => {
+              if (user) {
+                handleLogout();
+              } else {
+                router.push('/auth/sign_in');
+              }
+            }}
+            className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
           >
-            Sign Up
-          </Link>
+            {user ? 'Logout' : 'Sign Up'}
+          </button>
         </div>
       </nav>
 
@@ -110,12 +143,18 @@ function Navbar() {
           <Link href="/Trackreport">Track report</Link>
           <Link href="/pricing">Pricing</Link>
           <Link href="/contacts">Contact Us</Link>
-          <Link
-            href="/optionss"
-            className="text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition text-xl"
+          <button
+            onClick={() => {
+              if (user) {
+                handleLogout();
+              } else {
+                router.push('/auth/sign_in');
+              }
+            }}
+            className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition text-xl"
           >
-            Sign Up
-          </Link>
+            {user ? 'Logout' : 'Sign Up'}
+          </button>
         </div>
       )}
     </>

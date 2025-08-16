@@ -224,7 +224,7 @@ export default function SignupPage() {
               <div className="flex gap-4">
                 <button
                   type="button"
-                  onClick={handleReset}
+                  onClick={() => { handleReset(); }}
                   className="w-1/2 bg-gray-200 text-gray-800 rounded-md py-2 font-semibold cursor-pointer"
                 >
                   Back
