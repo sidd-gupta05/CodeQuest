@@ -1,0 +1,58 @@
+// components/BookAppointment/LabCard/LabAvailability.tsx
+import React from 'react';
+import { Lab } from '../Filters/types';
+import Link from 'next/link';
+
+interface LabAvailabilityProps {
+  lab: Lab;
+}
+
+export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => (
+  <>
+    <div>
+      <p className="text-sm font-semibold">Next available at</p>
+      <p className="text-md font-bold text-[#2A787A]">{lab.nextAvailable}</p>
+      {lab.timeSlots && (
+        <div className="mt-2">
+          <p className="text-sm font-semibold mb-1">Available Time Slots:</p>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(lab.timeSlots).map(([period, slots]) => (
+              <div key={period} className="mb-2">
+                <span className="text-xs font-medium text-gray-600">
+                  {period}:
+                </span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {slots.map((slot, index) =>
+                    slot !== '-' ? (
+                      <span
+                        key={index}
+                        className="text-xs bg-gray-100 px-2 py-1 rounded cursor-pointer"
+                      >
+                        {slot}
+                      </span>
+                    ) : null
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+    <Link
+      href={{
+        pathname: '/Booking',
+        query: {
+          labId: lab.id,
+        },
+      }}
+      className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-lg cursor-pointer md:mt-22 text-center ${
+        lab.nextAvailable === 'Not Available'
+          ? 'bg-gray-300 text-gray-500 pointer-events-none'
+          : 'bg-[#2A787A] hover:bg-[#1e3232] text-white'
+      }`}
+    >
+      Book Appointment
+    </Link>
+  </>
+);

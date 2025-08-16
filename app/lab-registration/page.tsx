@@ -44,6 +44,7 @@ export default function LabRegistration() {
       error,
     } = await supabase.auth.getUser();
 
+    localStorage.setItem('labId', user?.id || '');
     console.log('User data:', user?.id, user?.email, user?.role);
     if (error || !user) {
       console.error('No user found:', error?.message);

@@ -1,16 +1,16 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { signIn } from 'next-auth/react';
+import axios from 'axios';
 import CarouselSection from '@/components/carousel-section';
-import { supabase } from '@/utils/supabase/client';
+import { AccountTypeSidebar } from '@/components/AccSidebar';
 
 export default function SignupPage() {
-  const [accountType, setAccountType] = useState<string>('');
   const router = useRouter();
-
+  const [accountType, setAccountType] = useState<string>('');
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -18,13 +18,21 @@ export default function SignupPage() {
     phone: '',
     password: '',
     confirmPassword: '',
-    createdAt: new Date().toISOString(),
+    role: '',
   });
-
   const [errors, setErrors] = useState<Partial<typeof form>>({});
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleAccountSelect = (type: string) => {
+    setAccountType(type);
+    setForm((form) => ({ ...form, role: type }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors((form) => ({ ...form, [e.target.name]: undefined }));
+    setApiError(null);
   };
 
   const validate = () => {
@@ -33,95 +41,84 @@ export default function SignupPage() {
     if (!/^[A-Za-z]+$/.test(form.firstName)) {
       newErrors.firstName = 'Only letters allowed';
     }
-
     if (!/^[A-Za-z]+$/.test(form.lastName)) {
       newErrors.lastName = 'Only letters allowed';
     }
-
+    if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(form.email)) {
+      newErrors.email = 'Enter a valid email';
+    }
     if (!/^\d{10}$/.test(form.phone)) {
       newErrors.phone = 'Enter a valid 10-digit number';
     }
-
     if (form.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
     }
-
     if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
+    }
+    if (!['PATIENT', 'LAB'].includes(form.role)) {
+      newErrors.role = 'Invalid account type';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    if (!validate()) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setApiError(null);
+    setIsLoading(true);
 
-    const role = accountType?.toUpperCase();
-    localStorage.setItem('accountType', role);
-
-    if (role === 'DOCTOR' || role === 'LAB') {
-      const { error } = await supabase.auth.signUp({
-        email: form.email,
-        password: form.password,
-        options: {
-          data: {
-            firstName: form.firstName,
-            lastName: form.lastName,
-            phone: form.phone,
-            role,
-          },
-          emailRedirectTo:
-            role === 'DOCTOR'
-              ? `${location.origin}/doctor-registration`
-              : `${location.origin}/lab-registration`,
-        },
-      });
-
-      if (error) {
-        console.error('Signup error:', error.message);
-        alert('Signup error: ' + error.message);
-        return;
-      }
-      // TODO: Redirect to verification page & something feels missing here
-      router.push(`/${role.toLowerCase()}-registration`);
+    if (!validate()) {
+      setIsLoading(false);
       return;
     }
 
-    if (role === 'PATIENT') {
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: `+91${form.phone}`,
-        options: { channel: 'sms' },
+    try {
+      const res = await axios.post('/api/auth/sign_in', form, {
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      if (error) {
-        alert('OTP error: ' + error.message);
-        return;
+      if (res.data.success) {
+        router.push(res.data.redirect);
+      } else {
+        setApiError(res.data.error || 'Something went wrong');
       }
-
-      router.push(`/api/auth/verify?email=${form.email}&phone=${form.phone}`);
-      return;
+    } catch (err: any) {
+      setApiError(err.response?.data?.error || 'Failed to sign up');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    const type = localStorage.getItem('accountType');
-    if (type) {
-      setAccountType(type);
-    }
-  }, []);
+  const handleReset = () => {
+    setAccountType('');
+    setForm({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      role: '',
+    });
+    setErrors({});
+    setApiError(null);
+  };
 
   return (
-    <>
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-        <style jsx global>{`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-          body {
-            font-family: 'Inter', sans-serif;
-          }
-        `}</style>
-        {/* Left side - Signup form */}
-        <div className="bg-white flex items-center justify-center p-10 ">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+          font-family: 'Inter', sans-serif;
+        }
+      `}</style>
+
+      <div className="bg-white flex items-center justify-center p-10">
+        {!accountType && <AccountTypeSidebar onSelect={handleAccountSelect} />}
+
+        {accountType && (
           <div className="max-w-md w-full flex flex-col justify-center">
             <div className="mb-6 text-center">
               <Image
@@ -134,12 +131,14 @@ export default function SignupPage() {
               <h2 className="text-3xl font-semibold text-gray-800 mb-2">
                 Create an account
               </h2>
-              <p className="text-gray-600 mt-2">
-                Start your 30 days free trial
-              </p>
+              <p className="text-gray-600 mt-2">Start your 30 days free trial</p>
             </div>
 
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+            {apiError && (
+              <p className="text-red-500 text-sm text-center mb-4">{apiError}</p>
+            )}
+
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="flex gap-4">
                 <div className="w-1/2">
                   <input
@@ -168,19 +167,24 @@ export default function SignupPage() {
                   )}
                 </div>
               </div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your e-mail"
-                value={form.email}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-              />
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your e-mail"
+                  value={form.email}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500">{errors.email}</p>
+                )}
+              </div>
               <div>
                 <input
                   type="text"
                   name="phone"
-                  placeholder="Enter your phone number"
+                  placeholder="Enter your phone number (10 digits)"
                   value={form.phone}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md px-4 py-2"
@@ -217,13 +221,22 @@ export default function SignupPage() {
                   </p>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="w-full bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer"
-              >
-                Next
-              </button>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="w-1/2 bg-gray-200 text-gray-800 rounded-md py-2 font-semibold cursor-pointer"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-1/2 bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer disabled:opacity-50"
+                >
+                  {isLoading ? 'Submitting...' : 'Next'}
+                </button>
+              </div>
             </form>
 
             <div className="flex items-center my-4">
@@ -236,19 +249,19 @@ export default function SignupPage() {
               <button
                 className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
                 onClick={() => {
-                  const accountType = localStorage.getItem('accountType');
-                  let callbackUrl = '/dashboard';
-
-                  if (accountType === 'doctor') {
-                    callbackUrl = '/doctor-registration';
-                  } else if (accountType === 'lab') {
-                    callbackUrl = '/lab-registration';
-                  }
-
+                  const callbackUrl =
+                    accountType === 'LAB'
+                      ? '/lab-registration'
+                      : '/dashboard';
                   signIn('google', { callbackUrl });
                 }}
               >
-                <Image src="/google.svg" alt="Google" width={20} height={20} />{' '}
+                <Image
+                  src="/google.svg"
+                  alt="Google"
+                  width={20}
+                  height={20}
+                />
                 <span className="text-sm font-medium">Sign in with Google</span>
               </button>
             </div>
@@ -260,11 +273,10 @@ export default function SignupPage() {
               </a>
             </p>
           </div>
-        </div>
-
-        {/* Right side - Illustration and carousel */}
-        <CarouselSection prop={'/doctor-desk.webp'} />
+        )}
       </div>
-    </>
+
+      <CarouselSection prop={'/doctor-desk.webp'} />
+    </div>
   );
 }

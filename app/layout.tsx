@@ -17,7 +17,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${clashFontRegular.className}`}>
-        <header></header>
         {children}
         {/* <footer className="bg-gray-800 text-white p-4 text-center">
           <p className="container mx-auto px-4 text-center text-gray-600">
