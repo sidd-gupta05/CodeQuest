@@ -14,27 +14,31 @@ export const ViewToggle: React.FC<ViewToggleProps> = ({
   <div className="flex items-center gap-2">
     <button
       onClick={() => onViewModeChange('list')}
-      className={`p-3 rounded-2xl transition-colors ${
+      className={`group p-3 rounded-2xl transition-colors cursor-pointer ${
         viewMode === 'list' ? 'bg-[#1e5f61]' : 'bg-gray-100 hover:bg-[#1e5f61]'
       }`}
       aria-label="View as list"
     >
       <Rows2
         className={`h-5 w-5 transition-colors ${
-          viewMode === 'list' ? 'text-white' : 'text-black hover:text-white'
+          viewMode === 'list'
+            ? 'text-white'
+            : 'text-black group-hover:text-white'
         }`}
       />
     </button>
     <button
       onClick={() => onViewModeChange('map')}
-      className={`p-3 rounded-2xl transition-colors ${
+      className={`group p-3 rounded-2xl transition-colors cursor-pointer ${
         viewMode === 'map' ? 'bg-[#1e5f61]' : 'bg-gray-100 hover:bg-[#1e5f61]'
       }`}
       aria-label="View on map"
     >
       <MapPin
         className={`h-5 w-5 transition-colors ${
-          viewMode === 'map' ? 'text-white' : 'text-black hover:text-white'
+          viewMode === 'map'
+            ? 'text-white'
+            : 'text-black group-hover:text-white'
         }`}
       />
     </button>
