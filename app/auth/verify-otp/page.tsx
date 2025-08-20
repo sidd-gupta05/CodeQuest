@@ -102,7 +102,7 @@ export default function VerifyPage() {
       payload.code = code;
       payload.phone = normalizePhone(`${payload.phone}`);
 
-      const res = await fetch('/api/verify-otp', {
+      const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -128,8 +128,7 @@ export default function VerifyPage() {
     setResendLoading(true);
     setError('');
 
-    const { error: resendError } = await supabase.auth.resend({
-      type: 'sms',
+    const { error: resendError } = await supabase.auth.signInWithOtp({
       phone: normalizePhone(`+91${phone}`),
     });
 

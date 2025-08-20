@@ -8,9 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 const verifyOtpSchema = z.object({
   phone: z.string().min(10),
   code: z.string().length(6),
-  email: z.string().email(),
-  firstName: z.string(),
-  lastName: z.string(),
+  email: z.email().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   role: z.enum(['PATIENT', 'DOCTOR']),
 });
 
@@ -44,9 +44,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log('Sending OTP to:', normalizePhone(phone));
+    console.log('Verifying OTP for:', phone, 'with code:', code);
+
     // ✅ Verify OTP directly with Supabase
     const { data, error } = await supabase.auth.verifyOtp({
-      phone: normalizePhone(phone),
+      phone: `+91${normalizePhone(phone)}`,
       token: code,
       type: 'sms',
     });
