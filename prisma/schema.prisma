@@ -9,6 +9,8 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+// ========== DIMENSIONS ==========
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -16,19 +18,34 @@ model User {
   firstName String
   lastName  String
   phone     String?   @unique
-  role      UserRole?
+  role      UserRole
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   patient   Patient?
-  lab       Lab?
   lab       Lab?
 
   @@map("users")
 }
 
+model Patient {
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  address      String?
+  dateOfBirth  DateTime?
+  gender       String?
+  latitude     Float         @default(0.0)
+  longitude    Float         @default(0.0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@map("patients")
+}
+
 model Lab {
-  id                    String        @id @default(uuid())
-  userId                String        @unique
   id                    String        @id @default(uuid())
   userId                String        @unique
   labLocation           String
@@ -36,150 +53,106 @@ model Lab {
   certificateUrl        String
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  details               LabDetails?
+  timeSlots             TimeSlot[]
   appointments          Appointment[]
-  timeSlots             TimeSlot[]
-  details               LabDetails?
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  timeSlots             TimeSlot[]
-  details               LabDetails?
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("labs")
 }
 
-
 model LabDetails {
-  id                   String                 @id @default(uuid())
-  labId                String                 @unique
-  labName              String
-  collectionTypes      String[]
-  experienceYears      Int?
-  imageUrl             String?
-  isLoved              Boolean?               @default(false)
-  latitude             Float                  @default(0.0)
-  longitude            Float                  @default(0.0)
-  nextAvailable        DateTime?
-  rating               Float?
-  testType             String?
-  LabDetailsToTimeSlot LabDetailsToTimeSlot[]
-  lab                  Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
+  id              String                 @id @default(uuid())
+  labId           String                 @unique
+  labName         String
+  collectionTypes String[]
+  experienceYears Int?
+  imageUrl        String?
+  isLoved         Boolean?               @default(false)
+  latitude        Float                  @default(0.0)
+  longitude       Float                  @default(0.0)
+  nextAvailable   DateTime?
+  rating          Float?
+  testType        String?
+
+  lab             Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
+  timeSlots       LabDetailsToTimeSlot[]
 
   @@map("lab_details")
 }
 
 model TimeSlot {
-  id                   String                 @id @default(uuid())
-  labId                String
-  date                 DateTime
-  time                 String
-  isBooked             Boolean                @default(false)
-  createdAt            DateTime               @default(now())
-  slots                Slot[]
-  lab                  Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
-  LabDetailsToTimeSlot LabDetailsToTimeSlot[]
-  id                   String                 @id @default(uuid())
-  labId                String
-  date                 DateTime
-  time                 String
-  isBooked             Boolean                @default(false)
-  createdAt            DateTime               @default(now())
-  slots                Slot[]
-  lab                  Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
-  LabDetailsToTimeSlot LabDetailsToTimeSlot[]
+  id        String     @id @default(uuid())
+  labId     String
+  date      DateTime
+  time      String
+  isBooked  Boolean    @default(false)
+  createdAt DateTime   @default(now())
+
+  lab       Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
+  slots     Slot[]
+  details   LabDetailsToTimeSlot[]
 
   @@unique([labId, date, time])
+  @@map("time_slots")
 }
-
 
 model Slot {
   id         String   @id @default(uuid())
   timeSlotId String
   timeSlot   TimeSlot @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+
+  @@map("slots")
 }
 
-model Patient {
-  id           String        @id @default(uuid())
-  userId       String        @unique
-  address      String
-  dateOfBirth  DateTime
-  gender       String
-  latitude     Float         @default(0.0)
-  longitude    Float         @default(0.0)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  id           String        @id @default(uuid())
-  userId       String        @unique
-  address      String
-  dateOfBirth  DateTime
-  gender       String
-  latitude     Float         @default(0.0)
-  longitude    Float         @default(0.0)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  appointments Appointment[]
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+// ========== FACT TABLE ==========
 
 model Appointment {
-  id        String    @id @default(uuid())
+  id        String     @id @default(uuid())
   patientId String
   labId     String
   date      DateTime
   time      String
-  status    String    @default("Pending")
-  createdAt DateTime  @default(now())
-  lab       Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
-  patient   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  status    String     @default("Pending")
+  createdAt DateTime   @default(now())
+
+  patient   Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  lab       Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
   payments  Payment[]
-  id        String    @id @default(uuid())
-  patientId String
-  labId     String
-  date      DateTime
-  time      String
-  status    String    @default("Pending")
-  createdAt DateTime  @default(now())
-  lab       Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
-  patient   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  payments  Payment[]
+
+  @@map("appointments")
 }
 
+// ========== SUPPORTING FACTS ==========
+
 model Payment {
-  id            String      @id @default(uuid())
   id            String      @id @default(uuid())
   appointmentId String
   status        String
   amount        Float
   paidAt        DateTime?
   createdAt     DateTime    @default(now())
+
   appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
 }
+
+// ========== BRIDGE TABLE ==========
 
 model LabDetailsToTimeSlot {
-  A           String
-  B           String
-  lab_details LabDetails @relation(fields: [A], references: [id], onDelete: Cascade)
-  TimeSlot    TimeSlot   @relation(fields: [B], references: [id], onDelete: Cascade)
+  labDetailsId String
+  timeSlotId   String
 
-  @@id([A, B], map: "_LabDetailsToTimeSlot_AB_pkey")
-  @@index([B], map: "_LabDetailsToTimeSlot_B_index")
-  @@map("_LabDetailsToTimeSlot")
-  createdAt     DateTime    @default(now())
-  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  labDetails   LabDetails @relation(fields: [labDetailsId], references: [id], onDelete: Cascade)
+  timeSlot     TimeSlot   @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+
+  @@id([labDetailsId, timeSlotId])
+  @@map("lab_details_to_time_slots")
 }
 
-model LabDetailsToTimeSlot {
-  A           String
-  B           String
-  lab_details LabDetails @relation(fields: [A], references: [id], onDelete: Cascade)
-  TimeSlot    TimeSlot   @relation(fields: [B], references: [id], onDelete: Cascade)
-
-  @@id([A, B], map: "_LabDetailsToTimeSlot_AB_pkey")
-  @@index([B], map: "_LabDetailsToTimeSlot_B_index")
-  @@map("_LabDetailsToTimeSlot")
-}
+// ========== ENUMS ==========
 
 enum UserRole {
   PATIENT

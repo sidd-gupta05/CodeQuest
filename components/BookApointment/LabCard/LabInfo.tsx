@@ -23,7 +23,7 @@ export const LabInfo: React.FC<LabInfoProps> = ({ lab }) => (
       />
       {lab.location}{' '}
       <Link
-        href="/map"
+        href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lab.location)}"
         className="text-[#2A787A] px-7 hover:text-[#132425] cursor-pointer"
       >
         Get Direction

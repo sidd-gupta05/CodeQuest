@@ -1,5 +1,21 @@
 // Reusable Input Component (using Tailwind classes for styling)
-const InputField = ({ label, type = 'text', id, value, onChange, icon: Icon, placeholder, step, min, required, disabled }) => (
+import React from 'react';
+
+interface InputFieldProps {
+  label: string;
+  type?: string;
+  id: string;
+  value: string | number;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  placeholder?: string;
+  step?: string | number;
+  min?: string | number;
+  required?: boolean;
+  disabled?: boolean;
+}
+
+const InputField: React.FC<InputFieldProps> = ({ label, type = 'text', id, value, onChange, icon: Icon, placeholder, step, min, required, disabled }) => (
   <div className="mb-4">
     <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
       {Icon && <Icon className="inline-block w-4 h-4 mr-2 text-indigo-500" />}
