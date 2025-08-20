@@ -9,16 +9,19 @@ export async function POST(req: Request) {
 
   console.log('Received form data:', form);
 
-  const role =  form.role?.toUpperCase();
-  console.log(role)
-  
+  const role = form.role?.toUpperCase();
+  console.log(role);
+
   if (!role) {
-    return NextResponse.json({ error: 'Invalid account type' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid account type' },
+      { status: 400 }
+    );
   }
 
   if (role === 'LAB') {
     // 1. Sign up using email/password
-    const { error: signUpError } = await (await supabase).auth.signUp({
+    const { error: signUpError } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
@@ -35,7 +38,7 @@ export async function POST(req: Request) {
     });
 
     if (signUpError) {
-      console.log(signUpError.message)
+      console.log(signUpError.message);
       return NextResponse.json({ error: signUpError.message }, { status: 400 });
     }
 
@@ -43,14 +46,17 @@ export async function POST(req: Request) {
     const {
       data: { user },
       error: getUserError,
-    } = await (await supabase).auth.getUser();
+    } = await supabase.auth.getUser();
 
     if (getUserError || !user) {
-      return NextResponse.json({ error: 'Could not fetch user' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Could not fetch user' },
+        { status: 500 }
+      );
     }
 
     // 3. Insert into users table (optional - use your own table schema)
-    const { error: insertUserError } = await (await supabase).from('users').upsert({
+    const { error: insertUserError } = await supabase.from('users').upsert({
       id: user.id,
       email: form.email,
       firstName: form.firstName,
@@ -63,7 +69,10 @@ export async function POST(req: Request) {
 
     if (insertUserError) {
       return NextResponse.json(
-        { error: 'User signup succeeded but DB insert failed', dbError: insertUserError.message },
+        {
+          error: 'User signup succeeded but DB insert failed',
+          dbError: insertUserError.message,
+        },
         { status: 500 }
       );
     }
@@ -85,19 +94,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: otpError.message }, { status: 400 });
     }
 
-    // TODO: Might have to store form data in Session rather than search query
-    return NextResponse.json({
-      success: true,
-      redirect: `/api/auth/verify?firstName=${form.firstName}&lastName=${form.lastName}&email=${form.email}&phone=${form.phone}&role=${role}`,
-      payload: {
-        firstName: form.firstName,
-        lastName: form.lastName,
-        email: form.email,
-        phone: form.phone,
-        role,
-        password: form.password, // if needed
-      },
-    });
+      return NextResponse.json({ success: 200 });
   }
 
   return NextResponse.json({ error: 'Unhandled case' }, { status: 400 });

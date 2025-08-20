@@ -12,7 +12,10 @@ export async function POST() {
     await supabase.auth.signOut();
     
     // Redirect to / page
-    return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'));
+    return NextResponse.json(
+      { success: true, message: 'logout successful' },
+      { status: 200 }
+    );
 
   } catch (error) {
     console.error('Logout error:', error);

@@ -8,58 +8,58 @@ import Image from 'next/image';
 
 export default function VerifyPage() {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
-  const [resendTimer, setResendTimer] = useState(60);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
-  const [payload, setPayload] = useState<any>(null);
+  const [payload, setPayload] = useState<Record<string, any> | null>(null);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const phone = searchParams.get('phone') || '';
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  
 
-  // ✅ Restore payload from sessionStorage
-  useEffect(() => {
-    const saved = sessionStorage.getItem('signupPayload');
-    if (saved) {
-      setPayload(JSON.parse(saved));
-    } else {
-      // if missing, redirect back
-      router.push('/signup');
-    }
-  }, [router]);
+  /** normalize phone → ensures only single +91 prefix */
+  const normalizePhone = (num: string) => {
+    return num.replace(/^(\+91)?\+91/, '+91');
+  };
 
-  // ✅ Restore resend timer
+  // restore resend timer from localStorage
   useEffect(() => {
-    const expiry = localStorage.getItem('otp_expiry');
-    if (expiry) {
-      const remaining = Math.floor((+expiry - Date.now()) / 1000);
-      if (remaining > 0) setResendTimer(remaining);
+    const lastSent = localStorage.getItem('otpLastSent');
+    if (lastSent) {
+      const diff = 60 - Math.floor((Date.now() - Number(lastSent)) / 1000);
+      if (diff > 0) setTimeLeft(diff);
     }
   }, []);
 
-  // ⏱ countdown effect
+  // countdown effect
   useEffect(() => {
-    if (resendTimer > 0) {
-      const t = setInterval(() => setResendTimer((prev) => prev - 1), 1000);
-      return () => clearInterval(t);
-    }
-  }, [resendTimer]);
+    if (timeLeft <= 0) return;
+    const interval = setInterval(() => {
+      setTimeLeft((t) => t - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
-  // Focus first input on mount
+  // focus first input on mount
   useEffect(() => {
     inputRefs.current[0]?.focus();
   }, []);
 
+  // fetch payload from sessionStorage
+  useEffect(() => {
+    const saved = sessionStorage.getItem('signupPayload');
+    if (saved) {
+      setPayload(JSON.parse(saved));
+    }
+  }, []);
+
   const handleChange = (index: number, value: string) => {
     if (!/^[0-9]?$/.test(value)) return;
-
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -75,8 +75,7 @@ export default function VerifyPage() {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text').slice(0, 6);
     if (/^[0-9]{6}$/.test(pastedData)) {
-      const newOtp = pastedData.split('');
-      setOtp(newOtp);
+      setOtp(pastedData.split(''));
       inputRefs.current[5]?.focus();
     }
   };
@@ -95,20 +94,18 @@ export default function VerifyPage() {
 
     try {
       if (!payload) {
-        setError('Signup data missing. Please start again.');
+        setError('No payload found');
+        setLoading(false);
         return;
       }
 
-      const requestBody = {
-        ...payload,
-        phone: `+91${phone}`,
-        code,
-      };
+      payload.code = code;
+      payload.phone = normalizePhone(`${payload.phone}`);
 
       const res = await fetch('/api/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -133,7 +130,7 @@ export default function VerifyPage() {
 
     const { error: resendError } = await supabase.auth.resend({
       type: 'sms',
-      phone: `+91${phone}`,
+      phone: normalizePhone(`+91${phone}`),
     });
 
     setResendLoading(false);
@@ -142,10 +139,8 @@ export default function VerifyPage() {
       setError('Failed to resend OTP. Please try again in a moment.');
       console.error('Resend OTP failed:', resendError.message);
     } else {
-      const expiry = Date.now() + 60 * 1000;
-      localStorage.setItem('otp_expiry', expiry.toString());
-      setResendTimer(60);
-      setOtp(Array(6).fill(''));
+      localStorage.setItem('otpLastSent', Date.now().toString());
+      setTimeLeft(60);
     }
   };
 
@@ -173,7 +168,7 @@ export default function VerifyPage() {
           <p className="text-gray-500 mb-6">
             A 6-digit code has been sent to your number:
             <br />
-            <strong className="text-gray-700">+91 {phone}</strong>
+            <strong className="text-gray-700">{normalizePhone(`+91${phone}`)}</strong>
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -199,9 +194,7 @@ export default function VerifyPage() {
               ))}
             </div>
 
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
             <button
               type="submit"
@@ -215,8 +208,8 @@ export default function VerifyPage() {
 
           <div className="text-center mt-6 text-sm text-gray-600">
             Didn&apos;t receive the code?{' '}
-            {resendTimer > 0 ? (
-              <span className="text-gray-400">Resend in {resendTimer}s</span>
+            {timeLeft > 0 ? (
+              <span className="text-gray-400">Resend in {timeLeft}s</span>
             ) : (
               <button
                 onClick={handleResendOtp}

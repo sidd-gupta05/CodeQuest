@@ -13,24 +13,29 @@ function Navbar() {
   const [role, setRole] = useState<string | null>(null);
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-    });
+    await supabase.auth.signOut();
+    router.push('/');
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const getUser = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-
-      const role = user?.user_metadata?.role || 'Role not defined';
-      console.log('User role:', role);
-      setRole(role);
+      setRole(user?.user_metadata?.role || null);
     };
 
-    fetchUser();
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setRole(session?.user?.user_metadata?.role || null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
@@ -40,7 +45,7 @@ function Navbar() {
         <div className="flex items-center gap-2 min-w-[120px]">
           <Link
             href="/"
-            className="text-white font-semibold flex items-center gap-2 text-xl select-none pointer-events-none"
+            className="text-white font-semibold flex items-center gap-2 text-xl select-none cursor-pointer"
           >
             <Image
               src="/logo2.svg"

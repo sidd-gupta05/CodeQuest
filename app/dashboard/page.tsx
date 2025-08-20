@@ -6,8 +6,11 @@ import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+
+  const router = useRouter();
 
   useEffect (() => {
     const fetchUser = async () => {
@@ -30,6 +33,7 @@ export default function DashboardPage() {
     await fetch('/api/auth/logout', {
       method: 'POST',
     });
+    router.push('/');
   };
 
   return (

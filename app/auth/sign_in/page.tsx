@@ -35,6 +35,7 @@ export default function SignupPage() {
     setApiError(null);
   };
 
+  // TODO: Improve below validation with Zod
   const validate = () => {
     const newErrors: Partial<typeof form> = {};
 
@@ -79,10 +80,14 @@ export default function SignupPage() {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (res.data.success) {
-        router.push(res.data.redirect);
+      const data = await res.data;
+      if (data.success) {
+        // ✅ Store signup payload client-side
+        sessionStorage.setItem('signupPayload', JSON.stringify(form));
+
+        router.push(`/auth/verify-otp?phone=${form.phone}`);
       } else {
-        setApiError(res.data.error || 'Something went wrong');
+        setApiError(data.error || 'Something went wrong');
       }
     } catch (err: any) {
       setApiError(err.response?.data?.error || 'Failed to sign up');
@@ -131,11 +136,15 @@ export default function SignupPage() {
               <h2 className="text-3xl font-semibold text-gray-800 mb-2">
                 Create an account
               </h2>
-              <p className="text-gray-600 mt-2">Start your 30 days free trial</p>
+              <p className="text-gray-600 mt-2">
+                Start your 30 days free trial
+              </p>
             </div>
 
             {apiError && (
-              <p className="text-red-500 text-sm text-center mb-4">{apiError}</p>
+              <p className="text-red-500 text-sm text-center mb-4">
+                {apiError}
+              </p>
             )}
 
             <form className="space-y-4" onSubmit={handleSubmit}>
@@ -224,7 +233,9 @@ export default function SignupPage() {
               <div className="flex gap-4">
                 <button
                   type="button"
-                  onClick={() => { handleReset(); }}
+                  onClick={() => {
+                    handleReset();
+                  }}
                   className="w-1/2 bg-gray-200 text-gray-800 rounded-md py-2 font-semibold cursor-pointer"
                 >
                   Back
@@ -247,21 +258,14 @@ export default function SignupPage() {
 
             <div className="flex gap-4 justify-center">
               <button
-                className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
+                className="cursor-pointer flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
                 onClick={() => {
                   const callbackUrl =
-                    accountType === 'LAB'
-                      ? '/lab-registration'
-                      : '/dashboard';
+                    accountType === 'LAB' ? '/lab-registration' : '/dashboard';
                   signIn('google', { callbackUrl });
                 }}
               >
-                <Image
-                  src="/google.svg"
-                  alt="Google"
-                  width={20}
-                  height={20}
-                />
+                <Image src="/google.svg" alt="Google" width={20} height={20} />
                 <span className="text-sm font-medium">Sign in with Google</span>
               </button>
             </div>

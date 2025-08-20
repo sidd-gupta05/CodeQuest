@@ -1,61 +1,72 @@
 'use client';
+
 import Image from 'next/image';
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signIn } from 'next-auth/react';
+import { supabase } from '@/utils/supabase/client';
+import Link from 'next/link';
+
+// 1. Zod schema
+const loginSchema = z.object({
+  identifier: z.string().min(1, 'Email or phone is required'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const [form, setForm] = useState({
-    identifier: '',
-    password: '',
+
+  // 2. Setup react-hook-form with Zod
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      identifier: '',
+      password: '',
+    },
   });
 
-  const [errors, setErrors] = useState({
-    identifier: '',
-    password: '',
-  });
+  // 3. On submit
+  const onSubmit = async (values: LoginFormValues) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: values.identifier,
+      password: values.password,
+    });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const validate = () => {
-    const newErrors = { identifier: '', password: '' };
-    let valid = true;
-
-    if (!form.identifier) {
-      newErrors.identifier = 'Email or phone is required';
-      valid = false;
+    if (error) {
+      form.setError('identifier', { message: 'Invalid credentials' });
+      return;
     }
 
-    if (!form.password) {
-      newErrors.password = 'Password is required';
-      valid = false;
+    // fetch user profile
+    const userId = data.user?.id;
+    if (!userId) return;
+
+    const { data: profile, error: profileError } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
+    if (profileError || !profile) {
+      console.error(profileError);
+      return;
     }
 
-    setErrors(newErrors);
-    return valid;
-  };
-
-  const handleSubmit = async () => {
-    if (!validate()) return;
-
-    console.log('Logging in with', form);
-    router.push('/dashboard');
-
-    // Uncomment if using credentials auth
-    // const res = await signIn("credentials", {
-    //   redirect: false,
-    //   email: form.identifier,
-    //   password: form.password,
-    // });
-    // if (res?.ok) router.push("/optionss");
-    // else alert("Login failed");
+    // redirect
+    if (profile.role === 'LAB') {
+      router.push('/dashboard');
+    } else {
+      router.push('/BookAppointment');
+    }
   };
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+      {/* Left column */}
       <div className="bg-white flex items-center justify-center p-10">
         <div className="max-w-md w-full">
           <div className="mb-6 text-center">
@@ -70,52 +81,57 @@ export default function LoginPage() {
             <p className="text-gray-600 text-xl">Welcome back! Please login.</p>
           </div>
 
-          <form className="space-y-4">
+          {/* Plain Tailwind form but still wired with RHF */}
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
             <div>
               <input
                 type="text"
-                name="identifier"
                 placeholder="Email or Phone"
-                value={form.identifier}
-                onChange={handleChange}
+                {...form.register('identifier')}
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
-              {errors.identifier && (
-                <p className="text-xs text-red-500">{errors.identifier}</p>
+              {form.formState.errors.identifier && (
+                <p className="text-xs text-red-500">
+                  {form.formState.errors.identifier.message}
+                </p>
               )}
             </div>
             <div>
               <input
                 type="password"
-                name="password"
                 placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
+                {...form.register('password')}
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
               />
-              {errors.password && (
-                <p className="text-xs text-red-500">{errors.password}</p>
+              {form.formState.errors.password && (
+                <p className="text-xs text-red-500">
+                  {form.formState.errors.password.message}
+                </p>
               )}
             </div>
 
             <button
-              type="button"
-              onClick={handleSubmit}
-              className="w-full bg-teal-600 text-white rounded-md py-2 font-semibold hover:bg-teal-700"
+              type="submit"
+              className="cursor-pointer w-full bg-teal-600 text-white rounded-md py-2 font-semibold hover:bg-teal-700"
             >
               Login
             </button>
           </form>
 
+          {/* Divider */}
           <div className="flex items-center my-4">
             <div className="flex-grow h-px bg-gray-300" />
             <span className="mx-2 text-gray-400 text-sm">OR</span>
             <div className="flex-grow h-px bg-gray-300" />
           </div>
 
+          {/* Social Login */}
           <div className="flex gap-4 justify-center">
             <button
-              className="flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
+              className="flex cursor-pointer items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
               onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
             >
               <Image src="/google.svg" alt="Google" width={20} height={20} />
@@ -125,13 +141,14 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-gray-600 mt-4">
             Don&#39;t have an account?{' '}
-            <a href="/auth/sign_in" className="text-teal-600">
+            <Link href="/auth/sign_in" className="text-teal-600">
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </div>
 
+      {/* Right column */}
       <div
         className="hidden md:flex items-center justify-center p-10"
         style={{
