@@ -20,20 +20,6 @@ export default function LabRegistration() {
     setUploadedFile(null);
   };
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const checkAuth = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push('/sign-in?redirectTo=/doctor-registration');
-      }
-    };
-
-    checkAuth();
-  }, [router]);
 
   // 🔽 Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

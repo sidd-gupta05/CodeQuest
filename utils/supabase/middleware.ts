@@ -63,9 +63,9 @@ export const createClient = async (request: NextRequest) => {
   }
 
   if (user) {
-    console.log('Authenticated user:', user.id);
+    // console.log('Authenticated user:', user.id);
     const role = user.role;
-    console.log('Authenticated user:', user.email, 'Role:', role);
+    // console.log('Authenticated user:', user.email, 'Role:', role);
 
     //redirect non-patient from lab to book appointment
     if (
