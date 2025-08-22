@@ -30,8 +30,6 @@ export async function POST(req: Request) {
           lastName: form.lastName,
           phone: form.phone,
           role,
-          // TODO: Hash the password before storing
-          password: form.password,
         },
         emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/lab-registration`,
       },

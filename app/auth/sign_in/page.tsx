@@ -7,6 +7,7 @@ import { signIn } from 'next-auth/react';
 import axios from 'axios';
 import CarouselSection from '@/components/carousel-section';
 import { AccountTypeSidebar } from '@/components/AccSidebar';
+import OneTapComponent from '@/components/OneTapComponent';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -257,7 +258,7 @@ export default function SignupPage() {
             </div>
 
             <div className="flex gap-4 justify-center">
-              <button
+              {/* <button
                 className="cursor-pointer flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
                 onClick={() => {
                   const callbackUrl =
@@ -267,7 +268,9 @@ export default function SignupPage() {
               >
                 <Image src="/google.svg" alt="Google" width={20} height={20} />
                 <span className="text-sm font-medium">Sign in with Google</span>
-              </button>
+              </button> */}
+
+              <OneTapComponent />
             </div>
 
             <p className="text-center text-sm text-gray-600 mt-4">
