@@ -8,6 +8,7 @@ import axios from 'axios';
 import CarouselSection from '@/components/carousel-section';
 import { AccountTypeSidebar } from '@/components/AccSidebar';
 import OneTapComponent from '@/components/OneTapComponent';
+import { supabase } from '@/utils/supabase/client';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -65,6 +66,21 @@ export default function SignupPage() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+
+  // TODO: Gonna remove below handlers
+  const handleGoogleLogin = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `http://localhost:3000/api/auth/oauth-callback?role=${accountType}`,
+      },
+    });
+
+    if (error) console.error(error);
+    console.log('Google login initiated', data);
+  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -258,19 +274,15 @@ export default function SignupPage() {
             </div>
 
             <div className="flex gap-4 justify-center">
-              {/* <button
+              <button
                 className="cursor-pointer flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-                onClick={() => {
-                  const callbackUrl =
-                    accountType === 'LAB' ? '/lab-registration' : '/dashboard';
-                  signIn('google', { callbackUrl });
-                }}
+                onClick={() => handleGoogleLogin()}
               >
                 <Image src="/google.svg" alt="Google" width={20} height={20} />
                 <span className="text-sm font-medium">Sign in with Google</span>
-              </button> */}
+              </button>
 
-              <OneTapComponent />
+              {/* <OneTapComponent /> */}
             </div>
 
             <p className="text-center text-sm text-gray-600 mt-4">
