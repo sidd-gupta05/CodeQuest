@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
+import { NextResponse } from 'next/server';
 
 // 1. Zod schema
 const loginSchema = z.object({
@@ -30,6 +31,7 @@ export default function LoginPage() {
   });
 
   // 3. On submit
+  //TODO: Gotta create an API for it I think so
   const onSubmit = async (values: LoginFormValues) => {
     const identifier = values.identifier.trim();
     const isEmail = identifier.includes('@');
@@ -48,7 +50,9 @@ export default function LoginPage() {
       }));
     }
 
+    // console.log(data)
     if (error) {
+      console.error('Login error:', error.message);
       form.setError('identifier', { message: 'Invalid credentials' });
       return;
     }
@@ -67,7 +71,13 @@ export default function LoginPage() {
       console.error(profileError);
       return;
     }
-
+    const res = NextResponse.json({ success: true });
+    res.cookies.set('user-role', profile?.role, {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    });
     // redirect
     if (profile.role === 'LAB') {
       router.push('/dashboard');

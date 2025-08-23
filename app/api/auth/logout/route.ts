@@ -12,11 +12,15 @@ export async function POST() {
     await supabase.auth.signOut();
     
     // Redirect to / page
-    return NextResponse.json(
+    const res =  NextResponse.json(
       { success: true, message: 'logout successful' },
       { status: 200 }
     );
 
+  // Clear the user-role cookie
+    res.cookies.set('user-role', '', { maxAge: 0, path: '/' });
+    return res;
+    
   } catch (error) {
     console.error('Logout error:', error);
     return NextResponse.json(
