@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   }
 
   const user = sessionData.user;
-  console.log('Authenticated OAuth user:', user);
+  // console.log('Authenticated OAuth user:', user);
 
   // 2. Check if user exists in your custom users table
   const { data: existingUser, error: fetchError } = await supabase
@@ -37,7 +37,9 @@ export async function GET(req: Request) {
     .single();
 
   if (fetchError && fetchError.code !== 'PGRST116') {
-    return NextResponse.redirect(new URL('/auth/sign_in?error=oauth_failed', req.url));
+    return NextResponse.redirect(
+      new URL('/auth/sign_in?error=oauth_failed', req.url)
+    );
   }
 
   const finalRole = existingUser?.role || roleParam;
@@ -64,6 +66,17 @@ export async function GET(req: Request) {
       );
     }
   }
-  const redirectPath = finalRole === 'LAB' ? '/lab-registration' : '/dashboard';
-  return NextResponse.redirect(new URL(redirectPath, req.url));
+
+  //TODO: Gotta modify labs api to redirect not yet registered labs to lab-registration
+  // Set role cookie (HTTP-only)
+  const response = NextResponse.redirect(
+    new URL(finalRole === 'LAB' ? ('/lab-registration') : '/dashboard', req.url)
+  );
+  response.cookies.set('user-role', finalRole, {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+  });
+  return response;
 }

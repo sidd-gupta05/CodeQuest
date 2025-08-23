@@ -35,19 +35,8 @@ export const createClient = async (request: NextRequest) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  
-
-  // Fetch role from your users table
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user?.id)
-    .single();
 
   const pathname = request.nextUrl.pathname;
-
-  // TODO: Sorting below paths asap also what are patient only routes here?
-  // ✅ Define protected paths
   const protectedPaths = [
     '/register',
     '/login',
@@ -70,14 +59,34 @@ export const createClient = async (request: NextRequest) => {
     return NextResponse.redirect(url);
   }
 
+  let role = request.cookies.get('user-role')?.value;
+
+  // fallback to DB if cookie missing and user present (rare case)
+  if (user && !role) {
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    role = profile?.role;
+    if (role) {
+      supabaseResponse.cookies.set('user-role', role, {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+      });
+    }
+  }
+
   if (user) {
     console.log('Authenticated user:', user);
-    console.log('Authenticated user:', user.email, 'Role:', profile?. role);
+    console.log('Authenticated user:', user.email, 'Role:', role);
 
     //redirect non-patient from lab to book appointment
     if (
       ['/auth/sign_in', '/register', '/dashboard'].includes(pathname) &&
-      profile?.role !== 'LAB'
+      role !== 'LAB'
     ) {
       const url = request.nextUrl.clone();
       url.pathname = '/BookAppointment'; // redirect them somewhere safe
@@ -86,15 +95,9 @@ export const createClient = async (request: NextRequest) => {
 
     // 🔁 Redirect authenticated users trying to access auth pages
     if (user && ['/auth/sign_in', '/register'].includes(pathname)) {
-      console.log(
-        'Redirecting authenticated user:',
-        pathname,
-        'Role:',
-        profile?.role
-      );
+      console.log('Redirecting authenticated user:', pathname, 'Role:', role);
       const url = request.nextUrl.clone();
-      url.pathname =
-        profile?.role === 'LAB' ? '/dashboard' : '/BookAppointment';
+      url.pathname = role === 'LAB' ? '/dashboard' : '/BookAppointment';
       return NextResponse.redirect(url);
     }
   }
