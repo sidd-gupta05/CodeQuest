@@ -31,10 +31,22 @@ export default function LoginPage() {
 
   // 3. On submit
   const onSubmit = async (values: LoginFormValues) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: values.identifier,
-      password: values.password,
-    });
+    const identifier = values.identifier.trim();
+    const isEmail = identifier.includes('@');
+
+    let data, error;
+
+    if (isEmail) {
+      ({ data, error } = await supabase.auth.signInWithPassword({
+        email: identifier,
+        password: values.password,
+      }));
+    } else {
+      ({ data, error } = await supabase.auth.signInWithPassword({
+        phone: `+91${identifier}`, // Ensure you store phone in E.164 format in Supabase
+        password: values.password,
+      }));
+    }
 
     if (error) {
       form.setError('identifier', { message: 'Invalid credentials' });
@@ -82,10 +94,7 @@ export default function LoginPage() {
           </div>
 
           {/* Plain Tailwind form but still wired with RHF */}
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <input
                 type="text"

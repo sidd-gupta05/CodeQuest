@@ -35,6 +35,14 @@ export const createClient = async (request: NextRequest) => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  
+
+  // Fetch role from your users table
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user?.id)
+    .single();
 
   const pathname = request.nextUrl.pathname;
 
@@ -63,14 +71,13 @@ export const createClient = async (request: NextRequest) => {
   }
 
   if (user) {
-    // console.log('Authenticated user:', user.id);
-    const role = user.role;
-    // console.log('Authenticated user:', user.email, 'Role:', role);
+    console.log('Authenticated user:', user);
+    console.log('Authenticated user:', user.email, 'Role:', profile?. role);
 
     //redirect non-patient from lab to book appointment
     if (
       ['/auth/sign_in', '/register', '/dashboard'].includes(pathname) &&
-      role !== 'LAB'
+      profile?.role !== 'LAB'
     ) {
       const url = request.nextUrl.clone();
       url.pathname = '/BookAppointment'; // redirect them somewhere safe
@@ -83,11 +90,11 @@ export const createClient = async (request: NextRequest) => {
         'Redirecting authenticated user:',
         pathname,
         'Role:',
-        user.user_metadata.role
+        profile?.role
       );
       const url = request.nextUrl.clone();
       url.pathname =
-        user.user_metadata.role === 'LAB' ? '/dashboard' : '/BookAppointment';
+        profile?.role === 'LAB' ? '/dashboard' : '/BookAppointment';
       return NextResponse.redirect(url);
     }
   }

@@ -17,9 +17,14 @@ export default function DashboardPage() {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
 
-      const role = user?.user_metadata?.role || 'Role not defined';
-      console.log('User role:', role);
-      setRole(role);
+        // Fetch role from your users table
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user?.id)
+    .single();
+
+      setRole(profile?.role);
     };
 
     fetchUser();
