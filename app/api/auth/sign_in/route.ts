@@ -7,6 +7,7 @@ export async function POST(req: Request) {
   const supabase = await createClient(cookies());
   const form = await req.json();
 
+  //TODO: create all necessary interface
   console.log('Received form data:', form);
 
   const role = form.role?.toUpperCase();
@@ -18,6 +19,28 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
+
+   // --- Pre-check for duplicate email ---
+    const { data: existingEmail } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', form.email)
+      .single();
+
+    if (existingEmail) {
+      return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
+    }
+
+    // --- Pre-check for duplicate phone ---
+    const { data: existingPhone } = await supabase
+      .from('users')
+      .select('id')
+      .eq('phone', form.phone)
+      .single();
+
+    if (existingPhone) {
+      return NextResponse.json({ error: 'Phone already registered' }, { status: 400 });
+    }
 
   if (role === 'LAB') {
     // 1. Sign up using email/password
@@ -76,8 +99,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      success: true,
-      redirect: `/${role.toLowerCase()}-registration`,
+      success: 200,
+      redirect: `/lab-registration`,
     });
   }
 
