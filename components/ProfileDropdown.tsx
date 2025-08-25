@@ -126,7 +126,7 @@ export function ProfileDropdown({
     ? `${profileData.firstName} ${profileData.lastName}`
     : 'User';
 
-    console.log('Profile Data:', user);
+  console.log('Profile Data:', user);
   return (
     <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 z-1000 border border-gray-200 transition-all duration-200 ease-in-out transform">
       <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
@@ -154,7 +154,9 @@ export function ProfileDropdown({
             <p className="text-sm text-gray-500 flex items-center gap-1.5 mt-1">
               <Mail className="w-4 h-4 flex-shrink-0" />
               {/* Guaranteed Email Visibility */}
-              <span className="truncate">{user?.email || 'Loading...'}</span>
+              <span className="truncate">
+                {user.user_metadata.email || 'Loading...'}
+              </span>
             </p>
           </div>
         </div>
