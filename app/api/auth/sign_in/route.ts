@@ -84,8 +84,8 @@ export async function POST(req: Request) {
       lastName: form.lastName,
       phone: form.phone,
       role,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      // createdAt: new Date().toISOString(),
+      // updatedAt: new Date().toISOString(),
     });
 
     if (insertUserError) {
