@@ -1,7 +1,7 @@
-// components/BookAppointment/LabCard/LabAvailability.tsx
 import React, { useEffect, useState } from 'react';
 import { Lab } from '../Filters/types';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { supabase } from '@/utils/supabase/client';
 
@@ -12,6 +12,7 @@ interface LabAvailabilityProps {
 export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -40,6 +41,7 @@ export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => {
     if (!user) {
       e.preventDefault();
       toast.error('Please sign in first to book an appointment');
+      router.push('/auth/sign_in'); // Redirect to sign-in page
       return;
     }
 
