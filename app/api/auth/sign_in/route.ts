@@ -20,27 +20,33 @@ export async function POST(req: Request) {
     );
   }
 
-   // --- Pre-check for duplicate email ---
-    const { data: existingEmail } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', form.email)
-      .single();
+  // --- Pre-check for duplicate email ---
+  const { data: existingEmail } = await supabase
+    .from('users')
+    .select('id')
+    .eq('email', form.email)
+    .single();
 
-    if (existingEmail) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
-    }
+  if (existingEmail) {
+    return NextResponse.json(
+      { error: 'Email already registered' },
+      { status: 400 }
+    );
+  }
 
-    // --- Pre-check for duplicate phone ---
-    const { data: existingPhone } = await supabase
-      .from('users')
-      .select('id')
-      .eq('phone', form.phone)
-      .single();
+  // --- Pre-check for duplicate phone ---
+  const { data: existingPhone } = await supabase
+    .from('users')
+    .select('id')
+    .eq('phone', form.phone)
+    .single();
 
-    if (existingPhone) {
-      return NextResponse.json({ error: 'Phone already registered' }, { status: 400 });
-    }
+  if (existingPhone) {
+    return NextResponse.json(
+      { error: 'Phone already registered' },
+      { status: 400 }
+    );
+  }
 
   if (role === 'LAB') {
     // 1. Sign up using email/password
@@ -108,14 +114,22 @@ export async function POST(req: Request) {
     // 4. Sign in with OTP (phone-based)
     const { error: otpError } = await supabase.auth.signInWithOtp({
       phone: `+91${form.phone}`,
-      options: { channel: 'sms' },
+      options: {
+        channel: 'sms',
+        data: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          role,
+        },
+      },
     });
 
     if (otpError) {
       return NextResponse.json({ error: otpError.message }, { status: 400 });
     }
 
-      return NextResponse.json({ success: 200 });
+    return NextResponse.json({ success: 200 });
   }
 
   return NextResponse.json({ error: 'Unhandled case' }, { status: 400 });

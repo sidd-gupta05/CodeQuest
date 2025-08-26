@@ -10,8 +10,15 @@ import LabSearch from '@/components/lab-search';
 import { Pagination } from '@/components/BookApointment/Pagination/Pagination';
 import { MapView } from '@/components/BookApointment/MapView/MapView';
 import { ResultsHeader, EmptyResults } from '@/components/BookApointment';
-import { DesktopFilters, MobileFilters } from '@/components/BookApointment/Filters';
-import { Lab, Filters, SearchFilters } from '@/components/BookApointment/Filters/types';
+import {
+  DesktopFilters,
+  MobileFilters,
+} from '@/components/BookApointment/Filters';
+import {
+  Lab,
+  Filters,
+  SearchFilters,
+} from '@/components/BookApointment/Filters/types';
 import { LabCard } from '@/components/BookApointment/LabCard';
 import { fetchLabs, handlePageChange, toggleLove } from './action';
 
