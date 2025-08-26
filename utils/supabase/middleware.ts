@@ -32,6 +32,7 @@ export const createClient = async (request: NextRequest) => {
     },
   });
 
+  //TODO:Optimize the code to avoid multiple calls to getUser
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -80,8 +81,14 @@ export const createClient = async (request: NextRequest) => {
   }
 
   if (user) {
-    console.log('Authenticated user:', user);
-    console.log('Authenticated user:', user.email, 'Role:', role);
+    supabaseResponse.cookies.set('user-aud', String(user.aud), {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    });
+    // console.log('Authenticated user:', user);
+    // console.log('Authenticated user:', user.email, 'Role:', role);
 
     //redirect non-patient from lab to book appointment
     if (

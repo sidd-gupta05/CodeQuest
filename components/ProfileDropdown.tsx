@@ -83,7 +83,7 @@ export function ProfileDropdown({
 
         {/* Display role information */}
         <div className="text-sm text-gray-500 flex items-center gap-2 mt-3">
-          <UserIcon className="w-4 h-4 flex-shrink-0 cursor-pointer" />
+          <UserIcon className="w-4 h-4 flex-shrink-0 " />
           <span className="capitalize">
             {profileData?.role?.toLowerCase() || 'user'}
           </span>

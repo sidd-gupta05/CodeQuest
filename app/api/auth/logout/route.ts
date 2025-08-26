@@ -19,6 +19,7 @@ export async function POST() {
 
   // Clear the user-role cookie
     res.cookies.set('user-role', '', { maxAge: 0, path: '/' });
+    res.cookies.set('user-aud', '', { maxAge: 0, path: '/' });
     return res;
     
   } catch (error) {

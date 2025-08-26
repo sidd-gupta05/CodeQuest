@@ -168,10 +168,7 @@ function Navbar() {
                 )}
               </div>
             )}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-white corsor-pointer"
-            >
+            <button onClick={() => setIsOpen(!isOpen)} className="text-white corsor-pointer">
               {isOpen ? (
                 <X className="h-6 w-6" />
               ) : (
