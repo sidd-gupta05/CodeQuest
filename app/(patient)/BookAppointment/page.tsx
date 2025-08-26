@@ -12,8 +12,15 @@ import { MapView } from '@/components/BookApointment/MapView/MapView';
 
 // TODO: More Optimizations can be done here, like lazy loading components
 import { ResultsHeader, EmptyResults } from '@/components/BookApointment';
-import { DesktopFilters, MobileFilters } from '@/components/BookApointment/Filters';
-import { Lab, Filters, SearchFilters } from '@/components/BookApointment/Filters/types';
+import {
+  DesktopFilters,
+  MobileFilters,
+} from '@/components/BookApointment/Filters';
+import {
+  Lab,
+  Filters,
+  SearchFilters,
+} from '@/components/BookApointment/Filters/types';
 import { LabCard } from '@/components/BookApointment/LabCard';
 
 const ITEMS_PER_PAGE = 7;

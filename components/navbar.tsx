@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
-import { User as UserIcon } from 'lucide-react';
+import { User as UserIcon, Menu, X } from 'lucide-react';
 import { ProfileDropdown } from './ProfileDropdown';
 
 function Navbar() {
@@ -14,11 +14,13 @@ function Navbar() {
   const [user, setUser] = useState<User | null>(null);
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
     setProfileData(null);
+    setUserRole(null);
     setProfileDropdownOpen(false);
     router.push('/');
   };
@@ -28,14 +30,16 @@ function Navbar() {
       if (currentUser) {
         const { data: profile } = await supabase
           .from('users')
-          .select('firstName, lastName, phone')
+          .select('firstName, lastName, phone, role')
           .eq('id', currentUser.id)
           .single();
         setUser(currentUser);
         setProfileData(profile);
+        setUserRole(profile?.role || null);
       } else {
         setUser(null);
         setProfileData(null);
+        setUserRole(null);
       }
     };
 
@@ -104,21 +108,34 @@ function Navbar() {
           {/* Right: Profile dropdown or Sign Up button */}
           <div className="hidden md:flex items-center justify-end flex-shrink-0 min-w-[120px]">
             {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
-                >
-                  <UserIcon className="h-5 w-5 text-white" />
-                </button>
-                {isProfileDropdownOpen && (
-                  <ProfileDropdown
-                    user={user}
-                    profileData={profileData}
-                    onClose={() => setProfileDropdownOpen(false)}
-                    onLogout={handleLogout}
-                  />
+              <div className="flex items-center gap-4">
+                {/* Dashboard button for doctors/labs only */}
+                {userRole === 'LAB' && (
+                  <Link
+                    href="/dashboard"
+                    className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
+                  >
+                    Dashboard
+                  </Link>
                 )}
+                <div className="relative">
+                  <button
+                    onClick={() =>
+                      setProfileDropdownOpen(!isProfileDropdownOpen)
+                    }
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20 cursor-pointer"
+                  >
+                    <UserIcon className="h-5 w-5 text-white curos-pointer" />
+                  </button>
+                  {isProfileDropdownOpen && (
+                    <ProfileDropdown
+                      user={user}
+                      profileData={profileData}
+                      onClose={() => setProfileDropdownOpen(false)}
+                      onLogout={handleLogout}
+                    />
+                  )}
+                </div>
               </div>
             ) : (
               <button
@@ -131,21 +148,35 @@ function Navbar() {
           </div>
 
           {/* Hamburger for Mobile */}
-          <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-white">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16m-7 6h7'}
-                />
-              </svg>
+          <div className="md:hidden flex items-center gap-4">
+            {/* Mobile profile dropdown for logged-in users */}
+            {user && (
+              <div className="relative">
+                <button
+                  onClick={() => setProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20 cursor-pointer"
+                >
+                  <UserIcon className="h-5 w-5 text-white cursor-pointer" />
+                </button>
+                {isProfileDropdownOpen && (
+                  <ProfileDropdown
+                    user={user}
+                    profileData={profileData}
+                    onClose={() => setProfileDropdownOpen(false)}
+                    onLogout={handleLogout}
+                  />
+                )}
+              </div>
+            )}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-white corsor-pointer"
+            >
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -186,13 +217,16 @@ function Navbar() {
             <hr className="w-full border-white/20 my-2" />
             {user ? (
               <>
-                <Link
-                  href="/dashboard"
-                  onClick={() => setIsOpen(false)}
-                  className={navLinkClasses}
-                >
-                  Dashboard
-                </Link>
+                {/* Dashboard button for doctors/labs only in mobile menu */}
+                {userRole === 'LAB' && (
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsOpen(false)}
+                    className={navLinkClasses}
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="w-full text-left text-red-400 px-4 py-2 rounded-full hover:bg-white/10"
