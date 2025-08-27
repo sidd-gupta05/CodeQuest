@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/auth/sign_in/page.tsx"
-, "app/dashboard/lab/profile/page.jsx", "components/InputField.tsx", "data/mapper.js", "app/api/create-razorpay-order.ts", "pages/api/verify-payment.ts"  ],
+, "app/dashboard/lab/profile/page.jsx", "components/InputField.tsx", "data/mapper.js", "app/api/create-razorpay-order.ts", "pages/api/verify-payment.ts", "prisma/nil.js", "prisma/nil.js"  ],
   "exclude": ["node_modules"]
 }

@@ -1,16 +1,14 @@
 // app/(patient)/BookAppointment/page.tsx
 'use client';
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import LabSearch from '@/components/lab-search';
-import { labsData } from '@/data/labsData';
 import { Pagination } from '@/components/BookApointment/Pagination/Pagination';
 import { MapView } from '@/components/BookApointment/MapView/MapView';
-
-// TODO: More Optimizations can be done here, like lazy loading components
 import { ResultsHeader, EmptyResults } from '@/components/BookApointment';
 import {
   DesktopFilters,
@@ -22,6 +20,7 @@ import {
   SearchFilters,
 } from '@/components/BookApointment/Filters/types';
 import { LabCard } from '@/components/BookApointment/LabCard';
+import { fetchLabs, handlePageChange, toggleLove } from './action';
 
 const ITEMS_PER_PAGE = 7;
 
@@ -33,7 +32,7 @@ const getToday = () => {
 
 const BookAppointment = () => {
   const searchParams = useSearchParams();
-  const [labs, setLabs] = useState<Lab[]>(labsData);
+  const [labs, setLabs] = useState<Lab[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     searchQuery: '',
@@ -52,6 +51,14 @@ const BookAppointment = () => {
   const [sortBy, setSortBy] = useState<string>('rating');
   const [showAllTestTypes, setShowAllTestTypes] = useState(false);
 
+  // Fetch labs dynamically
+  useEffect(() => {
+    (async () => {
+      const data = await fetchLabs();
+      setLabs(data);
+    })();
+  }, []);
+
   useEffect(() => {
     const searchQuery = searchParams.get('search') || '';
     const location = searchParams.get('location') || '';
@@ -60,14 +67,6 @@ const BookAppointment = () => {
     setSearchFilters({ searchQuery, location, date });
     setCurrentPage(1);
   }, [searchParams]);
-
-  const handleLoveClick = (id: number) => {
-    setLabs(
-      labs.map((lab) =>
-        lab.id === id ? { ...lab, isLoved: !lab.isLoved } : lab
-      )
-    );
-  };
 
   const handleFilterChange = (filterName: keyof Filters, value: any) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
@@ -92,20 +91,16 @@ const BookAppointment = () => {
       distance: 25,
     });
     setCurrentPage(1);
-    document
-      .querySelectorAll('input[type="radio"]')
-      .forEach((radio) => (radio.checked = false));
-    document
-      .querySelectorAll('input[type="checkbox"]')
-      .forEach((checkbox) => (checkbox.checked = false));
+    document.querySelectorAll('input[type="radio"]').forEach((radio) => (radio.checked = false));
+    document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => (checkbox.checked = false));
   };
 
   const testTypeCounts = useMemo(() => {
-    return labsData.reduce((acc: Record<string, number>, lab) => {
+    return labs.reduce((acc: Record<string, number>, lab) => {
       acc[lab.testType] = (acc[lab.testType] || 0) + 1;
       return acc;
     }, {});
-  }, []);
+  }, [labs]);
 
   const filteredAndSortedLabs = useMemo(() => {
     let filtered = [...labs];
@@ -175,10 +170,6 @@ const BookAppointment = () => {
       });
     }
 
-    if (filters.distance > 0) {
-      filtered = filtered.filter((lab) => true);
-    }
-
     if (filters.collectionTypes.length > 0) {
       filtered = filtered.filter((lab) =>
         filters.collectionTypes.every((type: string) =>
@@ -215,19 +206,9 @@ const BookAppointment = () => {
     ? allAvailableTestTypes
     : allAvailableTestTypes.slice(0, 5);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   return (
     <>
-      <main
-        className="flex flex-col text-white"
-        style={{
-          background:
-            'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)',
-        }}
-      >
+      <main className="flex flex-col text-white" style={{ background: 'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)' }}>
         <Navbar />
         <LabSearch />
       </main>
@@ -241,9 +222,7 @@ const BookAppointment = () => {
               showAllTestTypes={showAllTestTypes}
               onFilterChange={handleFilterChange}
               onCollectionTypeChange={handleCollectionTypeChange}
-              onToggleShowAllTestTypes={() =>
-                setShowAllTestTypes(!showAllTestTypes)
-              }
+              onToggleShowAllTestTypes={() => setShowAllTestTypes(!showAllTestTypes)}
               onClearAllFilters={clearAllFilters}
               allAvailableTestTypes={allAvailableTestTypes}
               visibleTestTypes={visibleTestTypes}
@@ -255,9 +234,7 @@ const BookAppointment = () => {
               showAllTestTypes={showAllTestTypes}
               onFilterChange={handleFilterChange}
               onCollectionTypeChange={handleCollectionTypeChange}
-              onToggleShowAllTestTypes={() =>
-                setShowAllTestTypes(!showAllTestTypes)
-              }
+              onToggleShowAllTestTypes={() => setShowAllTestTypes(!showAllTestTypes)}
               onClearAllFilters={clearAllFilters}
               allAvailableTestTypes={allAvailableTestTypes}
               visibleTestTypes={visibleTestTypes}
@@ -276,11 +253,7 @@ const BookAppointment = () => {
                 <AnimatePresence>
                   {paginatedLabs.length > 0 ? (
                     paginatedLabs.map((lab) => (
-                      <LabCard
-                        key={lab.id}
-                        lab={lab}
-                        onLoveClick={handleLoveClick}
-                      />
+                      <LabCard key={lab.id} lab={lab} onLoveClick={() => toggleLove(lab.id, labs, setLabs)} />
                     ))
                   ) : (
                     <EmptyResults />
@@ -298,7 +271,7 @@ const BookAppointment = () => {
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={handlePageChange}
+          onPageChange={(page) => handlePageChange(page, setCurrentPage)}
         />
       )}
 

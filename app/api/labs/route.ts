@@ -8,6 +8,48 @@ type TimeSlotInput = {
   time: string;
 };
 
+export async function GET() {
+  try {
+    const labs = await db.lab.findMany({
+      include: { details: true, timeSlots: true }
+    });
+    
+    const mapped = labs.map((lab) => {
+      const d = lab.details; // details is an object, not an array
+      const groupedSlots: { [K in 'Morning' | 'Afternoon' | 'Evening']: string[] } = {
+        Morning: [],
+        Afternoon: [],
+        Evening: []
+      };
+      lab.timeSlots.forEach((slot) => {
+        const key = slot.session?.charAt(0).toUpperCase() + slot.session.slice(1).toLowerCase();
+        if (key === 'Morning' || key === 'Afternoon' || key === 'Evening') {
+          groupedSlots[key].push(slot.time);
+        }
+      });
+
+      return {
+        id: lab.id,
+        name: d?.labName || '',
+        testType: d?.testType || '',
+        location: lab.labLocation,
+        nextAvailable: d?.nextAvailable?.toISOString().split('T')[0] || 'Not Available',
+        rating: d?.rating || 0,
+        experience: d?.experienceYears || 0,
+        isLoved: d?.isLoved || false,
+        image: d?.imageUrl,
+        collectionTypes: d?.collectionTypes || [],
+        timeSlots: groupedSlots
+      };
+    });
+    
+    return new Response(JSON.stringify(mapped), { status: 200 });
+  } catch (e) {
+    console.error(e);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -73,22 +115,6 @@ export async function POST(req: Request) {
     }
 
     return new Response(JSON.stringify({ message: 'Lab details updated successfully' }), { status: 201 });
-  } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
-  }
-}
-
-
-export async function GET(req: Request) {
-
-
-  try {
-    const labs = await db.lab.findMany({
-      include: { details: true, timeSlots: true }
-    });
-
-    return new Response(JSON.stringify(labs), { status: 200 });
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
