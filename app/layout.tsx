@@ -2,7 +2,7 @@
 import './globals.css';
 import { clashFontRegular } from './fonts';
 import { Toaster } from 'react-hot-toast';
-import { SessionProvider } from 'next-auth/react';
+// import { SessionProvider } from 'next-auth/react';
 
 export const metadata = {
   title: 'Lab-Sphere',
@@ -20,10 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${clashFontRegular.className}`}>
-        <SessionProvider>
-          {children}
-          <Toaster position="top-right" />
-        </SessionProvider>
+        {/* <SessionProvider> */}
+        {children}
+        <Toaster position="top-right" />
+        {/* </SessionProvider> */}
       </body>
     </html>
   );

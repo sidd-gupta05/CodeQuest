@@ -15,6 +15,7 @@ function Navbar() {
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -41,6 +42,7 @@ function Navbar() {
         setProfileData(null);
         setUserRole(null);
       }
+      setLoading(false); // Set loading to false after user data is fetched
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -60,6 +62,54 @@ function Navbar() {
 
   const navLinkClasses =
     'text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2';
+
+  // Don't render auth section until loading is complete
+  const renderAuthSection = () => {
+    if (loading) {
+      // You can return a skeleton loader or null here
+      return (
+        <div className="hidden md:flex items-center justify-end flex-shrink-0 min-w-[120px]">
+          <div className="h-10 w-10 rounded-full bg-gray-300 animate-pulse"></div>
+        </div>
+      );
+    }
+
+    return user ? (
+      <div className="flex items-center gap-4">
+        {userRole === 'LAB' && (
+          <Link
+            href="/dashboard"
+            className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
+          >
+            Dashboard
+          </Link>
+        )}
+        <div className="relative">
+          <button
+            onClick={() => setProfileDropdownOpen(!isProfileDropdownOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20 cursor-pointer"
+          >
+            <UserIcon className="h-5 w-5 text-white curos-pointer" />
+          </button>
+          {isProfileDropdownOpen && (
+            <ProfileDropdown
+              user={user}
+              profileData={profileData}
+              onClose={() => setProfileDropdownOpen(false)}
+              onLogout={handleLogout}
+            />
+          )}
+        </div>
+      </div>
+    ) : (
+      <button
+        onClick={() => router.push('/auth/sign_in')}
+        className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
+      >
+        Sign In
+      </button>
+    );
+  };
 
   return (
     <>
@@ -107,50 +157,13 @@ function Navbar() {
 
           {/* Right: Profile dropdown or Sign Up button */}
           <div className="hidden md:flex items-center justify-end flex-shrink-0 min-w-[120px]">
-            {user ? (
-              <div className="flex items-center gap-4">
-                {/* Dashboard button for doctors/labs only */}
-                {userRole === 'LAB' && (
-                  <Link
-                    href="/dashboard"
-                    className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
-                  >
-                    Dashboard
-                  </Link>
-                )}
-                <div className="relative">
-                  <button
-                    onClick={() =>
-                      setProfileDropdownOpen(!isProfileDropdownOpen)
-                    }
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20 cursor-pointer"
-                  >
-                    <UserIcon className="h-5 w-5 text-white curos-pointer" />
-                  </button>
-                  {isProfileDropdownOpen && (
-                    <ProfileDropdown
-                      user={user}
-                      profileData={profileData}
-                      onClose={() => setProfileDropdownOpen(false)}
-                      onLogout={handleLogout}
-                    />
-                  )}
-                </div>
-              </div>
-            ) : (
-              <button
-                onClick={() => router.push('/auth/sign_in')}
-                className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
-              >
-                Sign In
-              </button>
-            )}
+            {renderAuthSection()}
           </div>
 
           {/* Hamburger for Mobile */}
           <div className="md:hidden flex items-center gap-4">
             {/* Mobile profile dropdown for logged-in users */}
-            {user && (
+            {!loading && user && (
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -168,7 +181,10 @@ function Navbar() {
                 )}
               </div>
             )}
-            <button onClick={() => setIsOpen(!isOpen)} className="text-white corsor-pointer">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-white corsor-pointer"
+            >
               {isOpen ? (
                 <X className="h-6 w-6" />
               ) : (
@@ -212,9 +228,8 @@ function Navbar() {
               Contact Us
             </Link>
             <hr className="w-full border-white/20 my-2" />
-            {user ? (
+            {!loading && user ? (
               <>
-                {/* Dashboard button for doctors/labs only in mobile menu */}
                 {userRole === 'LAB' && (
                   <Link
                     href="/dashboard"
