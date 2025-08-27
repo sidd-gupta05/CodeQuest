@@ -11,18 +11,23 @@ type TimeSlotInput = {
 export async function GET() {
   try {
     const labs = await db.lab.findMany({
-      include: { details: true, timeSlots: true }
+      include: { details: true, timeSlots: true },
     });
-    
+    console.log('Fetched labs:', labs);
+
     const mapped = labs.map((lab) => {
       const d = lab.details; // details is an object, not an array
-      const groupedSlots: { [K in 'Morning' | 'Afternoon' | 'Evening']: string[] } = {
+      const groupedSlots: {
+        [K in 'Morning' | 'Afternoon' | 'Evening']: string[];
+      } = {
         Morning: [],
         Afternoon: [],
-        Evening: []
+        Evening: [],
       };
       lab.timeSlots.forEach((slot) => {
-        const key = slot.session?.charAt(0).toUpperCase() + slot.session.slice(1).toLowerCase();
+        const key =
+          slot.session?.charAt(0).toUpperCase() +
+          slot.session.slice(1).toLowerCase();
         if (key === 'Morning' || key === 'Afternoon' || key === 'Evening') {
           groupedSlots[key].push(slot.time);
         }
@@ -33,20 +38,24 @@ export async function GET() {
         name: d?.labName || '',
         testType: d?.testType || '',
         location: lab.labLocation,
-        nextAvailable: d?.nextAvailable?.toISOString().split('T')[0] || 'Not Available',
+        nextAvailable:
+          d?.nextAvailable?.toISOString().split('T')[0] || 'Not Available',
         rating: d?.rating || 0,
         experience: d?.experienceYears || 0,
         isLoved: d?.isLoved || false,
         image: d?.imageUrl,
         collectionTypes: d?.collectionTypes || [],
-        timeSlots: groupedSlots
+        timeSlots: groupedSlots,
       };
     });
-    
+
     return new Response(JSON.stringify(mapped), { status: 200 });
   } catch (e) {
     console.error(e);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+    console.log('Error fetching labs:', e);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+    });
   }
 }
 
@@ -61,19 +70,26 @@ export async function POST(req: Request) {
       collectionTypes,
       latitude,
       longitude,
-      isAvailable
+      isAvailable,
     } = body;
 
     const supabase = await createClient(cookies());
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
     if (!user || error) {
-      return new Response(JSON.stringify({ error: 'Not authenticated' }), { status: 401 });
+      return new Response(JSON.stringify({ error: 'Not authenticated' }), {
+        status: 401,
+      });
     }
 
     const lab = await db.lab.findUnique({ where: { userId: user.id } });
     if (!lab) {
-      return new Response(JSON.stringify({ error: 'Lab not found' }), { status: 404 });
+      return new Response(JSON.stringify({ error: 'Lab not found' }), {
+        status: 404,
+      });
     }
 
     await db.labDetails.upsert({
@@ -82,8 +98,11 @@ export async function POST(req: Request) {
         testType,
         experienceYears: experienceYears ?? null,
         imageUrl,
-        collectionTypes: Array.isArray(collectionTypes) ? collectionTypes : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
-        nextAvailable: nextAvailable?.length > 0 ? new Date(nextAvailable[0].date) : null,
+        collectionTypes: Array.isArray(collectionTypes)
+          ? collectionTypes
+          : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
+        nextAvailable:
+          nextAvailable?.length > 0 ? new Date(nextAvailable[0].date) : null,
         latitude: latitude ?? 0.0,
         longitude: longitude ?? 0.0,
         isLoved: isAvailable ?? false,
@@ -94,8 +113,11 @@ export async function POST(req: Request) {
         testType,
         experienceYears: experienceYears ?? null,
         imageUrl,
-        collectionTypes: Array.isArray(collectionTypes) ? collectionTypes : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
-        nextAvailable: nextAvailable?.length > 0 ? new Date(nextAvailable[0].date) : null,
+        collectionTypes: Array.isArray(collectionTypes)
+          ? collectionTypes
+          : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
+        nextAvailable:
+          nextAvailable?.length > 0 ? new Date(nextAvailable[0].date) : null,
         latitude: latitude ?? 0.0,
         longitude: longitude ?? 0.0,
         isLoved: isAvailable ?? false,
@@ -114,9 +136,14 @@ export async function POST(req: Request) {
       });
     }
 
-    return new Response(JSON.stringify({ message: 'Lab details updated successfully' }), { status: 201 });
+    return new Response(
+      JSON.stringify({ message: 'Lab details updated successfully' }),
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+    });
   }
 }

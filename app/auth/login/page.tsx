@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
-import { NextResponse } from 'next/server';
 
 // 1. Zod schema
 const loginSchema = z.object({
@@ -31,58 +30,77 @@ export default function LoginPage() {
   });
 
   // 3. On submit
-  //TODO: Gotta create an API for it I think so
   const onSubmit = async (values: LoginFormValues) => {
     const identifier = values.identifier.trim();
     const isEmail = identifier.includes('@');
 
-    let data, error;
+    //TODO: krrish - fetch user by email/phone and check if provider is google, if yes show error to login with google
+    try {
+      // 🔍 Step 1: Check if account exists and if it's a Google OAuth account
+      let { data: userByEmail, error: lookupError } = await supabase
+        .from('users') // <-- this assumes you mirror Supabase auth.users into your own "users" table
+        .select('id, provider')
+        .eq('email', identifier)
+        .single();
 
-    if (isEmail) {
-      ({ data, error } = await supabase.auth.signInWithPassword({
-        email: identifier,
-        password: values.password,
-      }));
-    } else {
-      ({ data, error } = await supabase.auth.signInWithPassword({
-        phone: `+91${identifier}`, // Ensure you store phone in E.164 format in Supabase
-        password: values.password,
-      }));
-    }
+        let { data: userByPhone, error: lookupPhoneError } = await supabase.auth.getUserIdentities();
+        
 
-    // console.log(data)
-    if (error) {
-      console.error('Login error:', error.message);
-      form.setError('identifier', { message: 'Invalid credentials' });
-      return;
-    }
+      if (lookupError && lookupError.code !== 'PGRST116') {
+        console.error('Lookup error:', lookupError);
+      }
 
-    // fetch user profile
-    const userId = data.user?.id;
-    if (!userId) return;
+      if (userByEmail?.provider === 'google') {
+        form.setError('identifier', {
+          message: 'This email is registered with Google. Please login with Google instead.',
+        });
+        return;
+      }
 
-    const { data: profile, error: profileError } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', userId)
-      .single();
+      // 🔐 Step 2: Try Supabase password login
+      let data, error;
+      if (isEmail) {
+        ({ data, error } = await supabase.auth.signInWithPassword({
+          email: identifier,
+          password: values.password,
+        }));
+      } else {
+        ({ data, error } = await supabase.auth.signInWithPassword({
+          phone: `+91${identifier}`, // Ensure phone stored in E.164 format
+          password: values.password,
+        }));
+      }
 
-    if (profileError || !profile) {
-      console.error(profileError);
-      return;
-    }
-    const res = NextResponse.json({ success: true });
-    res.cookies.set('user-role', profile?.role, {
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-    });
-    // redirect
-    if (profile.role === 'LAB') {
-      router.push('/dashboard');
-    } else {
-      router.push('/BookAppointment');
+      if (error) {
+        console.error('Login error:', error.message);
+        form.setError('identifier', { message: 'Invalid credentials' });
+        return;
+      }
+
+      const userId = data.user?.id;
+      if (!userId) return;
+
+      // 👤 Step 3: Fetch profile role
+      const { data: profile, error: profileError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      if (profileError || !profile) {
+        console.error(profileError);
+        return;
+      }
+
+      // 🚀 Step 4: Redirect by role
+      if (profile.role === 'LAB') {
+        router.push('/dashboard');
+      } else {
+        router.push('/BookAppointment');
+      }
+    } catch (err) {
+      console.error('Unexpected login error:', err);
+      form.setError('identifier', { message: 'Something went wrong. Try again.' });
     }
   };
 
