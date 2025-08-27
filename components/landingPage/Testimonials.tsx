@@ -115,7 +115,7 @@ export default function Testimonials() {
 
         <motion.div variants={fadeInUp}>
           <Link
-            href={'/optionss'}
+            href={'/auth/sign_in'}
             className="mt-8 inline-block bg-[#2B7C7E] hover:bg-[#1f5d5f] text-white py-3 px-8 rounded-full text-sm font-semibold shadow-lg transition-all duration-300 hover:shadow-2xl animate-bounce select-none"
           >
             Get Started
