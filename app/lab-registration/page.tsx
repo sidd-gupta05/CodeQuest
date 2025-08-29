@@ -29,6 +29,7 @@ export default function LabRegistration() {
       data: { user },
       error,
     } = await supabase.auth.getUser();
+    console.log('Submitting form for user:', user?.id);
 
     localStorage.setItem('labId', user?.id || '');
     console.log('User data:', user?.id, user?.email, user?.role);
