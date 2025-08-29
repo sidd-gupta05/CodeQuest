@@ -116,7 +116,17 @@ export async function POST(req: NextRequest) {
     }
 
     console.log('User inserted:', data);
-    return NextResponse.json({ success: true }, { status: 200 });
+
+    const response = NextResponse.redirect(
+      new URL('/BookAppointment', req.url)
+    );
+    response.cookies.set('user-role', role, {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    });
+    return response;
   } catch (error: any) {
     console.error(
       'OTP verification failed:',
