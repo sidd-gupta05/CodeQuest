@@ -4,9 +4,11 @@ import dynamic from 'next/dynamic';
 import { ViewToggle } from '../ViewToggle/ViewToggle';
 import { Lab } from '../Filters';
 
-const MapBox = dynamic(() => import('@/components/MapContainer'), {
+const MapBox = dynamic(() => import('@/components/BookApointment/MapView/MapBox'), {
   ssr: false,
+  loading: () => <p className="text-center mt-4">📍 Loading map...</p>,
 });
+
 
 interface MapViewProps {
   labs: Lab[]; // already typed
