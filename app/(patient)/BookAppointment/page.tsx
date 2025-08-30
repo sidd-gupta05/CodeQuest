@@ -20,7 +20,8 @@ import {
   SearchFilters,
 } from '@/components/BookApointment/Filters/types';
 import { LabCard } from '@/components/BookApointment/LabCard';
-import { fetchLabs, handlePageChange, toggleLove } from './action';
+import { handlePageChange, toggleLove } from './action';
+import axios from 'axios';
 
 const ITEMS_PER_PAGE = 7;
 
@@ -51,12 +52,15 @@ const BookAppointment = () => {
   const [sortBy, setSortBy] = useState<string>('rating');
   const [showAllTestTypes, setShowAllTestTypes] = useState(false);
 
-  // Fetch labs dynamically
   useEffect(() => {
-    (async () => {
-      const data = await fetchLabs();
-      setLabs(data);
-    })();
+    try {
+      axios.get('/api/lab').then((res) => {
+        const data: Lab[] = res.data;
+        setLabs(data);
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
 
   useEffect(() => {
@@ -91,8 +95,12 @@ const BookAppointment = () => {
       distance: 25,
     });
     setCurrentPage(1);
-    document.querySelectorAll('input[type="radio"]').forEach((radio) => (radio.checked = false));
-    document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => (checkbox.checked = false));
+    document
+      .querySelectorAll('input[type="radio"]')
+      .forEach((radio) => (radio.checked = false));
+    document
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((checkbox) => (checkbox.checked = false));
   };
 
   const testTypeCounts = useMemo(() => {
@@ -208,7 +216,13 @@ const BookAppointment = () => {
 
   return (
     <>
-      <main className="flex flex-col text-white" style={{ background: 'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)' }}>
+      <main
+        className="flex flex-col text-white"
+        style={{
+          background:
+            'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)',
+        }}
+      >
         <Navbar />
         <LabSearch />
       </main>
@@ -222,7 +236,9 @@ const BookAppointment = () => {
               showAllTestTypes={showAllTestTypes}
               onFilterChange={handleFilterChange}
               onCollectionTypeChange={handleCollectionTypeChange}
-              onToggleShowAllTestTypes={() => setShowAllTestTypes(!showAllTestTypes)}
+              onToggleShowAllTestTypes={() =>
+                setShowAllTestTypes(!showAllTestTypes)
+              }
               onClearAllFilters={clearAllFilters}
               allAvailableTestTypes={allAvailableTestTypes}
               visibleTestTypes={visibleTestTypes}
@@ -234,7 +250,9 @@ const BookAppointment = () => {
               showAllTestTypes={showAllTestTypes}
               onFilterChange={handleFilterChange}
               onCollectionTypeChange={handleCollectionTypeChange}
-              onToggleShowAllTestTypes={() => setShowAllTestTypes(!showAllTestTypes)}
+              onToggleShowAllTestTypes={() =>
+                setShowAllTestTypes(!showAllTestTypes)
+              }
               onClearAllFilters={clearAllFilters}
               allAvailableTestTypes={allAvailableTestTypes}
               visibleTestTypes={visibleTestTypes}
@@ -253,7 +271,11 @@ const BookAppointment = () => {
                 <AnimatePresence>
                   {paginatedLabs.length > 0 ? (
                     paginatedLabs.map((lab) => (
-                      <LabCard key={lab.id} lab={lab} onLoveClick={() => toggleLove(lab.id, labs, setLabs)} />
+                      <LabCard
+                        key={lab.id}
+                        lab={lab}
+                        onLoveClick={() => toggleLove(lab.id, labs, setLabs)}
+                      />
                     ))
                   ) : (
                     <EmptyResults />
@@ -263,7 +285,11 @@ const BookAppointment = () => {
             </main>
           </div>
         ) : (
-          <MapView onViewModeChange={setViewMode} />
+          // <MapView onViewModeChange={setViewMode} />
+          <MapView
+            labs={filteredAndSortedLabs}
+            onViewModeChange={setViewMode}
+          />
         )}
       </section>
 
