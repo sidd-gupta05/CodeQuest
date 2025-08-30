@@ -13,7 +13,7 @@ export async function GET() {
     const labs = await db.lab.findMany({
       include: { details: true, timeSlots: true },
     });
-    console.log('Fetched labs:', labs);
+    // console.log('Fetched labs:', labs);
 
     const mapped = labs.map((lab) => {
       const d = lab.details; // details is an object, not an array
@@ -39,13 +39,15 @@ export async function GET() {
         testType: d?.testType || '',
         location: lab.labLocation,
         nextAvailable:
-          d?.nextAvailable?.toISOString().split('T')[0] || 'Not Available',
+        d?.nextAvailable?.toISOString().split('T')[0] || 'Not Available',
         rating: d?.rating || 0,
         experience: d?.experienceYears || 0,
         isLoved: d?.isLoved || false,
         image: d?.imageUrl,
         collectionTypes: d?.collectionTypes || [],
         timeSlots: groupedSlots,
+        latitude: d?.latitude ?? null,
+        longitude: d?.longitude ?? null,
       };
     });
 

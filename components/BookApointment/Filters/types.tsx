@@ -16,6 +16,9 @@ export interface Lab {
     Afternoon: string[];
     Evening: string[];
   };
+
+  latitude: number;
+  longitude: number;
 }
 
 export interface Filters {
