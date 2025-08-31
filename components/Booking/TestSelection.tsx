@@ -1,3 +1,4 @@
+//components/Booking/TestSelection.tsx
 'use client';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Star, MapPin, Search } from 'lucide-react';

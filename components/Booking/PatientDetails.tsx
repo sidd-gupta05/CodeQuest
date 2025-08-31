@@ -1,3 +1,4 @@
+//components/Booking/PatientDetails.tsx
 'use client';
 
 import { useState } from 'react';
