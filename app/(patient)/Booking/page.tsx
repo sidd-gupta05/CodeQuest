@@ -1,10 +1,12 @@
+//app/(patient)/Booking/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-import { labsData } from '@/data/labsData';
+// import { labsData } from '@/data/labsData';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import Stepper from '@/components/stepper';
 import Calendar from '@/components/calendar';
@@ -22,6 +24,8 @@ import Image from 'next/image';
 
 export default function Booking() {
   const searchParams = useSearchParams();
+  const supabase = createSupabaseBrowserClient();
+
   const [selectedLab, setSelectedLab] = useState<any>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState('');
@@ -34,27 +38,100 @@ export default function Booking() {
 
   useEffect(() => {
     const labId = searchParams.get('labId');
-    if (labId) {
-      const lab = labsData.find((lab) => lab.id === parseInt(labId));
-      if (lab) {
-        setSelectedLab(lab);
-        setIsLoved(lab.isLoved);
 
-        if (lab.nextAvailable && lab.nextAvailable !== 'Not Available') {
-          setSelectedDate(new Date(lab.nextAvailable));
-        } else {
-          setSelectedDate(new Date());
-        }
+    const fetchLabData = async () => {
+      if (!labId) return;
 
-        const firstAvailableTime = Object.values(lab.timeSlots)
-          .flat()
-          .find((slot) => slot !== '-');
-        if (firstAvailableTime) {
-          setSelectedTime(firstAvailableTime);
-        }
+      const { data: lab, error } = await supabase
+        .from('labs')
+        .select(
+          `
+            id,
+            labLocation,
+            details:lab_details (
+                labName,
+                imageUrl,
+                rating,
+                isLoved,
+                experienceYears,
+                testType,
+                nextAvailable
+            ),
+            timeSlots:lab_time_slots (
+                time,
+                session
+            )
+        `
+        )
+        .eq('id', labId)
+        .single();
+
+      if (error || !lab) {
+        console.error('Error fetching lab data:', error);
+        setSelectedLab(null);
+        return;
       }
-    }
-  }, [searchParams]);
+
+      const labDetails = Array.isArray(lab.details)
+        ? lab.details[0]
+        : lab.details;
+
+      const processedTimeSlots: {
+        Morning: string[];
+        Afternoon: string[];
+        Evening: string[];
+      } = { Morning: [], Afternoon: [], Evening: [] };
+      if (lab.timeSlots) {
+        lab.timeSlots.forEach((slot: { time: string; session: string }) => {
+          switch (slot.session) {
+            case 'MORNING':
+              processedTimeSlots.Morning.push(slot.time);
+              break;
+            case 'AFTERNOON':
+              processedTimeSlots.Afternoon.push(slot.time);
+              break;
+            case 'EVENING':
+              processedTimeSlots.Evening.push(slot.time);
+              break;
+          }
+        });
+      }
+
+      const processedLab = {
+        id: lab.id,
+        name: labDetails?.labName || 'N/A',
+        location: lab.labLocation,
+        image: labDetails?.imageUrl || '/default-image.png',
+        rating: labDetails?.rating || 0,
+        isLoved: labDetails?.isLoved || false,
+        experience: labDetails?.experienceYears || 0,
+        testType: labDetails?.testType || 'N/A',
+        nextAvailable: labDetails?.nextAvailable,
+        timeSlots: processedTimeSlots,
+      };
+
+      setSelectedLab(processedLab);
+      setIsLoved(processedLab.isLoved);
+
+      if (
+        processedLab.nextAvailable &&
+        processedLab.nextAvailable !== 'Not Available'
+      ) {
+        setSelectedDate(new Date(processedLab.nextAvailable));
+      } else {
+        setSelectedDate(new Date());
+      }
+
+      const firstAvailableTime = Object.values(processedLab.timeSlots)
+        .flat()
+        .find((slot) => slot !== '-');
+      if (firstAvailableTime) {
+        setSelectedTime(firstAvailableTime);
+      }
+    };
+
+    fetchLabData();
+  }, [searchParams, supabase]);
 
   if (!selectedLab) {
     return (
@@ -222,44 +299,49 @@ export default function Booking() {
               </motion.div>
             )}
 
+            {/* All other steps remain unchanged */}
             {currentStep === 2 && (
               <motion.div
                 key="step2"
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: 'spring', stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
+                {...{
+                  custom: direction,
+                  variants,
+                  initial: 'enter',
+                  animate: 'center',
+                  exit: 'exit',
+                  transition: {
+                    x: { type: 'spring', stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  },
+                  className: 'w-full max-w-4xl',
                 }}
-                className="w-full max-w-4xl"
               >
                 <TestSelection
                   onBack={handlePrevStep}
-                  onNext={handleNextStep} // Remove the manual setSelectedTests here
+                  onNext={handleNextStep}
                   selectedLab={selectedLab}
                   appointmentDate={formattedDate}
                   appointmentTime={selectedTime}
-                  selectedTests={selectedTests} // Pass the current selected tests
-                  onTestsChange={setSelectedTests} // Pass the setter function
+                  selectedTests={selectedTests}
+                  onTestsChange={setSelectedTests}
                 />
               </motion.div>
             )}
             {currentStep === 3 && (
               <motion.div
                 key="step3"
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: 'spring', stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
+                {...{
+                  custom: direction,
+                  variants,
+                  initial: 'enter',
+                  animate: 'center',
+                  exit: 'exit',
+                  transition: {
+                    x: { type: 'spring', stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  },
+                  className: 'w-full max-w-4xl',
                 }}
-                className="w-full max-w-4xl"
               >
                 <PatientDetails
                   onBack={handlePrevStep}
@@ -267,6 +349,7 @@ export default function Booking() {
                   selectedLab={selectedLab}
                   appointmentDate={formattedDate}
                   appointmentTime={selectedTime}
+                  patientDetails={patientDetails}
                   onPatientDetailsChange={setPatientDetails}
                 />
               </motion.div>
@@ -274,16 +357,18 @@ export default function Booking() {
             {currentStep === 4 && (
               <motion.div
                 key="step4"
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: 'spring', stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
+                {...{
+                  custom: direction,
+                  variants,
+                  initial: 'enter',
+                  animate: 'center',
+                  exit: 'exit',
+                  transition: {
+                    x: { type: 'spring', stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  },
+                  className: 'w-full max-w-4xl',
                 }}
-                className="w-full max-w-4xl"
               >
                 <AddOns
                   onBack={handlePrevStep}
@@ -291,6 +376,7 @@ export default function Booking() {
                   selectedLab={selectedLab}
                   appointmentDate={formattedDate}
                   appointmentTime={selectedTime}
+                  selectedAddons={selectedAddons}
                   onAddonsChange={setSelectedAddons}
                 />
               </motion.div>
@@ -298,16 +384,18 @@ export default function Booking() {
             {currentStep === 5 && (
               <motion.div
                 key="step5"
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: 'spring', stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
+                {...{
+                  custom: direction,
+                  variants,
+                  initial: 'enter',
+                  animate: 'center',
+                  exit: 'exit',
+                  transition: {
+                    x: { type: 'spring', stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  },
+                  className: 'w-full max-w-4xl',
                 }}
-                className="w-full max-w-4xl"
               >
                 <Payment
                   onBack={handlePrevStep}
@@ -324,16 +412,18 @@ export default function Booking() {
             {currentStep === 6 && (
               <motion.div
                 key="step6"
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: 'spring', stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
+                {...{
+                  custom: direction,
+                  variants,
+                  initial: 'enter',
+                  animate: 'center',
+                  exit: 'exit',
+                  transition: {
+                    x: { type: 'spring', stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  },
+                  className: 'w-full max-w-4xl',
                 }}
-                className="w-full max-w-4xl"
               >
                 <Confirmation
                   selectedLab={selectedLab}

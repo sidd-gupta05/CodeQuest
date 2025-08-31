@@ -1,3 +1,4 @@
+//components/BookApointment/LabCard/LabAvailability.tsx
 import React, { useEffect, useState } from 'react';
 import { Lab } from '../Filters/types';
 import Link from 'next/link';

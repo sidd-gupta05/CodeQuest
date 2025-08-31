@@ -1,6 +1,7 @@
+//components/Booking/PatientDetails.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BookingHeader from './BookingHeader';
 import BookingNavigation from './BookingNavigation';
 
@@ -10,6 +11,7 @@ interface PatientDetailsProps {
   selectedLab: any;
   appointmentDate: string;
   appointmentTime: string;
+  patientDetails: any;
   onPatientDetailsChange: (details: any) => void;
 }
 
@@ -19,6 +21,7 @@ export default function PatientDetails({
   selectedLab,
   appointmentDate,
   appointmentTime,
+  patientDetails,
   onPatientDetailsChange,
 }: PatientDetailsProps) {
   const [patientData, setPatientData] = useState({
@@ -29,15 +32,28 @@ export default function PatientDetails({
     address: '',
   });
 
+  useEffect(() => {
+    if (patientDetails) {
+      setPatientData({
+        firstName: patientDetails.firstName || '',
+        lastName: patientDetails.lastName || '',
+        gender: patientDetails.gender || '',
+        age: patientDetails.age || '',
+        address: patientDetails.address || '',
+      });
+    }
+  }, [patientDetails]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setPatientData((prev) => ({
-      ...prev,
+    const updatedData = {
+      ...patientData,
       [name]: value,
-    }));
-    onPatientDetailsChange({ ...patientData, [name]: value });
+    };
+    setPatientData(updatedData);
+    onPatientDetailsChange(updatedData);
   };
 
   const isFormValid =

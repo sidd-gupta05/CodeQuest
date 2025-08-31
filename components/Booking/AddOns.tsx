@@ -1,6 +1,7 @@
+//components/Booking/AddOns.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BookingHeader from './BookingHeader';
 import BookingNavigation from './BookingNavigation';
 
@@ -10,6 +11,7 @@ interface AddOnsProps {
   selectedLab: any;
   appointmentDate: string;
   appointmentTime: string;
+  selectedAddons: string[];
   onAddonsChange: (addons: string[]) => void;
 }
 
@@ -19,15 +21,40 @@ export default function AddOns({
   selectedLab,
   appointmentDate,
   appointmentTime,
+  selectedAddons,
   onAddonsChange,
 }: AddOnsProps) {
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [localAddons, setLocalAddons] = useState<string[]>(selectedAddons);
+
+  useEffect(() => {
+    setLocalAddons(selectedAddons);
+  }, [selectedAddons]);
 
   const handleAddonToggle = (addonName: string) => {
-    const newAddons = selectedAddons.includes(addonName)
-      ? selectedAddons.filter((a) => a !== addonName)
-      : [...selectedAddons, addonName];
-    setSelectedAddons(newAddons);
+    let newAddons;
+
+    // Handle mutually exclusive delivery options
+    if (
+      addonName === 'Express Delivery' ||
+      addonName === 'Superfast Delivery'
+    ) {
+      // Remove any existing delivery options first
+      newAddons = localAddons.filter(
+        (a) => a !== 'Express Delivery' && a !== 'Superfast Delivery'
+      );
+
+      // Add the selected delivery option if it's not already selected
+      if (!localAddons.includes(addonName)) {
+        newAddons = [...newAddons, addonName];
+      }
+    } else {
+      // For non-delivery options, toggle normally
+      newAddons = localAddons.includes(addonName)
+        ? localAddons.filter((a) => a !== addonName)
+        : [...localAddons, addonName];
+    }
+
+    setLocalAddons(newAddons);
     onAddonsChange(newAddons);
   };
 
@@ -69,10 +96,25 @@ export default function AddOns({
             key={index}
             onClick={() => handleAddonToggle(addon.name)}
             className={`flex justify-between items-center p-4 border rounded-lg transition-colors ${
-              selectedAddons.includes(addon.name)
+              localAddons.includes(addon.name)
                 ? 'border-[#37AFA2] bg-teal-50 shadow-md'
                 : 'border-gray-200 hover:border-teal-400'
+            } ${
+              // Disable Superfast Delivery if Express is selected and vice versa
+              (addon.name === 'Superfast Delivery' &&
+                localAddons.includes('Express Delivery')) ||
+              (addon.name === 'Express Delivery' &&
+                localAddons.includes('Superfast Delivery'))
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
             }`}
+            disabled={
+              // Disable the button if the opposite delivery option is selected
+              (addon.name === 'Superfast Delivery' &&
+                localAddons.includes('Express Delivery')) ||
+              (addon.name === 'Express Delivery' &&
+                localAddons.includes('Superfast Delivery'))
+            }
           >
             <div className="text-left">
               <p className="font-semibold text-gray-800">{addon.name}</p>
@@ -81,12 +123,12 @@ export default function AddOns({
             </div>
             <div
               className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                selectedAddons.includes(addon.name)
+                localAddons.includes(addon.name)
                   ? 'border-[#37AFA2] bg-[#37AFA2]'
                   : 'border-gray-400'
               }`}
             >
-              {selectedAddons.includes(addon.name) && (
+              {localAddons.includes(addon.name) && (
                 <div className="w-2.5 h-2.5 bg-white rounded-full"></div>
               )}
             </div>

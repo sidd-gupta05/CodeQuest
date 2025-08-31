@@ -1,3 +1,4 @@
+//components/Booking/BookingHeader.tsx
 'use client';
 
 import { Star, MapPin } from 'lucide-react';

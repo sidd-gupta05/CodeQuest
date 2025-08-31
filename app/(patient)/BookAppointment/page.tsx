@@ -40,7 +40,13 @@ const BookAppointment = () => {
     location: '',
     date: '',
   });
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+
+  // Read view mode from URL params or default to 'list'
+  const urlViewMode = searchParams.get('view');
+  const [viewMode, setViewMode] = useState<'list' | 'map'>(
+    urlViewMode === 'map' ? 'map' : 'list'
+  );
+
   const [filters, setFilters] = useState<Filters>({
     testType: '',
     availability: '',
@@ -67,10 +73,36 @@ const BookAppointment = () => {
     const searchQuery = searchParams.get('search') || '';
     const location = searchParams.get('location') || '';
     const date = searchParams.get('date') || '';
+    const viewParam = searchParams.get('view');
 
     setSearchFilters({ searchQuery, location, date });
+
+    // Update view mode if specified in URL
+    if (viewParam === 'map' || viewParam === 'list') {
+      setViewMode(viewParam);
+    }
+
     setCurrentPage(1);
   }, [searchParams]);
+
+  // Listen for custom events from LabInfo component
+  useEffect(() => {
+    const handleViewModeChange = (event: CustomEvent) => {
+      setViewMode(event.detail);
+    };
+
+    window.addEventListener(
+      'viewModeChange',
+      handleViewModeChange as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        'viewModeChange',
+        handleViewModeChange as EventListener
+      );
+    };
+  }, []);
 
   const handleFilterChange = (filterName: keyof Filters, value: any) => {
     setFilters((prevFilters) => ({ ...prevFilters, [filterName]: value }));
@@ -214,6 +246,14 @@ const BookAppointment = () => {
     ? allAvailableTestTypes
     : allAvailableTestTypes.slice(0, 5);
 
+  const handleViewModeChange = (mode: 'list' | 'map') => {
+    setViewMode(mode);
+    // Update URL with view parameter
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('view', mode);
+    window.history.pushState({}, '', `?${params.toString()}`);
+  };
+
   return (
     <>
       <main
@@ -264,7 +304,7 @@ const BookAppointment = () => {
                 sortBy={sortBy}
                 viewMode={viewMode}
                 onSortChange={setSortBy}
-                onViewModeChange={setViewMode}
+                onViewModeChange={handleViewModeChange}
               />
 
               <div className="space-y-4">
@@ -285,10 +325,9 @@ const BookAppointment = () => {
             </main>
           </div>
         ) : (
-          // <MapView onViewModeChange={setViewMode} />
           <MapView
             labs={filteredAndSortedLabs}
-            onViewModeChange={setViewMode}
+            onViewModeChange={handleViewModeChange}
           />
         )}
       </section>

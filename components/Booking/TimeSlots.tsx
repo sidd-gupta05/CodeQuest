@@ -1,3 +1,4 @@
+//components/Booking/TimeSlots.tsx
 'use client';
 
 import { ChevronLeft, ChevronRight, Star, MapPin, Heart } from 'lucide-react';
