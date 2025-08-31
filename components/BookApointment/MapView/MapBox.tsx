@@ -1,3 +1,4 @@
+// components/BookAppointment/MapView/MapBox.tsx
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -7,6 +8,8 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
 import { Lab } from '../Filters';
 import Image from 'next/image';
+import { MapPin } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // User icon
 const userIcon = new L.Icon({
@@ -33,7 +36,13 @@ const labUnavailableIcon = new L.Icon({
 });
 
 // 🛣️ Routing component
-function Routing({ from, to }: { from: [number, number]; to: [number, number] | null }) {
+function Routing({
+  from,
+  to,
+}: {
+  from: [number, number];
+  to: [number, number] | null;
+}) {
   const map = useMap();
   const controlRef = useRef<L.Routing.Control | null>(null);
   const lineRef = useRef<L.LayerGroup | null>(null);
@@ -54,7 +63,7 @@ function Routing({ from, to }: { from: [number, number]; to: [number, number] | 
     const control = L.Routing.control({
       waypoints: [L.latLng(from[0], from[1]), L.latLng(to[0], to[1])],
       lineOptions: {
-        styles: [{ color: "red", weight: 5, opacity: 0.7 }],
+        styles: [{ color: 'red', weight: 5, opacity: 0.7 }],
       },
       createMarker: () => null,
       addWaypoints: false,
@@ -65,11 +74,10 @@ function Routing({ from, to }: { from: [number, number]; to: [number, number] | 
 
     controlRef.current = control;
 
-    
     // hide the details panel completely
     const panel = document.querySelector('.leaflet-routing-container');
     if (panel) panel.remove();
-    
+
     return () => {
       if (controlRef.current) {
         map.removeControl(controlRef.current);
@@ -88,6 +96,9 @@ function Routing({ from, to }: { from: [number, number]; to: [number, number] | 
 export default function MapBox({ labs }: { labs: Lab[] }) {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const [routeTo, setRouteTo] = useState<[number, number] | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const directionLabId = searchParams.get('directionTo');
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -99,8 +110,60 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
     }
   }, []);
 
+  useEffect(() => {
+    // If there's a directionLabId in the URL, find the lab and set the route
+    if (directionLabId && position) {
+      const labToRoute = labs.find((lab) => String(lab.id) === directionLabId);
+      if (labToRoute && labToRoute.latitude && labToRoute.longitude) {
+        setRouteTo([labToRoute.latitude, labToRoute.longitude]);
+
+        // Center the map on the lab location
+        const mapElement = document.querySelector('.leaflet-container');
+        if (mapElement) {
+          // @ts-ignore
+          const map = mapElement._leaflet_map;
+          if (map) {
+            map.setView([labToRoute.latitude, labToRoute.longitude], 15);
+          }
+        }
+      }
+    }
+  }, [directionLabId, labs, position]);
+
+  const handleBookNow = (labId: string) => {
+    router.push(`/Booking?labId=${labId}`);
+  };
+
+  const handleGetDirections = (labId: string) => {
+    // Update URL with direction parameter
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('directionTo', labId);
+    window.history.pushState({}, '', newUrl.toString());
+
+    // Find the lab and set the route
+    const labToRoute = labs.find((lab) => String(lab.id) === labId);
+    if (labToRoute && labToRoute.latitude && labToRoute.longitude && position) {
+      setRouteTo([labToRoute.latitude, labToRoute.longitude]);
+
+      // Center the map on the lab location
+      const mapElement = document.querySelector('.leaflet-container');
+      if (mapElement) {
+        // @ts-ignore
+        const map = mapElement._leaflet_map;
+        if (map) {
+          map.setView([labToRoute.latitude, labToRoute.longitude], 15);
+        }
+      }
+    }
+  };
+
   if (!position) {
-    return <p className="text-center mt-4">📍 Getting your location...</p>;
+    return (
+      <div className="text-center mt-4 flex items-center justify-center">
+        <MapPin className="animate-pulse mr-2" size={20} />
+        <span>Getting your location...</span>
+      </div>
+    );
   }
 
   return (
@@ -130,13 +193,15 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
             position={[lab.latitude, lab.longitude]}
             icon={lab.isAvailable ? labAvailableIcon : labUnavailableIcon}
             eventHandlers={{
-              dblclick: () => setRouteTo([lab.latitude, lab.longitude]),
+              dblclick: () => handleGetDirections(String(lab.id)),
             }}
           >
             <Popup>
               <div
                 className={`w-56 p-1 rounded-md ${
-                  lab.isAvailable ? 'opacity-100' : 'opacity-50 pointer-events-none'
+                  lab.isAvailable
+                    ? 'opacity-100'
+                    : 'opacity-50 pointer-events-none'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -156,21 +221,28 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
                           lab.isAvailable ? 'text-green-600' : 'text-red-600'
                         }`}
                       >
-                        {lab.isAvailable ? 'Available ✔️' : 'Not Available ❌'}
+                        {lab.isAvailable ? 'Available' : 'Not Available'}
                       </span>
                     </div>
                   </div>
                 </div>
                 <button
+                  onClick={() => handleBookNow(String(lab.id))}
                   disabled={!lab.isAvailable}
                   className={`mt-2 w-full py-1.5 rounded-full text-sm font-semibold 
                     ${
                       lab.isAvailable
-                        ? 'bg-[#2B7C7E] text-white hover:bg-[#236667]'
+                        ? 'bg-[#2B7C7E] text-white hover:bg-[#236667] cursor-pointer'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
                 >
                   Book Now
+                </button>
+                <button
+                  onClick={() => handleGetDirections(String(lab.id))}
+                  className="mt-2 w-full py-1.5 rounded-full text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"
+                >
+                  Get Directions
                 </button>
               </div>
             </Popup>
@@ -178,9 +250,7 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
         ))}
 
       {/* Render route if user picked a lab */}
-      {routeTo && position && (
-        <Routing from={position} to={routeTo} onClear={() => setRouteTo(null)} />
-      )}
+      {routeTo && position && <Routing from={position} to={routeTo} />}
     </MapContainer>
   );
 }
