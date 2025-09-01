@@ -35,6 +35,17 @@ export default function Booking() {
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [patientDetails, setPatientDetails] = useState<any>({});
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, [supabase.auth]);
 
   useEffect(() => {
     const labId = searchParams.get('labId');
@@ -431,6 +442,7 @@ export default function Booking() {
                   appointmentTime={selectedTime}
                   selectedTests={selectedTests}
                   selectedAddons={selectedAddons}
+                  authUser={user}
                   patientDetails={patientDetails}
                 />
               </motion.div>
