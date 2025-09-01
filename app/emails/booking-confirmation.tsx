@@ -3,6 +3,9 @@ export const generateBookingConfirmationEmail = (
   bookingDetails: any,
   qrDataUrl: string
 ) => {
+  // Extract just the base64 data from the data URL
+  const qrBase64 = qrDataUrl.replace(/^data:image\/png;base64,/, '');
+
   return `
   <!DOCTYPE html>
   <html>
@@ -146,7 +149,7 @@ export const generateBookingConfirmationEmail = (
 
           <div style="text-align: center; margin: 25px 0;">
             <div class="qr-container">
-              <img src="${qrDataUrl}" alt="Booking QR Code" width="200" height="200" style="display: block; margin: 0 auto;" />
+              <img src="data:image/png;base64,${qrBase64}" alt="Booking QR Code" width="200" height="200" style="display: block; margin: 0 auto;" />
               <div class="qr-label">Scan for booking details</div>
             </div>
           </div>
@@ -181,7 +184,7 @@ export const generateBookingConfirmationEmail = (
         </div>
 
         <p>You can track your report using the QR code above or by visiting:</p>
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL}/Trackreport?bookingId=${bookingDetails.bookingId}" class="track-link">
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://labsphere.com'}/Trackreport?bookingId=${bookingDetails.bookingId}" class="track-link">
           Track My Report
         </a>
       </div>

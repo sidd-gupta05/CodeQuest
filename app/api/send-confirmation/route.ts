@@ -1,207 +1,138 @@
+// /api/send-confirmation/route.ts
 
-// }
-
-// app/api/send-confirmation/route.ts
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import QRCode from 'qrcode';
+import { generateBookingConfirmationEmail } from '@/app/emails/booking-confirmation';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const generateBookingId = (details: any): string => {
+  const { patientDetails, lab, tests, addons } = details;
+
+  try {
+    const timestamp = Date.now().toString(36).slice(-6).toUpperCase();
+    const firstNameInitial = patientDetails?.firstName?.charAt(0) || 'P';
+    const lastNameInitial = patientDetails?.lastName?.charAt(0) || 'X';
+    const patientInitials =
+      `${firstNameInitial}${lastNameInitial}`.toUpperCase();
+    const labCode = lab?.id
+      ?.toString()
+      .padStart(3, '0')
+      .slice(-3)
+      .toUpperCase();
+
+    const selectedTests = tests || [];
+    const testCode =
+      selectedTests.length > 0
+        ? selectedTests
+            .map((t: string) => t.charAt(0))
+            .join('')
+            .slice(0, 3)
+            .toUpperCase()
+        : 'GEN';
+
+    const selectedAddons = addons || [];
+    const servicesHash = [...selectedTests, ...selectedAddons]
+      .join('')
+      .split('')
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0)
+      .toString(16)
+      .slice(-4)
+      .toUpperCase();
+
+    return `BK-${timestamp}-${patientInitials}-${labCode}-${testCode}-${servicesHash}`;
+  } catch (error) {
+    console.error('Fallback booking ID generated due to error:', error);
+    return `BK-${Date.now().toString(36).toUpperCase()}`;
+  }
+};
+
 export async function POST(request: Request) {
   try {
-    const { bookingDetails } = await request.json();
+    const body = await request.json();
+    const { bookingDetails, userEmail } = body;
 
-    if (!bookingDetails?.bookingId) {
+    if (!bookingDetails || !userEmail) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing booking details or user email' },
         { status: 400 }
       );
     }
 
-    // Generate QR code data
-    const qrData = JSON.stringify({
-      bookingId: bookingDetails.bookingId,
-      labId: bookingDetails.lab.id,
-      labName: bookingDetails.lab.name,
-      date: bookingDetails.date,
-      time: bookingDetails.time,
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userEmail)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+
+    const bookingId = generateBookingId({
+      patientDetails: bookingDetails.patient,
+      lab: bookingDetails.lab,
       tests: bookingDetails.tests,
       addons: bookingDetails.addons,
-      patient: bookingDetails.patient,
+    });
+
+    const completeBookingDetails = {
+      ...bookingDetails,
+      bookingId,
+    };
+
+    const qrData = JSON.stringify({
+      bookingId: bookingId,
+      labId: completeBookingDetails.lab?.id,
+      labName: completeBookingDetails.lab?.name,
+      date: completeBookingDetails.date,
+      time: completeBookingDetails.time,
+      patientName: `${completeBookingDetails.patient?.firstName} ${completeBookingDetails.patient?.lastName}`,
       timestamp: new Date().toISOString(),
     });
 
-    // Generate QR code as base64 data URL
+    // Generate QR code as data URL
     const qrDataUrl = await QRCode.toDataURL(qrData, {
       errorCorrectionLevel: 'H',
       margin: 1,
-      color: {
-        dark: '#37AFA2',
-        light: '#ffffff',
-      },
+      color: { dark: '#37AFA2', light: '#ffffff' },
       width: 200,
       type: 'image/png',
     });
 
-    const testEmail = 'siddharthgupta2482005@gmail.com';
-    const targetEmail = 'siddharth2482005@gmail.com';
+    const emailHtml = generateBookingConfirmationEmail(
+      completeBookingDetails,
+      qrDataUrl
+    );
 
-    const emailHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <title>Lab Appointment Confirmation</title>
-      <style>
-        body {
-          font-family: 'Arial', sans-serif;
-          line-height: 1.6;
-          color: #333;
-          max-width: 600px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-        .header {
-          color: #37AFA2;
-          font-size: 24px;
-          margin-bottom: 20px;
-          font-weight: bold;
-        }
-        .card {
-          background: #f8f9fa;
-          padding: 20px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
-        .section-title {
-          font-size: 18px;
-          margin: 15px 0 10px 0;
-          font-weight: bold;
-        }
-        .footer {
-          margin-top: 30px;
-          font-size: 12px;
-          color: #777;
-          text-align: center;
-        }
-        .booking-id {
-          background: #37AFA2;
-          color: white;
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-        .test-item {
-          margin-left: 20px;
-        }
-        .qr-container {
-          text-align: center;
-          margin: 20px 0;
-          padding: 10px;
-          background: white;
-          border-radius: 8px;
-          display: inline-block;
-          border: 1px solid #ddd;
-        }
-        .qr-label {
-          font-size: 12px;
-          color: #777;
-          margin-top: 5px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header">Your Lab Appointment is Confirmed!</div>
-
-      <div class="card">
-        <div class="section-title">Appointment Details</div>
-
-        <p><strong>Booking ID:</strong> <span class="booking-id">${bookingDetails.bookingId}</span></p>
-        <p><strong>Patient Name:</strong> ${bookingDetails.patient.firstName} ${bookingDetails.patient.lastName}</p>
-        <p><strong>Lab Name:</strong> ${bookingDetails.lab.name}</p>
-        <p><strong>Appointment Date:</strong> ${bookingDetails.date}</p>
-        <p><strong>Appointment Time:</strong> ${bookingDetails.time}</p>
-
-        <div style="text-align: center; margin: 20px 0;">
-          <div class="qr-container">
-            <img src="${qrDataUrl}" alt="Booking QR Code" width="200" height="200" style="display: block; margin: 0 auto;" />
-            <div class="qr-label">Scan for booking details</div>
-          </div>
-        </div>
-
-        <div class="section-title">Tests Scheduled:</div>
-        <ul>
-          ${bookingDetails.tests
-            .map(
-              (test: string) => `
-            <li class="test-item">${test}</li>
-          `
-            )
-            .join('')}
-        </ul>
-
-        ${
-          bookingDetails.addons?.length > 0
-            ? `
-          <div class="section-title">Additional Services:</div>
-          <ul>
-            ${bookingDetails.addons
-              .map(
-                (addon: string) => `
-              <li class="test-item">${addon}</li>
-            `
-              )
-              .join('')}
-          </ul>
-        `
-            : ''
-        }
-      </div>
-
-      <p>You can track your report using the QR code above or by visiting:</p>
-      <p>
-        <a href="${process.env.NEXT_PUBLIC_SITE_URL}/Trackreport?bookingId=${bookingDetails.bookingId}"
-           style="color: #37AFA2; text-decoration: underline;">
-          Track My Report
-        </a>
-      </p>
-
-      <div class="footer">
-        <p>If you have any questions, please contact our support team at support@labsphere.com</p>
-        <p>© ${new Date().getFullYear()} LabSphere. All rights reserved.</p>
-        <p style="color: #999; font-size: 11px;">
-          [This is a test email. In production, this would be sent to ${targetEmail}]
-        </p>
-      </div>
-    </body>
-    </html>
-    `;
+    const fromEmail = process.env.RESEND_VERIFIED_DOMAIN
+      ? `LabSphere <noreply@${process.env.RESEND_VERIFIED_DOMAIN}>`
+      : 'LabSphere <onboarding@resend.dev>'; // Use this only for testing
 
     const { data, error } = await resend.emails.send({
-      from: 'LabSphere <onboarding@resend.dev>',
-      to: testEmail,
-      subject: `Lab Appointment Confirmation - ${bookingDetails.bookingId}`,
+      from: fromEmail,
+      to: userEmail,
+      subject: `Lab Appointment Confirmation - ${bookingId}`,
       html: emailHtml,
     });
 
     if (error) {
-      console.error('Resend error:', error);
+      console.error('Resend API Error:', error);
       return NextResponse.json(
-        { error: 'Failed to send confirmation email' },
+        { error: 'Failed to send confirmation email. Please try again later.' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: `Test confirmation sent to ${testEmail}`,
+      message: `Confirmation sent to ${userEmail}`,
+      bookingId: bookingId,
       data,
     });
   } catch (error) {
-    console.error('Error sending confirmation email:', error);
+    console.error('Internal Server Error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'An unexpected error occurred.' },
       { status: 500 }
     );
   }
