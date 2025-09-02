@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-// import { labsData } from '@/data/labsData';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import Stepper from '@/components/stepper';
