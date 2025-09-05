@@ -1,3 +1,4 @@
+//components/Booking/index.ts
 export { default as AddOns } from './AddOns';
 export { default as BookingHeader } from './BookingHeader';
 export { default as PatientDetails } from './PatientDetails';
