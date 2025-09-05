@@ -1,12 +1,10 @@
-//app/(patient)/Booking/page.tsx
+// app/(patient)/Booking/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-// import { labsData } from '@/data/labsData';
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import Stepper from '@/components/stepper';
 import Calendar from '@/components/calendar';
@@ -21,9 +19,11 @@ import {
   Confirmation,
 } from '@/components/Booking';
 import Image from 'next/image';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 export default function Booking() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const supabase = createSupabaseBrowserClient();
 
   const [selectedLab, setSelectedLab] = useState<any>(null);
@@ -36,118 +36,135 @@ export default function Booking() {
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [patientDetails, setPatientDetails] = useState<any>({});
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
+    const checkAuth = async () => {
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error || !session) {
+          // Redirect to login if not authenticated
+          router.push('/login');
+          return;
+        }
+
+        setAuthChecked(true);
+
+        // Fetch user details if authenticated
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          setUser(user);
+          setPatientDetails((prev) => ({
+            ...prev,
+            name:
+              user.user_metadata?.full_name || user.user_metadata?.name || '',
+            email: user.email || '',
+            phone: '',
+          }));
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        router.push('/login');
+      }
     };
-    getUser();
-  }, [supabase.auth]);
+
+    checkAuth();
+  }, [supabase.auth, router]);
 
   useEffect(() => {
-    const labId = searchParams.get('labId');
+    if (!authChecked) return; // Wait until auth check is complete
 
+    const labId = searchParams.get('labId');
     const fetchLabData = async () => {
       if (!labId) return;
 
-      const { data: lab, error } = await supabase
-        .from('labs')
-        .select(
-          `
-            id,
-            labLocation,
-            details:lab_details (
-                labName,
-                imageUrl,
-                rating,
-                isLoved,
-                experienceYears,
-                testType,
-                nextAvailable
-            ),
-            timeSlots:lab_time_slots (
-                time,
-                session
-            )
-        `
-        )
-        .eq('id', labId)
-        .single();
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/lab/${labId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch lab data');
+        }
 
-      if (error || !lab) {
+        const lab = await response.json();
+
+        const processedLab = {
+          id: lab.id,
+          name: lab.name || 'N/A',
+          location: lab.location,
+          image: lab.image || '/default-image.png',
+          rating: lab.rating || 0,
+          isLoved: false,
+          experience: 0,
+          testType: lab.testType || 'N/A',
+          nextAvailable: lab.nextAvailable,
+          timeSlots: lab.timeSlots || {
+            Morning: [],
+            Afternoon: [],
+            Evening: [],
+          },
+        };
+
+        setSelectedLab(processedLab);
+        setIsLoved(false);
+
+        if (
+          processedLab.nextAvailable &&
+          processedLab.nextAvailable !== 'Not Available'
+        ) {
+          setSelectedDate(new Date(processedLab.nextAvailable));
+        }
+
+        const firstAvailableTime = Object.values(processedLab.timeSlots)
+          .flat()
+          .find((slot) => typeof slot === 'string' && slot !== '-');
+        if (typeof firstAvailableTime === 'string') {
+          setSelectedTime(firstAvailableTime);
+        }
+      } catch (error) {
         console.error('Error fetching lab data:', error);
         setSelectedLab(null);
-        return;
-      }
-
-      const labDetails = Array.isArray(lab.details)
-        ? lab.details[0]
-        : lab.details;
-
-      const processedTimeSlots: {
-        Morning: string[];
-        Afternoon: string[];
-        Evening: string[];
-      } = { Morning: [], Afternoon: [], Evening: [] };
-      if (lab.timeSlots) {
-        lab.timeSlots.forEach((slot: { time: string; session: string }) => {
-          switch (slot.session) {
-            case 'MORNING':
-              processedTimeSlots.Morning.push(slot.time);
-              break;
-            case 'AFTERNOON':
-              processedTimeSlots.Afternoon.push(slot.time);
-              break;
-            case 'EVENING':
-              processedTimeSlots.Evening.push(slot.time);
-              break;
-          }
-        });
-      }
-
-      const processedLab = {
-        id: lab.id,
-        name: labDetails?.labName || 'N/A',
-        location: lab.labLocation,
-        image: labDetails?.imageUrl || '/default-image.png',
-        rating: labDetails?.rating || 0,
-        isLoved: labDetails?.isLoved || false,
-        experience: labDetails?.experienceYears || 0,
-        testType: labDetails?.testType || 'N/A',
-        nextAvailable: labDetails?.nextAvailable,
-        timeSlots: processedTimeSlots,
-      };
-
-      setSelectedLab(processedLab);
-      setIsLoved(processedLab.isLoved);
-
-      if (
-        processedLab.nextAvailable &&
-        processedLab.nextAvailable !== 'Not Available'
-      ) {
-        setSelectedDate(new Date(processedLab.nextAvailable));
-      } else {
-        setSelectedDate(new Date());
-      }
-
-      const firstAvailableTime = Object.values(processedLab.timeSlots)
-        .flat()
-        .find((slot) => slot !== '-');
-      if (firstAvailableTime) {
-        setSelectedTime(firstAvailableTime);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchLabData();
-  }, [searchParams, supabase]);
+  }, [searchParams, authChecked]);
+
+  // Show loading until auth check is complete
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-white/90 text-sm">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-white/90 text-sm">Loading lab details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!selectedLab) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
-        <p>Loading lab information...</p>
+        <p>Failed to load lab information.</p>
         <Link href="/BookAppointment" className="text-[#2A787A] mt-4">
           Back to labs
         </Link>
@@ -155,6 +172,7 @@ export default function Booking() {
     );
   }
 
+  // Rest of your component remains exactly the same...
   const handleNextStep = () => {
     setDirection(1);
     if (currentStep < 6) {
@@ -262,6 +280,7 @@ export default function Booking() {
 
                   <div className="border-b border-gray-200 my-6"></div>
 
+                  {/* // Page 1 */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                     <div>
                       <h3 className="font-bold text-gray-800 text-lg mb-4">

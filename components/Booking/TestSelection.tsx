@@ -8,6 +8,7 @@ import {
   MapPin,
   Search,
   X,
+  Filter,
 } from 'lucide-react';
 import { allLabTests } from '@/data/labsData';
 import BookingHeader from './BookingHeader';
@@ -37,6 +38,8 @@ export default function TestSelection({
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const testsPerPage = 6;
+
+  
 
   const allTestsWithCategory = Object.entries(allLabTests).flatMap(
     ([category, tests]) => tests.map((test) => ({ category, name: test }))
@@ -86,7 +89,7 @@ export default function TestSelection({
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
+    <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 text-black w-full max-w-4xl my-8">
       <BookingHeader
         selectedLab={selectedLab}
         appointmentDate={appointmentDate}
@@ -98,60 +101,83 @@ export default function TestSelection({
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-grow">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={18} className="text-gray-400" />
+            </div>
             <input
               type="text"
-              placeholder="Search tests"
+              placeholder="Search tests by name..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#37AFA2]"
-            />
-            <Search
-              size={20}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2A787A] focus:border-[#2A787A]"
             />
           </div>
 
           {selectedTests.length > 0 && (
             <button
               onClick={handleClearAll}
-              className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors whitespace-nowrap"
+              className="flex items-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg border border-red-200 hover:bg-red-100 transition-colors whitespace-nowrap"
             >
               <X size={16} />
-              Clear All Tests
+              Clear All
             </button>
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
-          <button
-            onClick={() => {
-              setSelectedCategory(null);
-              setCurrentPage(1);
-            }}
-            className={`px-3 py-1 rounded-full text-sm ${
-              selectedCategory === null
-                ? 'bg-[#37AFA2] text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            All Categories
-          </button>
-          {Object.keys(allLabTests).map((category) => (
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Filter size={18} className="text-gray-500" />
+            <h3 className="text-sm font-medium text-gray-700">
+              Filter by Category
+            </h3>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
             <button
-              key={category}
               onClick={() => {
-                setSelectedCategory(category);
+                setSelectedCategory(null);
                 setCurrentPage(1);
               }}
-              className={`px-3 py-1 rounded-full text-sm ${
-                selectedCategory === category
-                  ? 'bg-[#37AFA2] text-white'
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                selectedCategory === null
+                  ? 'bg-[#2A787A] text-white shadow-sm'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {category}
+              All Categories
             </button>
-          ))}
+            {Object.keys(allLabTests).map((category) => (
+              <button
+                key={category}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setCurrentPage(1);
+                }}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  selectedCategory === category
+                    ? 'bg-[#2A787A] text-white shadow-sm'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-4 rounded-lg mb-4">
+          <div className="flex justify-between items-center">
+            <h3 className="font-semibold text-gray-800">
+              Available Tests
+              {selectedCategory && `: ${selectedCategory}`}
+            </h3>
+            <span className="text-sm text-gray-500 bg-white px-2 py-1 rounded-md">
+              {selectedTests.length} selected
+            </span>
+          </div>
         </div>
 
         {selectedCategory ? (
@@ -159,24 +185,31 @@ export default function TestSelection({
           Object.entries(testsByCategory).length > 0 ? (
             Object.entries(testsByCategory).map(([category, tests]) => (
               <div key={category} className="mb-6">
-                <h3 className="font-bold text-gray-800 text-lg mb-3">
+                <h3 className="font-semibold text-gray-800 text-lg mb-4 pl-2 border-l-4 border-[#2A787A] py-1">
                   {category}
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-2 gap-x-4">
-                  {tests.map((test, index) => {
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {tests.map((test) => {
                     const uniqueId = `${category}-${test.replace(/\s+/g, '-')}`;
                     return (
-                      <div key={uniqueId} className="flex items-center">
+                      <div
+                        key={uniqueId}
+                        className={`flex items-start p-3 rounded-lg border transition-all duration-200 ${
+                          selectedTests.includes(test)
+                            ? 'border-[#2A787A] bg-[#F0F7F7]'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
                         <input
                           type="checkbox"
                           id={uniqueId}
                           checked={selectedTests.includes(test)}
                           onChange={() => handleTestToggle(test)}
-                          className="w-4 h-4 text-[#37AFA2] bg-gray-100 border-gray-300 rounded focus:ring-[#37AFA2]"
+                          className="mt-1 w-4 h-4 text-[#2A787A] bg-white border-gray-300 rounded focus:ring-[#2A787A]"
                         />
                         <label
                           htmlFor={uniqueId}
-                          className="ml-2 text-sm text-gray-700 cursor-pointer"
+                          className="ml-3 text-sm text-gray-700 cursor-pointer"
                         >
                           {test}
                         </label>
@@ -187,7 +220,7 @@ export default function TestSelection({
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-4">
+            <p className="text-gray-500 text-center py-8 bg-white rounded-lg border border-gray-200">
               No tests found matching your search.
             </p>
           )

@@ -1,16 +1,20 @@
+// app/api/lab/[id]/route.ts
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/prisma';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const lab = await db.lab.findUnique({
       where: { id: params.id },
       include: {
         details: true,
         timeSlots: {
-          include: { exceptions: true }
-        }
-      }
+          include: { exceptions: true },
+        },
+      },
     });
 
     if (!lab) return Response.json({ error: 'Lab not found' }, { status: 404 });
@@ -18,10 +22,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const d = lab.details;
 
     // Group slots into Morning/Afternoon/Evening, filtering exceptions
-    const groupedSlots = { Morning: [], Afternoon: [], Evening: [] as string[] };
+    const groupedSlots = {
+      Morning: [],
+      Afternoon: [],
+      Evening: [] as string[],
+    };
     lab.timeSlots.forEach((slot) => {
       if (!slot.isActive) return;
-      const disabledToday = slot.exceptions.some(e => e.isDisabled);
+      const disabledToday = slot.exceptions.some((e) => e.isDisabled);
       if (disabledToday) return;
 
       const key = slot.session.charAt(0) + slot.session.slice(1).toLowerCase(); // MORNING -> Morning
