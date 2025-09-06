@@ -98,14 +98,12 @@ export default function SignupPage() {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const data = await res.data;
-      if (data.success) {
-        // ✅ Store signup payload client-side
-        sessionStorage.setItem('signupPayload', JSON.stringify(form));
-
+      const data = res.data;
+      console.log(res.data.message);
+      if (form.role === 'PATIENT') {
         router.push(`/auth/verify-otp?phone=${form.phone}`);
-      } else {
-        setApiError(data.error || 'Something went wrong');
+      } else if (form.role === 'LAB') {
+        router.push(`/lab-registration?email=${form.email}`);
       }
     } catch (err: any) {
       setApiError(err.response?.data?.error || 'Failed to sign up');
