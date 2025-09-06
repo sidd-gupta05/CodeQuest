@@ -48,20 +48,18 @@ export default function Booking() {
         } = await supabase.auth.getSession();
 
         if (error || !session) {
-          // Redirect to login if not authenticated
           router.push('/login');
           return;
         }
 
         setAuthChecked(true);
 
-        // Fetch user details if authenticated
         const {
           data: { user },
         } = await supabase.auth.getUser();
         if (user) {
           setUser(user);
-          setPatientDetails((prev) => ({
+          setPatientDetails((prev: any) => ({
             ...prev,
             name:
               user.user_metadata?.full_name || user.user_metadata?.name || '',
@@ -172,7 +170,6 @@ export default function Booking() {
     );
   }
 
-  // Rest of your component remains exactly the same...
   const handleNextStep = () => {
     setDirection(1);
     if (currentStep < 6) {
@@ -436,6 +433,7 @@ export default function Booking() {
                   selectedTests={selectedTests}
                   selectedAddons={selectedAddons}
                   patientDetails={patientDetails}
+                  user={user} // Pass the user object here
                 />
               </motion.div>
             )}

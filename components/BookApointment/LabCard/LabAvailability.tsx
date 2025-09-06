@@ -46,6 +46,12 @@ export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => {
       return;
     }
 
+    // Uncomment this if you want to prevent labs from booking
+    // if (user.user_metadata?.role === 'LAB') {
+    //   e.preventDefault();
+    //   toast.error('Labs are not allowed to book appointments');
+    //   return;
+    // }
 
     // Allow booking for authenticated users
     return;

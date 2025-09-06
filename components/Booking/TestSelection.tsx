@@ -1,15 +1,7 @@
 // components/Booking/TestSelection.tsx
 'use client';
 import { useState } from 'react';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Star,
-  MapPin,
-  Search,
-  X,
-  Filter,
-} from 'lucide-react';
+import { Search, X, Filter } from 'lucide-react';
 import { allLabTests } from '@/data/labsData';
 import BookingHeader from './BookingHeader';
 import BookingNavigation from './BookingNavigation';
@@ -38,8 +30,6 @@ export default function TestSelection({
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const testsPerPage = 6;
-
-  
 
   const allTestsWithCategory = Object.entries(allLabTests).flatMap(
     ([category, tests]) => tests.map((test) => ({ category, name: test }))
