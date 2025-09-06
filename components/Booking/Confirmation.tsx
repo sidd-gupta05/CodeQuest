@@ -1,9 +1,8 @@
-// components/Booking/Confirmation.tsx
 'use client';
 
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface PatientDetails {
   firstName: string;
@@ -43,29 +42,33 @@ export default function Confirmation({
 }: ConfirmationProps) {
   const [bookingId, setBookingId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  // Commented out email state variables
-  // const [emailSent, setEmailSent] = useState(false);
-  // const [emailError, setEmailError] = useState<string | null>(null);
   const [qrData, setQrData] = useState<string>('');
+  const [bookingExists, setBookingExists] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Get user email from authUser or patientDetails
-  const getUserEmail = () => {
-    return (
-      patientDetails.email || authUser?.email || authUser?.user_metadata?.email
-    );
-  };
+  useEffect(() => {
+    // Get bookingId from URL parameters
+    const urlBookingId = searchParams.get('bookingId');
+    if (urlBookingId) {
+      setBookingId(urlBookingId);
+      setBookingExists(true); // Real booking ID from successful payment
+    } else {
+      // Generate a mock booking ID for demonstration only
+      const mockBookingId = `BK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      setBookingId(mockBookingId);
+      setBookingExists(false); // Mock booking ID, doesn't exist in DB
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const confirmBooking = async () => {
-      try {
-        // Generate a mock booking ID for demonstration
-        const mockBookingId = `BK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        setBookingId(mockBookingId);
+      if (!bookingId) return; // Wait until bookingId is set
 
+      try {
         // Generate QR code data
         const qrDataString = JSON.stringify({
-          bookingId: mockBookingId,
+          bookingId: bookingId,
           labId: selectedLab.id,
           labName: selectedLab.name,
           date: appointmentDate,
@@ -77,61 +80,32 @@ export default function Confirmation({
         });
         setQrData(qrDataString);
 
-        /*
-        const userEmail = getUserEmail();
-        if (!userEmail) {
-          setEmailError('Email not found. Cannot send confirmation.');
-          setIsLoading(false);
-          return;
-        }
-
-        const response = await fetch('/api/send-confirmation', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            bookingDetails: {
-              lab: selectedLab,
-              date: appointmentDate,
-              time: appointmentTime,
-              tests: selectedTests,
-              addons: selectedAddons,
-              patient: { ...patientDetails, email: userEmail },
+        // Only update booking with QR code data if it exists in the database
+        if (bookingExists) {
+          const response = await fetch('/api/bookings/update-booking', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-            userEmail: userEmail,
-          }),
-        });
+            body: JSON.stringify({
+              bookingId: bookingId,
+              qrCodeData: qrDataString,
+            }),
+          });
 
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to confirm booking.');
+          if (response.ok) {
+            const result = await response.json();
+            if (!result.success) {
+              console.error('Failed to update booking with QR code');
+            }
+          } else {
+            console.error('Failed to update booking - server error');
+          }
+        } else {
+          console.log('Using mock booking ID, skipping database update');
         }
-
-        setBookingId(result.bookingId);
-
-        const qrDataString = JSON.stringify({
-          bookingId: result.bookingId,
-          labId: selectedLab.id,
-          labName: selectedLab.name,
-          date: appointmentDate,
-          time: appointmentTime,
-          tests: selectedTests,
-          addons: selectedAddons,
-          patient: patientDetails,
-          timestamp: new Date().toISOString(),
-        });
-        setQrData(qrDataString);
-
-        setEmailSent(true);
-        */
       } catch (error: any) {
         console.error('Error during booking confirmation:', error);
-        // setEmailError(
-        //   error.message ||
-        //     'Failed to send confirmation email. Please contact support.'
-        // );
       } finally {
         setIsLoading(false);
       }
@@ -139,6 +113,8 @@ export default function Confirmation({
 
     confirmBooking();
   }, [
+    bookingId,
+    bookingExists,
     selectedLab,
     selectedTests,
     selectedAddons,
@@ -175,9 +151,6 @@ export default function Confirmation({
     );
   }
 
-  // Commented out userEmail as it's not used in the UI anymore
-  // const userEmail = getUserEmail();
-
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
       <div className="flex flex-col items-center text-center">
@@ -202,21 +175,12 @@ export default function Confirmation({
           </div>
         )}
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          {/* {emailError ? 'Booking Incomplete' : 'Booking Confirmed!'} */}
-          Booking Confirmed!
+          {bookingExists ? 'Booking Confirmed!' : 'Booking Preview'}
         </h2>
         <p className="text-gray-600 mb-6">
-          {/* {emailSent ? (
-            <>
-              A test confirmation has been sent to {userEmail}.
-              <br />
-            </>
-          ) : emailError ? (
-            <span className="text-red-500">{emailError}</span>
-          ) : (
-            'Sending test confirmation email...'
-          )} */}
-          Your booking has been successfully confirmed.
+          {bookingExists
+            ? 'Your booking has been successfully confirmed.'
+            : 'This is a preview of your booking. Complete payment to confirm.'}
         </p>
         <div className="w-full max-w-md bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
           <h3 className="font-semibold text-lg text-gray-800 mb-4 flex items-center justify-between">
@@ -292,12 +256,12 @@ export default function Confirmation({
             </button>
           )}
 
-          <a
-            href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://labsphere.com'}/Trackreport?bookingId=${bookingId}`}
-            className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg shadow-lg cursor-pointer flex-1 text-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+          <button
+            onClick={handleTrackReport}
+            className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg shadow-lg cursor-pointer flex-1 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             Track Your Report
-          </a>
+          </button>
         </div>
         <div className="mt-6 text-sm text-gray-500">
           <p>
