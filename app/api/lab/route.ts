@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     const {
       labName,
       testType,
-      nextAvailable,
+      // nextAvailable,
       experienceYears,
       imageUrl,
       collectionTypes,
@@ -67,31 +67,32 @@ export async function POST(req: Request) {
       isAvailable,
       isLoved,
       rating,
-      timeSlots, // array of { time, session }
+      pathlabId
+      // timeSlots, // array of { time, session }
     } = body;
 
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
+    // const {
+    //   data: { user },
+    //   error,
+    // } = await supabase.auth.getUser();
 
-    if (!user || error) {
-      return new Response(JSON.stringify({ error: 'Not authenticated' }), {
-        status: 401,
-      });
-    }
+    // if (!user || error) {
+    //   return new Response(JSON.stringify({ error: 'Not authenticated' }), {
+    //     status: 401,
+    //   });
+    // }
 
     // Find lab belonging to this user
-    const lab = await db.lab.findUnique({ where: { userId: user.id } });
-    if (!lab) {
-      return new Response(JSON.stringify({ error: 'Lab not found' }), {
-        status: 404,
-      });
-    }
+    // const lab = await db.lab.findUnique({ where: { userId: user.id } });
+    // if (!lab) {
+    //   return new Response(JSON.stringify({ error: 'Lab not found' }), {
+    //     status: 404,
+    //   });
+    // }
 
     // Upsert LabDetails
     await db.labDetails.upsert({
-      where: { labId: lab.id },
+      where: { labId: pathlabId },
       update: {
         labName,
         testType,
@@ -100,7 +101,7 @@ export async function POST(req: Request) {
         collectionTypes: Array.isArray(collectionTypes)
           ? collectionTypes
           : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
-        nextAvailable: nextAvailable ? new Date(nextAvailable) : null,
+        // nextAvailable: nextAvailable ? new Date(nextAvailable) : null,
         latitude: latitude ?? 0.0,
         longitude: longitude ?? 0.0,
         isLoved: isLoved ?? false,
@@ -109,7 +110,7 @@ export async function POST(req: Request) {
       },
       create: {
         id: uuidv4(),
-        labId: lab.id,
+        labId: pathlabId,
         labName,
         testType,
         experienceYears: experienceYears ?? null,
@@ -117,7 +118,7 @@ export async function POST(req: Request) {
         collectionTypes: Array.isArray(collectionTypes)
           ? collectionTypes
           : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
-        nextAvailable: nextAvailable ? new Date(nextAvailable) : null,
+        // nextAvailable: nextAvailable ? new Date(nextAvailable) : null,
         latitude: latitude ?? 0.0,
         longitude: longitude ?? 0.0,
         isLoved: isLoved ?? false,
@@ -127,17 +128,17 @@ export async function POST(req: Request) {
     });
 
     // Reset and insert timeSlots
-    if (timeSlots && timeSlots.length > 0) {
-      await db.labTimeSlot.deleteMany({ where: { labId: lab.id } });
-      await db.labTimeSlot.createMany({
-        data: timeSlots.map((slot: { time: string; session: string }) => ({
-          id: uuidv4(),
-          labId: lab.id,
-          time: slot.time,
-          session: slot.session.toUpperCase(), // MORNING / AFTERNOON / EVENING
-        })),
-      });
-    }
+    // if (timeSlots && timeSlots.length > 0) {
+    //   await db.labTimeSlot.deleteMany({ where: { labId: lab.id } });
+    //   await db.labTimeSlot.createMany({
+    //     data: timeSlots.map((slot: { time: string; session: string }) => ({
+    //       id: uuidv4(),
+    //       labId: lab.id,
+    //       time: slot.time,
+    //       session: slot.session.toUpperCase(), // MORNING / AFTERNOON / EVENING
+    //     })),
+    //   });
+    // }
 
     return new Response(
       JSON.stringify({ message: 'Lab details updated successfully' }),

@@ -53,7 +53,6 @@ model Lab {
   timeSlots             LabTimeSlot[]
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   tests                 tests[]       @relation("AvailableTests")
- schedules             Schedule[]
 
   @@map("labs")
 }
@@ -105,41 +104,6 @@ model LabTimeSlotException {
 
   @@unique([labTimeSlotId, date])
   @@map("lab_timeslot_exceptions")
-}
-
-
-//Schedule_Schema_Update
-
-model Schedule {
-  id          Int                  @id @default(autoincrement())
-  labId       String
-  createdAt   DateTime                @default(now())
-  updatedAt   DateTime                @updatedAt
-  availabilities ScheduleAvailability[]
-  lab         Lab                     @relation(fields: [labId], references: [id], onDelete: Cascade)
-
-  @@map("schedules")
-}
-
-model ScheduleAvailability {
-  id        Int   @id @default(autoincrement())
-  scheduleId Int
-  dayOfWeek DayOfWeek
-  startTime String // "09:00"
-  endTime   String // "12:00"
-  schedule  Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-
-  @@map("schedule_availabilities")
-}
-
-enum DayOfWeek {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
 }
 
 model Payment {

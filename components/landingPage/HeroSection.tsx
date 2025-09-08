@@ -47,13 +47,14 @@ export default function HeroSection() {
             Get Started
           </Link>
 
-          <div
+          {/* <div
             className="absolute bottom-[-435px] left-1/2 z-10 w-full h-[200px] bg-gray-200 border border-gray-300 hidden md:block select-none pointer-events-none"
             style={{
               transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
               transformOrigin: 'bottom',
             }}
-          />
+          /> */}
+          
           <div className="relative w-full max-w-lg mx-auto select-none pointer-events-none">
             <Image
               src="/iphone.svg"
@@ -100,14 +101,14 @@ export default function HeroSection() {
                 className="text-sm sm:text-base text-black"
                 style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
               >
-                Design new UX flow for Michael
+                New Appointment for Michael
               </div>
 
               <div
                 className="text-gray-500 text-xs sm:text-sm"
                 style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
               >
-                Start from screen 16
+                CBC & Blood Sugar
               </div>
             </div>
           </div>
