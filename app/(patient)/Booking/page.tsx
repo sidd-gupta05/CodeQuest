@@ -136,6 +136,108 @@ export default function Booking() {
     fetchLabData();
   }, [searchParams, authChecked]);
 
+  const [schedules, setSchedules] = useState<any[]>([]);
+
+  const labId = searchParams.get('labId');
+
+  useEffect(() => {
+
+    async function fetchSchedule() {
+      if (!labId) return;
+
+      const { data: schedules, error } = await supabase
+        .from("schedules")
+        .select(`
+        id,
+        createdAt,
+        updatedAt,
+        availabilities:schedule_availabilities (
+          id,
+          dayOfWeek,
+          startTime,
+          endTime
+        )
+      `)
+        .eq("labId", labId);
+
+      if (error) {
+        console.error("Error fetching schedules:", error);
+        return
+      }
+      if (schedules) {
+        setSchedules(schedules);
+        // console.log("Fetched schedules from DB");
+      } else {
+        console.log("No schedules found for this lab");
+      }
+    }
+
+    fetchSchedule();
+  }, [labId]);
+
+  // console.log("Schedules:", schedules[0]?.availabilities);
+
+
+
+  interface Availability {
+    id: number;
+    dayOfWeek: string;
+    startTime: string;
+    endTime: string;
+  }
+
+  const availabilities: Availability[] = schedules[0]?.availabilities || [];
+
+  const dayMap: Record<string, number> = {
+    SUNDAY: 0,
+    MONDAY: 1,
+    TUESDAY: 2,
+    WEDNESDAY: 3,
+    THURSDAY: 4,
+    FRIDAY: 5,
+    SATURDAY: 6,
+  };
+
+  const allowedDays = availabilities.map((a) => dayMap[a.dayOfWeek]);
+
+
+
+
+
+
+  function generateTimeSlots(dayOfWeek: string) {
+    const availability = availabilities.find(a => a.dayOfWeek === dayOfWeek);
+    if (!availability) return [];
+
+    const { startTime, endTime } = availability;
+
+    const slots: string[] = [];
+    let [startHour, startMin] = startTime.split(":").map(Number);
+    const [endHour, endMin] = endTime.split(":").map(Number);
+
+    while (
+      startHour < endHour ||
+      (startHour === endHour && startMin < endMin)
+    ) {
+      const timeStr = `${String(startHour).padStart(2, "0")}:${String(
+        startMin
+      ).padStart(2, "0")}`;
+      slots.push(timeStr);
+
+      startMin += 30;
+      if (startMin >= 60) {
+        startMin = 0;
+        startHour++;
+      }
+    }
+
+    return slots;
+  }
+
+
+
+
+
   // Show loading until auth check is complete
   if (!authChecked) {
     return (
@@ -259,7 +361,7 @@ export default function Booking() {
                           className="ml-4"
                         >
                           <Heart
-                            size={20}
+                            size={16}
                             className={
                               isLoved
                                 ? 'text-red-500 fill-current'
@@ -269,7 +371,7 @@ export default function Booking() {
                         </button>
                       </div>
                       <div className="mt-1 text-sm text-gray-500">
-                        {selectedLab.experience} Years of Experience |{' '}
+                        {/* {selectedLab.experience} Years of Experience |{' '} */}
                         {selectedLab.testType}
                       </div>
                     </div>
@@ -283,21 +385,60 @@ export default function Booking() {
                       <h3 className="font-bold text-gray-800 text-lg mb-4">
                         Select Date
                       </h3>
+                      {/* <Calendar
+                        selectedDate={selectedDate}
+                        onDateChange={setSelectedDate}
+                      /> */}
                       <Calendar
                         selectedDate={selectedDate}
                         onDateChange={setSelectedDate}
+                        disabled={(date: Date) => {
+                          const day = date.getDay(); // 0-6
+                          return !allowedDays.includes(day);
+                        }}
                       />
+
                     </div>
 
                     <div>
                       <h3 className="font-bold text-gray-800 text-lg mb-4">
                         Select Time Slot
                       </h3>
-                      <TimeSlots
+
+                      {/* {selectedDate && (
+                        <select
+                          value={selectedTime || ""}
+                          onChange={(e) => setSelectedTime(e.target.value)}
+                          className="w-full border rounded p-2"
+                        >
+                          <option value="">Select a time</option>
+                          {generateTimeSlots(
+                            Object.keys(dayMap).find(
+                              (day) => dayMap[day] === selectedDate.getDay()
+                            ) || ""
+                          ).map((slot) => (
+                            <option key={slot} value={slot}>
+                              {slot}
+                            </option>
+                          ))}
+                        </select>
+                      )} */}
+
+                      {/* <TimeSlots
                         selectedTime={selectedTime}
                         onTimeChange={setSelectedTime}
                         timeSlots={selectedLab.timeSlots}
+                      /> */}
+
+                      <TimeSlots
+                        slots={generateTimeSlots(
+                          Object.keys(dayMap).find((day) => dayMap[day] === selectedDate?.getDay()) || ""
+                        )}
+                        selectedTime={selectedTime}
+                        onTimeChange={setSelectedTime}
+                        selectedDate={selectedDate}
                       />
+
                     </div>
                   </div>
 
@@ -312,11 +453,10 @@ export default function Booking() {
                     <button
                       onClick={handleNextStep}
                       disabled={!isStep1Complete}
-                      className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer w-full sm:w-auto justify-center ${
-                        !isStep1Complete
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
-                      }`}
+                      className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer w-full sm:w-auto justify-center ${!isStep1Complete
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
+                        }`}
                     >
                       Select Tests
                       <ChevronRight size={22} />
