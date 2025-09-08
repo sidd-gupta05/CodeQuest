@@ -216,7 +216,7 @@ export default function FeaturesGrid() {
         <motion.div
           {...animationProps}
           variants={animationVariants.fromCenter}
-          className="hidden sm:flex bg-white rounded-4xl shadow-xl flex flex-col items-center justify-center p-6 w-full"
+          className="hidden sm:flex bg-white rounded-4xl shadow-xl flex-col items-center justify-center p-6 w-full"
         >
           <Image src="/logo.svg" alt="logo" width={120} height={120} />
           <div className="text-[#2B7C7E] text-5xl font-bold mt-4">
@@ -275,7 +275,7 @@ export default function FeaturesGrid() {
           <motion.div
             {...animationProps}
             variants={animationVariants.fromCenter}
-            className="hidden sm:flex col-span-1 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white text-center flex items-center justify-center"
+            className="hidden sm:flex col-span-1 bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl text-white text-center items-center justify-center"
           >
             <p className="text-4xl font-bold">
               Your health

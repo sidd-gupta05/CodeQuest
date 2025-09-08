@@ -15,7 +15,7 @@ function Navbar() {
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -42,7 +42,7 @@ function Navbar() {
         setProfileData(null);
         setUserRole(null);
       }
-      setLoading(false); // Set loading to false after user data is fetched
+      setLoading(false);
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -63,19 +63,17 @@ function Navbar() {
   const navLinkClasses =
     'text-lg px-4 py-1 rounded-full transition hover:bg-white/20 hover:backdrop-blur-md hover:font-clash hover:py-2';
 
-  // Don't render auth section until loading is complete
   const renderAuthSection = () => {
     if (loading) {
-      // You can return a skeleton loader or null here
       return (
-        <div className="hidden md:flex items-center justify-end flex-shrink-0 min-w-[120px]">
+        <div className="hidden lg:flex items-center justify-end flex-shrink-0 min-w-[120px]">
           <div className="h-10 w-10 rounded-full bg-gray-300 animate-pulse"></div>
         </div>
       );
     }
 
     return user ? (
-      <div className="flex items-center gap-4">
+      <div className="hidden lg:flex items-center gap-4">
         {userRole === 'LAB' && (
           <Link
             href="/dashboard"
@@ -104,7 +102,7 @@ function Navbar() {
     ) : (
       <button
         onClick={() => router.push('/auth/sign_in')}
-        className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
+        className="hidden lg:flex cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
       >
         Sign In
       </button>
@@ -113,7 +111,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className=" relative z-50 backdrop-blur-md bg-gradient-to-r from-[#1e5f61]/60 to-[#0c2d34]/60 border border-white/20 rounded-full px-6 py-4 mx-auto mt-6 max-w-[95%] shadow-lg w-full  select-none">
+      <nav className="relative z-50 backdrop-blur-md bg-gradient-to-r from-[#1e5f61]/60 to-[#0c2d34]/60 border border-white/20 rounded-full px-6 py-4 mx-auto mt-6 max-w-[95%] shadow-lg w-full select-none">
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
           <div className="flex-shrink-0">
@@ -131,8 +129,8 @@ function Navbar() {
             </Link>
           </div>
 
-          {/* Center: Navigation Links */}
-          <ul className="hidden md:flex flex-1 justify-center items-center gap-2 lg:gap-4">
+          {/* Center: Navigation Links - Hidden on md screens */}
+          <ul className="hidden lg:flex flex-1 justify-center items-center gap-2 lg:gap-4">
             <li>
               <Link href="/BookAppointment" className={navLinkClasses}>
                 Book Appointment
@@ -155,13 +153,13 @@ function Navbar() {
             </li>
           </ul>
 
-          {/* Right: Profile dropdown or Sign Up button */}
-          <div className="hidden md:flex items-center justify-end flex-shrink-0 min-w-[120px]">
+          {/* Right: Profile dropdown or Sign Up button - Hidden on md screens */}
+          <div className="hidden lg:flex items-center justify-end flex-shrink-0 min-w-[120px]">
             {renderAuthSection()}
           </div>
 
-          {/* Hamburger for Mobile */}
-          <div className="md:hidden flex items-center gap-4">
+          {/* Hamburger for Mobile and Medium screens */}
+          <div className="lg:hidden flex items-center gap-4">
             {/* Mobile profile dropdown for logged-in users */}
             {!loading && user && (
               <div className="relative">
@@ -195,9 +193,9 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile and Medium Screen Menu */}
       {isOpen && (
-        <div className="md:hidden mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50">
+        <div className="lg:hidden mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50">
           <div className="mt-2 flex flex-col items-center gap-2 rounded-xl bg-black/50 p-4 text-white">
             <Link
               href="/BookAppointment"
@@ -248,7 +246,10 @@ function Navbar() {
               </>
             ) : (
               <button
-                onClick={() => router.push('/auth/sign_in')}
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push('/auth/sign_in');
+                }}
                 className="cursor-pointer text-white font-semibold px-4 py-1.5 border border-white/30 rounded-full hover:bg-white/10 transition"
               >
                 Sign In
