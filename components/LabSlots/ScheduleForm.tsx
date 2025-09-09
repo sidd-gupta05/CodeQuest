@@ -129,23 +129,23 @@
 //   );
 // }
 
-"use client";
+'use client';
 
-import { useFieldArray, useForm } from "react-hook-form";
-import { Fragment, useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Check, Loader, Plus, Save, X } from "lucide-react";
-import { supabase } from "@/utils/supabase/client";
+import { useFieldArray, useForm } from 'react-hook-form';
+import { Fragment, useEffect, useState } from 'react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Check, Loader, Plus, Save, X } from 'lucide-react';
+import { supabase } from '@/utils/supabase/client';
 
 const DAYS_OF_WEEK_IN_ORDER = [
-  "MONDAY",
-  "TUESDAY",
-  "WEDNESDAY",
-  "THURSDAY",
-  "FRIDAY",
-  "SATURDAY",
-  "SUNDAY",
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
 ];
 
 type Availability = {
@@ -160,7 +160,6 @@ type ScheduleFormValues = {
 };
 
 export function ScheduleForm({ labId }: { labId: string }) {
-
   const [schedules, setSchedules] = useState<any[]>([]);
 
   useEffect(() => {
@@ -168,8 +167,9 @@ export function ScheduleForm({ labId }: { labId: string }) {
       if (!labId) return;
 
       const { data: schedules, error } = await supabase
-        .from("schedules")
-        .select(`
+        .from('schedules')
+        .select(
+          `
         id,
         createdAt,
         updatedAt,
@@ -179,18 +179,19 @@ export function ScheduleForm({ labId }: { labId: string }) {
           startTime,
           endTime
         )
-      `)
-        .eq("labId", labId);
+      `
+        )
+        .eq('labId', labId);
 
       if (error) {
-        console.error("Error fetching schedules:", error);
-        return
+        console.error('Error fetching schedules:', error);
+        return;
       }
       if (schedules) {
         setSchedules(schedules);
         // console.log("Fetched schedules from DB");
       } else {
-        console.log("No schedules found for this lab");
+        console.log('No schedules found for this lab');
       }
     }
 
@@ -214,9 +215,9 @@ export function ScheduleForm({ labId }: { labId: string }) {
     defaultValues: {
       labId,
       weeklySchedule: [
-        { dayOfWeek: "MONDAY", startTime: "09:00", endTime: "17:00" },
-        { dayOfWeek: "TUESDAY", startTime: "09:00", endTime: "17:00" },
-        { dayOfWeek: "WEDNESDAY", startTime: "09:00", endTime: "17:00" },
+        { dayOfWeek: 'MONDAY', startTime: '09:00', endTime: '17:00' },
+        { dayOfWeek: 'TUESDAY', startTime: '09:00', endTime: '17:00' },
+        { dayOfWeek: 'WEDNESDAY', startTime: '09:00', endTime: '17:00' },
       ],
     },
   });
@@ -233,7 +234,7 @@ export function ScheduleForm({ labId }: { labId: string }) {
   const { control, handleSubmit, reset } = form;
 
   const { append, remove, fields } = useFieldArray({
-    name: "weeklySchedule",
+    name: 'weeklySchedule',
     control,
   });
 
@@ -243,31 +244,30 @@ export function ScheduleForm({ labId }: { labId: string }) {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/schedule", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setErrorMessage(data.error || "Failed to save schedule");
+        setErrorMessage(data.error || 'Failed to save schedule');
         setLoading(false);
       } else {
-        setSuccessMessage("Schedule saved ✅");
+        setSuccessMessage('Schedule saved ✅');
         reset({ labId, weeklySchedule: data.availabilities });
         setLoading(false);
       }
     } catch (err) {
-      setErrorMessage("Something went wrong!");
+      setErrorMessage('Something went wrong!');
       setLoading(false);
     }
   }
 
   return (
     <div className="flex flex-col gap-6">
-
       <div className="flex flex-col gap-3">
         {DAYS_OF_WEEK_IN_ORDER.map((day) => (
           <Fragment key={day}>
@@ -283,8 +283,8 @@ export function ScheduleForm({ labId }: { labId: string }) {
                 onClick={() =>
                   append({
                     dayOfWeek: day,
-                    startTime: "09:00",
-                    endTime: "17:00",
+                    startTime: '09:00',
+                    endTime: '17:00',
                   })
                 }
               >
@@ -302,12 +302,16 @@ export function ScheduleForm({ labId }: { labId: string }) {
                   return (
                     <div className="flex gap-2 items-center" key={field.id}>
                       <Input
-                        {...form.register(`weeklySchedule.${realIndex}.startTime` as const)}
+                        {...form.register(
+                          `weeklySchedule.${realIndex}.startTime` as const
+                        )}
                         className="w-24 h-8 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
                       />
                       -
                       <Input
-                        {...form.register(`weeklySchedule.${realIndex}.endTime` as const)}
+                        {...form.register(
+                          `weeklySchedule.${realIndex}.endTime` as const
+                        )}
                         className="w-24 h-8 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
                       />
                       <Button
@@ -321,7 +325,6 @@ export function ScheduleForm({ labId }: { labId: string }) {
                     </div>
                   );
                 })}
-
             </div>
           </Fragment>
         ))}
@@ -331,8 +334,12 @@ export function ScheduleForm({ labId }: { labId: string }) {
       {successMessage && <div className="text-green-500">{successMessage}</div>}
 
       <div className="flex gap-2 justify-end">
-        <Button type="button" variant="outline" className="flex w-36 items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700" onClick={handleSubmit(onSubmit)}>
-
+        <Button
+          type="button"
+          variant="outline"
+          className="flex w-36 items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
+          onClick={handleSubmit(onSubmit)}
+        >
           {loading ? (
             <Loader className="w-4 h-4 animate-spin" />
           ) : (
@@ -340,10 +347,8 @@ export function ScheduleForm({ labId }: { labId: string }) {
               <Save className="w-4 h-4" /> Save Schedule
             </>
           )}
-
         </Button>
       </div>
     </div>
   );
 }
-
