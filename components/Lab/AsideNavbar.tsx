@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
+import Link from 'next/link';
 
 interface AsideNavbarProps {
   isOpen: boolean;
@@ -111,7 +112,7 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
           <nav className="flex-1">
             <ul className="space-y-1">
               <li>
-                <a
+                <Link
                   href="/dashboard"
                   onClick={(e) => {
                     e.preventDefault();
@@ -127,11 +128,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <LayoutGrid className="h-5 w-5" />
                     <span>Dashboard</span>
                   </div>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
+                <Link
                   href="/dashboard/lab/patient_list"
                   onClick={(e) => {
                     e.preventDefault();
@@ -147,11 +148,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <Users className="h-5 w-5" />
                     <span>Patients List</span>
                   </div>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
+                <Link
                   href="/dashboard/lab/calendar"
                   onClick={(e) => {
                     e.preventDefault();
@@ -167,11 +168,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <Calendar className="h-5 w-5" />
                     <span>Calendar</span>
                   </div>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
+                <Link
                   href="/dashboard/lab/employee"
                   onClick={(e) => {
                     e.preventDefault();
@@ -188,11 +189,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <span>Employee</span>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-400" />
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
+                <Link
                   href="/dashboard/lab/inventory"
                   onClick={(e) => {
                     e.preventDefault();
@@ -208,11 +209,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <Warehouse className="h-5 w-5" />
                     <span>Inventory</span>
                   </div>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
+                <Link
                   href="/dashboard/lab/ai_advisor"
                   onClick={(e) => {
                     e.preventDefault();
@@ -232,11 +233,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     Hot
                     <Flame className="h-3 w-3 text-orange-400" />
                   </span>
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
+                <Link
                   href="/dashboard/lab/billing"
                   onClick={(e) => {
                     e.preventDefault();
@@ -253,11 +254,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <span>Billing</span>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-400" />
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
+                <Link
                   href="/dashboard/lab/equipment"
                   onClick={(e) => {
                     e.preventDefault();
@@ -273,7 +274,7 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <Wrench className="h-5 w-5" />
                     <span>Equipment</span>
                   </div>
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -282,13 +283,13 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
             <nav className="border-t border-gray-200 pt-4">
               <ul className="space-y-1">
                 <li>
-                  <a
+                  <Link
                     href="/dashboard/lab/profile"
                     className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-medium text-black hover:bg-gray-100"
                   >
                     <Settings className="h-5 w-5" />
                     <span>Settings</span>
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <button

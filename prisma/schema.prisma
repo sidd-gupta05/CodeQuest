@@ -181,8 +181,8 @@ model booking_tests {
   bookingId String
   testId    String
   createdAt DateTime @default(now())
-  bookings  bookings @relation(fields: [bookingId], references: [id])
-  tests     tests    @relation(fields: [testId], references: [id])
+  bookings  bookings @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  tests     tests    @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@unique([bookingId, testId])
 }
@@ -205,6 +205,7 @@ model bookings {
   patients       Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
   lab_time_slots LabTimeSlot?     @relation(fields: [timeSlotId], references: [id])
   payments       Payment[]
+   tests          tests[]          @relation("BookingTests")
 }
 
 model tests {
@@ -218,6 +219,7 @@ model tests {
   updatedAt     DateTime
   booking_tests booking_tests[]
   labs          Lab[]           @relation("AvailableTests")
+  bookings      bookings[]      @relation("BookingTests")
 }
 
 enum Session {
