@@ -71,8 +71,15 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
     <>
       <div className="md:hidden bg-gray-50 p-4 flex justify-between items-center shadow-sm">
         <div className="flex items-center gap-3">
-          <img src="/logo2.svg" alt="Labsphere Logo" width={100} height={100} />
-          <h1 className="text-xl font-bold text-black">Labsphere</h1>
+          <button onClick={onToggle}>
+            <img
+              src="/logo3.svg"
+              alt="Labsphere Logo"
+              width={100}
+              height={100}
+              className="cursor-pointer"
+            />
+          </button>
         </div>
         <button
           onClick={onToggle}
@@ -91,12 +98,14 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center gap-3 px-2 mb-8">
-            <img
-              src="/logo3.svg"
-              alt="Labsphere Logo"
-              width={150}
-              height={150}
-            />
+            <a href="/" className="block">
+              <img
+                src="/logo3.svg"
+                alt="Labsphere Logo"
+                width={150}
+                height={150}
+              />
+            </a>
           </div>
 
           <nav className="flex-1">
