@@ -1,16 +1,12 @@
-import { LabProvider } from "../context/LabContext"
-
+//app/dashboard/layout.js
+import { LabProvider } from '../context/LabContext';
 
 const dashboardLayout = ({ children }) => {
-    return (
+  return (
+    <div>
+      <LabProvider>{children}</LabProvider>
+    </div>
+  );
+};
 
-        <div>
-            <LabProvider>
-                {children}
-            </LabProvider>
-        </div>
-
-    )
-}
-
-export default dashboardLayout
+export default dashboardLayout;
