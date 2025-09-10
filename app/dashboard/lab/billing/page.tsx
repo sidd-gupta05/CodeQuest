@@ -1,18 +1,14 @@
 // app/dashboard/lab/billing/page.tsx
 'use client';
 import React from 'react';
-import AsideNavbar from '@/components/Lab/AsideNavbar';
 
 const Billing = () => {
-  const [isNavOpen, setIsNavOpen] = React.useState(false);
-
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AsideNavbar
-        isOpen={isNavOpen}
-        onToggle={() => setIsNavOpen(!isNavOpen)}
-      />
-      <div className="flex-1 md:ml-64 p-8">Billing</div>
+    <div className="p-8">
+      <h1 className="text-2xl font-semibold">Billing</h1>
+      <div className="mt-4">
+        <p>Billing content will go here...</p>
+      </div>
     </div>
   );
 };

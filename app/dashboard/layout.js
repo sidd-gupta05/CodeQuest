@@ -1,12 +1,24 @@
 //app/dashboard/layout.js
-import { LabProvider } from '../context/LabContext';
+'use client';
 
-const dashboardLayout = ({ children }) => {
+import { useState } from 'react';
+import { LabProvider } from '../context/LabContext';
+import AsideNavbar from '@/components/Lab/AsideNavbar';
+
+const DashboardLayout = ({ children }) => {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
   return (
-    <div>
-      <LabProvider>{children}</LabProvider>
+    <div className="flex min-h-screen bg-gray-50">
+      <LabProvider>
+        <AsideNavbar
+          isOpen={isNavOpen}
+          onToggle={() => setIsNavOpen(!isNavOpen)}
+        />
+        <main className="flex-1 md:ml-64">{children}</main>
+      </LabProvider>
     </div>
   );
 };
 
-export default dashboardLayout;
+export default DashboardLayout;
