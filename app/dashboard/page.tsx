@@ -4,14 +4,12 @@
 import { useContext, useState } from 'react';
 import AsideNavbar from '@/components/Lab/AsideNavbar';
 import { LabContext } from '../context/LabContext';
-import { Book } from 'lucide-react';
-import Booking from '../(patient)/Booking/page';
-import BookingList from '@/components/Lab/BookingList';
 import BookingChart from '@/components/Lab/BookingChart';
+import PaginatedBookingList from '@/components/Lab/PaginatedBookingList';
 
 export default function DashboardPage() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Add state for selected date
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const contextData = useContext(LabContext);
   const bookingData = contextData?.bookingData || [];
@@ -39,7 +37,10 @@ export default function DashboardPage() {
             />
           </div>
           <div className="mt-6">
-            <BookingList bookings={bookingData} selectedDate={selectedDate} />
+            <PaginatedBookingList
+              bookings={bookingData}
+              selectedDate={selectedDate}
+            />
           </div>
         </div>
       </div>

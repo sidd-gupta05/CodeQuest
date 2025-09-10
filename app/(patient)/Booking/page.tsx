@@ -141,13 +141,13 @@ export default function Booking() {
   const labId = searchParams.get('labId');
 
   useEffect(() => {
-
     async function fetchSchedule() {
       if (!labId) return;
 
       const { data: schedules, error } = await supabase
-        .from("schedules")
-        .select(`
+        .from('schedules')
+        .select(
+          `
         id,
         createdAt,
         updatedAt,
@@ -157,18 +157,19 @@ export default function Booking() {
           startTime,
           endTime
         )
-      `)
-        .eq("labId", labId);
+      `
+        )
+        .eq('labId', labId);
 
       if (error) {
-        console.error("Error fetching schedules:", error);
-        return
+        console.error('Error fetching schedules:', error);
+        return;
       }
       if (schedules) {
         setSchedules(schedules);
         // console.log("Fetched schedules from DB");
       } else {
-        console.log("No schedules found for this lab");
+        console.log('No schedules found for this lab');
       }
     }
 
@@ -176,8 +177,6 @@ export default function Booking() {
   }, [labId]);
 
   // console.log("Schedules:", schedules[0]?.availabilities);
-
-
 
   interface Availability {
     id: number;
@@ -200,28 +199,23 @@ export default function Booking() {
 
   const allowedDays = availabilities.map((a) => dayMap[a.dayOfWeek]);
 
-
-
-
-
-
   function generateTimeSlots(dayOfWeek: string) {
-    const availability = availabilities.find(a => a.dayOfWeek === dayOfWeek);
+    const availability = availabilities.find((a) => a.dayOfWeek === dayOfWeek);
     if (!availability) return [];
 
     const { startTime, endTime } = availability;
 
     const slots: string[] = [];
-    let [startHour, startMin] = startTime.split(":").map(Number);
-    const [endHour, endMin] = endTime.split(":").map(Number);
+    let [startHour, startMin] = startTime.split(':').map(Number);
+    const [endHour, endMin] = endTime.split(':').map(Number);
 
     while (
       startHour < endHour ||
       (startHour === endHour && startMin < endMin)
     ) {
-      const timeStr = `${String(startHour).padStart(2, "0")}:${String(
+      const timeStr = `${String(startHour).padStart(2, '0')}:${String(
         startMin
-      ).padStart(2, "0")}`;
+      ).padStart(2, '0')}`;
       slots.push(timeStr);
 
       startMin += 30;
@@ -233,10 +227,6 @@ export default function Booking() {
 
     return slots;
   }
-
-
-
-
 
   // Show loading until auth check is complete
   if (!authChecked) {
@@ -397,7 +387,6 @@ export default function Booking() {
                           return !allowedDays.includes(day);
                         }}
                       />
-
                     </div>
 
                     <div>
@@ -432,13 +421,14 @@ export default function Booking() {
 
                       <TimeSlots
                         slots={generateTimeSlots(
-                          Object.keys(dayMap).find((day) => dayMap[day] === selectedDate?.getDay()) || ""
+                          Object.keys(dayMap).find(
+                            (day) => dayMap[day] === selectedDate?.getDay()
+                          ) || ''
                         )}
                         selectedTime={selectedTime}
                         onTimeChange={setSelectedTime}
                         selectedDate={selectedDate}
                       />
-
                     </div>
                   </div>
 
@@ -453,10 +443,11 @@ export default function Booking() {
                     <button
                       onClick={handleNextStep}
                       disabled={!isStep1Complete}
-                      className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer w-full sm:w-auto justify-center ${!isStep1Complete
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
-                        }`}
+                      className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer w-full sm:w-auto justify-center ${
+                        !isStep1Complete
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'
+                      }`}
                     >
                       Select Tests
                       <ChevronRight size={22} />
