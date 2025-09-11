@@ -714,9 +714,9 @@ const LabForm: React.FC = () => {
   // ---------------- Render ----------------
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <AsideNavbar isOpen={isNavOpen} onToggle={() => setIsNavOpen(!isNavOpen)} />
+      {/* <AsideNavbar isOpen={isNavOpen} onToggle={() => setIsNavOpen(!isNavOpen)} /> */}
 
-      <div className="flex-1 md:ml-64">
+      <div className="flex-1">
         <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 font-inter">
           <div className="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-2xl">
             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6 flex items-center justify-center">
