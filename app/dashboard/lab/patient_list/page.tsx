@@ -2,17 +2,19 @@
 'use client';
 import React, { useContext } from 'react';
 import { LabContext } from '@/app/context/LabContext';
-import PaginatedBookingList from '@/components/Lab/PaginatedBookingList';
+import PatientList from '@/components/Lab/PatientList';
 
 const Patient_list = () => {
   const contextData = useContext(LabContext);
-  const bookingData = contextData?.bookingData || [];
+  const patientData = contextData?.patients || [];
+
+  console.log('Patient Data:', patientData);
 
   return (
     <div className="p-8">
       <h2 className="text-xl font-semibold">Patient List</h2>
       <div className="my-6">
-        <PaginatedBookingList bookings={bookingData} selectedDate={null} />
+        <PatientList patients={patientData} />
       </div>
     </div>
   );

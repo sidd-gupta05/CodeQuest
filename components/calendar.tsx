@@ -210,14 +210,14 @@ const Calendar = ({ selectedDate, onDateChange, disabled }: CalendarProps) => {
           onClick={handlePrevMonth}
           className="p-1 rounded-full hover:bg-gray-100"
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={18} />
         </button>
-        <h4 className="font-bold text-lg">{monthYearString}</h4>
+        <h4 className="font-bold text-base">{monthYearString}</h4>
         <button
           onClick={handleNextMonth}
           className="p-1 rounded-full hover:bg-gray-100"
         >
-          <ChevronRight size={20} />
+          <ChevronRight size={18} />
         </button>
       </div>
       <div className="grid grid-cols-7 gap-y-2 text-center text-sm">

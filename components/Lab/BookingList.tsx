@@ -74,43 +74,42 @@ const BookingList: React.FC<BookingListProps> = ({
   };
 
   // Sort bookings: Express first, then Superfast, then others
-  const sortedBookings = useMemo(() => {
-    return [...bookings].sort((a, b) => {
-      const getPriority = (booking: Booking) => {
-        const type = getDeliveryType(booking);
-        if (type === 'EXPRESS') return 2;
-        if (type === 'SUPERFAST') return 1;
-        return 0;
-      };
+  // const sortedBookings = useMemo(() => {
+  //   return [...bookings].sort((a, b) => {
+  //     const getPriority = (booking: Booking) => {
+  //       const type = getDeliveryType(booking);
+  //       if (type === 'EXPRESS') return 2;
+  //       if (type === 'SUPERFAST') return 1;
+  //       return 0;
+  //     };
 
-      return getPriority(b) - getPriority(a);
-    });
-  }, [bookings]);
+  //     return getPriority(b) - getPriority(a);
+  //   });
+  // }, [bookings]);
 
   // Filter bookings by selected date
-  const filteredBookings = useMemo(() => {
-    if (!selectedDate) return sortedBookings;
+  // const filteredBookings = useMemo(() => {
+  //   if (!selectedDate) return sortedBookings;
 
-    return sortedBookings.filter((booking) => {
-      const bookingDate = new Date(booking.date).toDateString();
-      return bookingDate === selectedDate.toDateString();
-    });
-  }, [sortedBookings, selectedDate]);
+  //   return sortedBookings.filter((booking) => {
+  //     const bookingDate = new Date(booking.date).toDateString();
+  //     return bookingDate === selectedDate.toDateString();
+  //   });
+  // }, [sortedBookings, selectedDate]);
 
   return (
     <div className="overflow-hidden">
       {/* Desktop View */}
       <div className="hidden md:block">
         <ul className="divide-y divide-gray-200">
-          {filteredBookings.map((booking) => {
+          {bookings.map((booking) => {
             const deliveryType = getDeliveryType(booking);
             const patientName =
               booking.firstName && booking.lastName
                 ? `${booking.firstName} ${booking.lastName}`
                 : booking.patientId?.userId
-                  ? `${booking.patientId.userId.firstName || ''} ${
-                      booking.patientId.userId.lastName || ''
-                    }`
+                  ? `${booking.patientId.userId.firstName || ''} ${booking.patientId.userId.lastName || ''
+                  }`
                   : 'Unknown';
 
             const patientAddress =
@@ -122,6 +121,15 @@ const BookingList: React.FC<BookingListProps> = ({
                 day: '2-digit',
                 month: 'short',
                 year: '2-digit',
+
+              }
+            );
+
+            const bookingTime = new Date(booking.date).toLocaleTimeString(
+              'en-GB',
+              {
+                hour: '2-digit',
+                minute: '2-digit',
               }
             );
 
@@ -134,13 +142,13 @@ const BookingList: React.FC<BookingListProps> = ({
                 {deliveryType === 'EXPRESS' && (
                   <>
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
-                    <div className="absolute left-1 top-0 bottom-0 w-1 bg-red-400"></div>
+                    {/* <div className="absolute left-1 top-0 bottom-0 w-1 bg-red-400"></div> */}
                   </>
                 )}
                 {deliveryType === 'SUPERFAST' && (
                   <>
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
-                    <div className="absolute left-1 top-0 bottom-0 w-1 bg-green-400"></div>
+                    {/* <div className="absolute left-1 top-0 bottom-0 w-1 bg-green-400"></div> */}
                   </>
                 )}
 
@@ -159,7 +167,7 @@ const BookingList: React.FC<BookingListProps> = ({
                     </p>
                   </div>
 
-                  <div className="w-32 text-sm text-gray-600">
+                  <div className="w-32 mr-3 text-sm text-gray-600">
                     {booking.bookingId}
                   </div>
 
@@ -171,7 +179,7 @@ const BookingList: React.FC<BookingListProps> = ({
                       {hasMultipleTests && (
                         <button
                           onClick={() => toggleBookingExpansion(booking.id)}
-                          className="ml-1 text-gray-500 hover:text-gray-700"
+                          className="ml-1 mr-3 text-gray-500 hover:text-gray-700"
                         >
                           {isExpanded ? (
                             <ChevronUp className="w-4 h-4" />
@@ -183,19 +191,18 @@ const BookingList: React.FC<BookingListProps> = ({
                     </div>
                   </div>
 
-                  <div className="w-32 text-sm text-gray-600">
-                    {formattedDate}
+                  <div className="w-32 ml-5 text-sm text-gray-600">
+                    {formattedDate}, <span>{bookingTime}</span>
                   </div>
 
-                  <div className="w-20 text-sm text-gray-600">UPI</div>
+                  <div className="w-14 text-sm text-gray-600">UPI</div>
 
                   <div className="w-28">
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        booking.status === 'CONFIRMED'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                        }`}
                     >
                       {booking.status}
                     </span>
@@ -219,7 +226,7 @@ const BookingList: React.FC<BookingListProps> = ({
                 {isExpanded && hasMultipleTests && (
                   <div className="mt-3 ml-8 p-3 bg-gray-50 rounded-lg">
                     <p className="text-xs font-medium text-gray-700 mb-2">
-                      All Tests:
+                      All Tests :
                     </p>
                     <ul className="space-y-1">
                       {booking.booking_tests.map((test, index) => (
@@ -239,15 +246,14 @@ const BookingList: React.FC<BookingListProps> = ({
       {/* Mobile View */}
       <div className="md:hidden">
         <ul className="divide-y divide-gray-200">
-          {filteredBookings.map((booking) => {
+          {bookings.map((booking) => {
             const deliveryType = getDeliveryType(booking);
             const patientName =
               booking.firstName && booking.lastName
                 ? `${booking.firstName} ${booking.lastName}`
                 : booking.patientId?.userId
-                  ? `${booking.patientId.userId.firstName || ''} ${
-                      booking.patientId.userId.lastName || ''
-                    }`
+                  ? `${booking.patientId.userId.firstName || ''} ${booking.patientId.userId.lastName || ''
+                  }`
                   : 'Unknown';
 
             const patientAddress =
@@ -271,13 +277,13 @@ const BookingList: React.FC<BookingListProps> = ({
                 {deliveryType === 'EXPRESS' && (
                   <>
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
-                    <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-red-400"></div>
+                    {/* <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-red-400"></div> */}
                   </>
                 )}
                 {deliveryType === 'SUPERFAST' && (
                   <>
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
-                    <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-green-400"></div>
+                    {/* <div className="absolute left-1 top-0 bottom-0 w-0.5 bg-green-400"></div> */}
                   </>
                 )}
 
@@ -343,11 +349,10 @@ const BookingList: React.FC<BookingListProps> = ({
                   <div>
                     <p className="text-xs text-gray-500">Status</p>
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        booking.status === 'CONFIRMED'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                        }`}
                     >
                       {booking.status}
                     </span>
