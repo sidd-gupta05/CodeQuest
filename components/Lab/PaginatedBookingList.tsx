@@ -457,7 +457,7 @@ const PaginatedBookingList: React.FC<PaginatedBookingListProps> = ({
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 rounded-md text-sm font-medium ${page === currentPage ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                className={`px-3 py-1 rounded-md text-sm font-medium ${page === currentPage ? 'bg-green-500 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
               >
                 {page}
               </button>

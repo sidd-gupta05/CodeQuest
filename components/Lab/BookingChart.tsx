@@ -611,7 +611,6 @@
 
 // export default BookingChart;
 
-
 'use client';
 
 import React, { useMemo, useState, useRef, useEffect } from 'react';
@@ -624,7 +623,13 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from 'recharts';
-import { ChevronLeftCircle, ChevronUp, ChevronDown, ChevronLast, ChevronLeft } from 'lucide-react';
+import {
+  ChevronLeftCircle,
+  ChevronUp,
+  ChevronDown,
+  ChevronLast,
+  ChevronLeft,
+} from 'lucide-react';
 import LabCalendar from '../labcalender';
 
 export type Booking = {
@@ -652,35 +657,65 @@ const BookingChart: React.FC<BookingChartProps> = ({
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
 
   const months = useMemo(
-    () => ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    () => [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ],
     []
   );
 
   const years = useMemo(() => {
-    const allYears = bookings.map(b => new Date(b.date).getFullYear());
+    const allYears = bookings.map((b) => new Date(b.date).getFullYear());
     return Array.from(new Set(allYears)).sort((a, b) => b - a);
   }, [bookings]);
 
   // Bookings grouped by month/day
   const monthlyAndDailyData = useMemo(() => {
     const byMonth: Record<string, Record<string, Booking[]>> = {};
-    months.forEach(m => byMonth[m] = {});
 
-    bookings.forEach(b => {
+    // Initialize all months first with empty objects
+    months.forEach((m) => {
+      byMonth[m] = {};
+    });
+
+    bookings.forEach((b) => {
       const date = new Date(b.date);
       if (date.getFullYear() !== selectedYear) return;
-      const monthKey = date.toLocaleString("default", { month: "short" });
+
+      // Get month in short format (Jan, Feb, etc.)
+      const monthKey = date.toLocaleString('en-US', { month: 'short' });
       const dayKey = date.toDateString();
-      if (!byMonth[monthKey][dayKey]) byMonth[monthKey][dayKey] = [];
+
+      // Ensure the month key exists in our byMonth object
+      if (!byMonth[monthKey]) {
+        // If it doesn't exist, create it (this handles any locale issues)
+        byMonth[monthKey] = {};
+      }
+
+      if (!byMonth[monthKey][dayKey]) {
+        byMonth[monthKey][dayKey] = [];
+      }
       byMonth[monthKey][dayKey].push(b);
     });
 
     return byMonth;
   }, [bookings, months, selectedYear]);
 
-  const bookedDates = useMemo(() =>
-    bookings.filter(b => new Date(b.date).getFullYear() === selectedYear)
-      .map(b => new Date(b.date).toDateString()),
+  const bookedDates = useMemo(
+    () =>
+      bookings
+        .filter((b) => new Date(b.date).getFullYear() === selectedYear)
+        .map((b) => new Date(b.date).toDateString()),
     [bookings, selectedYear]
   );
 
@@ -688,11 +723,11 @@ const BookingChart: React.FC<BookingChartProps> = ({
   const chartData = useMemo(() => {
     if (zoomedDate) {
       const dayKey = zoomedDate.toDateString();
-      const monthKey = zoomedDate.toLocaleString("default", { month: "short" });
+      const monthKey = zoomedDate.toLocaleString('en-US', { month: 'short' });
       const daysInMonth = monthlyAndDailyData[monthKey] || {};
       if (daysInMonth[dayKey]) {
         const perHour: Record<string, number> = {};
-        daysInMonth[dayKey].forEach(b => {
+        daysInMonth[dayKey].forEach((b) => {
           const hour = new Date(b.date).getHours();
           const hourLabel = `${hour}:00`;
           perHour[hourLabel] = (perHour[hourLabel] || 0) + 1;
@@ -704,11 +739,17 @@ const BookingChart: React.FC<BookingChartProps> = ({
       return [];
     }
 
-    return months.map(month => {
+    // Return monthly data - ensure all months are included even if they have 0 appointments
+    return months.map((month) => {
       const monthData = monthlyAndDailyData[month] || {};
+      const appointmentsCount = Object.values(monthData).reduce(
+        (sum, arr) => sum + arr.length,
+        0
+      );
+
       return {
         label: month,
-        appointments: Object.values(monthData).reduce((sum, arr) => sum + arr.length, 0),
+        appointments: appointmentsCount,
       };
     });
   }, [zoomedDate, monthlyAndDailyData, months]);
@@ -733,8 +774,14 @@ const BookingChart: React.FC<BookingChartProps> = ({
   const yearListRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (yearListRef.current) {
-      const selectedEl = yearListRef.current.querySelector(`div[data-year='${selectedYear}']`);
-      if (selectedEl) (selectedEl as HTMLDivElement).scrollIntoView({ behavior: "smooth", block: "center" });
+      const selectedEl = yearListRef.current.querySelector(
+        `div[data-year='${selectedYear}']`
+      );
+      if (selectedEl)
+        (selectedEl as HTMLDivElement).scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
     }
   }, [yearDropdownOpen, selectedYear]);
 
@@ -752,11 +799,18 @@ const BookingChart: React.FC<BookingChartProps> = ({
                   className="border rounded py-1 px-3 text-sm w-24 text-left bg-white flex justify-between items-center"
                 >
                   {selectedYear}
-                  {yearDropdownOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {yearDropdownOpen ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
                 </button>
                 {yearDropdownOpen && (
-                  <div ref={yearListRef} className="absolute mt-1 max-h-48 w-24 overflow-y-auto border rounded shadow bg-white z-10">
-                    {years.map(year => (
+                  <div
+                    ref={yearListRef}
+                    className="absolute mt-1 max-h-48 w-24 overflow-y-auto border rounded shadow bg-white z-10"
+                  >
+                    {years.map((year) => (
                       <div
                         key={year}
                         data-year={year}
@@ -765,11 +819,13 @@ const BookingChart: React.FC<BookingChartProps> = ({
                           setYearDropdownOpen(false);
                           setSelectedDate(() => {
                             // pick first booked date in this year if exists, else default to Jan 1
-                            const firstBooking = bookings.find(b => new Date(b.date).getFullYear() === year);
-                            if (firstBooking) return new Date(firstBooking.date);
-                            return new Date(year, 0, 1);    // Jan 1
+                            const firstBooking = bookings.find(
+                              (b) => new Date(b.date).getFullYear() === year
+                            );
+                            if (firstBooking)
+                              return new Date(firstBooking.date);
+                            return new Date(year, 0, 1); // Jan 1
                           });
-
                         }}
                         className={`cursor-pointer px-3 py-1 text-sm hover:bg-indigo-100 ${year === selectedYear ? 'bg-indigo-200 font-medium' : ''}`}
                       >
@@ -781,7 +837,7 @@ const BookingChart: React.FC<BookingChartProps> = ({
               </div>
             )}
             {zoomedDate && (
-              <div className='flex items-center gap-3'>
+              <div className="flex items-center gap-3">
                 <button
                   onClick={handleBackToYearly}
                   className="text-sm px-2 flex items-center py-1 border cursor-pointer rounded hover:bg-gray-100"
@@ -791,10 +847,10 @@ const BookingChart: React.FC<BookingChartProps> = ({
                 <div>
                   <span className="text-sm">
                     {zoomedDate.toLocaleDateString('en-US', {
-                      weekday: 'short', 
-                      day: 'numeric',   
-                      month: 'short',   
-                      year: 'numeric'   
+                      weekday: 'short',
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
                     })}
                   </span>
                 </div>
@@ -818,7 +874,10 @@ const BookingChart: React.FC<BookingChartProps> = ({
         <LabCalendar // made another calendar component specifically for lab dashboard
           selectedDate={selectedDate}
           onDateChange={handleDateClick}
-          disabled={date => date.getFullYear() !== selectedYear || !bookedDates.includes(date.toDateString())}
+          disabled={(date) =>
+            date.getFullYear() !== selectedYear ||
+            !bookedDates.includes(date.toDateString())
+          }
           month={selectedDate.getMonth()}
           year={selectedDate.getFullYear()}
         />
