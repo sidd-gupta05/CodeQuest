@@ -59,13 +59,13 @@ export default function Booking() {
         } = await supabase.auth.getUser();
         if (user) {
           setUser(user);
-          setPatientDetails((prev: any) => ({
-            ...prev,
-            name:
-              user.user_metadata?.full_name || user.user_metadata?.name || '',
-            email: user.email || '',
-            phone: '',
-          }));
+          // setPatientDetails((prev: any) => ({
+          //   ...prev,
+          //   name:
+          //     user.user_metadata?.full_name || user.user_metadata?.name || '',
+          //   email: user.email || '',
+          //   phone: '',
+          // }));
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
@@ -234,7 +234,7 @@ export default function Booking() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-white/90 text-sm">Checking authentication...</p>
+          <p className="text-white/90 text-sm">Checking authentication . . .</p>
         </div>
       </div>
     );
@@ -245,7 +245,7 @@ export default function Booking() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-white/90 text-sm">Loading lab details...</p>
+          <p className="text-white/90 text-sm">Loading lab details . . .</p>
         </div>
       </div>
     );

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { report } from 'process';
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         .from('bookings')
         .update({
           status: 'CONFIRMED',
+          reportStatus: 'TEST_BOOKED',
           updatedAt: now,
         })
         .eq('id', bookingId);

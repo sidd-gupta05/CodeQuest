@@ -35,6 +35,9 @@ const BookAppointment = () => {
   const searchParams = useSearchParams();
   const [labs, setLabs] = useState<Lab[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [labsLoading, setLabsLoading] = useState(true);
+
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
     searchQuery: '',
     location: '',
@@ -59,15 +62,35 @@ const BookAppointment = () => {
   const [showAllTestTypes, setShowAllTestTypes] = useState(false);
 
   useEffect(() => {
-    try {
-      axios.get('/api/lab').then((res) => {
+    const fetchLabs = async () => {
+      try {
+        setLabsLoading(true);
+        const res = await axios.get('/api/lab');
         const data: Lab[] = res.data;
         setLabs(data);
-      });
-    } catch (err) {
-      console.error(err);
-    }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLabsLoading(false);
+      }
+    };
+
+    fetchLabs();
   }, []);
+
+  // useEffect(() => {
+  //   try {
+  //     setLabsLoading(true)
+  //     axios.get('/api/lab').then((res) => {
+  //       const data: Lab[] = res.data;
+  //       setLabs(data);
+  //       setLabsLoading(false)
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //     setLabsLoading(false)
+  //   }
+  // }, []);
 
   useEffect(() => {
     const searchQuery = searchParams.get('search') || '';
@@ -128,10 +151,10 @@ const BookAppointment = () => {
     });
     setCurrentPage(1);
     document
-      .querySelectorAll('input[type="radio"]')
+      .querySelectorAll<HTMLInputElement>('input[type="radio"]')
       .forEach((radio) => (radio.checked = false));
     document
-      .querySelectorAll('input[type="checkbox"]')
+      .querySelectorAll<HTMLInputElement>('input[type="checkbox"]')
       .forEach((checkbox) => (checkbox.checked = false));
   };
 
@@ -253,6 +276,28 @@ const BookAppointment = () => {
     params.set('view', mode);
     window.history.pushState({}, '', `?${params.toString()}`);
   };
+
+  if (labsLoading) {
+    return (
+      <div className='min-h-screen flex flex-col'
+        style={{
+          background:
+            'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 40%, #FFF 75%)',
+        }}>
+
+        <div className='text-white'>
+          <Navbar />
+        </div>
+
+        <div className="flex flex-col justify-center items-center my-auto">
+          <div className='w-20 h-20 mx-auto'>
+            <img src="/main-loading.gif" alt="Loading..." />
+          </div>
+          <div className="mt-2 text-center text-slate-700 font-semibold">Setting things up for you . . .</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

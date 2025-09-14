@@ -29,7 +29,7 @@ export default function HeroSection() {
               Precision & Simplicity
             </p>
 
-            <p
+            {/* <p
               className="mt-6 text-black text-md md:text-lg text-center"
               style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}
             >
@@ -37,7 +37,20 @@ export default function HeroSection() {
               everything in one secure platform
               <br />
               <strong>NO queues, no confusion</strong>
+            </p> */}
+
+            <p
+              className="mt-6 text-slate-700 text-lg md:text-xl text-center leading-relaxed"
+              style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
+            >
+              Book lab tests online, get accurate reports fast, and track everything in one secure platform!
+              <br />
+              <span className="block mt-1 text-teal-900 font-semibold">
+                No queues, No confusion ⚡
+              </span>
             </p>
+
+
           </div>
 
           <Link
@@ -54,7 +67,7 @@ export default function HeroSection() {
               transformOrigin: 'bottom',
             }}
           /> */}
-          
+
           <div className="relative w-full max-w-lg mx-auto select-none pointer-events-none">
             <Image
               src="/iphone.svg"

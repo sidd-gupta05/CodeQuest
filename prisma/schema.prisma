@@ -19,14 +19,18 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   lab       Lab?
-  patient   Patient?
+  patient   Patient[]
 
   @@map("users")
 }
 
 model Patient {
   id          String     @id @default(uuid())
-  userId      String     @unique
+  userId      String     
+  firstName   String?
+  lastName    String?
+  age         Int?
+  phone       String?
   address     String?
   dateOfBirth DateTime?
   gender      String?
@@ -195,6 +199,7 @@ model bookings {
   timeSlotId     String?
   date           DateTime
   status         BookingStatus    @default(PENDING)
+  reportStatus   ReportStatus     @default(BOOKING_PENDING)
   totalAmount    Float
   qrCodeData     String?
   createdAt      DateTime         @default(now())
@@ -240,4 +245,13 @@ enum BookingStatus {
   COMPLETED
   CANCELLED
   NO_SHOW
+}
+
+enum ReportStatus {
+  BOOKING_PENDING
+  TEST_BOOKED
+  SAMPLE_COLLECTED
+  IN_LAB
+  UNDER_REVIEW
+  REPORT_READY
 }

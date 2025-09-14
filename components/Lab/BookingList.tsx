@@ -2,7 +2,8 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { Download, Eye, ChevronDown, ChevronUp } from 'lucide-react';
+import { Download, Eye, ChevronDown, ChevronUp, FlaskConical, FileCheck2, IndianRupee, Calendar, Receipt, MapPin, Phone, User, Clock } from 'lucide-react';
+import BookingModal from './BookingModal';
 
 type Booking = {
   bookingId: string;
@@ -12,13 +13,19 @@ type Booking = {
   id: string;
   labId: string;
   patientId?: {
-    userId?: { firstName?: string; lastName?: string };
+    // userId?: {  lastName?: string };
+    firstName?: string;
+    lastName?: string;
     address?: string;
+    dateOfBirth?: string;
+    phone?: string;
+    gender?: string;
   };
-  firstName?: string;
-  lastName?: string;
-  address?: string;
+  // firstName?: string;
+  // lastName?: string;
+  // address?: string;
   status: string;
+  reportStatus?: string;
   totalAmount: number;
   deliveryType?: 'EXPRESS' | 'SUPERFAST' | 'STANDARD' | string;
   booking_addons?: Array<{
@@ -40,6 +47,9 @@ const BookingList: React.FC<BookingListProps> = ({
   const [expandedBookings, setExpandedBookings] = useState<Set<string>>(
     new Set()
   );
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
   const toggleBookingExpansion = (bookingId: string) => {
     const newExpanded = new Set(expandedBookings);
@@ -104,16 +114,13 @@ const BookingList: React.FC<BookingListProps> = ({
         <ul className="divide-y divide-gray-200">
           {bookings.map((booking) => {
             const deliveryType = getDeliveryType(booking);
-            const patientName =
-              booking.firstName && booking.lastName
-                ? `${booking.firstName} ${booking.lastName}`
-                : booking.patientId?.userId
-                  ? `${booking.patientId.userId.firstName || ''} ${booking.patientId.userId.lastName || ''
-                  }`
-                  : 'Unknown';
 
-            const patientAddress =
-              booking.address || booking.patientId?.address || '-';
+            const patientName = booking.patientId?.firstName && booking.patientId?.lastName
+              ? `${booking.patientId.firstName} ${booking.patientId.lastName}`
+              : 'Unknown';
+
+
+            const patientAddress = booking.patientId?.address || '-';
 
             const formattedDate = new Date(booking.date).toLocaleDateString(
               'en-GB',
@@ -213,8 +220,14 @@ const BookingList: React.FC<BookingListProps> = ({
                   </div>
 
                   <div className="flex space-x-3 ml-4">
-                    <button className="text-gray-400 hover:text-gray-600">
+                    <button
+                      onClick={() => {
+                        setSelectedBooking(booking);
+                        setShowModal(true);
+                      }}
+                      className="text-gray-400 cursor-pointer hover:text-gray-600">
                       <Eye className="w-5 h-5" />
+
                     </button>
                     <button className="text-gray-400 hover:text-gray-600">
                       <Download className="w-5 h-5" />
@@ -248,16 +261,13 @@ const BookingList: React.FC<BookingListProps> = ({
         <ul className="divide-y divide-gray-200">
           {bookings.map((booking) => {
             const deliveryType = getDeliveryType(booking);
-            const patientName =
-              booking.firstName && booking.lastName
-                ? `${booking.firstName} ${booking.lastName}`
-                : booking.patientId?.userId
-                  ? `${booking.patientId.userId.firstName || ''} ${booking.patientId.userId.lastName || ''
-                  }`
-                  : 'Unknown';
 
-            const patientAddress =
-              booking.address || booking.patientId?.address || '-';
+            const patientName = booking.patientId?.firstName && booking.patientId?.lastName
+              ? `${booking.patientId.firstName} ${booking.patientId.lastName}`
+              : 'Unknown';
+
+
+            const patientAddress = booking.patientId?.address || '-';
 
             const formattedDate = new Date(booking.date).toLocaleDateString(
               'en-GB',
@@ -385,6 +395,15 @@ const BookingList: React.FC<BookingListProps> = ({
           })}
         </ul>
       </div>
+
+      {/* Modal for booking details */}
+      <BookingModal
+        booking={selectedBooking}
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        // onUpdateStatus={(newStatus) => setSelectedBooking({ ...selectedBooking!, reportStatus: newStatus })}
+      />
+
     </div>
   );
 };
