@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${clashFontRegular.className}`}>
+      <body suppressHydrationWarning className={`${clashFontRegular.className}`}>
         {/* <SessionProvider> */}
         {children}
         <Toaster position="top-right" />

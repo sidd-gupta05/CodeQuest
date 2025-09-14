@@ -7,13 +7,12 @@ import { Eye, Download, Search } from 'lucide-react';
 export type Patient = {
   id: string;
   address?: string;
-  user: {
-    id: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string | null;
-  };
+  age?: number | null;
+  firstName?: string;
+  lastName?: string;
+  gender?: string;
+  phone?: string | null;
+
 };
 
 interface PatientListProps {
@@ -29,11 +28,11 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
 
     const lowerSearch = search.toLowerCase();
     return patients.filter((p) => {
-      const fullName = `${p.user.firstName || ''} ${p.user.lastName || ''}`.toLowerCase();
+      const fullName = `${p.firstName || ''} ${p.lastName || ''}`.toLowerCase();
       return (
         p.id.toLowerCase().includes(lowerSearch) ||
         fullName.includes(lowerSearch) ||
-        (p.user.email?.toLowerCase().includes(lowerSearch) ?? false)
+        (p.phone?.toLowerCase().includes(lowerSearch) ?? false)
       );
     });
   }, [patients, search]);
@@ -49,7 +48,7 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
         <Search className="w-5 h-5 text-gray-400 mr-2" />
         <input
           type="text"
-          placeholder="Search by name, email or ID"
+          placeholder="Search by name, phone or ID"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 border-0 bg-transparent outline-none border-none focus:outline-nonefocus:ring-0 text-sm text-gray-700 placeholder-gray-400"
@@ -60,10 +59,12 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
       <div className="hidden md:block">
         <ul className="divide-y divide-gray-200">
           {filteredPatients.map((patient) => {
-            const fullName = `${patient.user.firstName || ''} ${patient.user.lastName || ''}`.trim() || 'Unknown';
+            const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'Unknown';
             const patientAddress = patient.address || '-';
-            const patientEmail = patient.user.email || '-';
+            const patientPhone = patient.phone || '-';
             const patientId = patient.id;
+            const patientAge = patient.age || '-';
+            const patientGender = patient.gender || '-';
 
             return (
               <li
@@ -73,8 +74,10 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
                 <div className="flex-1 flex items-center space-x-6">
                   <p className="w-32 text-sm text-gray-900">{fullName}</p>
                   <p className="w-48 text-sm font-medium text-gray-900">{patientId}</p>
-                  <p className="w-48 text-sm text-gray-500">{patientAddress}</p>
-                  <p className="w-64 text-sm text-gray-500">{patientEmail}</p>
+                  <p className="w-56 text-sm text-gray-500">{patientAddress}</p>
+                  <p className="w-32 text-sm text-gray-500">{patientPhone}</p>
+                  {/* <p className="w-16 text-sm text-gray-500">{patientAge}</p> */}
+                  <p className="w-12 text-sm text-gray-500">{patientGender}</p>
                 </div>
                 <div className="flex space-x-3">
                   <button className="text-gray-400 hover:text-gray-600 transition">
@@ -94,10 +97,12 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
       <div className="md:hidden">
         <ul className="divide-y divide-gray-200">
           {filteredPatients.map((patient) => {
-            const fullName = `${patient.user.firstName || ''} ${patient.user.lastName || ''}`.trim() || 'Unknown';
+            const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'Unknown';
             const patientAddress = patient.address || '-';
-            const patientEmail = patient.user.email || '-';
+            const patientPhone = patient.phone || '-';
             const patientId = patient.id;
+            const patientAge = patient.age || '-';
+            const patientGender = patient.gender || '-';
 
             return (
               <li
@@ -113,8 +118,14 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
                 <p className="text-xs text-gray-500 font-semibold">Address</p>
                 <p className="text-sm text-gray-500">{patientAddress}</p>
 
-                <p className="text-xs text-gray-500 font-semibold">Email</p>
-                <p className="text-sm text-gray-500">{patientEmail}</p>
+                {/* <p className="text-xs text-gray-500 font-semibold">Age</p>
+                <p className="text-sm text-gray-500">{patientAge}</p>
+
+                <p className="text-xs text-gray-500 font-semibold">Gender</p>
+                <p className="text-sm text-gray-500">{patientGender}</p> */}
+
+                <p className="text-xs text-gray-500 font-semibold">Phone</p>
+                <p className="text-sm text-gray-500">{patientPhone}</p>
 
                 <div className="flex space-x-2 mt-2">
                   <button className="text-gray-400 hover:text-gray-600 transition">

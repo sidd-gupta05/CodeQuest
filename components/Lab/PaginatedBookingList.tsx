@@ -441,7 +441,7 @@ const PaginatedBookingList: React.FC<PaginatedBookingListProps> = ({
           <div className="text-sm text-gray-700">
             Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
             <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredAndSortedBookings.length)}</span> of{' '}
-            <span className="font-medium">{filteredAndSortedBookings.length}</span> patients
+            <span className="font-medium">{filteredAndSortedBookings.length}</span> bookings
           </div>
 
           <div className="flex space-x-2">

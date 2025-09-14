@@ -101,15 +101,14 @@ export async function POST(req: Request) {
         collectionTypes: Array.isArray(collectionTypes)
           ? collectionTypes
           : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
-        // nextAvailable: nextAvailable ? new Date(nextAvailable) : null,
         latitude: latitude ?? 0.0,
         longitude: longitude ?? 0.0,
         isLoved: isLoved ?? false,
         isAvailable: isAvailable ?? true,
-        rating: rating ?? null,
+        // rating: rating ?? null,
       },
       create: {
-        id: uuidv4(),
+        id: uuidv4(), 
         labId: pathlabId,
         labName,
         testType,
@@ -118,12 +117,11 @@ export async function POST(req: Request) {
         collectionTypes: Array.isArray(collectionTypes)
           ? collectionTypes
           : (collectionTypes?.split(',').map((s: string) => s.trim()) ?? []),
-        // nextAvailable: nextAvailable ? new Date(nextAvailable) : null,
         latitude: latitude ?? 0.0,
         longitude: longitude ?? 0.0,
         isLoved: isLoved ?? false,
         isAvailable: isAvailable ?? true,
-        rating: rating ?? null,
+        // rating: rating ?? null,
       },
     });
 
