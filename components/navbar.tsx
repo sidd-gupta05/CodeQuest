@@ -137,9 +137,9 @@ function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="/Trackreport" className={navLinkClasses}>
+              <a href="/Trackreport" className={navLinkClasses}>
                 Track Report
-              </Link>
+              </a>
             </li>
             <li>
               <Link href="/pricing" className={navLinkClasses}>
@@ -204,13 +204,13 @@ function Navbar() {
             >
               Book Appointment
             </Link>
-            <Link
+            <a
               href="/Trackreport"
               onClick={() => setIsOpen(false)}
               className={navLinkClasses}
             >
               Track Report
-            </Link>
+            </a>
             <Link
               href="/pricing"
               onClick={() => setIsOpen(false)}
