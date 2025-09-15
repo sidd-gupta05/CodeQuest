@@ -92,6 +92,56 @@ const LabTestTracker = () => {
     fetchBookings();
   }, []);
 
+  //real-time stepper update
+  useEffect(() => {
+    let channel: any;
+
+    const setupRealtime = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      // 1. Get all patients of this user
+      const { data: patients, error } = await supabase
+        .from("patients")
+        .select("id")
+        .eq("userId", user.id);
+
+      if (error || !patients?.length) return;
+
+      const patientIds = patients.map((p) => p.id);
+
+      // 2. Subscribe to bookings for all those patientIds
+      channel = supabase
+        .channel(`user-patients-${user.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "bookings",
+            filter: `patientId=in.(${patientIds.join(",")})`,
+          },
+          (payload) => {
+            setBookings((prev) =>
+              prev.map((b) =>
+                b.id === payload.new.id ? { ...b, ...payload.new } : b
+              )
+            );
+          }
+        )
+        .subscribe();
+    };
+
+    setupRealtime();
+
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, []);
+
   useEffect(() => {
     if (selectedBooking) {
       // Lock body scroll
@@ -106,6 +156,16 @@ const LabTestTracker = () => {
       document.body.classList.remove("overflow-hidden");
     };
   }, [selectedBooking]);
+
+  // Sync selectedBooking with latest bookings data
+  useEffect(() => {
+    if (selectedBooking) {
+      const updated = bookings.find((b) => b.id === selectedBooking.id);
+      if (updated) {
+        setSelectedBooking(updated);
+      }
+    }
+  }, [bookings]);
 
   // Filter & paginate
   const filteredBookings = bookings.filter((booking) => {
