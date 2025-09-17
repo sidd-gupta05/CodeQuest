@@ -1,6 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+LabSphere is a modern web platform for managing **labs, doctors, and patients** with seamless authentication, booking, and verification flows. Built with [Next.js](https://nextjs.org), [TypeScript](https://www.typescriptlang.org/), and [Tailwind CSS](https://tailwindcss.com/), it provides a scalable and responsive application foundation.
 
-## Getting Started
+## 🚀 Getting Started
 
 First, run the development server:
 
@@ -14,23 +14,30 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the UI by modifying files in the `app/` directory (e.g., `app/page.tsx`). The app will auto-update as you make changes.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font).
 
-## Learn More
+## ⚙️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+* **Frontend**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
+* **Authentication**: Supabase (Email, Phone OTP, Social Logins) + Twilio OTP integration
+* **Database**: PostgreSQL with Prisma ORM
+* **Storage**: Supabase Storage for certificates and documents
+* **Deployment**: Vercel (for frontend)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📖 Learn More
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To dive deeper into the core technologies:
 
-## Deploy on Vercel
+* [Next.js Documentation](https://nextjs.org/docs) – Next.js features and API.
+* [Supabase Documentation](https://supabase.com/docs) – Authentication, Database, and Storage.
+* [Prisma Documentation](https://www.prisma.io/docs) – Database ORM for PostgreSQL.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚢 Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The easiest way to deploy **LabSphere** is to use [Vercel](https://vercel.com/new) for the frontend.
+For the backend (Supabase + PostgreSQL), check out the [Supabase Deployment Guide](https://supabase.com/docs/guides/hosting/overview).
+
