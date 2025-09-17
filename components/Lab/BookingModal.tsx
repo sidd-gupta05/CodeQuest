@@ -1,7 +1,7 @@
 // components/Lab/BookingModal.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   User,
   Phone,
@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import toast from 'react-hot-toast';
-
 
 type Booking = {
   bookingId: string;
@@ -60,92 +59,92 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const [uploadAttemptsLeft, setUploadAttemptsLeft] = useState(() => {
+    if (typeof window !== 'undefined' && booking?.bookingId) {
+      const stored = localStorage.getItem(
+        `uploadAttempts-${booking.bookingId}`
+      );
+      return stored ? parseInt(stored, 10) : 3;
+    }
+    return 3;
+  });  
+
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [confirmedStatus, setConfirmedStatus] = useState(
     booking.reportStatus || 'TEST_BOOKED'
   );
-const [uploadAttemptsLeft, setUploadAttemptsLeft] = useState(() => {
-  const stored = localStorage.getItem(`uploadAttempts-${booking.bookingId}`);
-  return stored ? Number(stored) : 3;
-});
 
-useEffect(() => {
-  localStorage.setItem(`uploadAttempts-${booking.bookingId}`, String(uploadAttemptsLeft));
-}, [uploadAttemptsLeft, booking.bookingId]);
+  async function handleSave(reportStatus: string) {
+    try {
+      setIsLoading(true);
 
-async function handleSave(reportStatus: string) {
-  try {
-    setIsLoading(true);
+      // ✅ Restrict REPORT_READY without file
+      if (reportStatus === 'REPORT_READY' && !uploadedFile) {
+        toast.error('Please upload a report file before saving REPORT_READY');
+        setIsLoading(false);
+        return;
+      }
 
-    // ✅ Restrict REPORT_READY without file
-    if (reportStatus === "REPORT_READY" && !uploadedFile) {
-      toast.error("Please upload a report file before saving REPORT_READY");
-      setIsLoading(false);  
-      return;
-    }
+      let reportUrl = null;
+      if (uploadedFile) {
+        reportUrl = await handleReport();
+      }
 
-    let reportUrl = null;
-    if (uploadedFile) {
-      reportUrl = await handleReport();
-    }
+      const response = await fetch('/api/bookings/update-report-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId: booking?.bookingId,
+          reportStatus,
+          reportUrl, // send uploaded file link
+        }),
+      });
 
-    const response = await fetch("/api/bookings/update-report-status", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        bookingId: booking?.bookingId,
-        reportStatus,
-        reportUrl, // send uploaded file link
-      }),
-    });
+      const data = await response.json();
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      toast.error(`Failed: ${data.error || "Update failed"}`);
-      setIsLoading(false);
-    } else {
-      toast.success("Report status updated successfully");
-      setConfirmedStatus(reportStatus);
-      setReportStatus(reportStatus);
+      if (!response.ok) {
+        toast.error(`Failed: ${data.error || 'Update failed'}`);
+        setIsLoading(false);
+      } else {
+        toast.success('Report status updated successfully');
+        setConfirmedStatus(reportStatus);
+        setReportStatus(reportStatus);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Something went wrong');
       setIsLoading(false);
     }
-  } catch (err) {
-    console.error(err);
-    toast.error("Something went wrong");
-    setIsLoading(false);
   }
-}
-
 
   // File input change
-const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (e.target.files && e.target.files.length > 0) {
-    const file = e.target.files[0];
-    const validTypes = [
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
-      "application/msword", // older .doc
-    ];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const validTypes = [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+        'application/msword', // older .doc
+      ];
 
-    if (!validTypes.includes(file.type)) {
-      toast.error("Only PDF and DOCX files are allowed");
-      e.target.value = ""; // clear input
-      return;
+      if (!validTypes.includes(file.type)) {
+        toast.error('Only PDF and DOCX files are allowed');
+        e.target.value = ''; // clear input
+        return;
+      }
+
+      setUploadedFile(file);
+      setImagePreviewUrl(URL.createObjectURL(file));
+      toast.success(`Valid File Selected`);
+    } else {
+      setUploadedFile(null);
+      setImagePreviewUrl(null);
     }
-
-    setUploadedFile(file);
-    setImagePreviewUrl(URL.createObjectURL(file));
-    toast.success(`Valid File Selected`);
-  } else {
-    setUploadedFile(null);
-    setImagePreviewUrl(null);
-  }
-};
-
+  };
 
   const parseFileName = (bookingId: string, file: File) => {
     const NEXT_PUBLIC_SUPABASE_URL =
@@ -175,7 +174,19 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
       if (fileError) throw new Error(fileError.message);
 
-      setUploadAttemptsLeft((prev) => Math.max(prev - 1, 0));
+      setUploadAttemptsLeft((prev) => {
+        const next = Math.max(prev - 1, 0);
+        if (booking?.bookingId) {
+          localStorage.setItem(
+            `uploadAttempts-${booking.bookingId}`,
+            next.toString()
+          );
+        }
+        if (next === 0) {
+          toast.error('File limit is reached. Contact the administrator');
+        }
+        return next;
+      });
 
       return publicUrl;
     } catch (err) {
@@ -293,7 +304,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               Report Status
             </h3>
 
-            <Select value={reportStatus} onValueChange={setReportStatus}>
+            <Select value={reportStatus || 'TEST_BOOKED'} onValueChange={setReportStatus}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select report status" />
               </SelectTrigger>
@@ -308,8 +319,9 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   const confirmedIndex = arr.indexOf(confirmedStatus);
                   const currentIndex = arr.indexOf(status);
                   // Only current status OR next status is enabled
-                    const isEnabled = currentIndex === confirmedIndex || currentIndex === confirmedIndex + 1;
-
+                  const isEnabled =
+                    currentIndex === confirmedIndex ||
+                    currentIndex === confirmedIndex + 1;
 
                   return (
                     <SelectItem
@@ -333,9 +345,16 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           {/* Reports Upload */}
           <div className="w-full bg-gray-50 rounded-xl p-4">
             <label className="block text-sm font-semibold mb-2">Reports</label>
-            <p className="text-xs text-gray-500 mb-2">
+            <p
+              className={`text-xs mb-2 ${
+                uploadAttemptsLeft === 0
+                  ? 'text-red-600 font-semibold'
+                  : 'text-gray-500'
+              }`}
+            >
               Uploads remaining: {uploadAttemptsLeft}/3
             </p>
+
             <label
               className={`border-2 border-dashed rounded-md p-2 text-center relative block ${
                 reportStatus === 'REPORT_READY'
@@ -347,7 +366,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 type="file"
                 className="absolute inset-0 opacity-0 w-full"
                 onChange={handleFileChange}
-                disabled={reportStatus !== 'REPORT_READY'}
+                disabled={reportStatus !== 'REPORT_READY' || uploadAttemptsLeft === 0}
               />
               <div className="flex flex-col items-center justify-center text-gray-600">
                 <p className="text-sm">Upload Reports</p>
