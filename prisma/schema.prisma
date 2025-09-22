@@ -10,14 +10,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   firstName String
   lastName  String
-  phone     String?  @unique
+  phone     String?   @unique
   role      UserRole
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   lab       Lab?
   patient   Patient[]
 
@@ -26,7 +26,7 @@ model User {
 
 model Patient {
   id          String     @id @default(uuid())
-  userId      String     
+  userId      String
   firstName   String?
   lastName    String?
   age         Int?
@@ -57,7 +57,7 @@ model Lab {
   timeSlots             LabTimeSlot[]
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   tests                 tests[]       @relation("AvailableTests")
- schedules             Schedule[]
+  schedules             Schedule[]
 
   @@map("labs")
 }
@@ -75,6 +75,8 @@ model LabDetails {
   rating          Float?
   testType        String?
   labName         String
+  labcontactNumber   String?
+  labemail           String?
   isAvailable     Boolean   @default(true)
   lab             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
 
@@ -111,27 +113,26 @@ model LabTimeSlotException {
   @@map("lab_timeslot_exceptions")
 }
 
-
 //Schedule_Schema_Update
 
 model Schedule {
-  id          Int                  @id @default(autoincrement())
-  labId       String
-  createdAt   DateTime                @default(now())
-  updatedAt   DateTime                @updatedAt
+  id             Int                    @id @default(autoincrement())
+  labId          String
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
   availabilities ScheduleAvailability[]
-  lab         Lab                     @relation(fields: [labId], references: [id], onDelete: Cascade)
+  lab            Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
 
   @@map("schedules")
 }
 
 model ScheduleAvailability {
-  id        Int   @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   scheduleId Int
-  dayOfWeek DayOfWeek
-  startTime String // "09:00"
-  endTime   String // "12:00"
-  schedule  Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  dayOfWeek  DayOfWeek
+  startTime  String // "09:00"
+  endTime    String // "12:00"
+  schedule   Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 
   @@map("schedule_availabilities")
 }
@@ -210,7 +211,7 @@ model bookings {
   patients       Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
   lab_time_slots LabTimeSlot?     @relation(fields: [timeSlotId], references: [id])
   payments       Payment[]
-   tests          tests[]          @relation("BookingTests")
+  tests          tests[]          @relation("BookingTests")
 }
 
 model tests {

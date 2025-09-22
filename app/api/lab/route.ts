@@ -1,3 +1,4 @@
+// app/api/lab/route.ts
 import { db } from '@/lib/prisma';
 import { supabase } from '@/utils/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
