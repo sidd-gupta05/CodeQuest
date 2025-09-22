@@ -18,11 +18,13 @@ function Navbar() {
   const [loading, setLoading] = useState(true);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
     setUser(null);
     setProfileData(null);
     setUserRole(null);
     setProfileDropdownOpen(false);
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+    });
     router.push('/');
   };
 
