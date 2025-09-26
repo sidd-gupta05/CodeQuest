@@ -1,141 +1,11 @@
-// "use client";
-
-// import { useFieldArray, useForm } from "react-hook-form";
-// import { Fragment, useState } from "react";
-// import { Button } from "../ui/button";
-// import { Input } from "../ui/input";
-// import { Plus, X } from "lucide-react";
-
-// const DAYS_OF_WEEK_IN_ORDER = [
-//   "MONDAY",
-//   "TUESDAY",
-//   "WEDNESDAY",
-//   "THURSDAY",
-//   "FRIDAY",
-//   "SATURDAY",
-//   "SUNDAY",
-// ];
-
-// type Availability = {
-//   dayOfWeek: string;
-//   startTime: string;
-//   endTime: string;
-// };
-
-// type ScheduleFormValues = {
-//   labId: string;
-//   weeklySchedule: Availability[];
-// };
-
-// export function ScheduleForm({ labId }: { labId: string }) {
-//   const [successMessage, setSuccessMessage] = useState<string>();
-//   const [errorMessage, setErrorMessage] = useState<string>();
-
-//   const form = useForm<ScheduleFormValues>({
-//     defaultValues: {
-//       labId,
-//       weeklySchedule: [],
-//     },
-//   });
-
-//   const { control, handleSubmit, reset } = form;
-
-//   const { append, remove, fields } = useFieldArray({
-//     name: "weeklySchedule",
-//     control,
-//   });
-
-//   async function onSubmit(values: ScheduleFormValues) {
-//     setSuccessMessage(undefined);
-//     setErrorMessage(undefined);
-
-//     try {
-//       const res = await fetch("/api/schedules", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(values),
-//       });
-
-//       const data = await res.json();
-
-//       if (!res.ok) {
-//         setErrorMessage(data.error || "Failed to save schedule");
-//       } else {
-//         setSuccessMessage("✅ Schedule saved!");
-//         reset({ labId, weeklySchedule: data.availabilities });
-//       }
-//     } catch (err) {
-//       setErrorMessage("Something went wrong!");
-//     }
-//   }
-
-//   return (
-//     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-//       {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-//       {successMessage && <div className="text-green-500">{successMessage}</div>}
-
-//       <div className="grid grid-cols-[auto,1fr] gap-y-6 gap-x-4">
-//         {DAYS_OF_WEEK_IN_ORDER.map((day) => (
-//           <Fragment key={day}>
-//             <div className="capitalize text-sm font-semibold">{day.slice(0, 3)}</div>
-//             <div className="flex flex-col gap-2">
-//               <Button
-//                 type="button"
-//                 className="size-6 p-1"
-//                 variant="outline"
-//                 onClick={() =>
-//                   append({
-//                     dayOfWeek: day,
-//                     startTime: "09:00",
-//                     endTime: "17:00",
-//                   })
-//                 }
-//               >
-//                 <Plus className="size-full" />
-//               </Button>
-
-//               {fields
-//                 .filter((f) => f.dayOfWeek === day)
-//                 .map((field, index) => (
-//                   <div className="flex gap-2 items-center" key={field.id}>
-//                     <Input
-//                       {...form.register(`weeklySchedule.${index}.startTime` as const)}
-//                       className="w-24"
-//                     />
-//                     -
-//                     <Input
-//                       {...form.register(`weeklySchedule.${index}.endTime` as const)}
-//                       className="w-24"
-//                     />
-//                     <Button
-//                       type="button"
-//                       className="size-6 p-1"
-//                     //   variant="destructiveGhost"
-//                       onClick={() => remove(index)}
-//                     >
-//                       <X />
-//                     </Button>
-//                   </div>
-//                 ))}
-//             </div>
-//           </Fragment>
-//         ))}
-//       </div>
-
-//       <div className="flex gap-2 justify-end">
-//         <Button type="submit">Save</Button>
-//       </div>
-//     </form>
-//   );
-// }
-
+//components/LabSlots/ScheduleForm.tsx
 'use client';
 
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Fragment, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Check, Loader, Plus, Save, X } from 'lucide-react';
+import { Check, Loader, Plus, Save, X, Clock } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 
 const DAYS_OF_WEEK_IN_ORDER = [
@@ -189,7 +59,6 @@ export function ScheduleForm({ labId }: { labId: string }) {
       }
       if (schedules) {
         setSchedules(schedules);
-        // console.log("Fetched schedules from DB");
       } else {
         console.log('No schedules found for this lab');
       }
@@ -201,15 +70,6 @@ export function ScheduleForm({ labId }: { labId: string }) {
   const [successMessage, setSuccessMessage] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
-
-  // const form = useForm<ScheduleFormValues>({
-  //   defaultValues: {
-  //     labId,
-  //     weeklySchedule: [],
-  //   },
-  // });
-
-  // console.log("Fetched schedules:", schedules[0]?.availabilities);
 
   const form = useForm<ScheduleFormValues>({
     defaultValues: {
@@ -256,7 +116,7 @@ export function ScheduleForm({ labId }: { labId: string }) {
         setErrorMessage(data.error || 'Failed to save schedule');
         setLoading(false);
       } else {
-        setSuccessMessage('Schedule saved ✅');
+        setSuccessMessage('Schedule saved successfully!');
         reset({ labId, weeklySchedule: data.availabilities });
         setLoading(false);
       }
@@ -266,20 +126,45 @@ export function ScheduleForm({ labId }: { labId: string }) {
     }
   }
 
+  const getDayFields = (day: string) => {
+    return fields.filter((f) => f.dayOfWeek === day);
+  };
+
+  const hasDayFields = (day: string) => {
+    return getDayFields(day).length > 0;
+  };
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <Clock className="w-5 h-5 text-emerald-600" />
+          <h4 className="font-semibold text-gray-800">
+            Set Weekly Availability
+          </h4>
+        </div>
+        <div className="text-sm text-gray-500">
+          {fields.length} time slot(s) configured
+        </div>
+      </div>
+
+      {/* Days Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {DAYS_OF_WEEK_IN_ORDER.map((day) => (
-          <Fragment key={day}>
-            {/* Day name + plus icon inline */}
-            <div className="flex items-center justify-between">
-              <span className="capitalize text-sm font-semibold">
-                {day.slice(0, 3)}
+          <div
+            key={day}
+            className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+          >
+            {/* Day Header */}
+            <div className="flex justify-between items-center mb-3">
+              <span className="font-medium text-gray-700 capitalize">
+                {day.toLowerCase()}
               </span>
               <Button
                 type="button"
                 size="sm"
-                variant="outline"
+                variant="ghost"
                 onClick={() =>
                   append({
                     dayOfWeek: day,
@@ -287,64 +172,106 @@ export function ScheduleForm({ labId }: { labId: string }) {
                     endTime: '17:00',
                   })
                 }
+                className="h-8 w-8 p-0 hover:bg-emerald-100 hover:text-emerald-700"
               >
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
 
-            {/* Slots */}
-            <div className="flex flex-col gap-2">
-              {fields
-                .filter((f) => f.dayOfWeek === day)
-                .map((field) => {
-                  const realIndex = fields.findIndex((f) => f.id === field.id); // ✅ get actual index
+            {/* Time Slots */}
+            <div className="space-y-2">
+              {getDayFields(day).map((field) => {
+                const realIndex = fields.findIndex((f) => f.id === field.id);
 
-                  return (
-                    <div className="flex gap-2 items-center" key={field.id}>
-                      <Input
-                        {...form.register(
-                          `weeklySchedule.${realIndex}.startTime` as const
-                        )}
-                        className="w-24 h-8 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
-                      />
-                      -
-                      <Input
-                        {...form.register(
-                          `weeklySchedule.${realIndex}.endTime` as const
-                        )}
-                        className="w-24 h-8 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
-                      />
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => remove(realIndex)} // ✅ remove correct slot
-                      >
-                        <X className="w-4 h-8" />
-                      </Button>
-                    </div>
-                  );
-                })}
+                return (
+                  <div
+                    key={field.id}
+                    className="flex items-center space-x-2 bg-white p-2 rounded border"
+                  >
+                    <Input
+                      type="time"
+                      {...form.register(
+                        `weeklySchedule.${realIndex}.startTime` as const
+                      )}
+                      className="h-8 text-sm focus-visible:ring-1 focus-visible:ring-emerald-500"
+                    />
+                    <span className="text-gray-400">to</span>
+                    <Input
+                      type="time"
+                      {...form.register(
+                        `weeklySchedule.${realIndex}.endTime` as const
+                      )}
+                      className="h-8 text-sm focus-visible:ring-1 focus-visible:ring-emerald-500"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => remove(realIndex)}
+                      className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                );
+              })}
+
+              {!hasDayFields(day) && (
+                <div className="text-center py-3 text-gray-400 text-sm bg-white rounded border border-dashed">
+                  No time slots
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={() =>
+                      append({
+                        dayOfWeek: day,
+                        startTime: '09:00',
+                        endTime: '17:00',
+                      })
+                    }
+                    className="h-auto p-0 ml-1 text-emerald-600 hover:text-emerald-700"
+                  >
+                    Add slot
+                  </Button>
+                </div>
+              )}
             </div>
-          </Fragment>
+          </div>
         ))}
       </div>
 
-      {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-      {successMessage && <div className="text-green-500">{successMessage}</div>}
+      {/* Messages */}
+      {errorMessage && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center">
+          <X className="w-4 h-4 mr-2" />
+          {errorMessage}
+        </div>
+      )}
 
-      <div className="flex gap-2 justify-end">
+      {successMessage && (
+        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm flex items-center">
+          <Check className="w-4 h-4 mr-2" />
+          {successMessage}
+        </div>
+      )}
+
+      {/* Save Button */}
+      <div className="flex justify-end pt-4 border-t border-gray-200">
         <Button
           type="button"
-          variant="outline"
-          className="flex w-36 items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
           onClick={handleSubmit(onSubmit)}
+          disabled={loading}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 font-medium"
         >
           {loading ? (
-            <Loader className="w-4 h-4 animate-spin" />
+            <>
+              <Loader className="w-4 h-4 animate-spin mr-2" />
+              Saving...
+            </>
           ) : (
             <>
-              <Save className="w-4 h-4" /> Save Schedule
+              <Save className="w-4 h-4 mr-2" />
+              Save Schedule
             </>
           )}
         </Button>
