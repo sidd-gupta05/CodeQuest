@@ -18,6 +18,7 @@ import {
   ChevronDown,
   Flame,
   HelpCircle,
+  ChevronRight,
 } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
@@ -70,9 +71,10 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
 
   return (
     <>
-      <div className="md:hidden bg-gray-50 p-4 flex justify-between items-center shadow-sm">
+      {/* Mobile Header with Logo and Toggle Button on Right - Only for mobile */}
+      <div className="md:hidden bg-gray-50 p-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <button onClick={onToggle}>
+          <a href="/" className="block">
             <img
               src="/logo3.svg"
               alt="Labsphere Logo"
@@ -80,13 +82,17 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
               height={100}
               className="cursor-pointer"
             />
-          </button>
+          </a>
         </div>
         <button
           onClick={onToggle}
-          className="md:hidden p-2 rounded-md hover:bg-gray-200"
+          className="p-2 rounded-md hover:bg-gray-200 transition-colors"
         >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {isOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <ChevronRight className="h-6 w-6" />
+          )}
         </button>
       </div>
 
@@ -98,15 +104,26 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
         `}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center gap-3 px-2 mb-8">
-            <a href="/" className="block">
-              <img
-                src="/logo3.svg"
-                alt="Labsphere Logo"
-                width={150}
-                height={150}
-              />
-            </a>
+          {/* Logo for desktop - No close button since we don't have toggle on desktop */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3 px-2">
+              <a href="/" className="block">
+                <img
+                  src="/logo3.svg"
+                  alt="Labsphere Logo"
+                  width={150}
+                  height={150}
+                />
+              </a>
+            </div>
+            {/* Close button only for mobile inside sidebar */}
+            <button
+              onClick={onToggle}
+              className="md:hidden p-2 rounded-md hover:bg-gray-100"
+              aria-label="Close navigation"
+            >
+              <X className="h-5 w-5 text-gray-600" />
+            </button>
           </div>
 
           <nav className="flex-1">
@@ -316,9 +333,10 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
         </div>
       </aside>
 
+      {/* Overlay only for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-60 z-30 md:hidden"
+          className="fixed inset-0 bg-opacity-50 z-30 md:hidden"
           onClick={onToggle}
         />
       )}
