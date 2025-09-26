@@ -1,70 +1,7 @@
+//app/api/schedule/route.ts
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
-
-// // Create a schedule with weekly availabilities
-// export async function POST(req: Request) {
-//   const supabase = await createClient(cookies()); 
-
-//   try {
-//     const body = await req.json();
-//     const { labId, weeklySchedule } = body;
-
-//     if (!labId || !weeklySchedule || !Array.isArray(weeklySchedule)) {
-//       return NextResponse.json(
-//         { error: "labId and weeklySchedule[] are required" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Insert schedule
-//     const { data: schedule, error: scheduleError } = await supabase
-//       .from("schedules")
-//       .insert({
-//         labId,
-//         createdAt: new Date().toISOString(),
-//         updatedAt: new Date().toISOString(),
-//       })
-//       .select()
-//       .single();
-
-//     if (scheduleError) {
-//       console.error("DB insert error (schedule):", scheduleError.message);
-//       return NextResponse.json(
-//         { error: scheduleError.message },
-//         { status: 500 }
-//       );
-//     }
-
-//     // Insert availabilities
-//     const availabilitiesPayload = weeklySchedule.map((slot: any) => ({
-//       scheduleId: schedule.id,
-//       dayOfWeek: slot.dayOfWeek, // must match enum e.g. "MONDAY"
-//       startTime: slot.startTime,
-//       endTime: slot.endTime,
-//     }));
-
-//     const { error: availError } = await supabase
-//       .from("schedule_availabilities")
-//       .insert(availabilitiesPayload);
-
-//     if (availError) {
-//       console.error("DB insert error (availabilities):", availError.message);
-//       return NextResponse.json(
-//         { error: availError.message },
-//         { status: 500 }
-//       );
-//     }
-
-//     return NextResponse.json(
-//       { ...schedule, availabilities: availabilitiesPayload },
-//       { status: 201 }
-//     );
-//   } catch (err: any) {
-//     console.error("Error creating schedule:", err);
-//     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-//   }
-// }
 
 export async function POST(req: Request) {
   const supabase = await createClient(cookies());
