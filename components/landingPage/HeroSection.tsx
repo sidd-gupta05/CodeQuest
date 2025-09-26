@@ -46,7 +46,7 @@ export default function HeroSection() {
               Book lab tests online, get accurate reports fast, and track everything in one secure platform!
               <br />
               <span className="block mt-1 text-teal-900 font-semibold">
-                No queues, No confusion ⚡
+                No queues, No confusion 
               </span>
             </p>
 
