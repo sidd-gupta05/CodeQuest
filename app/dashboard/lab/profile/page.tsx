@@ -1,3 +1,4 @@
+// app/dashboard/lab/profile/page.tsx
 'use client';
 
 import React, {
@@ -440,22 +441,37 @@ const LabForm: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Weekly Schedule Section */}
+                {/* Weekly Schedule Section - IMPROVED DESIGN */}
                 {labId && (
-                  <div className="border border-gray-200 rounded-lg p-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <p className="flex items-center text-sm font-medium text-gray-700">
-                        <Calendar className="w-4 h-4 mr-2 text-indigo-600" />
-                        Weekly Schedule
-                      </p>
-                      <div className="flex items-center space-x-2">
-                        {/* <Checkbox id="repeat-all" /> */}
-                        {/* <Label htmlFor="repeat-all" className="text-sm">
-                          Repeat for all
-                        </Label> */}
+                  <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-emerald-100 rounded-lg">
+                          <Calendar className="w-5 h-5 text-emerald-700" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-800">
+                            Weekly Schedule
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Set your lab's operating hours for each day
+                          </p>
+                        </div>
                       </div>
+                      {/* <div className="flex items-center space-x-2 bg-white px-3 py-2 rounded-lg border border-gray-200">
+                        <span className="text-sm font-medium text-gray-700">
+                          All days same schedule
+                        </span>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" className="sr-only peer" />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                        </label>
+                      </div> */}
                     </div>
-                    <ScheduleForm labId={labId} />
+                    
+                    <div className="bg-white rounded-lg border border-gray-200 p-6">
+                      <ScheduleForm labId={labId} />
+                    </div>
                   </div>
                 )}
 
@@ -463,7 +479,7 @@ const LabForm: React.FC = () => {
                 <div className="mt-6 flex justify-start">
                   <button
                     type="submit"
-                    className="flex items-center justify-center px-6 py-3 text-base font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800"
+                    className="flex items-center justify-center px-6 py-3 text-base font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                   >
                     {loading && (
