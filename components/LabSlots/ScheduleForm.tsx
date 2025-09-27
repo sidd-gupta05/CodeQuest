@@ -261,7 +261,7 @@ export function ScheduleForm({ labId }: { labId: string }) {
           type="button"
           onClick={handleSubmit(onSubmit)}
           disabled={loading}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 font-medium"
+          className="bg-[#006A6A] hover:bg-[#005A5A] text-white px-6 py-2.5 font-medium cursor-pointer"
         >
           {loading ? (
             <>
