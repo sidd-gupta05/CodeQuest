@@ -9,7 +9,6 @@ import { signIn } from 'next-auth/react';
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
 
-// 1. Zod schema
 const loginSchema = z.object({
   identifier: z.string().min(1, 'Email or phone is required'),
   password: z.string().min(1, 'Password is required'),
@@ -20,7 +19,6 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
 
-  // 2. Setup react-hook-form with Zod
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -29,35 +27,36 @@ export default function LoginPage() {
     },
   });
 
-  // 3. On submit
   const onSubmit = async (values: LoginFormValues) => {
     const identifier = values.identifier.trim();
     const isEmail = identifier.includes('@');
 
     //TODO: krrish - fetch user by email/phone and check if provider is google, if yes show error to login with google
     try {
-      // 🔍 Step 1: Check if account exists and if it's a Google OAuth account
       let { data: userByEmail, error: lookupError } = await supabase
-        .from('users') // <-- this assumes you mirror Supabase auth.users into your own "users" table
+        .from('users')
         .select('id, provider')
         .eq('email', identifier)
         .single();
 
-        let { data: userByPhone, error: lookupPhoneError } = await supabase.auth.getUserIdentities();
-        
+      if (lookupError) {
+        const errorMessage = lookupError.message || '';
+        const isNoRowsError = errorMessage.includes(
+          'JSON object requested, multiple (or no) rows returned'
+        );
 
-      if (lookupError && lookupError.code !== 'PGRST116') {
-        console.error('Lookup error:', lookupError);
+        if (!isNoRowsError) {
+        }
       }
 
       if (userByEmail?.provider === 'google') {
         form.setError('identifier', {
-          message: 'This email is registered with Google. Please login with Google instead.',
+          message:
+            'This email is registered with Google. Please login with Google instead.',
         });
         return;
       }
 
-      // 🔐 Step 2: Try Supabase password login
       let data, error;
       if (isEmail) {
         ({ data, error } = await supabase.auth.signInWithPassword({
@@ -66,7 +65,7 @@ export default function LoginPage() {
         }));
       } else {
         ({ data, error } = await supabase.auth.signInWithPassword({
-          phone: `+91${identifier}`, // Ensure phone stored in E.164 format
+          phone: `+91${identifier}`,
           password: values.password,
         }));
       }
@@ -80,7 +79,6 @@ export default function LoginPage() {
       const userId = data.user?.id;
       if (!userId) return;
 
-      // 👤 Step 3: Fetch profile role
       const { data: profile, error: profileError } = await supabase
         .from('users')
         .select('role')
@@ -92,7 +90,6 @@ export default function LoginPage() {
         return;
       }
 
-      // 🚀 Step 4: Redirect by role
       if (profile.role === 'LAB') {
         router.push('/dashboard');
       } else {
@@ -100,7 +97,9 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error('Unexpected login error:', err);
-      form.setError('identifier', { message: 'Something went wrong. Try again.' });
+      form.setError('identifier', {
+        message: 'Something went wrong. Try again.',
+      });
     }
   };
 
