@@ -36,7 +36,7 @@ interface FormData {
   labContactNumber: string;
   labEmailAddress: string;
   testType: string;
-  nabclNo: string;
+  nablCertificateNumber: string;
   labLocation: string;
   timeSlots: { date: string; time: string }[];
   experienceYears: string;
@@ -52,7 +52,7 @@ interface LabDetails {
   labContactNumber?: string;
   labEmailAddress?: string;
   testType?: string;
-  nabclNo?: string;
+  nablCertificateNumber?: string;
   labLocation?: string;
   timeSlots?: { date: string; time: string }[];
   experienceYears?: number;
@@ -87,13 +87,12 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
 );
 
 const LabForm: React.FC = () => {
-
   const [formData, setFormData] = useState<FormData>({
     labName: '',
     labContactNumber: '',
     labEmailAddress: '',
     testType: '',
-    nabclNo: '',
+    nablCertificateNumber: '',
     labLocation: '',
     timeSlots: [{ date: '', time: '' }],
     experienceYears: '',
@@ -116,25 +115,61 @@ const LabForm: React.FC = () => {
   const labId = contextData?.labId;
   const labData = contextData?.labData;
 
+  // Fetch lab data including NABL certificate number from Lab table
   useEffect(() => {
-    if (labData) {
-      setFormData({
-        labName: labData?.labName || '',
-        labContactNumber: labData?.labContactNumber || '',
-        labEmailAddress: labData?.labEmailAddress || '',
-        testType: labData?.testType || '',
-        nabclNo: labData?.nabclNo || '',
-        labLocation: labData?.labLocation || '',
-        timeSlots: labData?.timeSlots || [{ date: '', time: '' }],
-        experienceYears: labData?.experienceYears?.toString() || '',
-        imageUrl: labData?.imageUrl || '',
-        collectionTypes: labData?.collectionTypes?.join(', ') || '',
-        latitude: labData?.latitude?.toString() || '',
-        longitude: labData?.longitude?.toString() || '',
-        isAvailable: labData?.isAvailable,
-      });
-    }
-  }, [labData]);
+    const fetchLabData = async () => {
+      if (!labId) return;
+
+      setFetching(true);
+      try {
+        // Fetch data from Lab table (for nablCertificateNumber and labLocation)
+        const { data: labData, error: labError } = await supabase
+          .from('labs')
+          .select('nablCertificateNumber, labLocation')
+          .eq('id', labId)
+          .single();
+
+        if (labError) throw labError;
+
+        // Fetch data from LabDetails table (for other details)
+        const { data: labDetails, error: detailsError } = await supabase
+          .from('lab_details')
+          .select('*')
+          .eq('labId', labId)
+          .single();
+
+        if (detailsError && detailsError.code !== 'PGRST116') {
+          // PGRST116 is "not found" error, which is acceptable for new labs
+          throw detailsError;
+        }
+
+        // Set form data with values from both tables
+        setFormData({
+          labName: labDetails?.labName || '',
+          labContactNumber: labDetails?.labcontactNumber || '', // Corrected field name
+          labEmailAddress: labDetails?.labemail || '', // Corrected field name
+          testType: labDetails?.testType || '',
+          nablCertificateNumber: labData?.nablCertificateNumber || '', // From Lab table
+          labLocation: labData?.labLocation || '', // From Lab table
+          timeSlots: labData?.timeSlots || [{ date: '', time: '' }],
+          experienceYears: labDetails?.experienceYears?.toString() || '',
+          imageUrl: labDetails?.imageUrl || '',
+          collectionTypes: labDetails?.collectionTypes?.join(', ') || '',
+          latitude: labDetails?.latitude?.toString() || '',
+          longitude: labDetails?.longitude?.toString() || '',
+          isAvailable: labDetails?.isAvailable ?? true,
+        });
+      } catch (err: unknown) {
+        console.error('Error fetching lab data:', err);
+        setMessage('Error fetching lab data');
+        setIsError(true);
+      } finally {
+        setFetching(false);
+      }
+    };
+
+    fetchLabData();
+  }, [labId]);
 
   const handleFetchLocation = () => {
     if (navigator.geolocation) {
@@ -159,6 +194,12 @@ const LabForm: React.FC = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+
+    // Prevent editing of NABL certificate number
+    if (name === 'nablCertificateNumber') {
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
@@ -208,16 +249,27 @@ const LabForm: React.FC = () => {
 
         finalImageUrl = publicUrlData?.publicUrl || '';
       } else if (finalImageUrl === '') {
-        // Handle image removal from storage if needed, though this is a simplification
+        // Handle image removal from storage if needed
       }
 
-      const payload = {
+      // Update Lab table (only labLocation as nablCertificateNumber is not editable)
+      const { error: labError } = await supabase
+        .from('labs')
+        .update({
+          labLocation: formData.labLocation,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq('id', labId);
+
+      if (labError) throw new Error(`Lab update failed: ${labError.message}`);
+
+      // Prepare LabDetails payload with CORRECT column names
+      const labDetailsPayload = {
+        labId: labId,
         labName: formData.labName,
-        labContactNumber: formData.labContactNumber,
-        labEmailAddress: formData.labEmailAddress,
+        labcontactNumber: formData.labContactNumber, // Correct column name
+        labemail: formData.labEmailAddress, // Correct column name
         testType: formData.testType || null,
-        nabclNo: formData.nabclNo,
-        labLocation: formData.labLocation,
         experienceYears: formData.experienceYears
           ? parseInt(formData.experienceYears)
           : null,
@@ -228,17 +280,17 @@ const LabForm: React.FC = () => {
         latitude: formData.latitude ? parseFloat(formData.latitude) : null,
         longitude: formData.longitude ? parseFloat(formData.longitude) : null,
         isAvailable: formData.isAvailable,
-        pathlabId: labId || null,
       };
 
-      const response = await fetch('/api/lab', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      // Upsert LabDetails (insert or update)
+      const { error: detailsError } = await supabase
+        .from('lab_details')
+        .upsert(labDetailsPayload, {
+          onConflict: 'labId',
+        });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Failed to save lab');
+      if (detailsError)
+        throw new Error(`Lab details update failed: ${detailsError.message}`);
 
       setMessage('Lab details saved successfully!');
       setIsError(false);
@@ -398,11 +450,12 @@ const LabForm: React.FC = () => {
                   />
                   <InputField
                     label="NABCL No."
-                    id="nabclNo"
-                    name="nabclNo"
-                    value={formData.nabclNo}
+                    id="nablCertificateNumber"
+                    name="nablCertificateNumber"
+                    value={formData.nablCertificateNumber}
                     onChange={handleChange}
                     placeholder="ABCDEFGH"
+                    disabled={true} // Make NABL certificate number uneditable
                   />
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -441,7 +494,7 @@ const LabForm: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Weekly Schedule Section - IMPROVED DESIGN */}
+                {/* Weekly Schedule Section */}
                 {labId && (
                   <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
                     <div className="flex justify-between items-center mb-6">
@@ -458,17 +511,8 @@ const LabForm: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      {/* <div className="flex items-center space-x-2 bg-white px-3 py-2 rounded-lg border border-gray-200">
-                        <span className="text-sm font-medium text-gray-700">
-                          All days same schedule
-                        </span>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" className="sr-only peer" />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-                        </label>
-                      </div> */}
                     </div>
-                    
+
                     <div className="bg-white rounded-lg border border-gray-200 p-6">
                       <ScheduleForm labId={labId} />
                     </div>
