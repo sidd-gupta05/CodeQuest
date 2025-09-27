@@ -23,6 +23,7 @@ import { ScheduleForm } from '@/components/LabSlots/ScheduleForm';
 import { Input } from '@/components/ui/input';
 import { LabContext } from '@/app/context/LabContext';
 import ChangePasswordForm from './ChangePasswordForm';
+import NotificationSettings from './NotificationSetting';
 
 interface CheckboxFieldProps {
   label: string;
@@ -144,7 +145,6 @@ const LabForm: React.FC = () => {
           .single();
 
         if (detailsError && detailsError.code !== 'PGRST116') {
-          // PGRST116 is "not found" error, which is acceptable for new labs
           throw detailsError;
         }
 
@@ -251,8 +251,6 @@ const LabForm: React.FC = () => {
           .getPublicUrl(`lab/${labId}/${cleanFileName}`);
 
         finalImageUrl = publicUrlData?.publicUrl || '';
-      } else if (finalImageUrl === '') {
-        // Handle image removal from storage if needed
       }
 
       const { error: labError } = await supabase
@@ -265,7 +263,6 @@ const LabForm: React.FC = () => {
 
       if (labError) throw new Error(`Lab update failed: ${labError.message}`);
 
-      // Prepare LabDetails payload with CORRECT column names
       const labDetailsPayload = {
         labId: labId,
         labName: formData.labName,
@@ -319,6 +316,9 @@ const LabForm: React.FC = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'notification-settings':
+        return <NotificationSettings />;
+
       case 'change-password':
         return <ChangePasswordForm />;
 
@@ -365,7 +365,7 @@ const LabForm: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleRemoveImage}
-                        className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
+                        className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50"
                       >
                         Remove
                       </button>
@@ -374,7 +374,7 @@ const LabForm: React.FC = () => {
                         onClick={() =>
                           document.getElementById('file-upload')?.click()
                         }
-                        className="px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 cursor-pointer"
+                        className="px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800"
                       >
                         Upload New Photo
                       </button>
@@ -468,7 +468,7 @@ const LabForm: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleFetchLocation}
-                        className="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 justify-center mt-2 md:mt-0 cursor-pointer"
+                        className="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 justify-center mt-2 md:mt-0"
                       >
                         <LocateFixed className="w-4 h-4 mr-2" />
                         Fetch Location
@@ -540,7 +540,7 @@ const LabForm: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 select-none">
+    <div className="flex min-h-screen bg-gray-50">
       <div className="flex-1">
         <div className="flex items-start justify-center p-4 sm:p-6 lg:p-8 font-inter">
           <div className="bg-white p-6 sm:p-8 rounded-xl w-full max-w-7xl">
@@ -550,9 +550,9 @@ const LabForm: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex space-x-2 mb-6 text-sm font-medium text-emerald-700 bg-emerald-100 p-2 rounded-xl w-[570px] ">
+            <div className="flex space-x-2 mb-6 text-sm font-medium text-emerald-700 bg-emerald-100 p-2 rounded-xl w-[570px]">
               <button
-                className={`px-4 py-2 rounded-md cursor-pointer ${
+                className={`px-4 py-2 rounded-md ${
                   activeTab === 'lab-settings'
                     ? 'bg-emerald-700 text-white'
                     : 'hover:bg-emerald-700 hover:text-white'
@@ -562,7 +562,7 @@ const LabForm: React.FC = () => {
                 Lab Settings
               </button>
               <button
-                className={`px-4 py-2 rounded-md cursor-pointer ${
+                className={`px-4 py-2 rounded-md ${
                   activeTab === 'lab-tests'
                     ? 'bg-emerald-700 text-white'
                     : 'hover:bg-emerald-700 hover:text-white'
@@ -572,7 +572,7 @@ const LabForm: React.FC = () => {
                 Lab Tests
               </button>
               <button
-                className={`px-4 py-2 rounded-md cursor-pointer ${
+                className={`px-4 py-2 rounded-md ${
                   activeTab === 'notification-settings'
                     ? 'bg-emerald-700 text-white'
                     : 'hover:bg-emerald-700 hover:text-white'
@@ -582,7 +582,7 @@ const LabForm: React.FC = () => {
                 Notification Settings
               </button>
               <button
-                className={`px-4 py-2 rounded-md cursor-pointer ${
+                className={`px-4 py-2 rounded-md ${
                   activeTab === 'change-password'
                     ? 'bg-emerald-700 text-white'
                     : 'hover:bg-emerald-700 hover:text-white'
