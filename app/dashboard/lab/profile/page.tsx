@@ -22,6 +22,7 @@ import { supabase } from '@/utils/supabase/client';
 import { ScheduleForm } from '@/components/LabSlots/ScheduleForm';
 import { Input } from '@/components/ui/input';
 import { LabContext } from '@/app/context/LabContext';
+import ChangePasswordForm from './ChangePasswordForm';
 
 interface CheckboxFieldProps {
   label: string;
@@ -63,6 +64,12 @@ interface LabDetails {
   isAvailable: boolean;
 }
 
+type ActiveTab =
+  | 'lab-settings'
+  | 'lab-tests'
+  | 'notification-settings'
+  | 'change-password';
+
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
   label,
   id,
@@ -87,6 +94,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
 );
 
 const LabForm: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<ActiveTab>('lab-settings');
   const [formData, setFormData] = useState<FormData>({
     labName: '',
     labContactNumber: '',
@@ -115,14 +123,12 @@ const LabForm: React.FC = () => {
   const labId = contextData?.labId;
   const labData = contextData?.labData;
 
-  // Fetch lab data including NABL certificate number from Lab table
   useEffect(() => {
     const fetchLabData = async () => {
       if (!labId) return;
 
       setFetching(true);
       try {
-        // Fetch data from Lab table (for nablCertificateNumber and labLocation)
         const { data: labData, error: labError } = await supabase
           .from('labs')
           .select('nablCertificateNumber, labLocation')
@@ -131,7 +137,6 @@ const LabForm: React.FC = () => {
 
         if (labError) throw labError;
 
-        // Fetch data from LabDetails table (for other details)
         const { data: labDetails, error: detailsError } = await supabase
           .from('lab_details')
           .select('*')
@@ -143,15 +148,14 @@ const LabForm: React.FC = () => {
           throw detailsError;
         }
 
-        // Set form data with values from both tables
         setFormData({
           labName: labDetails?.labName || '',
-          labContactNumber: labDetails?.labcontactNumber || '', // Corrected field name
-          labEmailAddress: labDetails?.labemail || '', // Corrected field name
+          labContactNumber: labDetails?.labcontactNumber || '',
+          labEmailAddress: labDetails?.labemail || '',
           testType: labDetails?.testType || '',
-          nablCertificateNumber: labData?.nablCertificateNumber || '', // From Lab table
-          labLocation: labData?.labLocation || '', // From Lab table
-          timeSlots: labData?.timeSlots || [{ date: '', time: '' }],
+          nablCertificateNumber: labData?.nablCertificateNumber || '',
+          labLocation: labData?.labLocation || '',
+          timeSlots: labDetails?.timeSlots || [{ date: '', time: '' }],
           experienceYears: labDetails?.experienceYears?.toString() || '',
           imageUrl: labDetails?.imageUrl || '',
           collectionTypes: labDetails?.collectionTypes?.join(', ') || '',
@@ -195,7 +199,6 @@ const LabForm: React.FC = () => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
-    // Prevent editing of NABL certificate number
     if (name === 'nablCertificateNumber') {
       return;
     }
@@ -252,7 +255,6 @@ const LabForm: React.FC = () => {
         // Handle image removal from storage if needed
       }
 
-      // Update Lab table (only labLocation as nablCertificateNumber is not editable)
       const { error: labError } = await supabase
         .from('labs')
         .update({
@@ -267,8 +269,8 @@ const LabForm: React.FC = () => {
       const labDetailsPayload = {
         labId: labId,
         labName: formData.labName,
-        labcontactNumber: formData.labContactNumber, // Correct column name
-        labemail: formData.labEmailAddress, // Correct column name
+        labcontactNumber: formData.labContactNumber,
+        labemail: formData.labEmailAddress,
         testType: formData.testType || null,
         experienceYears: formData.experienceYears
           ? parseInt(formData.experienceYears)
@@ -282,7 +284,6 @@ const LabForm: React.FC = () => {
         isAvailable: formData.isAvailable,
       };
 
-      // Upsert LabDetails (insert or update)
       const { error: detailsError } = await supabase
         .from('lab_details')
         .upsert(labDetailsPayload, {
@@ -316,33 +317,15 @@ const LabForm: React.FC = () => {
       .slice(0, 2);
   };
 
-  return (
-    <div className="flex min-h-screen bg-gray-50">
-      <div className="flex-1">
-        <div className="flex items-start justify-center p-4 sm:p-6 lg:p-8 font-inter">
-          <div className="bg-white p-6 sm:p-8 rounded-xl w-full max-w-7xl">
-            {/* Header */}
-            <div className="flex items-center space-x-2 text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
-              <span className="text-xl">Security & Settings</span>
-            </div>
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'change-password':
+        return <ChangePasswordForm />;
 
-            {/* Tabs */}
-            <div className="flex space-x-2 mb-6 text-sm font-medium text-emerald-700 bg-emerald-100 p-2 rounded-xl w-[570px]">
-              <button className="px-4 py-2 bg-emerald-700 text-white rounded-md">
-                Lab Settings
-              </button>
-              <button className="px-4 py-2 hover:bg-emerald-700 hover:text-white rounded-md">
-                Lab Tests
-              </button>
-              <button className="px-4 py-2 hover:bg-emerald-700 hover:text-white rounded-md">
-                Notification Settings
-              </button>
-              <button className="px-4 py-2 hover:bg-emerald-700 hover:text-white rounded-md">
-                Change Password
-              </button>
-            </div>
-
-            {/* Main Content */}
+      case 'lab-settings':
+      default:
+        return (
+          <>
             <h3 className="text-xl font-medium text-gray-800 mb-2">My Lab</h3>
             <p className="text-sm text-gray-500 mb-6">
               This information will be displayed publicly so be careful what you
@@ -382,7 +365,7 @@ const LabForm: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleRemoveImage}
-                        className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50"
+                        className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
                       >
                         Remove
                       </button>
@@ -391,7 +374,7 @@ const LabForm: React.FC = () => {
                         onClick={() =>
                           document.getElementById('file-upload')?.click()
                         }
-                        className="px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800"
+                        className="px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 cursor-pointer"
                       >
                         Upload New Photo
                       </button>
@@ -455,7 +438,7 @@ const LabForm: React.FC = () => {
                     value={formData.nablCertificateNumber}
                     onChange={handleChange}
                     placeholder="ABCDEFGH"
-                    disabled={true} // Make NABL certificate number uneditable
+                    disabled={true}
                   />
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -485,7 +468,7 @@ const LabForm: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleFetchLocation}
-                        className="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white  bg-emerald-700 hover:bg-emerald-800 justify-center mt-2 md:mt-0"
+                        className="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 justify-center mt-2 md:mt-0 cursor-pointer"
                       >
                         <LocateFixed className="w-4 h-4 mr-2" />
                         Fetch Location
@@ -535,7 +518,7 @@ const LabForm: React.FC = () => {
               </form>
             )}
 
-            {message && (
+            {message && activeTab === 'lab-settings' && (
               <div
                 className={`mt-6 p-4 rounded-md flex items-center ${
                   isError
@@ -551,6 +534,67 @@ const LabForm: React.FC = () => {
                 <p className="text-sm font-medium">{message}</p>
               </div>
             )}
+          </>
+        );
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen bg-gray-50 select-none">
+      <div className="flex-1">
+        <div className="flex items-start justify-center p-4 sm:p-6 lg:p-8 font-inter">
+          <div className="bg-white p-6 sm:p-8 rounded-xl w-full max-w-7xl">
+            {/* Header */}
+            <div className="flex items-center space-x-2 text-2xl font-semibold text-gray-800 mb-6 border-b pb-4">
+              <span className="text-xl">Security & Settings</span>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex space-x-2 mb-6 text-sm font-medium text-emerald-700 bg-emerald-100 p-2 rounded-xl w-[570px] ">
+              <button
+                className={`px-4 py-2 rounded-md cursor-pointer ${
+                  activeTab === 'lab-settings'
+                    ? 'bg-emerald-700 text-white'
+                    : 'hover:bg-emerald-700 hover:text-white'
+                }`}
+                onClick={() => setActiveTab('lab-settings')}
+              >
+                Lab Settings
+              </button>
+              <button
+                className={`px-4 py-2 rounded-md cursor-pointer ${
+                  activeTab === 'lab-tests'
+                    ? 'bg-emerald-700 text-white'
+                    : 'hover:bg-emerald-700 hover:text-white'
+                }`}
+                onClick={() => setActiveTab('lab-tests')}
+              >
+                Lab Tests
+              </button>
+              <button
+                className={`px-4 py-2 rounded-md cursor-pointer ${
+                  activeTab === 'notification-settings'
+                    ? 'bg-emerald-700 text-white'
+                    : 'hover:bg-emerald-700 hover:text-white'
+                }`}
+                onClick={() => setActiveTab('notification-settings')}
+              >
+                Notification Settings
+              </button>
+              <button
+                className={`px-4 py-2 rounded-md cursor-pointer ${
+                  activeTab === 'change-password'
+                    ? 'bg-emerald-700 text-white'
+                    : 'hover:bg-emerald-700 hover:text-white'
+                }`}
+                onClick={() => setActiveTab('change-password')}
+              >
+                Change Password
+              </button>
+            </div>
+
+            {/* Main Content */}
+            {renderTabContent()}
           </div>
         </div>
       </div>
