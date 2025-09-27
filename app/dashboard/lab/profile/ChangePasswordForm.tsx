@@ -5,8 +5,11 @@ import React, { useState, FormEvent } from 'react';
 import { Loader2, CheckCircle, XCircle, Eye, EyeOff } from 'lucide-react';
 import InputField from '@/components/InputField';
 import { supabase } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 const ChangePasswordForm: React.FC = () => {
+  const router = useRouter();
   const [passwords, setPasswords] = useState({
     currentPassword: '',
     newPassword: '',
@@ -37,6 +40,16 @@ const ChangePasswordForm: React.FC = () => {
     }));
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -45,7 +58,6 @@ const ChangePasswordForm: React.FC = () => {
 
     const { newPassword, confirmPassword } = passwords;
 
-    // Validation
     if (newPassword !== confirmPassword) {
       setMessage('New password and confirm password do not match.');
       setIsError(true);
@@ -61,7 +73,6 @@ const ChangePasswordForm: React.FC = () => {
     }
 
     try {
-      // Update password in Supabase Auth
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
@@ -71,16 +82,24 @@ const ChangePasswordForm: React.FC = () => {
       }
 
       setMessage(
-        'Password updated successfully! You may need to log in again with your new password.'
+        'Password updated successfully! You will be redirected to sign in with your new password.'
       );
       setIsError(false);
 
-      // Reset form
+      toast.success(
+        'Password updated successfully! Please sign in with your new password.'
+      );
+
       setPasswords({
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
       });
+
+      setTimeout(async () => {
+        await handleLogout();
+        router.push('/auth/login');
+      }, 1500);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setMessage(`Error: ${err.message}`);
