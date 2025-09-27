@@ -365,7 +365,7 @@ const LabForm: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleRemoveImage}
-                        className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50"
+                        className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 shadow-sm text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
                       >
                         Remove
                       </button>
@@ -374,7 +374,7 @@ const LabForm: React.FC = () => {
                         onClick={() =>
                           document.getElementById('file-upload')?.click()
                         }
-                        className="px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800"
+                        className="px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-[#006A6A] hover:bg-[#005A5A] cursor-pointer"
                       >
                         Upload New Photo
                       </button>
@@ -468,7 +468,7 @@ const LabForm: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleFetchLocation}
-                        className="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 justify-center mt-2 md:mt-0"
+                        className="flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-sm text-white bg-[#006A6A] hover:bg-[#005A5A] justify-center mt-2 md:mt-0 cursor-pointer"
                       >
                         <LocateFixed className="w-4 h-4 mr-2" />
                         Fetch Location
@@ -483,7 +483,7 @@ const LabForm: React.FC = () => {
                     <div className="flex justify-between items-center mb-6">
                       <div className="flex items-center space-x-3">
                         <div className="p-2 bg-emerald-100 rounded-lg">
-                          <Calendar className="w-5 h-5 text-emerald-700" />
+                          <Calendar className="w-5 h-5 text-[#006A6A]" />
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-gray-800">
@@ -506,7 +506,7 @@ const LabForm: React.FC = () => {
                 <div className="mt-6 flex justify-start">
                   <button
                     type="submit"
-                    className="flex items-center justify-center px-6 py-3 text-base font-medium rounded-md shadow-sm text-white bg-emerald-700 hover:bg-emerald-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center px-6 py-3 text-base font-medium rounded-md shadow-sm text-white bg-[#006A6A] hover:bg-[#005A5A] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                   >
                     {loading && (
@@ -550,42 +550,42 @@ const LabForm: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex space-x-2 mb-6 text-sm font-medium text-emerald-700 bg-emerald-100 p-2 rounded-xl w-[570px]">
+            <div className="flex space-x-2 mb-6 text-sm font-medium text-[#006A6A] bg-emerald-100 p-2 rounded-xl w-[570px]">
               <button
-                className={`px-4 py-2 rounded-md ${
+                className={`px-4 py-2 rounded-md cursor-pointer ${
                   activeTab === 'lab-settings'
-                    ? 'bg-emerald-700 text-white'
-                    : 'hover:bg-emerald-700 hover:text-white'
+                    ? 'bg-[#006A6A] text-white'
+                    : 'hover:bg-[#005A5A] hover:text-white'
                 }`}
                 onClick={() => setActiveTab('lab-settings')}
               >
                 Lab Settings
               </button>
               <button
-                className={`px-4 py-2 rounded-md ${
+                className={`px-4 py-2 rounded-md cursor-pointer ${
                   activeTab === 'lab-tests'
-                    ? 'bg-emerald-700 text-white'
-                    : 'hover:bg-emerald-700 hover:text-white'
+                    ? 'bg-[#006A6A] text-white'
+                    : 'hover:bg-[#005A5A] hover:text-white'
                 }`}
                 onClick={() => setActiveTab('lab-tests')}
               >
                 Lab Tests
               </button>
               <button
-                className={`px-4 py-2 rounded-md ${
+                className={`px-4 py-2 rounded-md cursor-pointer ${
                   activeTab === 'notification-settings'
-                    ? 'bg-emerald-700 text-white'
-                    : 'hover:bg-emerald-700 hover:text-white'
+                    ? 'bg-[#006A6A] text-white'
+                    : 'hover:bg-[#005A5A] hover:text-white'
                 }`}
                 onClick={() => setActiveTab('notification-settings')}
               >
                 Notification Settings
               </button>
               <button
-                className={`px-4 py-2 rounded-md ${
+                className={`px-4 py-2 rounded-md cursor-pointer ${
                   activeTab === 'change-password'
-                    ? 'bg-emerald-700 text-white'
-                    : 'hover:bg-emerald-700 hover:text-white'
+                    ? 'bg-[#006A6A] text-white'
+                    : 'hover:bg-[#005A5A] hover:text-white'
                 }`}
                 onClick={() => setActiveTab('change-password')}
               >
