@@ -120,6 +120,7 @@ const LabForm: React.FC = () => {
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const contextData = useContext(LabContext);
   const labId = contextData?.labId;
@@ -170,10 +171,16 @@ const LabForm: React.FC = () => {
         setIsError(true);
       } finally {
         setFetching(false);
+        setPageLoading(false);
       }
     };
 
-    fetchLabData();
+    // Simulate page loading with a slight delay to show the GIF
+    const timer = setTimeout(() => {
+      fetchLabData();
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [labId]);
 
   const handleFetchLocation = () => {
@@ -542,6 +549,17 @@ const LabForm: React.FC = () => {
         );
     }
   };
+
+  if (pageLoading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50 items-center justify-center">
+        <div className="text-center">
+          <img src="/user.gif" alt="Loading..." className="mx-auto w-32 h-32" />
+          <p className="mt-4 text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
