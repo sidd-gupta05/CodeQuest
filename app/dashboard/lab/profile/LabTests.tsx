@@ -3,6 +3,7 @@
 
 import React, { useState, ChangeEvent } from 'react';
 import { Plus, Search, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface LabTest {
   id: string;
@@ -41,6 +42,7 @@ const LabTests: React.FC = () => {
       };
       setTests([...tests, newTest]);
       setNewTestName('');
+      toast.success('Test added successfully!');
     }
   };
 
@@ -49,9 +51,11 @@ const LabTests: React.FC = () => {
     setLoading(true);
     // Here you would implement your API call to save the data to the database
     console.log('Saving changes:', tests);
+
+    // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      alert('Changes saved successfully!');
+      toast.success('Changes saved successfully!');
     }, 1500);
   };
 
