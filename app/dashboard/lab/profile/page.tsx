@@ -24,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import { LabContext } from '@/app/context/LabContext';
 import ChangePasswordForm from './ChangePasswordForm';
 import NotificationSettings from './NotificationSetting';
+import LabTests from './LabTests';
 
 interface CheckboxFieldProps {
   label: string;
@@ -316,6 +317,9 @@ const LabForm: React.FC = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'lab-tests':
+        return <LabTests />;
+
       case 'notification-settings':
         return <NotificationSettings />;
 
