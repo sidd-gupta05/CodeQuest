@@ -8,7 +8,7 @@ const Employee = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setPageLoading(false);
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
