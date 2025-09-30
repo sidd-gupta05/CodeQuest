@@ -27,10 +27,6 @@ model User {
 model Patient {
   id          String     @id @default(uuid())
   userId      String
-  firstName   String?
-  lastName    String?
-  age         Int?
-  phone       String?
   address     String?
   dateOfBirth DateTime?
   gender      String?
@@ -38,6 +34,10 @@ model Patient {
   longitude   Float      @default(0.0)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  age         Int?
+  firstName   String?
+  lastName    String?
+  phone       String?
   bookings    bookings[]
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -45,40 +45,42 @@ model Patient {
 }
 
 model Lab {
-  id                    String        @id @default(uuid())
-  userId                String        @unique
+  id                    String          @id @default(uuid())
+  userId                String          @unique
   labLocation           String
   nablCertificateNumber String
   certificateUrl        String
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  CustomReagent         CustomReagent[]
   bookings              bookings[]
   details               LabDetails?
+  lab_inventory         lab_inventory[]
   timeSlots             LabTimeSlot[]
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tests                 tests[]       @relation("AvailableTests")
+  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   schedules             Schedule[]
+  tests                 tests[]         @relation("AvailableTests")
 
   @@map("labs")
 }
 
 model LabDetails {
-  id              String    @id @default(uuid())
-  labId           String    @unique
-  collectionTypes String[]
-  experienceYears Int?
-  imageUrl        String?
-  isLoved         Boolean?  @default(false)
-  latitude        Float     @default(0.0)
-  longitude       Float     @default(0.0)
-  nextAvailable   DateTime?
-  rating          Float?
-  testType        String?
-  labName         String
-  labcontactNumber   String?
-  labemail           String?
-  isAvailable     Boolean   @default(true)
-  lab             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
+  id               String    @id @default(uuid())
+  labId            String    @unique
+  collectionTypes  String[]
+  experienceYears  Int?
+  imageUrl         String?
+  isLoved          Boolean?  @default(false)
+  latitude         Float     @default(0.0)
+  longitude        Float     @default(0.0)
+  nextAvailable    DateTime?
+  rating           Float?
+  testType         String?
+  labName          String
+  isAvailable      Boolean   @default(true)
+  labcontactNumber String?
+  labemail         String?
+  lab              Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
 
   @@map("lab_details")
 }
@@ -113,13 +115,11 @@ model LabTimeSlotException {
   @@map("lab_timeslot_exceptions")
 }
 
-//Schedule_Schema_Update
-
 model Schedule {
-  id             Int                    @id @default(autoincrement())
   labId          String
   createdAt      DateTime               @default(now())
   updatedAt      DateTime               @updatedAt
+  id             Int                    @id @default(autoincrement())
   availabilities ScheduleAvailability[]
   lab            Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
 
@@ -127,24 +127,14 @@ model Schedule {
 }
 
 model ScheduleAvailability {
+  dayOfWeek  DayOfWeek
+  startTime  String
+  endTime    String
   id         Int       @id @default(autoincrement())
   scheduleId Int
-  dayOfWeek  DayOfWeek
-  startTime  String // "09:00"
-  endTime    String // "12:00"
   schedule   Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 
   @@map("schedule_availabilities")
-}
-
-enum DayOfWeek {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
 }
 
 model Payment {
@@ -200,11 +190,11 @@ model bookings {
   timeSlotId     String?
   date           DateTime
   status         BookingStatus    @default(PENDING)
-  reportStatus   ReportStatus     @default(BOOKING_PENDING)
   totalAmount    Float
   qrCodeData     String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime
+  reportStatus   ReportStatus     @default(BOOKING_PENDING)
   booking_addons booking_addons[]
   booking_tests  booking_tests[]
   labs           Lab              @relation(fields: [labId], references: [id], onDelete: Cascade)
@@ -223,9 +213,73 @@ model tests {
   isActive      Boolean         @default(true)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
+  TestReagent   TestReagent[]
   booking_tests booking_tests[]
   labs          Lab[]           @relation("AvailableTests")
   bookings      bookings[]      @relation("BookingTests")
+}
+
+model CustomReagent {
+  id          String   @id
+  labId       String
+  name        String
+  category    String?
+  description String?
+  unit        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  labs        Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+}
+
+model ReagentCatalog {
+  id            String          @id
+  name          String
+  category      String?
+  description   String?
+  unit          String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  TestReagent   TestReagent[]
+  lab_inventory lab_inventory[]
+}
+
+model TestReagent {
+  id              String         @id
+  testId          String
+  reagentId       String
+  quantityPerTest Float
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime
+  ReagentCatalog  ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
+  tests           tests          @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([testId, reagentId])
+}
+
+model lab_inventory {
+  id               String         @id
+  labId            String
+  reagentId        String
+  quantity         Float
+  unit             String
+  expiryDate       DateTime?
+  reorderThreshold Float?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime
+  labs             Lab            @relation(fields: [labId], references: [id], onDelete: Cascade)
+  ReagentCatalog   ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
+
+  @@unique([labId, reagentId])
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }
 
 enum Session {
