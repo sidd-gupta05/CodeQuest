@@ -550,16 +550,16 @@ const LabForm: React.FC = () => {
     }
   };
 
-  if (pageLoading) {
-    return (
-      <div className="flex min-h-screen bg-gray-50 items-center justify-center">
-        <div className="text-center">
-          <img src="/user.gif" alt="Loading..." className="mx-auto w-32 h-32" />
-          <p className="mt-4 text-gray-600">Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (pageLoading) {
+  //   return (
+  //     <div className="flex min-h-screen bg-gray-50 items-center justify-center">
+  //       <div className="text-center">
+  //         <img src="/user.gif" alt="Loading..." className="mx-auto w-32 h-32" />
+  //         <p className="mt-4 text-gray-600">Loading profile...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
