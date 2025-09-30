@@ -1,3 +1,4 @@
+//components/landingPage/LabCards.tsx
 'use client';
 
 import { motion } from 'framer-motion';

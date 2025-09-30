@@ -5,6 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createSupabaseServerClient();
     const {
+      userId,
       patientId,
       labId,
       timeSlotId,
@@ -19,11 +20,13 @@ export async function POST(request: NextRequest) {
 
     const now = new Date().toISOString();
 
+    console.log("received patient details:", patientDetails);
+
     // 1. Convert the date string to proper PostgreSQL format
     const convertToPostgresDate = (dateString: string) => {
       try {
         console.log('Original date string:', dateString);
-        
+
         if (dateString.includes('-') && dateString.includes(':')) {
           return dateString;
         }
@@ -53,25 +56,65 @@ export async function POST(request: NextRequest) {
     console.log('Final formatted date:', formattedDate);
 
     // 2. Check if patient exists, if not create it
+    // let finalPatientId = patientId;
+
+    // const { data: existingPatient, error: patientCheckError } = await supabase
+    //   .from('patients')
+    //   .select('id')
+    //   .eq('userId', patientId)
+    //   .single();
+
+    // if (patientCheckError || !existingPatient) {
+    //   // Patient doesn't exist, create a new one
+    //   const newPatientId = `PAT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    //   const { data: newPatient, error: createPatientError } = await supabase
+    //     .from('patients')
+    //     .insert({
+    //       id: newPatientId,
+    //       userId: patientId,
+    //       address: patientDetails.address || '',
+    //       firstName: patientDetails.firstName || '',
+    //       lastName: patientDetails.lastName || '',
+    //       age: patientDetails.age || null,
+    //       dateOfBirth: patientDetails.dateOfBirth || null,
+    //       gender: patientDetails.gender || '',
+    //       latitude: patientDetails.latitude || 0.0,
+    //       longitude: patientDetails.longitude || 0.0,
+    //       createdAt: now,
+    //       updatedAt: now,
+    //     })
+    //     .select('id')
+    //     .single();
+
+    //   if (createPatientError) {
+    //     console.error('Create patient error:', createPatientError);
+    //     throw createPatientError;
+    //   }
+
+    //   finalPatientId = newPatient.id;
+    // } else {
+    //   finalPatientId = existingPatient.id;
+    // }
+
     let finalPatientId = patientId;
 
-    const { data: existingPatient, error: patientCheckError } = await supabase
-      .from('patients')
-      .select('id')
-      .eq('userId', patientId)
-      .single();
-
-    if (patientCheckError || !existingPatient) {
-      // Patient doesn't exist, create a new one
+    // 1. If no patientId provided → create a new patient
+    if (!finalPatientId) {
       const newPatientId = `PAT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
       const { data: newPatient, error: createPatientError } = await supabase
         .from('patients')
         .insert({
           id: newPatientId,
-          userId: patientId,
+          userId: userId, // <-- use actual userId, not patientId
+          // email: patientDetails.email || null,
           address: patientDetails.address || '',
-          dateOfBirth: patientDetails.dateOfBirth || null,
+          firstName: patientDetails.firstName || '',
+          lastName: patientDetails.lastName || '',
+          age: patientDetails.age || null,
+          dateOfBirth: patientDetails.dob || null,
+          phone: patientDetails.phone || '',
           gender: patientDetails.gender || '',
           latitude: patientDetails.latitude || 0.0,
           longitude: patientDetails.longitude || 0.0,
@@ -87,8 +130,6 @@ export async function POST(request: NextRequest) {
       }
 
       finalPatientId = newPatient.id;
-    } else {
-      finalPatientId = existingPatient.id;
     }
 
     // 3. Create the booking record with properly formatted date

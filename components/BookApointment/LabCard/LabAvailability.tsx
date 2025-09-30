@@ -60,16 +60,16 @@ export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => {
   return (
     <>
       <div>
-        <p className="text-sm font-semibold">Next available at</p>
-        <p className="text-md font-bold text-[#2A787A]">{lab.nextAvailable}</p>
+        {/* <p className="text-sm font-semibold">Next available at</p>
+        <p className="text-md font-bold text-[#2A787A]">{lab.nextAvailable}</p> */}
         {lab.timeSlots && (
           <div className="mt-2">
-            <p className="text-sm font-semibold mb-1">Available Time Slots:</p>
+            <p className="text-sm font-semibold mb-1">Available Slots :</p>
             <div className="flex flex-wrap gap-2">
               {Object.entries(lab.timeSlots).map(([period, slots]) => (
                 <div key={period} className="mb-2">
                   <span className="text-xs font-medium text-gray-600">
-                    {period}:
+                    {period}
                   </span>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {slots.map((slot, index) =>

@@ -13,6 +13,7 @@ interface InputFieldProps {
   min?: string | number;
   required?: boolean;
   disabled?: boolean;
+  name?: string; 
 }
 
 const InputField: React.FC<InputFieldProps> = ({ label, type = 'text', id, value, onChange, icon: Icon, placeholder, step, min, required, disabled }) => (

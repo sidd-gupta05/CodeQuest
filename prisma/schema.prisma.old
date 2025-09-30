@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String?  @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lab       Lab?
+  patient   Patient?
+
+  @@map("users")
+}
+
+model Patient {
+  id          String     @id @default(uuid())
+  userId      String     @unique
+  address     String?
+  dateOfBirth DateTime?
+  gender      String?
+  latitude    Float      @default(0.0)
+  longitude   Float      @default(0.0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  bookings    bookings[]
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("patients")
+}
+
+model Lab {
+  id                    String        @id @default(uuid())
+  userId                String        @unique
+  labLocation           String
+  nablCertificateNumber String
+  certificateUrl        String
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  bookings              bookings[]
+  details               LabDetails?
+  timeSlots             LabTimeSlot[]
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tests                 tests[]       @relation("AvailableTests")
+
+  @@map("labs")
+}
+
+model LabDetails {
+  id              String    @id @default(uuid())
+  labId           String    @unique
+  collectionTypes String[]
+  experienceYears Int?
+  imageUrl        String?
+  isLoved         Boolean?  @default(false)
+  latitude        Float     @default(0.0)
+  longitude       Float     @default(0.0)
+  nextAvailable   DateTime?
+  rating          Float?
+  testType        String?
+  labName         String
+  isAvailable     Boolean   @default(true)
+  lab             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  @@map("lab_details")
+}
+
+model LabTimeSlot {
+  id         String                 @id @default(uuid())
+  labId      String
+  time       String
+  session    Session
+  isActive   Boolean                @default(true)
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+  bookings   bookings[]
+  lab        Lab                    @relation(fields: [labId], references: [id], onDelete: Cascade)
+  exceptions LabTimeSlotException[]
+
+  @@unique([labId, time])
+  @@map("lab_time_slots")
+}
+
+model LabTimeSlotException {
+  id            String      @id @default(uuid())
+  labTimeSlotId String
+  date          DateTime
+  reason        String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  isUnavailable Boolean     @default(true)
+  labTimeSlot   LabTimeSlot @relation(fields: [labTimeSlotId], references: [id], onDelete: Cascade)
+
+  @@unique([labTimeSlotId, date])
+  @@map("lab_timeslot_exceptions")
+}
+
+model Payment {
+  id        String    @id @default(uuid())
+  status    String
+  amount    Float
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+  bookingId String
+  bookings  bookings  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model addons {
+  id             String           @id
+  name           String           @unique
+  description    String?
+  price          Float
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  booking_addons booking_addons[]
+}
+
+model booking_addons {
+  id        String   @id
+  bookingId String
+  addonId   String
+  createdAt DateTime @default(now())
+  addons    addons   @relation(fields: [addonId], references: [id])
+  bookings  bookings @relation(fields: [bookingId], references: [id])
+
+  @@unique([bookingId, addonId])
+}
+
+model booking_tests {
+  id        String   @id
+  bookingId String
+  testId    String
+  createdAt DateTime @default(now())
+  bookings  bookings @relation(fields: [bookingId], references: [id])
+  tests     tests    @relation(fields: [testId], references: [id])
+
+  @@unique([bookingId, testId])
+}
+
+model bookings {
+  id             String           @id
+  bookingId      String           @unique
+  patientId      String
+  labId          String
+  timeSlotId     String?
+  date           DateTime
+  status         BookingStatus    @default(PENDING)
+  totalAmount    Float
+  qrCodeData     String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  booking_addons booking_addons[]
+  booking_tests  booking_tests[]
+  labs           Lab              @relation(fields: [labId], references: [id], onDelete: Cascade)
+  patients       Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  lab_time_slots LabTimeSlot?     @relation(fields: [timeSlotId], references: [id])
+  payments       Payment[]
+}
+
+model tests {
+  id            String          @id
+  name          String          @unique
+  category      String
+  description   String?
+  price         Float
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  booking_tests booking_tests[]
+  labs          Lab[]           @relation("AvailableTests")
+}
+
+enum Session {
+  MORNING
+  AFTERNOON
+  EVENING
+}
+
+enum UserRole {
+  PATIENT
+  LAB
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}

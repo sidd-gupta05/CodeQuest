@@ -4,11 +4,11 @@ import { db } from '@/lib/prisma';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const lab = await db.lab.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         details: true,
         timeSlots: {
@@ -29,7 +29,7 @@ export async function GET(
     };
     lab.timeSlots.forEach((slot) => {
       if (!slot.isActive) return;
-      const disabledToday = slot.exceptions.some((e) => e.isDisabled);
+      const disabledToday = slot.exceptions.some((e) => e.isUnavailable);
       if (disabledToday) return;
 
       const key = slot.session.charAt(0) + slot.session.slice(1).toLowerCase(); // MORNING -> Morning

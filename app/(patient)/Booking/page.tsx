@@ -59,13 +59,13 @@ export default function Booking() {
         } = await supabase.auth.getUser();
         if (user) {
           setUser(user);
-          setPatientDetails((prev: any) => ({
-            ...prev,
-            name:
-              user.user_metadata?.full_name || user.user_metadata?.name || '',
-            email: user.email || '',
-            phone: '',
-          }));
+          // setPatientDetails((prev: any) => ({
+          //   ...prev,
+          //   name:
+          //     user.user_metadata?.full_name || user.user_metadata?.name || '',
+          //   email: user.email || '',
+          //   phone: '',
+          // }));
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
@@ -136,13 +136,105 @@ export default function Booking() {
     fetchLabData();
   }, [searchParams, authChecked]);
 
+  const [schedules, setSchedules] = useState<any[]>([]);
+
+  const labId = searchParams.get('labId');
+
+  useEffect(() => {
+    async function fetchSchedule() {
+      if (!labId) return;
+
+      const { data: schedules, error } = await supabase
+        .from('schedules')
+        .select(
+          `
+        id,
+        createdAt,
+        updatedAt,
+        availabilities:schedule_availabilities (
+          id,
+          dayOfWeek,
+          startTime,
+          endTime
+        )
+      `
+        )
+        .eq('labId', labId);
+
+      if (error) {
+        console.error('Error fetching schedules:', error);
+        return;
+      }
+      if (schedules) {
+        setSchedules(schedules);
+        // console.log("Fetched schedules from DB");
+      } else {
+        console.log('No schedules found for this lab');
+      }
+    }
+
+    fetchSchedule();
+  }, [labId]);
+
+  // console.log("Schedules:", schedules[0]?.availabilities);
+
+  interface Availability {
+    id: number;
+    dayOfWeek: string;
+    startTime: string;
+    endTime: string;
+  }
+
+  const availabilities: Availability[] = schedules[0]?.availabilities || [];
+
+  const dayMap: Record<string, number> = {
+    SUNDAY: 0,
+    MONDAY: 1,
+    TUESDAY: 2,
+    WEDNESDAY: 3,
+    THURSDAY: 4,
+    FRIDAY: 5,
+    SATURDAY: 6,
+  };
+
+  const allowedDays = availabilities.map((a) => dayMap[a.dayOfWeek]);
+
+  function generateTimeSlots(dayOfWeek: string) {
+    const availability = availabilities.find((a) => a.dayOfWeek === dayOfWeek);
+    if (!availability) return [];
+
+    const { startTime, endTime } = availability;
+
+    const slots: string[] = [];
+    let [startHour, startMin] = startTime.split(':').map(Number);
+    const [endHour, endMin] = endTime.split(':').map(Number);
+
+    while (
+      startHour < endHour ||
+      (startHour === endHour && startMin < endMin)
+    ) {
+      const timeStr = `${String(startHour).padStart(2, '0')}:${String(
+        startMin
+      ).padStart(2, '0')}`;
+      slots.push(timeStr);
+
+      startMin += 30;
+      if (startMin >= 60) {
+        startMin = 0;
+        startHour++;
+      }
+    }
+
+    return slots;
+  }
+
   // Show loading until auth check is complete
   if (!authChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-white/90 text-sm">Checking authentication...</p>
+          <p className="text-white/90 text-sm">Checking authentication . . .</p>
         </div>
       </div>
     );
@@ -153,7 +245,7 @@ export default function Booking() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-white/90 text-sm">Loading lab details...</p>
+          <p className="text-white/90 text-sm">Loading lab details . . .</p>
         </div>
       </div>
     );
@@ -259,7 +351,7 @@ export default function Booking() {
                           className="ml-4"
                         >
                           <Heart
-                            size={20}
+                            size={16}
                             className={
                               isLoved
                                 ? 'text-red-500 fill-current'
@@ -269,7 +361,7 @@ export default function Booking() {
                         </button>
                       </div>
                       <div className="mt-1 text-sm text-gray-500">
-                        {selectedLab.experience} Years of Experience |{' '}
+                        {/* {selectedLab.experience} Years of Experience |{' '} */}
                         {selectedLab.testType}
                       </div>
                     </div>
@@ -283,9 +375,17 @@ export default function Booking() {
                       <h3 className="font-bold text-gray-800 text-lg mb-4">
                         Select Date
                       </h3>
+                      {/* <Calendar
+                        selectedDate={selectedDate}
+                        onDateChange={setSelectedDate}
+                      /> */}
                       <Calendar
                         selectedDate={selectedDate}
                         onDateChange={setSelectedDate}
+                        disabled={(date: Date) => {
+                          const day = date.getDay(); // 0-6
+                          return !allowedDays.includes(day);
+                        }}
                       />
                     </div>
 
@@ -293,10 +393,41 @@ export default function Booking() {
                       <h3 className="font-bold text-gray-800 text-lg mb-4">
                         Select Time Slot
                       </h3>
-                      <TimeSlots
+
+                      {/* {selectedDate && (
+                        <select
+                          value={selectedTime || ""}
+                          onChange={(e) => setSelectedTime(e.target.value)}
+                          className="w-full border rounded p-2"
+                        >
+                          <option value="">Select a time</option>
+                          {generateTimeSlots(
+                            Object.keys(dayMap).find(
+                              (day) => dayMap[day] === selectedDate.getDay()
+                            ) || ""
+                          ).map((slot) => (
+                            <option key={slot} value={slot}>
+                              {slot}
+                            </option>
+                          ))}
+                        </select>
+                      )} */}
+
+                      {/* <TimeSlots
                         selectedTime={selectedTime}
                         onTimeChange={setSelectedTime}
                         timeSlots={selectedLab.timeSlots}
+                      /> */}
+
+                      <TimeSlots
+                        slots={generateTimeSlots(
+                          Object.keys(dayMap).find(
+                            (day) => dayMap[day] === selectedDate?.getDay()
+                          ) || ''
+                        )}
+                        selectedTime={selectedTime}
+                        onTimeChange={setSelectedTime}
+                        selectedDate={selectedDate}
                       />
                     </div>
                   </div>

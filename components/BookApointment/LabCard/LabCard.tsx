@@ -24,8 +24,8 @@ export const LabCard: React.FC<LabCardProps> = ({ lab, onLoveClick }) => (
     className="bg-white p-4 rounded-lg border shadow-md flex flex-col sm:flex-row gap-4 items-start"
   >
     <Image
-      src={lab.image}
-      alt={lab.name}
+      src={lab?.image || '/placeholder-lab.png'}
+      alt={lab?.name || 'Lab Image'}
       width={80}
       height={80}
       className="sm:w-24 sm:h-24 rounded-lg object-cover"

@@ -82,7 +82,8 @@ export default function PaymentClient({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          patientId: user.id,
+          userId: user.id,
+          patientId: patientDetails.id || null, // Use existing patient ID if available
           labId: selectedLab.id,
           timeSlotId: selectedLab.timeSlotId,
           date: formattedDate, 
@@ -94,6 +95,8 @@ export default function PaymentClient({
           qrCodeData: '',
         }),
       });
+
+      console.log("Patient Details:", patientDetails); // Debug log
 
       const bookingData = await bookingResponse.json();
       if (!bookingData.success) throw new Error(bookingData.error);

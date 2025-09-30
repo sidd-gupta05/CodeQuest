@@ -1,3 +1,4 @@
+//components/landingPage/HeroSection.tsx  
 'use client';
 
 import Link from 'next/link';
@@ -28,7 +29,7 @@ export default function HeroSection() {
               Precision & Simplicity
             </p>
 
-            <p
+            {/* <p
               className="mt-6 text-black text-md md:text-lg text-center"
               style={{ fontFamily: 'Lufga SemiBold, Urbanist, sans-serif' }}
             >
@@ -36,7 +37,20 @@ export default function HeroSection() {
               everything in one secure platform
               <br />
               <strong>NO queues, no confusion</strong>
+            </p> */}
+
+            <p
+              className="mt-6 text-slate-700 text-lg md:text-xl text-center leading-relaxed"
+              style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
+            >
+              Book lab tests online, get accurate reports fast, and track everything in one secure platform!
+              <br />
+              <span className="block mt-1 text-teal-900 font-semibold">
+                No queues, No confusion 
+              </span>
             </p>
+
+
           </div>
 
           <Link
@@ -46,13 +60,14 @@ export default function HeroSection() {
             Get Started
           </Link>
 
-          <div
+          {/* <div
             className="absolute bottom-[-435px] left-1/2 z-10 w-full h-[200px] bg-gray-200 border border-gray-300 hidden md:block select-none pointer-events-none"
             style={{
               transform: 'translateX(-50%) perspective(800px) rotateX(50deg)',
               transformOrigin: 'bottom',
             }}
-          />
+          /> */}
+
           <div className="relative w-full max-w-lg mx-auto select-none pointer-events-none">
             <Image
               src="/iphone.svg"
@@ -99,14 +114,14 @@ export default function HeroSection() {
                 className="text-sm sm:text-base text-black"
                 style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
               >
-                Design new UX flow for Michael
+                New Appointment for Michael
               </div>
 
               <div
                 className="text-gray-500 text-xs sm:text-sm"
                 style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
               >
-                Start from screen 16
+                CBC & Blood Sugar
               </div>
             </div>
           </div>

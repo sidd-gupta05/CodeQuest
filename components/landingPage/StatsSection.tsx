@@ -1,3 +1,4 @@
+//components/landingPage/StatsSection.tsx
 'use client';
 
 import { useInView } from 'react-intersection-observer';
