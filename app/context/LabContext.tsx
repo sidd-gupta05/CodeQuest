@@ -374,6 +374,168 @@
 
 
 
+//-----------------------------------------------------------------------------------
+
+// 'use client';
+
+// import { supabase } from '@/utils/supabase/client';
+// import {
+//   createContext,
+//   useEffect,
+//   useState,
+//   ReactNode,
+//   Dispatch,
+//   SetStateAction,
+// } from 'react';
+
+// interface LabContextType {
+//   labId: string | null;
+//   labData: any;
+//   bookingData: any[];
+//   employeeData: any[];
+//   userData: any;
+//   patients: any[];
+//   loading: boolean;
+//   error: string | null;
+//   setLabId?: Dispatch<SetStateAction<string | null>>;
+//   setLabData?: Dispatch<SetStateAction<any>>;
+//   setBookingData?: Dispatch<SetStateAction<any[]>>;
+//   setUserData?: Dispatch<SetStateAction<any>>;
+//   setPatients?: Dispatch<SetStateAction<any[]>>;
+//   setEmployeeData?: Dispatch<SetStateAction<any[]>>;
+// }
+
+// export const LabContext = createContext<LabContextType | null>(null);
+
+// interface LabProviderProps {
+//   children: ReactNode;
+// }
+
+// export const LabProvider = ({ children }: LabProviderProps) => {
+//   const [labId, setLabId] = useState<string | null>(null);
+//   const [labData, setLabData] = useState<any>(null);
+//   const [bookingData, setBookingData] = useState<any[]>([]);
+//   const [userData, setUserData] = useState<any>(null);
+//   const [patients, setPatients] = useState<any[]>([]);
+//   const [employeeData, setEmployeeData] = useState<any[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const fetchAllData = async () => {
+//       setLoading(true);
+//       try {
+//         // --- 1. Get current user ---
+//         const { data: { user }, error: userAuthError } = await supabase.auth.getUser();
+//         if (userAuthError || !user) throw new Error('User not found');
+
+//         // --- 2. User details ---
+//         const { data: userDetails, error: userError } = await supabase
+//           .from('users')
+//           .select('firstName, lastName, email, phone')
+//           .eq('id', user.id)
+//           .single();
+
+//         if (userError) throw userError;
+//         setUserData(userDetails);
+
+//         // --- 3. Lab Id ---
+//         const { data: labRes, error: labError } = await supabase
+//           .from('labs')
+//           .select('id')
+//           .eq('userId', user.id)
+//           .single();
+
+//         if (labError) throw labError;
+//         const currentLabId = labRes?.id || null;
+//         setLabId(currentLabId);
+
+//         if (!currentLabId) return;
+
+//         // --- 4. Lab Details ---
+//         const { data: labDetails, error: labDetailsError } = await supabase
+//           .from('lab_details')
+//           .select('*')
+//           .eq('labId', currentLabId)
+//           .maybeSingle();
+
+//         if (labDetailsError) throw labDetailsError;
+//         setLabData(labDetails || null);
+
+//         // --- 5. Bookings ---
+//         const { data: bookings, error: bookingError } = await supabase
+//           .from('bookings')
+//           .select(
+//             `*, 
+//              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
+//              booking_tests(testId(name)),
+//              booking_addons(addons(name))`
+//           )
+//           .eq('labId', currentLabId);
+
+//         if (bookingError) throw bookingError;
+//         setBookingData(bookings || []);
+
+//         // --- 6. Patients ---
+//         const { data: patientsRes, error: patientError } = await supabase
+//           .from('patients')
+//           .select(`
+//             id,
+//             firstName,
+//             lastName,
+//             age,
+//             gender,
+//             phone,
+//             address,
+//             bookings!inner(labId)
+//           `)
+//           .eq('bookings.labId', currentLabId);
+
+//         if (patientError) throw patientError;
+//         setPatients(patientsRes || []);
+
+//         // --- 7. Employees ---
+//         const { data: employees, error: employeeError } = await supabase
+//           .from('employee')
+//           .select('*')
+//           .eq('labId', currentLabId);
+
+//         if (employeeError) throw employeeError;
+//         setEmployeeData(employees || []);
+
+//       } catch (err: any) {
+//         console.error(err);
+//         setError(err.message || 'Something went wrong while fetching data');
+//       } finally {
+//         setLoading(false); // only once at the end
+//       }
+//     };
+
+//     fetchAllData();
+//   }, []);
+
+//   return (
+//     <LabContext.Provider
+//       value={{
+//         employeeData,
+//         labData,
+//         labId,
+//         bookingData,
+//         userData,
+//         patients,
+//         loading,
+//         error,
+//       }}
+//     >
+//       {children}
+//     </LabContext.Provider>
+//   );
+// };
+
+//-----------------------------------------------------------------------------------
+
+
+
 
 
 'use client';
@@ -392,6 +554,7 @@ interface LabContextType {
   labId: string | null;
   labData: any;
   bookingData: any[];
+  employeeData: any[];
   userData: any;
   patients: any[];
   loading: boolean;
@@ -401,6 +564,7 @@ interface LabContextType {
   setBookingData?: Dispatch<SetStateAction<any[]>>;
   setUserData?: Dispatch<SetStateAction<any>>;
   setPatients?: Dispatch<SetStateAction<any[]>>;
+  setEmployeeData?: Dispatch<SetStateAction<any[]>>;
 }
 
 export const LabContext = createContext<LabContextType | null>(null);
@@ -415,6 +579,7 @@ export const LabProvider = ({ children }: LabProviderProps) => {
   const [bookingData, setBookingData] = useState<any[]>([]);
   const [userData, setUserData] = useState<any>(null);
   const [patients, setPatients] = useState<any[]>([]);
+  const [employeeData, setEmployeeData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -422,45 +587,38 @@ export const LabProvider = ({ children }: LabProviderProps) => {
     const fetchAllData = async () => {
       setLoading(true);
       try {
-        // --- 1. Get current user ---
+        // 1. Get current user
         const { data: { user }, error: userAuthError } = await supabase.auth.getUser();
         if (userAuthError || !user) throw new Error('User not found');
 
-        // --- 2. User details ---
-        const { data: userDetails, error: userError } = await supabase
+        // 2. User details
+        const { data: userDetails } = await supabase
           .from('users')
           .select('firstName, lastName, email, phone')
           .eq('id', user.id)
           .single();
-
-        if (userError) throw userError;
         setUserData(userDetails);
 
-        // --- 3. Lab Id ---
-        const { data: labRes, error: labError } = await supabase
+        // 3. Lab Id
+        const { data: labRes } = await supabase
           .from('labs')
           .select('id')
           .eq('userId', user.id)
           .single();
-
-        if (labError) throw labError;
         const currentLabId = labRes?.id || null;
         setLabId(currentLabId);
-
         if (!currentLabId) return;
 
-        // --- 4. Lab Details ---
-        const { data: labDetails, error: labDetailsError } = await supabase
+        // 4. Lab Details
+        const { data: labDetails } = await supabase
           .from('lab_details')
           .select('*')
           .eq('labId', currentLabId)
           .maybeSingle();
-
-        if (labDetailsError) throw labDetailsError;
         setLabData(labDetails || null);
 
-        // --- 5. Bookings ---
-        const { data: bookings, error: bookingError } = await supabase
+        // 5. Bookings
+        const { data: bookings } = await supabase
           .from('bookings')
           .select(
             `*, 
@@ -469,12 +627,10 @@ export const LabProvider = ({ children }: LabProviderProps) => {
              booking_addons(addons(name))`
           )
           .eq('labId', currentLabId);
-
-        if (bookingError) throw bookingError;
         setBookingData(bookings || []);
 
-        // --- 6. Patients ---
-        const { data: patientsRes, error: patientError } = await supabase
+        // 6. Patients
+        const { data: patientsRes } = await supabase
           .from('patients')
           .select(`
             id,
@@ -487,24 +643,139 @@ export const LabProvider = ({ children }: LabProviderProps) => {
             bookings!inner(labId)
           `)
           .eq('bookings.labId', currentLabId);
-
-        if (patientError) throw patientError;
         setPatients(patientsRes || []);
 
+        // 7. Employees
+        const { data: employees } = await supabase
+          .from('employee')
+          .select('*')
+          .eq('labId', currentLabId);
+        setEmployeeData(employees || []);
       } catch (err: any) {
         console.error(err);
         setError(err.message || 'Something went wrong while fetching data');
       } finally {
-        setLoading(false); // only once at the end
+        setLoading(false);
       }
     };
 
     fetchAllData();
   }, []);
 
+  // Realtime subscriptions
+  useEffect(() => {
+    if (!labId) return;
+
+    // EMPLOYEES
+    // const employeeChannel = supabase
+    //   .channel('employee-changes')
+    //   .on(
+    //     'postgres_changes',
+    //     { event: '*', schema: 'public', table: 'employee', filter: `labId=eq.${labId}` },
+    //     (payload) => {
+    //       console.log('Employee change:', payload);
+    //       if (payload.eventType === 'INSERT') {
+    //         setEmployeeData((prev) => [...prev, payload.new]);
+    //       } else if (payload.eventType === 'UPDATE') {
+    //         setEmployeeData((prev) =>
+    //           prev.map((emp) => (emp.id === payload.new.id ? payload.new : emp))
+    //         );
+    //       } else if (payload.eventType === 'DELETE') {
+    //         setEmployeeData((prev) =>
+    //           prev.filter((emp) => emp.id !== payload.old.id)
+    //         );
+    //       }
+    //     }
+    //   )
+    //   .subscribe();
+
+    const employeeChannel = supabase
+      .channel('employee-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'employee' },
+        async (payload) => {
+          console.log('Realtime employee change:', payload);
+
+          // Refetch full employees list for this lab
+          const { data: employees, error } = await supabase
+            .from('employee')
+            .select('*')
+            .eq('labId', labId);
+
+          if (!error) {
+            setEmployeeData(employees || []);
+          } else {
+            console.error('Error refetching employees:', error);
+          }
+        }
+      )
+      .subscribe();
+
+    // BOOKINGS
+    // const bookingChannel =
+      // supabase.channel('booking-changes')
+      //   .on(
+      //     'postgres_changes',
+      //     { event: 'UPDATE', schema: 'public', table: 'bookings' },
+      //     async (payload) => {
+      //       const { data: updatedBooking } = await supabase
+      //         .from('bookings')
+      //         .select(
+      //           `*, 
+      //      patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
+      //      booking_tests(testId(name)),
+      //      booking_addons(addons(name))`
+      //         )
+      //         .eq('id', payload.new.id)
+      //         .single();
+
+      //       if (updatedBooking) {
+      //         setBookingData((prev) =>
+      //           prev.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
+      //         );
+      //       }
+      //     }
+      //   )
+      //   .subscribe();
+
+      const bookingChannel = supabase
+    .channel('booking-changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'bookings' },
+      async (payload) => {
+        console.log('Realtime booking change:', payload);
+
+        const { data: bookings, error } = await supabase
+          .from('bookings')
+          .select(
+            `*, 
+             patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
+             booking_tests(testId(name)),
+             booking_addons(addons(name))`
+          )
+          .eq('labId', labId);
+
+        if (!error) {
+          setBookingData(bookings || []);
+        } else {
+          console.error('Error refetching bookings:', error);
+        }
+      }
+    )
+    .subscribe();
+
+    return () => {
+      supabase.removeChannel(employeeChannel);
+      supabase.removeChannel(bookingChannel);
+    };
+  }, [labId]);
+
   return (
     <LabContext.Provider
       value={{
+        employeeData,
         labData,
         labId,
         bookingData,
@@ -512,10 +783,12 @@ export const LabProvider = ({ children }: LabProviderProps) => {
         patients,
         loading,
         error,
+        setEmployeeData,
+        setBookingData,
+        setLabId,
       }}
     >
       {children}
     </LabContext.Provider>
   );
 };
-

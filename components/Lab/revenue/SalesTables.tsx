@@ -213,7 +213,15 @@ const SalesTables: React.FC<SalesTablesProps> = ({
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          {employeeData.length === 0 ? 
+          (
+            <tbody className='text-center text-gray-500'>
+              <tr>
+                <td className='py-5 text-sm' colSpan={5}>Add Employees ; No Data Available</td>
+              </tr>
+            </tbody>
+          ) : (
+            <tbody className="divide-y divide-gray-200">
             {employeeData.map((employee) => (
               <tr key={employee.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -262,6 +270,7 @@ const SalesTables: React.FC<SalesTablesProps> = ({
               </td>
             </tr>
           </tbody>
+          )}
         </table>
       </div>
 

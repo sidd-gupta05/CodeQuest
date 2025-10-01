@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useMemo, useEffect } from 'react';
+import React, { useState, useRef, useMemo, useEffect, useContext } from 'react';
 import {
   Download,
   Filter,
@@ -24,6 +24,7 @@ import {
 } from '@/components/Lab/revenue/types';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { LabContext } from '@/app/context/LabContext';
 
 // Fixed employee data (hardcoded as requested)
 const initializeEmployeeData = (): Employee[] => [
@@ -31,43 +32,43 @@ const initializeEmployeeData = (): Employee[] => [
     id: 'EMP001',
     name: 'Dr. Sharma',
     role: 'Pathologist',
-    monthlySalary: 7500,
+    monthlySalary: 5,
     department: 'Lab Operations',
   },
-  {
-    id: 'EMP002',
-    name: 'Priya Patel',
-    role: 'Lab Technician',
-    monthlySalary: 4500,
-    department: 'Lab Operations',
-  },
-  {
-    id: 'EMP003',
-    name: 'Rahul Kumar',
-    role: 'Lab Technician',
-    monthlySalary: 4200,
-    department: 'Lab Operations',
-  },
-  {
-    id: 'EMP004',
-    name: 'Anita Desai',
-    role: 'Receptionist',
-    monthlySalary: 2800,
-    department: 'Administration',
-  },
-  {
-    id: 'EMP005',
-    name: 'Sanjay Mehta',
-    role: 'Lab Manager',
-    monthlySalary: 6800,
-    department: 'Management',
-  },
+  // {
+  //   id: 'EMP002',
+  //   name: 'Priya Patel',
+  //   role: 'Lab Technician',
+  //   monthlySalary: 4500,
+  //   department: 'Lab Operations',
+  // },
+  // {
+  //   id: 'EMP003',
+  //   name: 'Rahul Kumar',
+  //   role: 'Lab Technician',
+  //   monthlySalary: 4200,
+  //   department: 'Lab Operations',
+  // },
+  // {
+  //   id: 'EMP004',
+  //   name: 'Anita Desai',
+  //   role: 'Receptionist',
+  //   monthlySalary: 2800,
+  //   department: 'Administration',
+  // },
+  // {
+  //   id: 'EMP005',
+  //   name: 'Sanjay Mehta',
+  //   role: 'Lab Manager',
+  //   monthlySalary: 6800,
+  //   department: 'Management',
+  // },
 ];
 
 // Fixed monthly costs (hardcoded as requested)
 const getMonthlyFixedCosts = () => {
-  const baseEquipmentCost = 1250;
-  const baseInventoryCost = 850;
+  const baseEquipmentCost = 10;
+  const baseInventoryCost = 5;
   const variation = Math.random() * 0.3 + 0.85;
   return {
     equipmentCosts: Math.round(baseEquipmentCost * variation),
@@ -76,8 +77,11 @@ const getMonthlyFixedCosts = () => {
 };
 
 const SalesModule = () => {
+
+  const currentYear = new Date().getFullYear();
+
   const [timeFilter, setTimeFilter] = useState<'monthly' | 'yearly'>('monthly');
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false); // New state for download status
   const [sortConfig, setSortConfig] = useState<SortConfig>({
@@ -85,9 +89,12 @@ const SalesModule = () => {
     direction: 'asc',
   });
 
-  const reportRef = useRef<HTMLDivElement>(null); 
+  const allbookings = useContext(LabContext)?.bookingData || [];
+  const employee = useContext(LabContext)?.employeeData || [];
+
+  const reportRef = useRef<HTMLDivElement>(null);
   const computationsRef = useRef<any>({});
-  const employeeDataRef = useRef<Employee[]>([]);
+  // const employeeDataRef = useRef<Employee[]>([]);
   const monthlyDataRef = useRef<MonthlyFinancials[]>([]);
 
   // Calculate financials from bookings
@@ -109,12 +116,20 @@ const SalesModule = () => {
 
     const monthlyFinancials: MonthlyFinancials[] = months.map(
       (month, index) => {
+        // const monthBookings = bookingsData.filter((booking) => {
+        //   const bookingDate = new Date(booking.date);
+        //   return (
+        //     bookingDate.getMonth() === index &&
+        //     bookingDate.getFullYear() === selectedYear
+        //   );
+        // });
+
         const monthBookings = bookingsData.filter((booking) => {
           const bookingDate = new Date(booking.date);
-          return (
-            bookingDate.getMonth() === index &&
-            bookingDate.getFullYear() === selectedYear
-          );
+          const bookingYear = bookingDate.getFullYear();
+          const bookingMonth = bookingDate.getMonth();
+
+          return bookingMonth === index && bookingYear === selectedYear;
         });
 
         const revenue = monthBookings.reduce(
@@ -122,7 +137,7 @@ const SalesModule = () => {
           0
         );
         const appointmentCount = monthBookings.length;
-        const totalEmployeeCosts = employeeDataRef.current.reduce(
+        const totalEmployeeCosts = employee.reduce(
           (sum, emp) => sum + emp.monthlySalary,
           0
         );
@@ -177,64 +192,116 @@ const SalesModule = () => {
     };
   };
 
+  // const allbookings = useContext(LabContext)?.bookingData || [];
+  // console.log('All Bookings from Context:', allbookings);
+
+  // useEffect(() => {
+  //   const fetchBookings = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const mockBookings: Booking[] = Array.from({ length: 250 }, (_, i) => {
+  //         const date = new Date(
+  //           2024,
+  //           Math.floor(Math.random() * 12),
+  //           Math.floor(Math.random() * 28) + 1
+  //         );
+  //         const totalAmount =
+  //           Math.round((Math.random() * 3000 + 800) * 100) / 100;
+
+  //         return {
+  //           id: `booking-${i}`,
+  //           bookingId: `BK${String(i + 1).padStart(4, '0')}`,
+  //           date: date.toISOString(),
+  //           totalAmount,
+  //           status: ['CONFIRMED', 'COMPLETED', 'PENDING'][
+  //             Math.floor(Math.random() * 3)
+  //           ],
+  //           patientId: `patient-${i}`,
+  //           labId: 'lab-1',
+  //         };
+  //       });
+
+  //       employeeDataRef.current = initializeEmployeeData();
+  //       calculateFinancials(mockBookings);
+  //     } catch (error) {
+  //       console.error('Error fetching bookings:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchBookings();
+  // }, [selectedYear]);
+
   useEffect(() => {
-    const fetchBookings = async () => {
-      setLoading(true);
-      try {
-        const mockBookings: Booking[] = Array.from({ length: 250 }, (_, i) => {
-          const date = new Date(
-            2024,
-            Math.floor(Math.random() * 12),
-            Math.floor(Math.random() * 28) + 1
-          );
-          const totalAmount =
-            Math.round((Math.random() * 3000 + 800) * 100) / 100;
-
-          return {
-            id: `booking-${i}`,
-            bookingId: `BK${String(i + 1).padStart(4, '0')}`,
-            date: date.toISOString(),
-            totalAmount,
-            status: ['CONFIRMED', 'COMPLETED', 'PENDING'][
-              Math.floor(Math.random() * 3)
-            ],
-            patientId: `patient-${i}`,
-            labId: 'lab-1',
-          };
-        });
-
-        employeeDataRef.current = initializeEmployeeData();
-        calculateFinancials(mockBookings);
-      } catch (error) {
-        console.error('Error fetching bookings:', error);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    try {
+      // Use real bookings from context
+      if (allbookings.length > 0) {
+        // employeeDataRef.current = initializeEmployeeData();
+        calculateFinancials(allbookings);  // pass context bookings here
+      } else {
+        console.warn("No booking data available in LabContext");
+        // employeeDataRef.current = initializeEmployeeData();
+        calculateFinancials([]); // still compute but with empty data
       }
-    };
-    fetchBookings();
-  }, [selectedYear]);
+    } catch (error) {
+      console.error('Error processing bookings:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [allbookings.length, selectedYear]);
+
+
+  // const sortedMonthlyData = useMemo(() => {
+  //   const data = [...monthlyDataRef.current];
+  //   if (sortConfig.key) {
+  //     data.sort((a, b) => {
+  //       if (
+  //         a[sortConfig.key as keyof MonthlyFinancials] <
+  //         b[sortConfig.key as keyof MonthlyFinancials]
+  //       ) {
+  //         return sortConfig.direction === 'asc' ? -1 : 1;
+  //       }
+  //       if (
+  //         a[sortConfig.key as keyof MonthlyFinancials] >
+  //         b[sortConfig.key as keyof MonthlyFinancials]
+  //       ) {
+  //         return sortConfig.direction === 'asc' ? 1 : -1;
+  //       }
+  //       return 0;
+  //     });
+  //   }
+  //   return data;
+  // }, [sortConfig, monthlyDataRef.current]);
+
+  const monthOrder = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
 
   const sortedMonthlyData = useMemo(() => {
     const data = [...monthlyDataRef.current];
     if (sortConfig.key) {
       data.sort((a, b) => {
-        if (
-          a[sortConfig.key as keyof MonthlyFinancials] <
-          b[sortConfig.key as keyof MonthlyFinancials]
-        ) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
+        const aValue = a[sortConfig.key as keyof MonthlyFinancials];
+        const bValue = b[sortConfig.key as keyof MonthlyFinancials];
+
+        // Custom sorting for month
+        if (sortConfig.key === 'month') {
+          return (
+            (monthOrder.indexOf(aValue as string) - monthOrder.indexOf(bValue as string)) *
+            (sortConfig.direction === 'asc' ? 1 : -1)
+          );
         }
-        if (
-          a[sortConfig.key as keyof MonthlyFinancials] >
-          b[sortConfig.key as keyof MonthlyFinancials]
-        ) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
+
+        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
         return 0;
       });
     }
     return data;
   }, [sortConfig, monthlyDataRef.current]);
+
 
   const handleSort = (key: string) => {
     setSortConfig({
@@ -354,7 +421,7 @@ const SalesModule = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6 sm:p-8 lg:p-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-xl font-semibold text-gray-900 mb-2">
           Sales Dashboard
         </h1>
         <p className="text-gray-600">
@@ -363,6 +430,7 @@ const SalesModule = () => {
       </div>
 
       <SalesHeader
+        bookingData={allbookings}
         timeFilter={timeFilter}
         setTimeFilter={setTimeFilter}
         selectedYear={selectedYear}
@@ -381,13 +449,13 @@ const SalesModule = () => {
         />
         <SalesTables
           sortedMonthlyData={sortedMonthlyData}
-          employeeData={employeeDataRef.current}
+          employeeData={employee}
           sortConfig={sortConfig}
           handleSort={handleSort}
         />
         <SalesInsights
           computations={computationsRef.current}
-          employeeData={employeeDataRef.current}
+          employeeData={employee}
         />
       </div>
     </div>
