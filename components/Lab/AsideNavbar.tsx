@@ -255,20 +255,20 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
 
               <li>
                 <Link
-                  href="/dashboard/lab/billing"
+                  href="/dashboard/lab/sales"
                   onClick={(e) => {
                     e.preventDefault();
-                    handleNavigation('/dashboard/lab/billing');
+                    handleNavigation('/dashboard/lab/sales');
                   }}
                   className={`flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
-                    pathname === '/dashboard/lab/billing'
+                    pathname === '/dashboard/lab/sales'
                       ? 'bg-[#e0f5f5] text-[#006A6A]'
                       : 'text-black hover:bg-gray-100'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <CreditCard className="h-5 w-5" />
-                    <span>Billing</span>
+                    <span>Revenue</span>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-400" />
                 </Link>
