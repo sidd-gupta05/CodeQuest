@@ -1,6 +1,5 @@
 // components/Lab/BookingModal.tsx
 'use client';
-
 import React, { useState } from 'react';
 import {
   User,
@@ -21,11 +20,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import toast from 'react-hot-toast';
+import { PDFDocument } from 'pdf-lib-with-encrypt';
+
 
 type Booking = {
   bookingId: string;
   booking_tests: { testId: { name: string } }[];
   date: string;
+  labId: string;
+  labName: string;
   patientId?: {
     firstName?: string;
     lastName?: string;
@@ -74,6 +77,34 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [confirmedStatus, setConfirmedStatus] = useState(
     booking.reportStatus || 'TEST_BOOKED'
   );
+
+
+async function lockPdf(file: File, booking: Booking) {
+  // Extract lab initials (first 4 uppercase letters)
+  const passInitials: string = getUpperCaseName(booking);
+  const passFinal: string = getLastNum(booking);
+
+
+  const password: string = passInitials + passFinal;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+
+  // Encrypt PDF
+  pdfDoc.encrypt({
+    userPassword: password,
+    ownerPassword: password,
+    permissions: {
+      printing: 'highResolution',
+      modifying: false,
+      copying: false,
+      annotating: false,
+    },
+  });
+
+  const lockedPdfBytes = await pdfDoc.save();
+  return { lockedPdfBytes, password };
+}
 
   async function handleSave(reportStatus: string) {
     try {
@@ -127,8 +158,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
       const file = e.target.files[0];
       const validTypes = [
         'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-        'application/msword', // older .doc
       ];
 
       if (!validTypes.includes(file.type)) {
@@ -148,8 +177,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   const parseFileName = (bookingId: string, file: File) => {
     const NEXT_PUBLIC_SUPABASE_URL =
-      process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      'https://unrlzieuyrsibokkqqbm.supabase.co';
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
     const cleanFileName = file.name.replace(/\s+/g, '_');
     return {
@@ -158,11 +186,25 @@ const BookingModal: React.FC<BookingModalProps> = ({
     };
   };
 
+  const getUpperCaseName  = (booking: Booking): string  => {
+    return booking.labName ? booking.labName.toUpperCase() : '';
+  }
+
+  const getLastNum  = (booking: Booking): string  => {
+    return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
+  }
+
   // Report upload handler
   const handleReport = async () => {
     if (!uploadedFile || !booking?.bookingId) return null;
 
     try {
+      const { lockedPdfBytes, password } = await lockPdf(
+        uploadedFile,
+        booking
+      );
+      console.log({ password });
+
       const { path, publicUrl } = parseFileName(
         booking.bookingId,
         uploadedFile
@@ -170,10 +212,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
       const { error: fileError } = await supabase.storage
         .from('uploads')
-        .upload(path, uploadedFile, { upsert: true });
+        .upload(path, lockedPdfBytes, { upsert: true, contentType: 'application/pdf' });
 
       if (fileError) throw new Error(fileError.message);
 
+          // TODO: send email to patient with publicUrl + password hint
+          
       setUploadAttemptsLeft((prev) => {
         const next = Math.max(prev - 1, 0);
         if (booking?.bookingId) {
@@ -210,7 +254,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         {/* Header */}
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold flex items-center gap-2">
-            # Booking Details
+            # Booking Details {getLastNum(booking)}
           </h2>
           <button
             onClick={onClose}

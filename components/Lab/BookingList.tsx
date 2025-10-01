@@ -26,6 +26,7 @@ type Booking = {
   date: string;
   id: string;
   labId: string;
+  labName: string;
   patientId?: {
     // userId?: {  lastName?: string };
     firstName?: string;

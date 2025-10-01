@@ -74,6 +74,8 @@
     "lucide-react": "^0.525.0",
     "next": "^15.5.4",
     "next-auth": "^5.0.0-beta.29",
+    "pdf-lib": "^1.17.1",
+    "pdf-lib-with-encrypt": "^1.2.1",
     "postcss": "^8.5.6",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
