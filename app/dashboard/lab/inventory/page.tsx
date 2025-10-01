@@ -1,10 +1,9 @@
 // app/dashboard/lab/inventory/page.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import './index.css'; // Import Tailwind CSS styles
 import { interFont } from "@/app/fonts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge"
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -350,15 +349,20 @@ const Inventory = () => {
             <p className="text-gray-600">Multi-tenant Lab Inventory Management System</p>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="icon">
-              <Bell className="h-4 w-4" />
-              {(lowStockCount + expiringCount) > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 text-xs">
-                  {lowStockCount + expiringCount}
-                </Badge>
-              )}
-            </Button>
-          </div>
+  <Button
+    className="relative bg-white border border-gray-300 p-5"
+    variant="outline"
+    size="icon"
+  >
+    <Bell className="h-8 w-8" />
+    {(lowStockCount + expiringCount) > 0 && (
+      <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 bg-red-500 text-white flex items-center justify-center text-xs">
+        {lowStockCount + expiringCount}
+      </Badge>
+    )}
+  </Button>
+</div>
+
         </div>
 
         {/* Dashboard Metrics */}
@@ -443,7 +447,7 @@ const Inventory = () => {
                     <DialogContent className={`${interFont.className} bg-white border-[#F7F8F9] max-w-lg`}>
                       <DialogHeader>
                         <DialogTitle className='font-semibold text-xl'>Add Reagent Stock</DialogTitle>
-                        <DialogDescription className='text-gray-600 border-[{`${interFont.className}`}]'>Add new stock for existing reagents</DialogDescription>
+                        <DialogDescription className='text-gray-600'>{`Add new stock for existing reagents`}</DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 border-[#F7F8F9]">
                         <div>
@@ -564,11 +568,11 @@ const Inventory = () => {
                               <TableCell>
                                 {item.quantity} {item.unit}
                                 {item.quantity <= item.reorderThreshold && (
-                                  <Badge variant="secondary" className="ml-2">Lowkrrish</Badge>
+                                  <Badge variant="secondary" className="ml-2 bg-[#F3F6FA]">Low</Badge>
                                 )}
                               </TableCell>
                               <TableCell>
-                                <Badge variant={stockStatus.color as any} className="flex items-center w-fit">
+                                <Badge variant={stockStatus.color as any} className="bg-[#F16869] text-white flex items-center w-fit">
                                   <StatusIcon className="h-3 w-3 mr-1" />
                                   {stockStatus.status.replace('-', ' ')}
                                 </Badge>
@@ -589,26 +593,26 @@ const Inventory = () => {
 
           {/* Test Catalog */}
           <TabsContent value="tests"
-              className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md">
-            <Card>
+              className="space-y-6 bg-white border border-gray-100 p-4 rounded-md">
+            <Card className="border-gray-100 ">
               <CardHeader>
-                <CardTitle>Available Tests</CardTitle>
-                <CardDescription>View test catalog and reagent requirements</CardDescription>
+                <CardTitle className="text-2xl font-semibold ">Available Tests</CardTitle>
+                <CardDescription className="font-medium text-[#838FA2]">View test catalog and reagent requirements</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-gray-100">
                   {sampleTestCatalog.map((test) => (
-                    <Card key={test.id} className="border-l-4 border-l-blue-500">
+                    <Card key={test.id} className="border-l-4 border-gray-300 border-l-blue-500">
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{test.name}</CardTitle>
-                          <Badge variant="outline">{test.category}</Badge>
+                          <Badge className='bg-[#F3F6FA] border-gray-100' variant="outline">{test.category}</Badge>
                         </div>
-                        <CardDescription>Duration: {test.duration}</CardDescription>
+                        <CardDescription className="font-medium text-[#838FA2]">Duration: {test.duration}</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
-                          <h4 className="font-medium text-sm">Required Reagents:</h4>
+                          <h4 className="font-bold text-sm">Required Reagents:</h4>
                           {test.reagents.map((reagent, index) => {
                             const reagentDetails = getReagentDetails(reagent.reagentId);
                             const inventoryItem = inventory.find(
@@ -641,11 +645,11 @@ const Inventory = () => {
 
           {/* Test Execution */}
           <TabsContent value="execute"
-              className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md">
-            <Card>
+              className="space-y-6 bg-white p-4 rounded-md">
+            <Card className="border-gray-100 ">
               <CardHeader>
-                <CardTitle>Execute Tests</CardTitle>
-                <CardDescription>Perform tests and automatically deduct reagents</CardDescription>
+                <CardTitle className='text-2xl font-semibold '>Execute Tests</CardTitle>
+                <CardDescription className='font-medium text-[#838FA2]'>Perform tests and automatically deduct reagents</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -662,16 +666,16 @@ const Inventory = () => {
                         <CardHeader>
                           <div className="flex items-center justify-between">
                             <CardTitle className="text-lg">{test.name}</CardTitle>
-                            <Badge variant={canExecute ? 'default' : 'destructive'}>
+                            <Badge className={canExecute ? 'bg-[#272E3F] text-white' : 'bg-red-700 text-white'} variant={canExecute ? 'default' : 'destructive'}>
                               {canExecute ? 'Ready' : 'Insufficient Stock'}
                             </Badge>
                           </div>
-                          <CardDescription>{test.category} • {test.duration}</CardDescription>
+                          <CardDescription className="font-medium text-[#838FA2]">{test.category} • {test.duration}</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-4">
                             <div className="space-y-2">
-                              <h4 className="font-medium text-sm">Reagent Consumption:</h4>
+                              <h4 className="font-bold text-sm">Reagent Consumption:</h4>
                               {test.reagents.map((reagent, index) => {
                                 const reagentDetails = getReagentDetails(reagent.reagentId);
                                 const inventoryItem = inventory.find(
@@ -694,7 +698,7 @@ const Inventory = () => {
                               })}
                             </div>
                             <Button 
-                              className="w-full" 
+                              className="w-full  hover:bg-[#272E3F] text-white bg-[#1e2530]" 
                               disabled={!canExecute || loading}
                               onClick={() => executeTest(test.id)}
                             >
@@ -723,67 +727,63 @@ const Inventory = () => {
           {/* Custom Reagents */}
           <TabsContent value="custom"
               className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md">
-            <Card>
-              <CardHeader>
+            <Card className='border-gray-100'>
+              <CardHeader className="border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Custom Reagents</CardTitle>
-                    <CardDescription>Lab-specific reagents and solutions</CardDescription>
+                    <CardTitle className="text-2xl font-semibold">Custom Reagents</CardTitle>
+                    <CardDescription className="font-medium text-[#64748B]">Lab-specific reagents and solutions</CardDescription>
                   </div>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button>
+                      <Button className="bg-[#0F172A] text-white hover:bg-[#272E3F] p-4  py-6 text-md">
                         <Plus className="h-4 w-4 mr-2" />
                         Add Custom Reagent
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className={`${interFont.className} bg-white border-[#F7F8F9] max-w-lg `}>
                       <DialogHeader>
-                        <DialogTitle>Add Custom Reagent</DialogTitle>
-                        <DialogDescription>Create a lab-specific reagent</DialogDescription>
+                        <DialogTitle className="text-xl font-semibold">Add Custom Reagent</DialogTitle>
+                        <DialogDescription className='font-medium text-[#838FA2]'>Create a lab-specific reagent</DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
-                          <Label htmlFor="name">Reagent Name</Label>
-                          <Input id="name" placeholder="Custom Antibody Solution" />
+                          <Label className="pb-1" htmlFor="name">Reagent Name</Label>
+                          <Input className='border-[#dbdcdd] p-4 py-5 text-md' id="name" placeholder="Custom Antibody Solution" />
                         </div>
                         <div>
-                          <Label htmlFor="description">Description</Label>
-                          <Textarea id="description" placeholder="Detailed description of the reagent..." />
+                          <Label className="pb-1" htmlFor="description">Description</Label>
+                          <Textarea className='border-[#dbdcdd] p-4  text-md' id="description" placeholder="Detailed description of the reagent..." />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label htmlFor="quantity">Initial Quantity</Label>
-                            <Input id="quantity" type="number" placeholder="50" />
+                            <Label className="pb-1 text-md" htmlFor="quantity">Initial Quantity</Label>
+                            <Input className='border-[#dbdcdd] p-4 py-5 text-md' id="quantity" type="number" placeholder="50" />
                           </div>
                           <div>
-                            <Label htmlFor="unit">Unit</Label>
+                            <Label className="pb-1 text-md" htmlFor="unit">Unit</Label>
                             <Select>
-                              <SelectTrigger>
-                                <SelectValue placeholder="ml" />
+                              <SelectTrigger className='border-[#dbdcdd] w-full p-4 py-5 text-md'>
+                                <SelectValue className='border-[#F7F8F9] text-lg' placeholder="ml" />
                               </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="ml">ml</SelectItem>
-                                <SelectItem value="l">l</SelectItem>
-                                <SelectItem value="kit">kit</SelectItem>
-                                <SelectItem value="vial">vial</SelectItem>
+                              <SelectContent className='bg-white border-[#F7F8F9] shadow-sm'>
+                                <SelectItem className='pl-3 hover:bg-gray-200' value="ml">ml</SelectItem>
+                                <SelectItem className='pl-3 hover:bg-gray-200' value="l">l</SelectItem>
+                                <SelectItem className='pl-3 hover:bg-gray-200' value="kit">kit</SelectItem>
+                                <SelectItem className='pl-3 hover:bg-gray-200' value="vial">vial</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                         </div>
                         <div>
-                          <Label htmlFor="expiry">Expiry Date</Label>
-                          <Input id="expiry" type="date" />
+                          <Label className="pb-1 text-md" htmlFor="expiry">Expiry Date</Label>
+                          <Input className='border-[#dbdcdd] text-md' id="expiry" type="date" />
                         </div>
                         <div>
-                          <Label htmlFor="threshold">Reorder Threshold</Label>
-                          <Input id="threshold" type="number" placeholder="15" />
+                          <Label className="pb-1 text-md" htmlFor="threshold">Reorder Threshold</Label>
+                          <Input className='border-[#dbdcdd] p-4 py-5 text-md' id="threshold" type="number" placeholder="15" />
                         </div>
-                        {/* <div>
-                          <Label htmlFor="location">Storage Location</Label>
-                          <Input id="location" placeholder="Special Storage" />
-                        </div> */}
-                        <Button className="w-full">Add Custom Reagent</Button>
+                        <Button className="w-full bg-black text-white cursor-pointer hover:bg-gray-800">Add Custom Reagent</Button>
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -796,16 +796,16 @@ const Inventory = () => {
                     const StatusIcon = stockStatus.icon;
                     
                     return (
-                      <Card key={reagent.id} className="border-l-4 border-l-purple-500">
+                      <Card key={reagent.id} className="border-l-4 border-gray-300 border-l-purple-500">
                         <CardHeader>
                           <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">{reagent.name}</CardTitle>
-                            <Badge variant={stockStatus.color as any} className="flex items-center">
+                            <CardTitle className="text-lg font-bold">{reagent.name}</CardTitle>
+                            <Badge variant={stockStatus.color as any} className="flex items-center ">
                               <StatusIcon className="h-3 w-3 mr-1" />
                               {stockStatus.status.replace('-', ' ')}
                             </Badge>
                           </div>
-                          <CardDescription>{reagent.description}</CardDescription>
+                          <CardDescription className="font-medium text-[#64748B]">{reagent.description}</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -844,19 +844,19 @@ const Inventory = () => {
           </TabsContent>
 
           {/* Alerts */}
-          <TabsContent value="alerts"
+          <TabsContent value="alerts" 
               className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md">
-            <Card>
-              <CardHeader>
-                <CardTitle>Alerts & Notifications</CardTitle>
-                <CardDescription>Monitor stock levels and expiry dates</CardDescription>
+            <Card className='border-gray-100'>
+              <CardHeader className='border-gray-100'>
+                <CardTitle className="text-2xl font-semibold">Alerts & Notifications</CardTitle>
+                <CardDescription className="font-medium text-[#64748B]">Monitor stock levels and expiry dates</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {/* Low Stock Alerts */}
                   <div className="space-y-3">
-                    <h3 className="font-medium text-lg flex items-center">
-                      <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
+                    <h3 className="font-medium text-lg font-semibold flex items-center">
+                      <AlertTriangle className="text-2xl font-semibold h-5 w-5 mr-2 text-orange-500" />
                       Low Stock Alerts
                     </h3>
                     {filteredInventory
@@ -882,7 +882,7 @@ const Inventory = () => {
 
                   {/* Expiry Alerts */}
                   <div className="space-y-3">
-                    <h3 className="font-medium text-lg flex items-center">
+                    <h3 className="font-medium text-lg flex items-center  font-semibold ">
                       <Clock className="h-5 w-5 mr-2 text-red-500" />
                       Expiry Alerts
                     </h3>
@@ -898,7 +898,7 @@ const Inventory = () => {
                         const daysToExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
                         
                         return (
-                          <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg bg-red-50">
+                          <div key={item.id} className="flex items-center justify-between p-4 border border-gray-100 rounded-lg bg-red-50">
                             <div>
                               <p className="font-medium">{reagent?.name}</p>
                               <p className="text-sm text-gray-600">
@@ -906,7 +906,7 @@ const Inventory = () => {
                                 {daysToExpiry <= 0 ? ' (EXPIRED)' : ` (${daysToExpiry} days)`}
                               </p>
                             </div>
-                            <Badge variant="destructive">
+                            <Badge className="bg-[#F16869] text-white flex items-center w-fit" variant="destructive">
                               {daysToExpiry <= 0 ? 'Expired' : 'Expiring Soon'}
                             </Badge>
                           </div>
