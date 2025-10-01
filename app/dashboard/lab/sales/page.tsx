@@ -1,4 +1,3 @@
-// // app/dashboard/lab/sales/page.tsx
 'use client';
 
 import React, { useState, useRef, useMemo, useEffect } from 'react';
@@ -22,7 +21,9 @@ import {
   Employee,
   MonthlyFinancials,
   SortConfig,
-} from '@/components/Lab/revenue/types'
+} from '@/components/Lab/revenue/types';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Fixed employee data (hardcoded as requested)
 const initializeEmployeeData = (): Employee[] => [
@@ -78,11 +79,13 @@ const SalesModule = () => {
   const [timeFilter, setTimeFilter] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [loading, setLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false); // New state for download status
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: 'month',
     direction: 'asc',
   });
 
+  const reportRef = useRef<HTMLDivElement>(null); // Ref for the content to be downloaded
   const computationsRef = useRef<any>({});
   const employeeDataRef = useRef<Employee[]>([]);
   const monthlyDataRef = useRef<MonthlyFinancials[]>([]);
@@ -265,15 +268,57 @@ const SalesModule = () => {
           appointmentCount: 0,
         }
       );
-      return [{ month: `Year ${selectedYear}`, ...annualData }];
+      return [{
+        month: `Year ${selectedYear}`,
+        year: selectedYear,
+        ...annualData
+      }];
     }
     return monthlyDataRef.current;
   }, [timeFilter, selectedYear, monthlyDataRef.current]);
 
-  const exportToPDF = () => {
-    alert(
-      'PDF export functionality would be implemented here with a library like jsPDF'
-    );
+  const exportToPDF = async () => {
+    setIsDownloading(true);
+    const input = reportRef.current;
+
+    if (!input) {
+      console.error('Report content not found');
+      setIsDownloading(false);
+      return;
+    }
+
+    try {
+      const canvas = await html2canvas(input, {
+        scale: 2,
+        useCORS: true,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      let position = 0;
+      let heightLeft = pdfHeight;
+
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pdf.internal.pageSize.getHeight();
+
+      while (heightLeft >= 0) {
+        position = heightLeft - pdfHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight();
+      }
+
+      pdf.save(`Sales_Report_${selectedYear}.pdf`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF report.');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   if (loading) {
@@ -289,29 +334,43 @@ const SalesModule = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 sm:p-8 lg:p-10">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Sales Dashboard
+        </h1>
+        <p className="text-gray-600">
+          Comprehensive financial overview based on appointment data
+        </p>
+      </div>
+
       <SalesHeader
         timeFilter={timeFilter}
         setTimeFilter={setTimeFilter}
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
         exportToPDF={exportToPDF}
+        isDownloading={isDownloading}
       />
-      <SalesMetrics computations={computationsRef.current} />
-      <SalesCharts
-        timeFilter={timeFilter}
-        filteredData={filteredData}
-        computations={computationsRef.current}
-      />
-      <SalesTables
-        sortedMonthlyData={sortedMonthlyData}
-        employeeData={employeeDataRef.current}
-        sortConfig={sortConfig}
-        handleSort={handleSort}
-      />
-      <SalesInsights
-        computations={computationsRef.current}
-        employeeData={employeeDataRef.current}
-      />
+
+      {/* This div is what will be captured for the PDF. It excludes the header. */}
+      <div ref={reportRef}>
+        <SalesMetrics computations={computationsRef.current} />
+        <SalesCharts
+          timeFilter={timeFilter}
+          filteredData={filteredData}
+          computations={computationsRef.current}
+        />
+        <SalesTables
+          sortedMonthlyData={sortedMonthlyData}
+          employeeData={employeeDataRef.current}
+          sortConfig={sortConfig}
+          handleSort={handleSort}
+        />
+        <SalesInsights
+          computations={computationsRef.current}
+          employeeData={employeeDataRef.current}
+        />
+      </div>
     </div>
   );
 };
