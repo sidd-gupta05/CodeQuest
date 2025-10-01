@@ -68,7 +68,6 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-
   // TODO: Gonna remove below handlers
   const handleGoogleLogin = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -81,7 +80,6 @@ export default function SignupPage() {
     if (error) console.error(error);
     console.log('Google login initiated', data);
   };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

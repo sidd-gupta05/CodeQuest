@@ -67,7 +67,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       return stored ? parseInt(stored, 10) : 3;
     }
     return 3;
-  });  
+  });
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -304,7 +304,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
               Report Status
             </h3>
 
-            <Select value={reportStatus || 'TEST_BOOKED'} onValueChange={setReportStatus}>
+            <Select
+              value={reportStatus || 'TEST_BOOKED'}
+              onValueChange={setReportStatus}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select report status" />
               </SelectTrigger>
@@ -366,7 +369,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 type="file"
                 className="absolute inset-0 opacity-0 w-full"
                 onChange={handleFileChange}
-                disabled={reportStatus !== 'REPORT_READY' || uploadAttemptsLeft === 0}
+                disabled={
+                  reportStatus !== 'REPORT_READY' || uploadAttemptsLeft === 0
+                }
               />
               <div className="flex flex-col items-center justify-center text-gray-600">
                 <p className="text-sm">Upload Reports</p>

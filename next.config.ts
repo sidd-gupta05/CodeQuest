@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next';
-import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -9,11 +8,10 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'loremflickr.com' },
       { protocol: 'https', hostname: 'loremflickr.com' },
-      { protocol: 'https', hostname: '**.supabase.co' }
+      { protocol: 'https', hostname: '**.supabase.co' },
     ],
     dangerouslyAllowSVG: true,
-    
   },
 };
 
-export default withFlowbiteReact(nextConfig);
+export default nextConfig;

@@ -12,7 +12,6 @@ export type Patient = {
   lastName?: string;
   gender?: string;
   phone?: string | null;
-
 };
 
 interface PatientListProps {
@@ -59,7 +58,9 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
       <div className="hidden md:block">
         <ul className="divide-y divide-gray-200">
           {filteredPatients.map((patient) => {
-            const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'Unknown';
+            const fullName =
+              `${patient.firstName || ''} ${patient.lastName || ''}`.trim() ||
+              'Unknown';
             const patientAddress = patient.address || '-';
             const patientPhone = patient.phone || '-';
             const patientId = patient.id;
@@ -73,7 +74,9 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
               >
                 <div className="flex-1 flex items-center space-x-6">
                   <p className="w-32 text-sm text-gray-900">{fullName}</p>
-                  <p className="w-48 text-sm font-medium text-gray-900">{patientId}</p>
+                  <p className="w-48 text-sm font-medium text-gray-900">
+                    {patientId}
+                  </p>
                   <p className="w-56 text-sm text-gray-500">{patientAddress}</p>
                   <p className="w-32 text-sm text-gray-500">{patientPhone}</p>
                   {/* <p className="w-16 text-sm text-gray-500">{patientAge}</p> */}
@@ -97,7 +100,9 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
       <div className="md:hidden">
         <ul className="divide-y divide-gray-200">
           {filteredPatients.map((patient) => {
-            const fullName = `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'Unknown';
+            const fullName =
+              `${patient.firstName || ''} ${patient.lastName || ''}`.trim() ||
+              'Unknown';
             const patientAddress = patient.address || '-';
             const patientPhone = patient.phone || '-';
             const patientId = patient.id;
@@ -112,7 +117,9 @@ const PatientList: React.FC<PatientListProps> = ({ patients }) => {
                 <p className="text-xs text-gray-500 font-semibold">Name</p>
                 <p className="text-sm text-gray-900">{fullName}</p>
 
-                <p className="text-xs text-gray-500 font-semibold">Patient ID</p>
+                <p className="text-xs text-gray-500 font-semibold">
+                  Patient ID
+                </p>
                 <p className="text-sm font-medium text-gray-900">{patientId}</p>
 
                 <p className="text-xs text-gray-500 font-semibold">Address</p>

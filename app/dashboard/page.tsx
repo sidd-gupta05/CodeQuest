@@ -39,7 +39,6 @@
 //   );
 // }
 
-
 'use client';
 
 import { useContext, useState } from 'react';
@@ -49,7 +48,9 @@ import PaginatedBookingList from '@/components/Lab/PaginatedBookingList';
 
 export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
 
   const contextData = useContext(LabContext);
   const bookingData = contextData?.bookingData || [];

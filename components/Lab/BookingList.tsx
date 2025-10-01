@@ -2,7 +2,21 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { Download, Eye, ChevronDown, ChevronUp, FlaskConical, FileCheck2, IndianRupee, Calendar, Receipt, MapPin, Phone, User, Clock } from 'lucide-react';
+import {
+  Download,
+  Eye,
+  ChevronDown,
+  ChevronUp,
+  FlaskConical,
+  FileCheck2,
+  IndianRupee,
+  Calendar,
+  Receipt,
+  MapPin,
+  Phone,
+  User,
+  Clock,
+} from 'lucide-react';
 import BookingModal from './BookingModal';
 
 type Booking = {
@@ -115,10 +129,10 @@ const BookingList: React.FC<BookingListProps> = ({
           {bookings.map((booking) => {
             const deliveryType = getDeliveryType(booking);
 
-            const patientName = booking.patientId?.firstName && booking.patientId?.lastName
-              ? `${booking.patientId.firstName} ${booking.patientId.lastName}`
-              : 'Unknown';
-
+            const patientName =
+              booking.patientId?.firstName && booking.patientId?.lastName
+                ? `${booking.patientId.firstName} ${booking.patientId.lastName}`
+                : 'Unknown';
 
             const patientAddress = booking.patientId?.address || '-';
 
@@ -128,7 +142,6 @@ const BookingList: React.FC<BookingListProps> = ({
                 day: '2-digit',
                 month: 'short',
                 year: '2-digit',
-
               }
             );
 
@@ -206,10 +219,11 @@ const BookingList: React.FC<BookingListProps> = ({
 
                   <div className="w-28">
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                        }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        booking.status === 'CONFIRMED'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}
                     >
                       {booking.status}
                     </span>
@@ -225,9 +239,9 @@ const BookingList: React.FC<BookingListProps> = ({
                         setSelectedBooking(booking);
                         setShowModal(true);
                       }}
-                      className="text-gray-400 cursor-pointer hover:text-gray-600">
+                      className="text-gray-400 cursor-pointer hover:text-gray-600"
+                    >
                       <Eye className="w-5 h-5" />
-
                     </button>
                     <button className="text-gray-400 hover:text-gray-600">
                       <Download className="w-5 h-5" />
@@ -262,10 +276,10 @@ const BookingList: React.FC<BookingListProps> = ({
           {bookings.map((booking) => {
             const deliveryType = getDeliveryType(booking);
 
-            const patientName = booking.patientId?.firstName && booking.patientId?.lastName
-              ? `${booking.patientId.firstName} ${booking.patientId.lastName}`
-              : 'Unknown';
-
+            const patientName =
+              booking.patientId?.firstName && booking.patientId?.lastName
+                ? `${booking.patientId.firstName} ${booking.patientId.lastName}`
+                : 'Unknown';
 
             const patientAddress = booking.patientId?.address || '-';
 
@@ -359,10 +373,11 @@ const BookingList: React.FC<BookingListProps> = ({
                   <div>
                     <p className="text-xs text-gray-500">Status</p>
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                        }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        booking.status === 'CONFIRMED'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}
                     >
                       {booking.status}
                     </span>
@@ -403,7 +418,6 @@ const BookingList: React.FC<BookingListProps> = ({
         onClose={() => setShowModal(false)}
         // onUpdateStatus={(newStatus) => setSelectedBooking({ ...selectedBooking!, reportStatus: newStatus })}
       />
-
     </div>
   );
 };

@@ -8,8 +8,8 @@ interface PaymentClientProps {
   onBack: () => void;
   onNext: () => void;
   selectedLab: any;
-  appointmentDate: string; 
-  appointmentTime: string; 
+  appointmentDate: string;
+  appointmentTime: string;
   selectedTests: string[];
   selectedAddons: string[];
   patientDetails: any;
@@ -27,8 +27,8 @@ export default function PaymentClient({
   onBack,
   onNext,
   selectedLab,
-  appointmentDate, 
-  appointmentTime, 
+  appointmentDate,
+  appointmentTime,
   selectedTests,
   selectedAddons,
   patientDetails,
@@ -86,7 +86,7 @@ export default function PaymentClient({
           patientId: patientDetails.id || null, // Use existing patient ID if available
           labId: selectedLab.id,
           timeSlotId: selectedLab.timeSlotId,
-          date: formattedDate, 
+          date: formattedDate,
           status: 'PENDING',
           totalAmount: totalAmount,
           selectedTests: selectedTests,
@@ -96,7 +96,7 @@ export default function PaymentClient({
         }),
       });
 
-      console.log("Patient Details:", patientDetails); // Debug log
+      console.log('Patient Details:', patientDetails); // Debug log
 
       const bookingData = await bookingResponse.json();
       if (!bookingData.success) throw new Error(bookingData.error);

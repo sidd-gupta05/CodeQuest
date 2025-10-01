@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -7,14 +6,24 @@ interface CalendarProps {
   onDateChange: (date: Date) => void;
   disabled?: (date: Date) => boolean;
   month?: number; // optional controlled month
-  year?: number;  // optional controlled year
+  year?: number; // optional controlled year
 }
 
-const LabCalendar = ({ selectedDate, onDateChange, disabled, month, year }: CalendarProps) => {
-  const [currentMonth, setCurrentMonth] = useState(month ?? selectedDate.getMonth());
-  const [currentYear, setCurrentYear] = useState(year ?? selectedDate.getFullYear());
+const LabCalendar = ({
+  selectedDate,
+  onDateChange,
+  disabled,
+  month,
+  year,
+}: CalendarProps) => {
+  const [currentMonth, setCurrentMonth] = useState(
+    month ?? selectedDate.getMonth()
+  );
+  const [currentYear, setCurrentYear] = useState(
+    year ?? selectedDate.getFullYear()
+  );
 
-   // Update internal state if props change
+  // Update internal state if props change
   React.useEffect(() => {
     if (month !== undefined) setCurrentMonth(month);
     if (year !== undefined) setCurrentYear(year);
@@ -130,8 +139,8 @@ const LabCalendar = ({ selectedDate, onDateChange, disabled, month, year }: Cale
                 isDisabled
                   ? 'text-gray-300 cursor-not-allowed'
                   : isSelected
-                  ? 'bg-[#37AFA2] text-white'
-                  : 'hover:bg-gray-100'
+                    ? 'bg-[#37AFA2] text-white'
+                    : 'hover:bg-gray-100'
               }`}
             >
               {date.day}

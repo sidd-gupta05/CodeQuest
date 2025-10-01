@@ -1,16 +1,19 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/prisma"; // make sure you have db client exported from here
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/prisma'; // make sure you have db client exported from here
 
 // GET /api/inventory → list all inventory items
 export async function GET() {
   try {
     const items = await db.inventoryItem.findMany({
-      orderBy: { name: "asc" },
+      orderBy: { name: 'asc' },
     });
     return NextResponse.json({ items });
   } catch (err) {
-    console.error("Error fetching inventory", err);
-    return NextResponse.json({ error: "Failed to fetch inventory" }, { status: 500 });
+    console.error('Error fetching inventory', err);
+    return NextResponse.json(
+      { error: 'Failed to fetch inventory' },
+      { status: 500 }
+    );
   }
 }
 
@@ -22,7 +25,7 @@ export async function POST(req: Request) {
 
     if (!name || !quantity || !unit) {
       return NextResponse.json(
-        { error: "Missing fields: name, quantity, unit" },
+        { error: 'Missing fields: name, quantity, unit' },
         { status: 400 }
       );
     }
@@ -33,7 +36,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json(item, { status: 201 });
   } catch (err) {
-    console.error("Error creating inventory item", err);
-    return NextResponse.json({ error: "Failed to create item" }, { status: 500 });
+    console.error('Error creating inventory item', err);
+    return NextResponse.json(
+      { error: 'Failed to create item' },
+      { status: 500 }
+    );
   }
 }

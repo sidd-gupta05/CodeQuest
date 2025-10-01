@@ -1,6 +1,6 @@
-'use client'
-import { useState } from "react";
-import Image from "next/image";
+'use client';
+import { useState } from 'react';
+import Image from 'next/image';
 interface AccountButtonProps {
   type: string;
   label: string;
@@ -55,12 +55,13 @@ const AccountButton: React.FC<AccountButtonProps> = ({
   );
 };
 
-
 interface AccountTypeSidebarProps {
   onSelect: (type: string) => void;
 }
 
-export const AccountTypeSidebar: React.FC<AccountTypeSidebarProps> = ({ onSelect }) => {
+export const AccountTypeSidebar: React.FC<AccountTypeSidebarProps> = ({
+  onSelect,
+}) => {
   const [accountType, setAccountType] = useState<string>('');
 
   const handleSelect = (type: string) => {
@@ -71,20 +72,19 @@ export const AccountTypeSidebar: React.FC<AccountTypeSidebarProps> = ({ onSelect
   return (
     <div className="bg-white flex items-center justify-center p-10">
       <div className="max-w-md w-full flex flex-col justify-center">
-        
         <div className="mb-6">
           <Image
-                className="mx-auto mb-4"
-                src="/labsphere-icon.svg"
-                alt="Labsphere Logo"
-                width={307}
-                height={111}
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = '/labsphere-icon.svg';
-                }}
-              />
+            className="mx-auto mb-4"
+            src="/labsphere-icon.svg"
+            alt="Labsphere Logo"
+            width={307}
+            height={111}
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src = '/labsphere-icon.svg';
+            }}
+          />
 
           <label className="block text-teal-600 text-xl text-center font-semibold mb-2">
             Choose Account Type

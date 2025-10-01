@@ -23,8 +23,6 @@
 
 // export default DashboardLayout;
 
-
-
 'use client';
 
 import { useState, useContext } from 'react';
@@ -36,7 +34,7 @@ const DashboardLayoutContent = ({ children }) => {
   const contextData = useContext(LabContext);
   const loading = contextData?.loading;
 
-  console.log("islLoading :",loading )
+  console.log('islLoading :', loading);
 
   if (loading) {
     return (

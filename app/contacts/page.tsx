@@ -13,7 +13,6 @@ const Contacts = () => {
         }}
       >
         <Navbar />
-        
       </main>
       <Footer />
     </>

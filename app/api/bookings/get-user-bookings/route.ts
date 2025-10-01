@@ -56,7 +56,8 @@ export async function POST(request: NextRequest) {
     // Fetch patients and their bookings with labs_with_details view
     const { data, error } = await supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         id,
         firstName,
         lastName,
@@ -85,9 +86,9 @@ export async function POST(request: NextRequest) {
             "labName"
           )
         )
-      `)
+      `
+      )
       .eq('userId', userId);
-
 
     if (error) {
       return NextResponse.json(
@@ -129,7 +130,8 @@ export async function POST(request: NextRequest) {
     });
 
     allBookings.sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
     return NextResponse.json({ bookings: allBookings });

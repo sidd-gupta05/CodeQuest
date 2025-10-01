@@ -68,7 +68,7 @@ export async function POST(req: Request) {
       isAvailable,
       isLoved,
       rating,
-      pathlabId
+      pathlabId,
       // timeSlots, // array of { time, session }
     } = body;
 
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
         // rating: rating ?? null,
       },
       create: {
-        id: uuidv4(), 
+        id: uuidv4(),
         labId: pathlabId,
         labName,
         testType,

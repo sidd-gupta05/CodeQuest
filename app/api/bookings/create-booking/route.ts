@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const now = new Date().toISOString();
 
-    console.log("received patient details:", patientDetails);
+    console.log('received patient details:', patientDetails);
 
     // 1. Convert the date string to proper PostgreSQL format
     const convertToPostgresDate = (dateString: string) => {

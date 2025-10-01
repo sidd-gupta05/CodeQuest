@@ -3,7 +3,9 @@ import { createSupabaseServerClient } from './server';
 export async function getPatientBookings(patientId: string) {
   const supabase = createSupabaseServerClient();
 
-  const { data: bookings, error } = await (await supabase)
+  const { data: bookings, error } = await (
+    await supabase
+  )
     .from('bookings')
     .select(
       `
@@ -24,7 +26,9 @@ export async function getPatientBookings(patientId: string) {
 export async function getBookingById(bookingId: string) {
   const supabase = createSupabaseServerClient();
 
-  const { data: booking, error } = await (await supabase)
+  const { data: booking, error } = await (
+    await supabase
+  )
     .from('bookings')
     .select(
       `

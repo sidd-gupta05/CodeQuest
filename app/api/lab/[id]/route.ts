@@ -4,11 +4,11 @@ import { db } from '@/lib/prisma';
 
 export async function GET(
   req: NextRequest,
-{ params }: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id  = (await params).id;
-    console.log(id)
+    const id = (await params).id;
+    console.log(id);
     const lab = await db.lab.findUnique({
       where: { id: id },
       include: {

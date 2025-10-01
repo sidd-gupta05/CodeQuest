@@ -20,7 +20,6 @@ export default function LabRegistration() {
     setUploadedFile(null);
   };
 
-
   // 🔽 Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

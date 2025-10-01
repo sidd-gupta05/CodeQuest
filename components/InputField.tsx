@@ -13,12 +13,27 @@ interface InputFieldProps {
   min?: string | number;
   required?: boolean;
   disabled?: boolean;
-  name?: string; 
+  name?: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ label, type = 'text', id, value, onChange, icon: Icon, placeholder, step, min, required, disabled }) => (
+const InputField: React.FC<InputFieldProps> = ({
+  label,
+  type = 'text',
+  id,
+  value,
+  onChange,
+  icon: Icon,
+  placeholder,
+  step,
+  min,
+  required,
+  disabled,
+}) => (
   <div className="mb-4">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+    <label
+      htmlFor={id}
+      className="block text-sm font-medium text-gray-700 mb-1"
+    >
       {Icon && <Icon className="inline-block w-4 h-4 mr-2 text-indigo-500" />}
       {label}
       {required && <span className="text-red-500 ml-1">*</span>}

@@ -2,7 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase/client';
-import { Eye, Download, RotateCw, Check, Clock, Search, Filter, Calendar, User, Phone, MapPin } from 'lucide-react';
+import {
+  Eye,
+  Download,
+  RotateCw,
+  Check,
+  Clock,
+  Search,
+  Filter,
+  Calendar,
+  User,
+  Phone,
+  MapPin,
+} from 'lucide-react';
 import { NewStepper } from './NewStepper';
 import Navbar from './navbar';
 import Footer from './footer';
@@ -29,18 +41,21 @@ interface Booking {
   };
 }
 
-const statusConfig: Record<string, { bg: string; text: string; border: string; icon: any }> = {
+const statusConfig: Record<
+  string,
+  { bg: string; text: string; border: string; icon: any }
+> = {
   PENDING: {
     bg: 'bg-gradient-to-r from-amber-50 to-orange-50',
     text: 'text-amber-700',
     border: 'border-amber-200',
-    icon: Clock
+    icon: Clock,
   },
   CONFIRMED: {
     bg: 'bg-gradient-to-r from-emerald-50 to-green-50',
     text: 'text-emerald-700',
     border: 'border-emerald-200',
-    icon: Check
+    icon: Check,
   },
 };
 
@@ -105,9 +120,9 @@ const LabTestTracker = () => {
 
       // 1. Get all patients of this user
       const { data: patients, error } = await supabase
-        .from("patients")
-        .select("id")
-        .eq("userId", user.id);
+        .from('patients')
+        .select('id')
+        .eq('userId', user.id);
 
       if (error || !patients?.length) return;
 
@@ -117,12 +132,12 @@ const LabTestTracker = () => {
       channel = supabase
         .channel(`user-patients-${user.id}`)
         .on(
-          "postgres_changes",
+          'postgres_changes',
           {
-            event: "UPDATE",
-            schema: "public",
-            table: "bookings",
-            filter: `patientId=in.(${patientIds.join(",")})`,
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'bookings',
+            filter: `patientId=in.(${patientIds.join(',')})`,
           },
           (payload) => {
             setBookings((prev) =>
@@ -145,15 +160,15 @@ const LabTestTracker = () => {
   useEffect(() => {
     if (selectedBooking) {
       // Lock body scroll
-      document.body.classList.add("overflow-hidden");
+      document.body.classList.add('overflow-hidden');
     } else {
       // Restore body scroll
-      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove('overflow-hidden');
     }
 
     // Cleanup if component unmounts
     return () => {
-      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove('overflow-hidden');
     };
   }, [selectedBooking]);
 
@@ -195,21 +210,24 @@ const LabTestTracker = () => {
 
   if (loading) {
     return (
-      <div className='min-h-screen flex flex-col'
+      <div
+        className="min-h-screen flex flex-col"
         style={{
           background:
             'linear-gradient(180deg, #05303B -14.4%, #91D8C1 15%, #FFF 70% )',
-        }}>
-
-        <div className='text-white'>
+        }}
+      >
+        <div className="text-white">
           <Navbar />
         </div>
 
         <div className="flex flex-col justify-center items-center my-auto">
-          <div className='w-20 h-20 mx-auto'>
+          <div className="w-20 h-20 mx-auto">
             <img src="/report-loading.gif" alt="Loading..." />
           </div>
-          <div className="mt-2 text-center text-slate-700 font-semibold">Gathering your bookings . . .</div>
+          <div className="mt-2 text-center text-slate-700 font-semibold">
+            Gathering your bookings . . .
+          </div>
         </div>
       </div>
     );
@@ -217,11 +235,9 @@ const LabTestTracker = () => {
 
   return (
     <div className="min-h-screen">
-
       <Navbar />
 
       <div className="px-4 py-8">
-
         <div className="px-4 md:px-8 lg:px-12 py-8 max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
@@ -291,11 +307,21 @@ const LabTestTracker = () => {
                 <table className="min-w-full">
                   <thead>
                     <tr className="bg-gradient-to-r from-slate-100 to-slate-50 border-b border-slate-200">
-                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">Booking Details</th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">Lab Information</th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">Patient Info</th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Booking Details
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Lab Information
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Patient Info
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -305,7 +331,10 @@ const LabTestTracker = () => {
                         const StatusIcon = statusInfo?.icon;
 
                         return (
-                          <tr key={booking.id} className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 transition-all duration-200 group">
+                          <tr
+                            key={booking.id}
+                            className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 transition-all duration-200 group"
+                          >
                             <td className="px-6 py-5">
                               <div className="flex flex-col space-y-1">
                                 <span className="font-mono text-sm font-bold text-[#178087] bg-[#178087]/10 px-3 py-1 rounded-lg inline-block w-fit">
@@ -313,42 +342,51 @@ const LabTestTracker = () => {
                                 </span>
                                 <div className="flex items-center text-xs text-slate-500">
                                   <Calendar className="w-3 h-3 mr-1" />
-                                  {new Date(booking.date).toLocaleDateString('en-US', {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    year: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
+                                  {new Date(booking.date).toLocaleDateString(
+                                    'en-US',
+                                    {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                    }
+                                  )}
                                 </div>
                               </div>
                             </td>
                             <td className="px-6 py-5">
                               <div className="flex flex-col space-y-1">
-                                <span className="font-semibold text-slate-900 text-sm">{booking.lab.labName}</span>
+                                <span className="font-semibold text-slate-900 text-sm">
+                                  {booking.lab.labName}
+                                </span>
                                 <div className="flex items-center text-xs text-slate-500">
                                   <MapPin className="w-3 h-3 mr-1" />
-                                  {booking.lab.labLocation || 'Location not specified'}
+                                  {booking.lab.labLocation ||
+                                    'Location not specified'}
                                 </div>
                               </div>
                             </td>
                             <td className="px-6 py-5">
                               <div className="flex flex-col space-y-1">
                                 <div className="flex items-center">
-
                                   <span className="font-medium text-slate-900 text-sm">
-                                    {booking.patient.firstName} {booking.patient.lastName}
+                                    {booking.patient.firstName}{' '}
+                                    {booking.patient.lastName}
                                   </span>
                                 </div>
                                 <div className="flex items-center text-xs text-slate-500">
-
                                   {booking.patient.phone}
                                 </div>
                               </div>
                             </td>
                             <td className="px-6 py-5">
-                              <div className={`inline-flex items-center px-3 py-2 rounded-xl border text-xs font-semibold ${statusInfo ? `${statusInfo.bg} ${statusInfo.text} ${statusInfo.border}` : 'bg-slate-50 text-slate-700 border-slate-200'}`}>
-                                {StatusIcon && <StatusIcon className="w-3 h-3 mr-1.5" />}
+                              <div
+                                className={`inline-flex items-center px-3 py-2 rounded-xl border text-xs font-semibold ${statusInfo ? `${statusInfo.bg} ${statusInfo.text} ${statusInfo.border}` : 'bg-slate-50 text-slate-700 border-slate-200'}`}
+                              >
+                                {StatusIcon && (
+                                  <StatusIcon className="w-3 h-3 mr-1.5" />
+                                )}
                                 {booking.status}
                               </div>
                             </td>
@@ -380,8 +418,12 @@ const LabTestTracker = () => {
                               <Search className="w-8 h-8 text-slate-400" />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-slate-900 mb-1">No bookings found</h3>
-                              <p className="text-slate-500 text-sm">Try adjusting your search or filter criteria</p>
+                              <h3 className="font-semibold text-slate-900 mb-1">
+                                No bookings found
+                              </h3>
+                              <p className="text-slate-500 text-sm">
+                                Try adjusting your search or filter criteria
+                              </p>
                             </div>
                           </div>
                         </td>
@@ -414,23 +456,27 @@ const LabTestTracker = () => {
                       </div>
                       <div className="hidden sm:block text-slate-500">
                         Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-                        {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}
+                        {Math.min(currentPage * itemsPerPage, totalItems)} of{' '}
+                        {totalItems}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                        <button
-                          key={pageNum}
-                          onClick={() => setCurrentPage(pageNum)}
-                          className={`px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200 ${pageNum === currentPage
-                            ? 'bg-[#178087] text-white border-[#178087] shadow-md'
-                            : 'text-slate-700 border-slate-200 bg-white hover:border-[#178087] hover:text-[#178087] hover:bg-[#178087]/5'
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (pageNum) => (
+                          <button
+                            key={pageNum}
+                            onClick={() => setCurrentPage(pageNum)}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200 ${
+                              pageNum === currentPage
+                                ? 'bg-[#178087] text-white border-[#178087] shadow-md'
+                                : 'text-slate-700 border-slate-200 bg-white hover:border-[#178087] hover:text-[#178087] hover:bg-[#178087]/5'
                             }`}
-                        >
-                          {pageNum}
-                        </button>
-                      ))}
+                          >
+                            {pageNum}
+                          </button>
+                        )
+                      )}
                     </div>
                   </div>
                 </div>
@@ -442,25 +488,35 @@ const LabTestTracker = () => {
           {selectedBooking && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
               <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] relative animate-in fade-in zoom-in-95 duration-300 border border-slate-200 overflow-hidden">
-
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedBooking(null)}
                   className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-slate-500 hover:cursor-pointer bg-slate-200 rounded-full transition-all duration-200 z-10"
                   aria-label="Close Modal"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
 
                 {/* Scrollable Content */}
                 <div className="overflow-y-auto max-h-[90vh] modal-scroll p-8">
-
                   {/* Progress Section */}
-                  {selectedBooking.status !== "PENDING" ? (
+                  {selectedBooking.status !== 'PENDING' ? (
                     <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-slate-100 mb-6 p-6">
-                      <h3 className="font-semibold text-slate-900 mb-6 text-center">Report Progress</h3>
+                      <h3 className="font-semibold text-slate-900 mb-6 text-center">
+                        Report Progress
+                      </h3>
                       <NewStepper status={selectedBooking.reportStatus} />
                     </div>
                   ) : (
@@ -468,9 +524,12 @@ const LabTestTracker = () => {
                       <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Clock className="w-8 h-8 text-amber-600" />
                       </div>
-                      <h3 className="font-semibold text-amber-900 mb-2">Booking Pending</h3>
+                      <h3 className="font-semibold text-amber-900 mb-2">
+                        Booking Pending
+                      </h3>
                       <p className="text-amber-700 text-sm leading-relaxed">
-                        Your booking is pending as the payment is being processed. You’ll be notified once it’s confirmed.
+                        Your booking is pending as the payment is being
+                        processed. You’ll be notified once it’s confirmed.
                       </p>
                     </div>
                   )}
@@ -485,31 +544,43 @@ const LabTestTracker = () => {
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Booking ID</p>
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
+                            Booking ID
+                          </p>
                           <p className="font-mono text-sm font-bold text-[#178087] bg-white px-3 py-2 rounded-lg border">
                             {selectedBooking.bookingId}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Date</p>
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
+                            Date
+                          </p>
                           <p className=" text-slate-900 flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-slate-400" />
-                            {new Date(selectedBooking.date).toLocaleDateString("en-US", {
-                              weekday: "long",
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
+                            {new Date(selectedBooking.date).toLocaleDateString(
+                              'en-US',
+                              {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              }
+                            )}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Time</p>
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
+                            Time
+                          </p>
                           <p className="text-slate-900 flex items-center gap-2">
                             <Clock className="w-4 h-4 text-slate-400" />
-                            {new Date(selectedBooking.date).toLocaleTimeString("en-US", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            {new Date(selectedBooking.date).toLocaleTimeString(
+                              'en-US',
+                              {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              }
+                            )}
                           </p>
                         </div>
                       </div>
@@ -519,21 +590,28 @@ const LabTestTracker = () => {
                     <div className="bg-gradient-to-br from-slate-50 to-emerald-50 rounded-2xl p-6 border border-slate-100">
                       <div className="space-y-4">
                         <div>
-                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Patient</p>
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
+                            Patient
+                          </p>
                           <p className="text-slate-900 flex items-center gap-2">
                             <User className="w-4 h-4 text-slate-400" />
-                            {selectedBooking.patient.firstName} {selectedBooking.patient.lastName}
+                            {selectedBooking.patient.firstName}{' '}
+                            {selectedBooking.patient.lastName}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Phone</p>
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
+                            Phone
+                          </p>
                           <p className="text-slate-900 flex items-center gap-2">
                             <Phone className="w-4 h-4 text-slate-400" />
                             {selectedBooking.patient.phone}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Lab</p>
+                          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
+                            Lab
+                          </p>
                           <p className="text-slate-900 flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-slate-400" />
                             {selectedBooking.lab.labName}
@@ -541,10 +619,14 @@ const LabTestTracker = () => {
                         </div>
                         <div>
                           <div className="bg-white rounded-lg p-3 border border-blue-100">
-                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Total Amount</p>
+                            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
+                              Total Amount
+                            </p>
                             <p className="font-bold text-lg text-emerald-600 flex items-center gap-2">
                               <span className="text-sm">₹</span>
-                              {selectedBooking.totalAmount.toLocaleString("en-IN")}
+                              {selectedBooking.totalAmount.toLocaleString(
+                                'en-IN'
+                              )}
                             </p>
                           </div>
                         </div>
@@ -565,16 +647,20 @@ const LabTestTracker = () => {
                       </h3>
                       <div className="space-y-2">
                         {selectedBooking.booking_tests.length > 0 ? (
-                          selectedBooking.booking_tests.map((test: any, index: number) => (
-                            <span
-                              key={test.id}
-                              className="inline-block bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 mr-2 rounded-full border border-blue-200"
-                            >
-                              {test.testId?.name || `Test #${index + 1}`}
-                            </span>
-                          ))
+                          selectedBooking.booking_tests.map(
+                            (test: any, index: number) => (
+                              <span
+                                key={test.id}
+                                className="inline-block bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 mr-2 rounded-full border border-blue-200"
+                              >
+                                {test.testId?.name || `Test #${index + 1}`}
+                              </span>
+                            )
+                          )
                         ) : (
-                          <p className="text-sm text-slate-500 italic">No tests booked</p>
+                          <p className="text-sm text-slate-500 italic">
+                            No tests booked
+                          </p>
                         )}
                       </div>
                     </div>
@@ -590,21 +676,24 @@ const LabTestTracker = () => {
                       </h3>
                       <div className="space-y-2">
                         {selectedBooking.booking_addons.length > 0 ? (
-                          selectedBooking.booking_addons.map((addon: any, index: number) => (
-                            <span
-                              key={addon.id}
-                              className="inline-block bg-purple-100 text-purple-700 text-xs font-medium px-3 py-1 mr-2 rounded-full border border-purple-200"
-                            >
-                              {addon.addonId?.name || `Add-on #${index + 1}`}
-                            </span>
-                          ))
+                          selectedBooking.booking_addons.map(
+                            (addon: any, index: number) => (
+                              <span
+                                key={addon.id}
+                                className="inline-block bg-purple-100 text-purple-700 text-xs font-medium px-3 py-1 mr-2 rounded-full border border-purple-200"
+                              >
+                                {addon.addonId?.name || `Add-on #${index + 1}`}
+                              </span>
+                            )
+                          )
                         ) : (
-                          <p className="text-sm text-slate-500 italic">No add-ons selected</p>
+                          <p className="text-sm text-slate-500 italic">
+                            No add-ons selected
+                          </p>
                         )}
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -613,7 +702,6 @@ const LabTestTracker = () => {
       </div>
 
       <Footer />
-
     </div>
   );
 };

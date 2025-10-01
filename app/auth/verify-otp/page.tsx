@@ -167,7 +167,9 @@ export default function VerifyPage() {
           <p className="text-gray-500 mb-6">
             A 6-digit code has been sent to your number:
             <br />
-            <strong className="text-gray-700">{normalizePhone(`+91${phone}`)}</strong>
+            <strong className="text-gray-700">
+              {normalizePhone(`+91${phone}`)}
+            </strong>
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -193,7 +195,9 @@ export default function VerifyPage() {
               ))}
             </div>
 
-            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
 
             <button
               type="submit"
