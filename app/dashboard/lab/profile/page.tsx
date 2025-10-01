@@ -118,7 +118,7 @@ const LabForm: React.FC = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
@@ -426,7 +426,7 @@ const LabForm: React.FC = () => {
                     name="labContactNumber"
                     value={formData.labContactNumber}
                     onChange={handleChange}
-                    placeholder="e.g., +91 5565 5669 456"
+                    placeholder="e.g. +91 55656 56694"
                   />
                   <InputField
                     label="Lab Email Address"
@@ -437,12 +437,12 @@ const LabForm: React.FC = () => {
                     placeholder="Enter lab's email address"
                   />
                   <InputField
-                    label="Lab Type"
+                    label="Test Type"
                     id="testType"
                     name="testType"
                     value={formData.testType}
                     onChange={handleChange}
-                    placeholder="Enter Lab Type"
+                    placeholder="Enter Test Type"
                   />
                   <InputField
                     label="NABCL No."
