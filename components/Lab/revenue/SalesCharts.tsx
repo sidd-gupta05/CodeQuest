@@ -139,10 +139,6 @@ const SalesCharts: React.FC<SalesChartsProps> = ({
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={(props) => {
-                const { name, percentage } = props;
-                return `${name} ${percentage ?? ''}%`;
-              }}
               outerRadius={100}
               innerRadius={60}
               fill="#8884d8"
@@ -161,6 +157,14 @@ const SalesCharts: React.FC<SalesChartsProps> = ({
                 `₹${Number(value).toLocaleString()}`,
                 name,
               ]}
+            />
+            <Legend
+              layout="horizontal"
+              verticalAlign="bottom"
+              align="center"
+              wrapperStyle={{
+                paddingTop: '20px',
+              }}
             />
           </PieChart>
         </ResponsiveContainer>
