@@ -226,9 +226,6 @@ model CustomReagent {
   category    String?
   description String?
   unit        String
-  quantity    Float?
-  expiryDate  DateTime?
-  reorderThreshold Float?
   createdAt   DateTime @default(now())
   updatedAt   DateTime
   labs        Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
@@ -251,7 +248,6 @@ model TestReagent {
   testId          String
   reagentId       String
   quantityPerTest Float
-  unit            String
   createdAt       DateTime       @default(now())
   updatedAt       DateTime
   ReagentCatalog  ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
@@ -266,7 +262,6 @@ model lab_inventory {
   reagentId        String
   quantity         Float
   unit             String
-  batchNumber      String?
   expiryDate       DateTime?
   reorderThreshold Float?
   createdAt        DateTime       @default(now())

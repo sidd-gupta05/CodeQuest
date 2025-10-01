@@ -611,6 +611,7 @@
 
 // export default BookingChart;
 
+//components/Lab/BookingChart.tsx
 'use client';
 
 import React, { useMemo, useState, useRef, useEffect } from 'react';
