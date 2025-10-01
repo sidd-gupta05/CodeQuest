@@ -11,28 +11,28 @@ const Patient_list = () => {
 
   console.log('Patient Data:', patientData);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPageLoading(false);
-    }, 1000);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setPageLoading(false);
+  //   }, 1000);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
-  if (pageLoading) {
-    return (
-      <div className="flex min-h-screen bg-gray-50 items-center justify-center">
-        <div className="text-center">
-          <img
-            src="/to-do-list.gif"
-            alt="Loading..."
-            className="mx-auto w-32 h-32"
-          />
-          <p className="mt-4 text-gray-600">Loading patient list...</p>
-        </div>
-      </div>
-    );
-  }
+  // if (pageLoading) {
+  //   return (
+  //     <div className="flex min-h-screen bg-gray-50 items-center justify-center">
+  //       <div className="text-center">
+  //         <img
+  //           src="/to-do-list.gif"
+  //           alt="Loading..."
+  //           className="mx-auto w-32 h-32"
+  //         />
+  //         <p className="mt-4 text-gray-600">Loading patient list...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="p-8">
