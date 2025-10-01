@@ -85,7 +85,7 @@ const SalesModule = () => {
     direction: 'asc',
   });
 
-  const reportRef = useRef<HTMLDivElement>(null); // Ref for the content to be downloaded
+  const reportRef = useRef<HTMLDivElement>(null); 
   const computationsRef = useRef<any>({});
   const employeeDataRef = useRef<Employee[]>([]);
   const monthlyDataRef = useRef<MonthlyFinancials[]>([]);
@@ -268,11 +268,13 @@ const SalesModule = () => {
           appointmentCount: 0,
         }
       );
-      return [{
-        month: `Year ${selectedYear}`,
-        year: selectedYear,
-        ...annualData
-      }];
+      return [
+        {
+          month: `Year ${selectedYear}`,
+          year: selectedYear,
+          ...annualData,
+        },
+      ];
     }
     return monthlyDataRef.current;
   }, [timeFilter, selectedYear, monthlyDataRef.current]);
@@ -288,27 +290,44 @@ const SalesModule = () => {
     }
 
     try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      let yOffset = 15;
+
+      pdf.setFontSize(20);
+      pdf.text(`Sales Report - ${selectedYear}`, pdfWidth / 2, yOffset, {
+        align: 'center',
+      });
+      yOffset += 8;
+      pdf.setFontSize(10);
+      pdf.text(`Report generated on: ${new Date().toLocaleDateString()}`, pdfWidth / 2, yOffset, {
+        align: 'center',
+      });
+      yOffset += 5;
+      pdf.line(10, yOffset, pdfWidth - 10, yOffset);
+      yOffset += 5;
+
       const canvas = await html2canvas(input, {
         scale: 2,
         useCORS: true,
       });
 
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
       const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const imgPdfWidth = pdf.internal.pageSize.getWidth();
+      const imgPdfHeight = (imgProps.height * imgPdfWidth) / imgProps.width;
 
-      let position = 0;
-      let heightLeft = pdfHeight;
+      let position = yOffset;
+      let heightLeft = imgPdfHeight;
 
-      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', 0, position, imgPdfWidth, imgPdfHeight);
       heightLeft -= pdf.internal.pageSize.getHeight();
 
       while (heightLeft >= 0) {
-        position = heightLeft - pdfHeight;
+        position = heightLeft - imgPdfHeight + yOffset;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+        pdf.addImage(imgData, 'PNG', 0, position, imgPdfWidth, imgPdfHeight);
         heightLeft -= pdf.internal.pageSize.getHeight();
       }
 
