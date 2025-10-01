@@ -25,6 +25,7 @@ import { LabContext } from '@/app/context/LabContext';
 import ChangePasswordForm from './ChangePasswordForm';
 import NotificationSettings from './NotificationSetting';
 import LabTests from './LabTests';
+import { uuidv4 } from 'zod';
 
 interface CheckboxFieldProps {
   label: string;
@@ -272,6 +273,7 @@ const LabForm: React.FC = () => {
       if (labError) throw new Error(`Lab update failed: ${labError.message}`);
 
       const labDetailsPayload = {
+        id: uuidv4(),
         labId: labId,
         labName: formData.labName,
         labcontactNumber: formData.labContactNumber,
