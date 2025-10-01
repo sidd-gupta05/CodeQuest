@@ -1,0 +1,13 @@
+[
+  {
+    "key": "ctrl+alt+v",
+    "command": "workbench.action.tasks.runTask",
+    "when": "terminalFocus",
+    "args": "Run Dev"
+  },
+  {
+    "key": "ctrl+alt+b",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Run Build"
+  }
+]
