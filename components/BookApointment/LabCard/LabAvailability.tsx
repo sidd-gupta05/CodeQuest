@@ -14,6 +14,7 @@ export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  console.log({ lab });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -80,7 +81,7 @@ export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => {
                         >
                           {slot}
                         </span>
-                      ) : null
+                      ) : null 
                     )}
                   </div>
                 </div>
