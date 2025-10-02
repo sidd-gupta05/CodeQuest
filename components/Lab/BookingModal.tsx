@@ -304,6 +304,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
               Report Status
             </h3>
 
+            <p
+              className={`text-xs mb-2`}
+            >
+              Current Status : {confirmedStatus.replace('_', ' ')}
+            </p>
+
             <Select value={reportStatus || 'TEST_BOOKED'} onValueChange={setReportStatus}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select report status" />
@@ -352,7 +358,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   : 'text-gray-500'
               }`}
             >
-              Uploads remaining: {uploadAttemptsLeft}/3
+              Uploads remaining : {uploadAttemptsLeft}/3
             </p>
 
             <label

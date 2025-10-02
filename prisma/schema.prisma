@@ -57,6 +57,7 @@ model Lab {
   details               LabDetails?
   lab_inventory         lab_inventory[]
   timeSlots             LabTimeSlot[]
+  employees             employee[]
   user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   schedules             Schedule[]
   tests                 tests[]         @relation("AvailableTests")
@@ -188,6 +189,7 @@ model bookings {
   patientId      String
   labId          String
   timeSlotId     String?
+  allocatedEmpId String?
   date           DateTime
   status         BookingStatus    @default(PENDING)
   totalAmount    Float
@@ -202,6 +204,7 @@ model bookings {
   lab_time_slots LabTimeSlot?     @relation(fields: [timeSlotId], references: [id])
   payments       Payment[]
   tests          tests[]          @relation("BookingTests")
+  allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])
 }
 
 model tests {
@@ -220,18 +223,18 @@ model tests {
 }
 
 model CustomReagent {
-  id          String   @id
-  labId       String
-  name        String
-  category    String?
-  description String?
-  unit        String
-  quantity    Float?
-  expiryDate  DateTime?
+  id               String    @id
+  labId            String
+  name             String
+  category         String?
+  description      String?
+  unit             String
+  quantity         Float?
+  expiryDate       DateTime?
   reorderThreshold Float?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-  labs        Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime
+  labs             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
 model ReagentCatalog {
@@ -275,6 +278,18 @@ model lab_inventory {
   ReagentCatalog   ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
 
   @@unique([labId, reagentId])
+}
+
+model employee {
+  id            String @id
+  labId         String
+  name          String
+  role          String
+  monthlySalary Float
+  department    String
+  bookings      bookings[]
+  createdAt     DateTime @default(now())
+  lab           Lab    @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
 enum DayOfWeek {

@@ -51,9 +51,9 @@ const SalesInsights: React.FC<SalesInsightsProps> = ({
     const totalNetProfit = computations.totalNetProfit || 0;
     const totalCosts =
       computations.totalEmployeeCosts +
-        computations.totalOperatingCosts +
-        computations.totalEquipmentCosts +
-        computations.totalInventoryCosts || 1;
+      computations.totalOperatingCosts +
+      computations.totalEquipmentCosts +
+      computations.totalInventoryCosts || 1;
 
     return {
       profitMargin: Math.round((totalNetProfit / totalRevenue) * 100),
@@ -70,26 +70,30 @@ const SalesInsights: React.FC<SalesInsightsProps> = ({
           Department Breakdown
         </h3>
         <div className="space-y-4">
-          {departmentBreakdown.map((dept, index) => (
-            <div
-              key={dept.name}
-              className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-            >
-              <div>
-                <p className="font-medium text-gray-900">{dept.name}</p>
-                <p className="text-sm text-gray-500">
-                  ({dept.employeeCount} employees)
-                </p>
+          {employeeData.length === 0 ? (
+            <p className="text-center text-sm text-gray-500">Add Employees ; No Data Available</p>
+          ) : (
+            departmentBreakdown.map((dept, index) => (
+              <div
+                key={dept.name}
+                className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+              >
+                <div>
+                  <p className="font-medium text-gray-900">{dept.name}</p>
+                  <p className="text-sm text-gray-500">
+                    ({dept.employeeCount} employees)
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold text-gray-900">
+                    <IndianRupee className="inline w-3 h-3 mr-1 text-gray-700" />
+                    {dept.totalSalary.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">per month</p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">
-                  <IndianRupee className="inline w-3 h-3 mr-1 text-gray-700" />
-                  {dept.totalSalary.toLocaleString()}
-                </p>
-                <p className="text-sm text-gray-500">per month</p>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
