@@ -288,6 +288,7 @@ model employee {
   monthlySalary Float
   department    String
   createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now())
   bookings      bookings[]
   lab           Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
 }

@@ -115,13 +115,6 @@ const SalesModule = () => {
 
     const monthlyFinancials: MonthlyFinancials[] = months.map(
       (month, index) => {
-        // const monthBookings = bookingsData.filter((booking) => {
-        //   const bookingDate = new Date(booking.date);
-        //   return (
-        //     bookingDate.getMonth() === index &&
-        //     bookingDate.getFullYear() === selectedYear
-        //   );
-        // });
 
         const monthBookings = bookingsData.filter((booking) => {
           const bookingDate = new Date(booking.date);
@@ -191,45 +184,7 @@ const SalesModule = () => {
     };
   };
 
-  // const allbookings = useContext(LabContext)?.bookingData || [];
-  // console.log('All Bookings from Context:', allbookings);
-
-  // useEffect(() => {
-  //   const fetchBookings = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const mockBookings: Booking[] = Array.from({ length: 250 }, (_, i) => {
-  //         const date = new Date(
-  //           2024,
-  //           Math.floor(Math.random() * 12),
-  //           Math.floor(Math.random() * 28) + 1
-  //         );
-  //         const totalAmount =
-  //           Math.round((Math.random() * 3000 + 800) * 100) / 100;
-
-  //         return {
-  //           id: `booking-${i}`,
-  //           bookingId: `BK${String(i + 1).padStart(4, '0')}`,
-  //           date: date.toISOString(),
-  //           totalAmount,
-  //           status: ['CONFIRMED', 'COMPLETED', 'PENDING'][
-  //             Math.floor(Math.random() * 3)
-  //           ],
-  //           patientId: `patient-${i}`,
-  //           labId: 'lab-1',
-  //         };
-  //       });
-
-  //       employeeDataRef.current = initializeEmployeeData();
-  //       calculateFinancials(mockBookings);
-  //     } catch (error) {
-  //       console.error('Error fetching bookings:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchBookings();
-  // }, [selectedYear]);
+  
 
   useEffect(() => {
     setLoading(true);
