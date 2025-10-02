@@ -1,4 +1,4 @@
-//CREATE EMPLOYEE
+//app/api/employee/create-employee/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
@@ -28,7 +28,8 @@ export async function POST(request: NextRequest) {
         role,
         monthlySalary,
         department,
-        createdAt: now,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
       .select()
       .single();
