@@ -22,7 +22,6 @@ import {
 import toast from 'react-hot-toast';
 import { PDFDocument } from 'pdf-lib-with-encrypt';
 
-
 type Booking = {
   bookingId: string;
   booking_tests: { testId: { name: string } }[];
@@ -78,33 +77,31 @@ const BookingModal: React.FC<BookingModalProps> = ({
     booking.reportStatus || 'TEST_BOOKED'
   );
 
+  async function lockPdf(file: File, booking: Booking) {
+    // Extract lab initials (first 4 uppercase letters)
+    const passInitials: string = getUpperCaseName(booking);
+    const passFinal: string = getLastNum(booking);
 
-async function lockPdf(file: File, booking: Booking) {
-  // Extract lab initials (first 4 uppercase letters)
-  const passInitials: string = getUpperCaseName(booking);
-  const passFinal: string = getLastNum(booking);
+    const password: string = passInitials + passFinal;
 
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
 
-  const password: string = passInitials + passFinal;
+    // Encrypt PDF
+    pdfDoc.encrypt({
+      userPassword: password,
+      ownerPassword: password,
+      permissions: {
+        printing: 'highResolution',
+        modifying: false,
+        copying: false,
+        annotating: false,
+      },
+    });
 
-  const arrayBuffer = await file.arrayBuffer();
-  const pdfDoc = await PDFDocument.load(arrayBuffer);
-
-  // Encrypt PDF
-  pdfDoc.encrypt({
-    userPassword: password,
-    ownerPassword: password,
-    permissions: {
-      printing: 'highResolution',
-      modifying: false,
-      copying: false,
-      annotating: false,
-    },
-  });
-
-  const lockedPdfBytes = await pdfDoc.save();
-  return { lockedPdfBytes, password };
-}
+    const lockedPdfBytes = await pdfDoc.save();
+    return { lockedPdfBytes, password };
+  }
 
   async function handleSave(reportStatus: string) {
     try {
@@ -156,9 +153,7 @@ async function lockPdf(file: File, booking: Booking) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      const validTypes = [
-        'application/pdf',
-      ];
+      const validTypes = ['application/pdf'];
 
       if (!validTypes.includes(file.type)) {
         toast.error('Only PDF and DOCX files are allowed');
@@ -176,8 +171,7 @@ async function lockPdf(file: File, booking: Booking) {
   };
 
   const parseFileName = (bookingId: string, file: File) => {
-    const NEXT_PUBLIC_SUPABASE_URL =
-      process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
     const cleanFileName = file.name.replace(/\s+/g, '_');
     return {
@@ -186,23 +180,20 @@ async function lockPdf(file: File, booking: Booking) {
     };
   };
 
-  const getUpperCaseName  = (booking: Booking): string  => {
+  const getUpperCaseName = (booking: Booking): string => {
     return booking.labName ? booking.labName.toUpperCase() : '';
-  }
+  };
 
-  const getLastNum  = (booking: Booking): string  => {
+  const getLastNum = (booking: Booking): string => {
     return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
-  }
+  };
 
   // Report upload handler
   const handleReport = async () => {
     if (!uploadedFile || !booking?.bookingId) return null;
 
     try {
-      const { lockedPdfBytes, password } = await lockPdf(
-        uploadedFile,
-        booking
-      );
+      const { lockedPdfBytes, password } = await lockPdf(uploadedFile, booking);
       console.log({ password });
 
       const { path, publicUrl } = parseFileName(
@@ -212,12 +203,15 @@ async function lockPdf(file: File, booking: Booking) {
 
       const { error: fileError } = await supabase.storage
         .from('uploads')
-        .upload(path, lockedPdfBytes, { upsert: true, contentType: 'application/pdf' });
+        .upload(path, lockedPdfBytes, {
+          upsert: true,
+          contentType: 'application/pdf',
+        });
 
       if (fileError) throw new Error(fileError.message);
 
-          // TODO: send email to patient with publicUrl + password hint
-          
+      // TODO: send email to patient with publicUrl + password hint
+
       setUploadAttemptsLeft((prev) => {
         const next = Math.max(prev - 1, 0);
         if (booking?.bookingId) {
@@ -348,6 +342,10 @@ async function lockPdf(file: File, booking: Booking) {
               Report Status
             </h3>
 
+            <p className={`text-xs mb-2`}>
+              Current Status : {confirmedStatus.replace('_', ' ')}
+            </p>
+
             <Select
               value={reportStatus || 'TEST_BOOKED'}
               onValueChange={setReportStatus}
@@ -399,7 +397,7 @@ async function lockPdf(file: File, booking: Booking) {
                   : 'text-gray-500'
               }`}
             >
-              Uploads remaining: {uploadAttemptsLeft}/3
+              Uploads remaining : {uploadAttemptsLeft}/3
             </p>
 
             <label

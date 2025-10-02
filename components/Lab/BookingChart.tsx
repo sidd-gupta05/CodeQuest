@@ -843,7 +843,7 @@ const BookingChart: React.FC<BookingChartProps> = ({
                   onClick={handleBackToYearly}
                   className="text-sm px-2 flex items-center py-1 border cursor-pointer rounded hover:bg-gray-100"
                 >
-                  <ChevronLeft className="w-4 h-4 mr-1" /> Yearly
+                  <ChevronLeft className="w-4 h-4 mr-1" /> Monthly
                 </button>
                 <div>
                   <span className="text-sm">
