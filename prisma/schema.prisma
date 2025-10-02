@@ -54,10 +54,10 @@ model Lab {
   updatedAt             DateTime        @updatedAt
   CustomReagent         CustomReagent[]
   bookings              bookings[]
+  employees             employee[]
   details               LabDetails?
   lab_inventory         lab_inventory[]
   timeSlots             LabTimeSlot[]
-  employees             employee[]
   user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   schedules             Schedule[]
   tests                 tests[]         @relation("AvailableTests")
@@ -189,7 +189,6 @@ model bookings {
   patientId      String
   labId          String
   timeSlotId     String?
-  allocatedEmpId String?
   date           DateTime
   status         BookingStatus    @default(PENDING)
   totalAmount    Float
@@ -197,14 +196,15 @@ model bookings {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime
   reportStatus   ReportStatus     @default(BOOKING_PENDING)
+  allocatedEmpId String?
   booking_addons booking_addons[]
   booking_tests  booking_tests[]
+  allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])
   labs           Lab              @relation(fields: [labId], references: [id], onDelete: Cascade)
   patients       Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
   lab_time_slots LabTimeSlot?     @relation(fields: [timeSlotId], references: [id])
   payments       Payment[]
   tests          tests[]          @relation("BookingTests")
-  allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])
 }
 
 model tests {
@@ -229,11 +229,11 @@ model CustomReagent {
   category         String?
   description      String?
   unit             String
-  quantity         Float?
-  expiryDate       DateTime?
-  reorderThreshold Float?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime
+  expiryDate       DateTime?
+  quantity         Float?
+  reorderThreshold Float?
   labs             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
@@ -254,9 +254,9 @@ model TestReagent {
   testId          String
   reagentId       String
   quantityPerTest Float
-  unit            String
   createdAt       DateTime       @default(now())
   updatedAt       DateTime
+  unit            String
   ReagentCatalog  ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
   tests           tests          @relation(fields: [testId], references: [id], onDelete: Cascade)
 
@@ -269,11 +269,11 @@ model lab_inventory {
   reagentId        String
   quantity         Float
   unit             String
-  batchNumber      String?
   expiryDate       DateTime?
   reorderThreshold Float?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime
+  batchNumber      String?
   labs             Lab            @relation(fields: [labId], references: [id], onDelete: Cascade)
   ReagentCatalog   ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
 
@@ -281,15 +281,15 @@ model lab_inventory {
 }
 
 model employee {
-  id            String @id
+  id            String     @id
   labId         String
   name          String
   role          String
   monthlySalary Float
   department    String
+  createdAt     DateTime   @default(now())
   bookings      bookings[]
-  createdAt     DateTime @default(now())
-  lab           Lab    @relation(fields: [labId], references: [id], onDelete: Cascade)
+  lab           Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
 enum DayOfWeek {

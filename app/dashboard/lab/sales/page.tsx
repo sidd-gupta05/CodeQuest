@@ -77,7 +77,6 @@ const getMonthlyFixedCosts = () => {
 };
 
 const SalesModule = () => {
-
   const currentYear = new Date().getFullYear();
 
   const [timeFilter, setTimeFilter] = useState<'monthly' | 'yearly'>('monthly');
@@ -238,9 +237,9 @@ const SalesModule = () => {
       // Use real bookings from context
       if (allbookings.length > 0) {
         // employeeDataRef.current = initializeEmployeeData();
-        calculateFinancials(allbookings);  // pass context bookings here
+        calculateFinancials(allbookings); // pass context bookings here
       } else {
-        console.warn("No booking data available in LabContext");
+        console.warn('No booking data available in LabContext');
         // employeeDataRef.current = initializeEmployeeData();
         calculateFinancials([]); // still compute but with empty data
       }
@@ -250,7 +249,6 @@ const SalesModule = () => {
       setLoading(false);
     }
   }, [allbookings.length, selectedYear]);
-
 
   // const sortedMonthlyData = useMemo(() => {
   //   const data = [...monthlyDataRef.current];
@@ -275,8 +273,18 @@ const SalesModule = () => {
   // }, [sortConfig, monthlyDataRef.current]);
 
   const monthOrder = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   const sortedMonthlyData = useMemo(() => {
@@ -289,7 +297,8 @@ const SalesModule = () => {
         // Custom sorting for month
         if (sortConfig.key === 'month') {
           return (
-            (monthOrder.indexOf(aValue as string) - monthOrder.indexOf(bValue as string)) *
+            (monthOrder.indexOf(aValue as string) -
+              monthOrder.indexOf(bValue as string)) *
             (sortConfig.direction === 'asc' ? 1 : -1)
           );
         }
@@ -301,7 +310,6 @@ const SalesModule = () => {
     }
     return data;
   }, [sortConfig, monthlyDataRef.current]);
-
 
   const handleSort = (key: string) => {
     setSortConfig({
@@ -368,9 +376,14 @@ const SalesModule = () => {
       });
       yOffset += 8;
       pdf.setFontSize(10);
-      pdf.text(`Report generated on: ${new Date().toLocaleDateString()}`, pdfWidth / 2, yOffset, {
-        align: 'center',
-      });
+      pdf.text(
+        `Report generated on: ${new Date().toLocaleDateString()}`,
+        pdfWidth / 2,
+        yOffset,
+        {
+          align: 'center',
+        }
+      );
       yOffset += 5;
       pdf.line(10, yOffset, pdfWidth - 10, yOffset);
       yOffset += 5;
