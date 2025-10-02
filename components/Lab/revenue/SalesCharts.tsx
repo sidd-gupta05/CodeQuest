@@ -1,3 +1,4 @@
+//components/Lab/revenue/SalesCharts.tsx
 import React, { useMemo } from 'react';
 import {
   BarChart,

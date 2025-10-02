@@ -1,3 +1,4 @@
+//components/Lab/revenue/SalesTables.tsx
 import React from 'react';
 import { ArrowUpDown, ArrowUp, ArrowDown, IndianRupee } from 'lucide-react';
 import { MonthlyFinancials, Employee, SortConfig } from './types';

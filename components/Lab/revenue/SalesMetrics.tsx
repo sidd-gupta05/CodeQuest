@@ -1,3 +1,4 @@
+//app/dashboard/lab/sales/page.tsx
 import React from 'react';
 import { IndianRupee, TrendingUp, TrendingDown, Users } from 'lucide-react';
 

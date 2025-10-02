@@ -21,7 +21,7 @@ export async function PUT(request: NextRequest) {
         role,
         department,
         monthlySalary,
-        updatedAt: new Date().toISOString(), // Changed from updated_at to updatedAt
+        updatedAt: new Date().toISOString(), 
       })
       .eq('id', id)
       .select()

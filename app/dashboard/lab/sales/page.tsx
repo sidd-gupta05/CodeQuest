@@ -1,16 +1,7 @@
+//app/dashboard/lab/sales/page.tsx
 'use client';
 
 import React, { useState, useRef, useMemo, useEffect, useContext } from 'react';
-import {
-  Download,
-  Filter,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  IndianRupee,
-  TrendingUp,
-  TrendingDown,
-} from 'lucide-react';
 import SalesHeader from '@/components/Lab/revenue/SalesHeader';
 import SalesMetrics from '@/components/Lab/revenue/SalesMetrics';
 import SalesCharts from '@/components/Lab/revenue/SalesCharts';
@@ -26,46 +17,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { LabContext } from '@/app/context/LabContext';
 
-// Fixed employee data (hardcoded as requested)
-const initializeEmployeeData = (): Employee[] => [
-  {
-    id: 'EMP001',
-    name: 'Dr. Sharma',
-    role: 'Pathologist',
-    monthlySalary: 5,
-    department: 'Lab Operations',
-  },
-  // {
-  //   id: 'EMP002',
-  //   name: 'Priya Patel',
-  //   role: 'Lab Technician',
-  //   monthlySalary: 4500,
-  //   department: 'Lab Operations',
-  // },
-  // {
-  //   id: 'EMP003',
-  //   name: 'Rahul Kumar',
-  //   role: 'Lab Technician',
-  //   monthlySalary: 4200,
-  //   department: 'Lab Operations',
-  // },
-  // {
-  //   id: 'EMP004',
-  //   name: 'Anita Desai',
-  //   role: 'Receptionist',
-  //   monthlySalary: 2800,
-  //   department: 'Administration',
-  // },
-  // {
-  //   id: 'EMP005',
-  //   name: 'Sanjay Mehta',
-  //   role: 'Lab Manager',
-  //   monthlySalary: 6800,
-  //   department: 'Management',
-  // },
-];
-
-// Fixed monthly costs (hardcoded as requested)
+// Fixed monthly costs (hardcoded)
 const getMonthlyFixedCosts = () => {
   const baseEquipmentCost = 10;
   const baseInventoryCost = 5;
@@ -82,7 +34,7 @@ const SalesModule = () => {
   const [timeFilter, setTimeFilter] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [loading, setLoading] = useState(true);
-  const [isDownloading, setIsDownloading] = useState(false); // New state for download status
+  const [isDownloading, setIsDownloading] = useState(false); 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: 'month',
     direction: 'asc',
@@ -93,10 +45,8 @@ const SalesModule = () => {
 
   const reportRef = useRef<HTMLDivElement>(null);
   const computationsRef = useRef<any>({});
-  // const employeeDataRef = useRef<Employee[]>([]);
   const monthlyDataRef = useRef<MonthlyFinancials[]>([]);
 
-  // Calculate financials from bookings
   const calculateFinancials = (bookingsData: Booking[]) => {
     const months = [
       'Jan',
@@ -129,10 +79,20 @@ const SalesModule = () => {
           0
         );
         const appointmentCount = monthBookings.length;
-        const totalEmployeeCosts = employee.reduce(
-          (sum, emp) => sum + emp.monthlySalary,
-          0
-        );
+        
+        // FIXed: Calculate employee costs only for months when they were employed
+        const totalEmployeeCosts = employee.reduce((sum, emp) => {
+          const joinDate = new Date(emp.createdAt);
+          const joinYear = joinDate.getFullYear();
+          const joinMonth = joinDate.getMonth();
+          
+          // If employee joined in or before this month of the selected year
+          if (joinYear < selectedYear || (joinYear === selectedYear && joinMonth <= index)) {
+            return sum + emp.monthlySalary;
+          }
+          return sum;
+        }, 0);
+
         const { equipmentCosts, inventoryCosts } = getMonthlyFixedCosts();
         const operatingCosts = revenue * 0.3;
         const totalCosts =
@@ -184,48 +144,21 @@ const SalesModule = () => {
     };
   };
 
-  
-
   useEffect(() => {
     setLoading(true);
     try {
-      // Use real bookings from context
       if (allbookings.length > 0) {
-        // employeeDataRef.current = initializeEmployeeData();
-        calculateFinancials(allbookings); // pass context bookings here
+        calculateFinancials(allbookings); 
       } else {
         console.warn('No booking data available in LabContext');
-        // employeeDataRef.current = initializeEmployeeData();
-        calculateFinancials([]); // still compute but with empty data
+        calculateFinancials([]);
       }
     } catch (error) {
       console.error('Error processing bookings:', error);
     } finally {
       setLoading(false);
     }
-  }, [allbookings.length, selectedYear]);
-
-  // const sortedMonthlyData = useMemo(() => {
-  //   const data = [...monthlyDataRef.current];
-  //   if (sortConfig.key) {
-  //     data.sort((a, b) => {
-  //       if (
-  //         a[sortConfig.key as keyof MonthlyFinancials] <
-  //         b[sortConfig.key as keyof MonthlyFinancials]
-  //       ) {
-  //         return sortConfig.direction === 'asc' ? -1 : 1;
-  //       }
-  //       if (
-  //         a[sortConfig.key as keyof MonthlyFinancials] >
-  //         b[sortConfig.key as keyof MonthlyFinancials]
-  //       ) {
-  //         return sortConfig.direction === 'asc' ? 1 : -1;
-  //       }
-  //       return 0;
-  //     });
-  //   }
-  //   return data;
-  // }, [sortConfig, monthlyDataRef.current]);
+  }, [allbookings.length, selectedYear, employee]); 
 
   const monthOrder = [
     'Jan',
@@ -407,7 +340,6 @@ const SalesModule = () => {
         isDownloading={isDownloading}
       />
 
-      {/* This div is what will be captured for the PDF. It excludes the header. */}
       <div ref={reportRef}>
         <SalesMetrics computations={computationsRef.current} />
         <SalesCharts

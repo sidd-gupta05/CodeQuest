@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
-import { CreditCard } from 'lucide-react';
+import { CreditCard, Loader2 } from 'lucide-react';
 
 interface PaymentClientProps {
   onBack: () => void;
@@ -36,6 +36,7 @@ export default function PaymentClient({
   totalAmount,
 }: PaymentClientProps) {
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [verificationLoading, setVerificationLoading] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
   useEffect(() => {
@@ -135,50 +136,62 @@ export default function PaymentClient({
         image: '/logo.svg',
         order_id: orderData.id,
         handler: async function (response: any) {
-          // Verify payment
-          const verificationResponse = await fetch(
-            '/api/razorpay/verify-payment',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                razorpayPaymentId: response.razorpay_payment_id,
-                razorpayOrderId: response.razorpay_order_id,
-                razorpaySignature: response.razorpay_signature,
-              }),
-            }
-          );
+          // Start verification loading
+          setVerificationLoading(true);
 
-          const verificationData = await verificationResponse.json();
-
-          if (verificationData.success) {
-            // Create payment record in database (only with fields that exist in schema)
-            const paymentResponse = await fetch(
-              '/api/bookings/create-payment',
+          try {
+            // Verify payment
+            const verificationResponse = await fetch(
+              '/api/razorpay/verify-payment',
               {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  bookingId: bookingId,
-                  status: 'success',
-                  amount: totalAmount,
-                  paidAt: new Date().toISOString(),
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpayOrderId: response.razorpay_order_id,
+                  razorpaySignature: response.razorpay_signature,
                 }),
               }
             );
 
-            const paymentData = await paymentResponse.json();
-            if (paymentData.success) {
-              onNext(); // Redirect to confirmation
+            const verificationData = await verificationResponse.json();
+
+            if (verificationData.success) {
+              // Create payment record in database (only with fields that exist in schema)
+              const paymentResponse = await fetch(
+                '/api/bookings/create-payment',
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    bookingId: bookingId,
+                    status: 'success',
+                    amount: totalAmount,
+                    paidAt: new Date().toISOString(),
+                  }),
+                }
+              );
+
+              const paymentData = await paymentResponse.json();
+              if (paymentData.success) {
+                onNext(); // Redirect to confirmation
+              } else {
+                alert(
+                  'Payment record creation failed. Please contact support.'
+                );
+              }
             } else {
-              alert('Payment record creation failed. Please contact support.');
+              alert('Payment verification failed. Please try again.');
             }
-          } else {
+          } catch (error) {
+            console.error('Payment verification error:', error);
             alert('Payment verification failed. Please try again.');
+          } finally {
+            setVerificationLoading(false);
           }
         },
         prefill: {
@@ -212,18 +225,27 @@ export default function PaymentClient({
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors cursor-pointer"
+          disabled={paymentLoading || verificationLoading}
+          className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
         >
           Back
         </button>
 
         <button
           onClick={handlePayment}
-          disabled={paymentLoading}
-          className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+          disabled={paymentLoading || verificationLoading}
+          className="flex items-center gap-2 px-6 py-3 bg-[#37AFA2] text-white rounded-lg font-medium hover:bg-[#2d9a8d] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer min-w-[140px] justify-center"
         >
           {paymentLoading ? (
-            'Processing...'
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Processing...
+            </>
+          ) : verificationLoading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Verifying...
+            </>
           ) : (
             <>
               <CreditCard className="w-5 h-5" />

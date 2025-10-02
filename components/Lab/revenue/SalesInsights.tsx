@@ -1,3 +1,4 @@
+//app/dashboard/lab/sales/page.tsx
 import React, { useMemo } from 'react';
 import {
   Building,
