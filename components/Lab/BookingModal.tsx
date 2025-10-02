@@ -53,10 +53,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
   onClose,
   //   onUpdateStatus,
 }) => {
-  if (!show || !booking) return null;
-
   const [reportStatus, setReportStatus] = useState(
-    booking.reportStatus || 'TEST_BOOKED'
+    booking?.reportStatus || 'TEST_BOOKED'
   );
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -74,18 +72,20 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [confirmedStatus, setConfirmedStatus] = useState(
-    booking.reportStatus || 'TEST_BOOKED'
+    booking?.reportStatus || 'TEST_BOOKED'
   );
+
+    if (!show || !booking) return null;
 
   async function lockPdf(file: File, booking: Booking) {
     // Extract lab initials (first 4 uppercase letters)
-    const passInitials: string = getUpperCaseName(booking);
+    const passInitials: string = getUpperCaseName(booking).slice(0, 4);
     const passFinal: string = getLastNum(booking);
 
     const password: string = passInitials + passFinal;
 
     const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true});
 
     // Encrypt PDF
     pdfDoc.encrypt({
@@ -150,7 +150,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   }
 
   // File input change
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const validTypes = ['application/pdf'];
@@ -158,6 +158,15 @@ const BookingModal: React.FC<BookingModalProps> = ({
       if (!validTypes.includes(file.type)) {
         toast.error('Only PDF and DOCX files are allowed');
         e.target.value = ''; // clear input
+        return;
+      }
+      
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true});
+
+      if (pdfDoc.isEncrypted) {
+        toast.error('Upload unprotected file! Password Protection is enabled by default');
+        e.target.value = '';
         return;
       }
 
@@ -173,10 +182,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const parseFileName = (bookingId: string, file: File) => {
     const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
-    const cleanFileName = file.name.replace(/\s+/g, '_');
+    const finalFileName = `${getLastNum(booking)}_report.pdf`;
     return {
-      path: `bookings/${bookingId}/${cleanFileName}`,
-      publicUrl: `${NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${bookingId}/${cleanFileName}`,
+      path: `bookings/${bookingId}/${finalFileName}`,
+      publicUrl: `${NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${bookingId}/${finalFileName}`,
     };
   };
 

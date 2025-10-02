@@ -7,15 +7,6 @@ import {
   Eye,
   ChevronDown,
   ChevronUp,
-  FlaskConical,
-  FileCheck2,
-  IndianRupee,
-  Calendar,
-  Receipt,
-  MapPin,
-  Phone,
-  User,
-  Clock,
 } from 'lucide-react';
 import BookingModal from './BookingModal';
 
@@ -97,6 +88,16 @@ const BookingList: React.FC<BookingListProps> = ({
 
     return undefined;
   };
+
+    const getLastNum = (booking: Booking): string => {
+    return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
+  };
+  
+  const getDownloadUrl = (booking: Booking) => {
+    const finalFileName = `${getLastNum(booking)}_report.pdf`;
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${booking.bookingId}/${finalFileName}`;
+  };
+
 
   // Sort bookings: Express first, then Superfast, then others
   // const sortedBookings = useMemo(() => {
@@ -244,9 +245,9 @@ const BookingList: React.FC<BookingListProps> = ({
                     >
                       <Eye className="w-5 h-5" />
                     </button>
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <Download className="w-5 h-5" />
-                    </button>
+                    <a href={getDownloadUrl(booking)} target="_blank" rel="noopener noreferrer">
+                      <Download className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                    </a>
                   </div>
                 </div>
 
@@ -336,9 +337,11 @@ const BookingList: React.FC<BookingListProps> = ({
                     <button className="text-gray-400 hover:text-gray-600">
                       <Eye className="w-4 h-4" />
                     </button>
+                    <a href={getDownloadUrl(booking)}>
                     <button className="text-gray-400 hover:text-gray-600">
                       <Download className="w-4 h-4" />
                     </button>
+                    </a>
                   </div>
                 </div>
 
