@@ -126,22 +126,22 @@
 //           <div class="section-title">Appointment Details</div>
 
 //           <p><span class="booking-id">${bookingDetails.bookingId}</span></p>
-          
+
 //           <div class="info-row">
 //             <span class="info-label">Patient Name:</span>
 //             <span>${bookingDetails.patient.firstName} ${bookingDetails.patient.lastName}</span>
 //           </div>
-          
+
 //           <div class="info-row">
 //             <span class="info-label">Lab Name:</span>
 //             <span>${bookingDetails.lab.name}</span>
 //           </div>
-          
+
 //           <div class="info-row">
 //             <span class="info-label">Appointment Date:</span>
 //             <span>${bookingDetails.date}</span>
 //           </div>
-          
+
 //           <div class="info-row">
 //             <span class="info-label">Appointment Time:</span>
 //             <span>${bookingDetails.time}</span>

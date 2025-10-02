@@ -1,6 +1,5 @@
 // components/Lab/BookingModal.tsx
 'use client';
-
 import React, { useState } from 'react';
 import {
   User,
@@ -21,11 +20,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import toast from 'react-hot-toast';
+import { PDFDocument } from 'pdf-lib-with-encrypt';
 
 type Booking = {
   bookingId: string;
   booking_tests: { testId: { name: string } }[];
   date: string;
+  labId: string;
+  labName: string;
   patientId?: {
     firstName?: string;
     lastName?: string;
@@ -51,10 +53,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
   onClose,
   //   onUpdateStatus,
 }) => {
-  if (!show || !booking) return null;
-
   const [reportStatus, setReportStatus] = useState(
-    booking.reportStatus || 'TEST_BOOKED'
+    booking?.reportStatus || 'TEST_BOOKED'
   );
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -67,13 +67,41 @@ const BookingModal: React.FC<BookingModalProps> = ({
       return stored ? parseInt(stored, 10) : 3;
     }
     return 3;
-  });  
+  });
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [confirmedStatus, setConfirmedStatus] = useState(
-    booking.reportStatus || 'TEST_BOOKED'
+    booking?.reportStatus || 'TEST_BOOKED'
   );
+
+    if (!show || !booking) return null;
+
+  async function lockPdf(file: File, booking: Booking) {
+    // Extract lab initials (first 4 uppercase letters)
+    const passInitials: string = getUpperCaseName(booking).slice(0, 4);
+    const passFinal: string = getLastNum(booking);
+
+    const password: string = passInitials + passFinal;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true});
+
+    // Encrypt PDF
+    pdfDoc.encrypt({
+      userPassword: password,
+      ownerPassword: password,
+      permissions: {
+        printing: 'highResolution',
+        modifying: false,
+        copying: false,
+        annotating: false,
+      },
+    });
+
+    const lockedPdfBytes = await pdfDoc.save();
+    return { lockedPdfBytes, password };
+  }
 
   async function handleSave(reportStatus: string) {
     try {
@@ -122,18 +150,23 @@ const BookingModal: React.FC<BookingModalProps> = ({
   }
 
   // File input change
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      const validTypes = [
-        'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-        'application/msword', // older .doc
-      ];
+      const validTypes = ['application/pdf'];
 
       if (!validTypes.includes(file.type)) {
         toast.error('Only PDF and DOCX files are allowed');
         e.target.value = ''; // clear input
+        return;
+      }
+      
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true});
+
+      if (pdfDoc.isEncrypted) {
+        toast.error('Upload unprotected file! Password Protection is enabled by default');
+        e.target.value = '';
         return;
       }
 
@@ -147,15 +180,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   const parseFileName = (bookingId: string, file: File) => {
-    const NEXT_PUBLIC_SUPABASE_URL =
-      process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      'https://unrlzieuyrsibokkqqbm.supabase.co';
+    const NEXT_PUBLIC_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
-    const cleanFileName = file.name.replace(/\s+/g, '_');
+    const finalFileName = `${getLastNum(booking)}_report.pdf`;
     return {
-      path: `bookings/${bookingId}/${cleanFileName}`,
-      publicUrl: `${NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${bookingId}/${cleanFileName}`,
+      path: `bookings/${bookingId}/${finalFileName}`,
+      publicUrl: `${NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${bookingId}/${finalFileName}`,
     };
+  };
+
+  const getUpperCaseName = (booking: Booking): string => {
+    return booking.labName ? booking.labName.toUpperCase() : '';
+  };
+
+  const getLastNum = (booking: Booking): string => {
+    return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
   };
 
   // Report upload handler
@@ -163,6 +202,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
     if (!uploadedFile || !booking?.bookingId) return null;
 
     try {
+      const { lockedPdfBytes, password } = await lockPdf(uploadedFile, booking);
+      console.log({ password });
+
       const { path, publicUrl } = parseFileName(
         booking.bookingId,
         uploadedFile
@@ -170,9 +212,14 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
       const { error: fileError } = await supabase.storage
         .from('uploads')
-        .upload(path, uploadedFile, { upsert: true });
+        .upload(path, lockedPdfBytes, {
+          upsert: true,
+          contentType: 'application/pdf',
+        });
 
       if (fileError) throw new Error(fileError.message);
+
+      // TODO: send email to patient with publicUrl + password hint
 
       setUploadAttemptsLeft((prev) => {
         const next = Math.max(prev - 1, 0);
@@ -210,7 +257,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         {/* Header */}
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold flex items-center gap-2">
-            # Booking Details
+            # Booking Details {getLastNum(booking)}
           </h2>
           <button
             onClick={onClose}
@@ -304,13 +351,14 @@ const BookingModal: React.FC<BookingModalProps> = ({
               Report Status
             </h3>
 
-            <p
-              className={`text-xs mb-2`}
-            >
+            <p className={`text-xs mb-2`}>
               Current Status : {confirmedStatus.replace('_', ' ')}
             </p>
 
-            <Select value={reportStatus || 'TEST_BOOKED'} onValueChange={setReportStatus}>
+            <Select
+              value={reportStatus || 'TEST_BOOKED'}
+              onValueChange={setReportStatus}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select report status" />
               </SelectTrigger>
@@ -372,7 +420,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 type="file"
                 className="absolute inset-0 opacity-0 w-full"
                 onChange={handleFileChange}
-                disabled={reportStatus !== 'REPORT_READY' || uploadAttemptsLeft === 0}
+                disabled={
+                  reportStatus !== 'REPORT_READY' || uploadAttemptsLeft === 0
+                }
               />
               <div className="flex flex-col items-center justify-center text-gray-600">
                 <p className="text-sm">Upload Reports</p>

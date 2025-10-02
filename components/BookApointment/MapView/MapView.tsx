@@ -5,17 +5,14 @@ import { ViewToggle } from '../ViewToggle/ViewToggle';
 import { Lab } from '../Filters';
 import { useSearchParams } from 'next/navigation';
 
-const MapBox = dynamic(
-  () => import('./MapBox'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="text-center mt-4 flex items-center justify-center">
-        <span>Loading map...</span>
-      </div>
-    ),
-  }
-);
+const MapBox = dynamic(() => import('./MapBox'), {
+  ssr: false,
+  loading: () => (
+    <div className="text-center mt-4 flex items-center justify-center">
+      <span>Loading map...</span>
+    </div>
+  ),
+});
 
 interface MapViewProps {
   labs: Lab[]; // already typed

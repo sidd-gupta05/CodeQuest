@@ -4,7 +4,7 @@
 // interface CalendarProps {
 //   selectedDate: Date;
 //   onDateChange: (date: Date) => void;
-//   disabled?: (date: Date) => boolean; 
+//   disabled?: (date: Date) => boolean;
 // }
 
 // const Calendar = ({ selectedDate, onDateChange }: CalendarProps) => {
@@ -17,7 +17,7 @@
 
 //   const handlePrevMonth = () => {
 //     if (currentMonth === 0) {
-//       setCurrentMonth(11);   
+//       setCurrentMonth(11);
 //       setCurrentYear(currentYear - 1);
 //     } else {
 //       setCurrentMonth(currentMonth - 1);
@@ -249,8 +249,8 @@ const Calendar = ({ selectedDate, onDateChange, disabled }: CalendarProps) => {
                 isDisabled
                   ? 'text-gray-300 cursor-not-allowed'
                   : isSelected
-                  ? 'bg-[#37AFA2] text-white'
-                  : 'hover:bg-gray-100'
+                    ? 'bg-[#37AFA2] text-white'
+                    : 'hover:bg-gray-100'
               }`}
             >
               {date.day}

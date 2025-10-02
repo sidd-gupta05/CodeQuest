@@ -121,8 +121,8 @@
 //                     const { data, error } = await supabase
 //                         .from('bookings')
 //                         .select(
-//                             `*, 
-//               patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
+//                             `*,
+//               patientId(address, firstName, lastName, dateOfBirth, phone, gender),
 //               booking_tests(testId(name)),
 //               booking_addons(addons(name))`
 //                         )
@@ -182,10 +182,6 @@
 //         </LabContext.Provider>
 //     );
 // };
-
-
-
-
 
 // 'use client';
 
@@ -302,8 +298,8 @@
 //         const { data, error: bookingError } = await supabase
 //           .from('bookings')
 //           .select(
-//             `*, 
-//              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
+//             `*,
+//              patientId(address, firstName, lastName, dateOfBirth, phone, gender),
 //              booking_tests(testId(name)),
 //              booking_addons(addons(name))`
 //           )
@@ -371,8 +367,6 @@
 //     </LabContext.Provider>
 //   );
 // };
-
-
 
 //-----------------------------------------------------------------------------------
 
@@ -466,8 +460,8 @@
 //         const { data: bookings, error: bookingError } = await supabase
 //           .from('bookings')
 //           .select(
-//             `*, 
-//              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
+//             `*,
+//              patientId(address, firstName, lastName, dateOfBirth, phone, gender),
 //              booking_tests(testId(name)),
 //              booking_addons(addons(name))`
 //           )
@@ -534,10 +528,6 @@
 
 //-----------------------------------------------------------------------------------
 
-
-
-
-
 'use client';
 
 import { supabase } from '@/utils/supabase/client';
@@ -588,7 +578,10 @@ export const LabProvider = ({ children }: LabProviderProps) => {
       setLoading(true);
       try {
         // 1. Get current user
-        const { data: { user }, error: userAuthError } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error: userAuthError,
+        } = await supabase.auth.getUser();
         if (userAuthError || !user) throw new Error('User not found');
 
         // 2. User details
@@ -632,7 +625,8 @@ export const LabProvider = ({ children }: LabProviderProps) => {
         // 6. Patients
         const { data: patientsRes } = await supabase
           .from('patients')
-          .select(`
+          .select(
+            `
             id,
             firstName,
             lastName,
@@ -641,7 +635,8 @@ export const LabProvider = ({ children }: LabProviderProps) => {
             phone,
             address,
             bookings!inner(labId)
-          `)
+          `
+          )
           .eq('bookings.labId', currentLabId);
         setPatients(patientsRes || []);
 
@@ -714,57 +709,57 @@ export const LabProvider = ({ children }: LabProviderProps) => {
 
     // BOOKINGS
     // const bookingChannel =
-      // supabase.channel('booking-changes')
-      //   .on(
-      //     'postgres_changes',
-      //     { event: 'UPDATE', schema: 'public', table: 'bookings' },
-      //     async (payload) => {
-      //       const { data: updatedBooking } = await supabase
-      //         .from('bookings')
-      //         .select(
-      //           `*, 
-      //      patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
-      //      booking_tests(testId(name)),
-      //      booking_addons(addons(name))`
-      //         )
-      //         .eq('id', payload.new.id)
-      //         .single();
+    // supabase.channel('booking-changes')
+    //   .on(
+    //     'postgres_changes',
+    //     { event: 'UPDATE', schema: 'public', table: 'bookings' },
+    //     async (payload) => {
+    //       const { data: updatedBooking } = await supabase
+    //         .from('bookings')
+    //         .select(
+    //           `*,
+    //      patientId(address, firstName, lastName, dateOfBirth, phone, gender),
+    //      booking_tests(testId(name)),
+    //      booking_addons(addons(name))`
+    //         )
+    //         .eq('id', payload.new.id)
+    //         .single();
 
-      //       if (updatedBooking) {
-      //         setBookingData((prev) =>
-      //           prev.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
-      //         );
-      //       }
-      //     }
-      //   )
-      //   .subscribe();
+    //       if (updatedBooking) {
+    //         setBookingData((prev) =>
+    //           prev.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
+    //         );
+    //       }
+    //     }
+    //   )
+    //   .subscribe();
 
-      const bookingChannel = supabase
-    .channel('booking-changes')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'bookings' },
-      async (payload) => {
-        console.log('Realtime booking change:', payload);
+    const bookingChannel = supabase
+      .channel('booking-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings' },
+        async (payload) => {
+          console.log('Realtime booking change:', payload);
 
-        const { data: bookings, error } = await supabase
-          .from('bookings')
-          .select(
-            `*, 
+          const { data: bookings, error } = await supabase
+            .from('bookings')
+            .select(
+              `*, 
              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
              booking_tests(testId(name)),
              booking_addons(addons(name))`
-          )
-          .eq('labId', labId);
+            )
+            .eq('labId', labId);
 
-        if (!error) {
-          setBookingData(bookings || []);
-        } else {
-          console.error('Error refetching bookings:', error);
+          if (!error) {
+            setBookingData(bookings || []);
+          } else {
+            console.error('Error refetching bookings:', error);
+          }
         }
-      }
-    )
-    .subscribe();
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(employeeChannel);

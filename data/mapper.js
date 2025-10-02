@@ -26,11 +26,11 @@ export function mapLabs(rawLabs) {
     return {
       id: index + 1,
       name: `Lab #${index + 1}`, // You can replace with actual lab name if stored
-      testType: details.testType || "General Tests",
-      location: lab.labLocation || "Unknown Location",
+      testType: details.testType || 'General Tests',
+      location: lab.labLocation || 'Unknown Location',
       nextAvailable: details.nextAvailable
-        ? new Date(details.nextAvailable).toISOString().split("T")[0]
-        : "N/A",
+        ? new Date(details.nextAvailable).toISOString().split('T')[0]
+        : 'N/A',
       rating: details.rating ?? 0,
       votes: 0, // You can calculate if you store votes in DB
       totalVotes: 0,
@@ -39,10 +39,10 @@ export function mapLabs(rawLabs) {
       isLoved: details.isLoved ?? false,
       image:
         details.imageUrl ||
-        "https://placehold.co/100x100/E8F7F7/333333?text=LAB",
+        'https://placehold.co/100x100/E8F7F7/333333?text=LAB',
       collectionTypes: details.collectionTypes?.length
         ? details.collectionTypes
-        : ["Home Collection", "Visiting to Lab"],
+        : ['Home Collection', 'Visiting to Lab'],
       timeSlots: groupTimeSlots(lab.timeSlots || []),
     };
   });
@@ -52,7 +52,7 @@ function groupTimeSlots(slots) {
   const groups = { Morning: [], Afternoon: [], Evening: [] };
 
   slots.forEach((slot) => {
-    const hour = parseInt(slot.time.split(":")[0], 10);
+    const hour = parseInt(slot.time.split(':')[0], 10);
     if (hour < 12) {
       groups.Morning.push(slot.time);
     } else if (hour < 17) {
@@ -65,7 +65,7 @@ function groupTimeSlots(slots) {
   // Ensure exactly 4 time slots per period
   for (const key in groups) {
     while (groups[key].length < 4) {
-      groups[key].push("-");
+      groups[key].push('-');
     }
   }
 

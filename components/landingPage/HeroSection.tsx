@@ -1,4 +1,4 @@
-//components/landingPage/HeroSection.tsx  
+//components/landingPage/HeroSection.tsx
 'use client';
 
 import Link from 'next/link';
@@ -43,14 +43,13 @@ export default function HeroSection() {
               className="mt-6 text-slate-700 text-lg md:text-xl text-center leading-relaxed"
               style={{ fontFamily: 'Lufga, Urbanist, sans-serif' }}
             >
-              Book lab tests online, get accurate reports fast, and track everything in one secure platform!
+              Book lab tests online, get accurate reports fast, and track
+              everything in one secure platform!
               <br />
               <span className="block mt-1 text-teal-900 font-semibold">
-                No queues, No confusion 
+                No queues, No confusion
               </span>
             </p>
-
-
           </div>
 
           <Link

@@ -57,31 +57,26 @@
 //   );
 // }
 
-
-
-
-
-
 //Stepper with real-time updates & animations
-"use client";
+'use client';
 
-import { Stepper, Step, StepLabel } from "@mui/material";
-import { Check, Clock, Circle, FileText } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Stepper, Step, StepLabel } from '@mui/material';
+import { Check, Clock, Circle, FileText } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export type ReportStatus =
-  | "TEST_BOOKED"
-  | "SAMPLE_COLLECTED"
-  | "IN_LAB"
-  | "UNDER_REVIEW"
-  | "REPORT_READY";
+  | 'TEST_BOOKED'
+  | 'SAMPLE_COLLECTED'
+  | 'IN_LAB'
+  | 'UNDER_REVIEW'
+  | 'REPORT_READY';
 
 const steps: { key: ReportStatus; label: string }[] = [
-  { key: "TEST_BOOKED", label: "Test Booked" },
-  { key: "SAMPLE_COLLECTED", label: "Sample Collected" },
-  { key: "IN_LAB", label: "In Lab" },
-  { key: "UNDER_REVIEW", label: "Under Review" },
-  { key: "REPORT_READY", label: "Report Ready" },
+  { key: 'TEST_BOOKED', label: 'Test Booked' },
+  { key: 'SAMPLE_COLLECTED', label: 'Sample Collected' },
+  { key: 'IN_LAB', label: 'In Lab' },
+  { key: 'UNDER_REVIEW', label: 'Under Review' },
+  { key: 'REPORT_READY', label: 'Report Ready' },
 ];
 
 export function NewStepper({ status }: { status: ReportStatus | string }) {
@@ -92,13 +87,13 @@ export function NewStepper({ status }: { status: ReportStatus | string }) {
       activeStep={currentStepIndex}
       alternativeLabel
       sx={{
-        "& .MuiStepConnector-line": {
-          borderColor: "#e5e7eb",
-          transition: "border-color 0.4s ease",
+        '& .MuiStepConnector-line': {
+          borderColor: '#e5e7eb',
+          transition: 'border-color 0.4s ease',
         },
-        "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line, & .MuiStepConnector-root.Mui-completed .MuiStepConnector-line":
+        '& .MuiStepConnector-root.Mui-active .MuiStepConnector-line, & .MuiStepConnector-root.Mui-completed .MuiStepConnector-line':
           {
-            borderColor: "#178087",
+            borderColor: '#178087',
           },
       }}
     >
@@ -125,10 +120,10 @@ export function NewStepper({ status }: { status: ReportStatus | string }) {
                       transition={{
                         duration: 1,
                         repeat: Infinity,
-                        ease: "easeInOut",
+                        ease: 'easeInOut',
                       }}
                     >
-                      {step.key === "REPORT_READY" ? (
+                      {step.key === 'REPORT_READY' ? (
                         <FileText className="w-5 h-5 text-green-600" />
                       ) : (
                         <Clock className="w-5 h-5 text-[#178087]" />

@@ -239,7 +239,9 @@ export default function PatientDetails({
   onPatientDetailsChange,
 }: PatientDetailsProps) {
   const [patients, setPatients] = useState<any[]>([]);
-  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
+    null
+  );
   const [showNewForm, setShowNewForm] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -257,7 +259,6 @@ export default function PatientDetails({
   // Fetch user + patients
   useEffect(() => {
     async function fetchUserAndPatients() {
-
       setIsLoading(true);
 
       const {
@@ -379,7 +380,9 @@ export default function PatientDetails({
     return (
       <div className="flex flex-col items-center justify-center h-64">
         <Loader2 className="animate-spin text-[#37AFA2]" size={32} />
-        <span className="text-slate-700 text-sm mt-1">Loading patient details . . .</span>
+        <span className="text-slate-700 text-sm mt-1">
+          Loading patient details . . .
+        </span>
       </div>
     );
   }
@@ -415,7 +418,9 @@ export default function PatientDetails({
                 />
 
                 <div>
-                  <p className="font-medium">{p.firstName} {p.lastName}</p>
+                  <p className="font-medium">
+                    {p.firstName} {p.lastName}
+                  </p>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {/* Age Badge */}
                     <span className="flex items-center gap-1 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
@@ -445,7 +450,8 @@ export default function PatientDetails({
             onClick={() => {
               setShowNewForm(true);
               setSelectedPatientId(null); // unselect any existing patient
-              setPatientData({       // reset form fields
+              setPatientData({
+                // reset form fields
                 firstName: '',
                 lastName: '',
                 gender: '',
@@ -460,7 +466,6 @@ export default function PatientDetails({
           >
             + Add New Patient
           </button>
-
         </div>
       )}
 
@@ -570,17 +575,15 @@ export default function PatientDetails({
             />
           </div>
 
-          {
-            patients.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setShowNewForm(false)}
-                className="text-sm ml-0 flex items-start text-gray-500 underline mt-2"
-              >
-                Back to Existing Patients
-              </button>
-            )
-          }
+          {patients.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowNewForm(false)}
+              className="text-sm ml-0 flex items-start text-gray-500 underline mt-2"
+            >
+              Back to Existing Patients
+            </button>
+          )}
         </div>
       )}
 
@@ -588,7 +591,7 @@ export default function PatientDetails({
         onBack={onBack}
         onNext={onNext}
         nextDisabled={
-          (!selectedPatientId && !isFormValid) // disable next if neither selected nor filled form
+          !selectedPatientId && !isFormValid // disable next if neither selected nor filled form
         }
         backText="Back"
         nextText="Continue to Add Ons"

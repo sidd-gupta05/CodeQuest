@@ -22,22 +22,21 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## ⚙️ Tech Stack
 
-* **Frontend**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
-* **Authentication**: Supabase (Email, Phone OTP, Social Logins) + Twilio OTP integration
-* **Database**: PostgreSQL with Prisma ORM
-* **Storage**: Supabase Storage for certificates and documents
-* **Deployment**: Vercel (for frontend)
+- **Frontend**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
+- **Authentication**: Supabase (Email, Phone OTP, Social Logins) + Twilio OTP integration
+- **Database**: PostgreSQL with Prisma ORM
+- **Storage**: Supabase Storage for certificates and documents
+- **Deployment**: Vercel (for frontend)
 
 ## 📖 Learn More
 
 To dive deeper into the core technologies:
 
-* [Next.js Documentation](https://nextjs.org/docs) – Next.js features and API.
-* [Supabase Documentation](https://supabase.com/docs) – Authentication, Database, and Storage.
-* [Prisma Documentation](https://www.prisma.io/docs) – Database ORM for PostgreSQL.
+- [Next.js Documentation](https://nextjs.org/docs) – Next.js features and API.
+- [Supabase Documentation](https://supabase.com/docs) – Authentication, Database, and Storage.
+- [Prisma Documentation](https://www.prisma.io/docs) – Database ORM for PostgreSQL.
 
 ## 🚢 Deployment
 
 The easiest way to deploy **LabSphere** is to use [Vercel](https://vercel.com/new) for the frontend.
 For the backend (Supabase + PostgreSQL), check out the [Supabase Deployment Guide](https://supabase.com/docs/guides/hosting/overview).
-

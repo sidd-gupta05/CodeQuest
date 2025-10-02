@@ -12,29 +12,11 @@
     "isAvailable": true,
     "isLoved": false,
     "image": "https://placehold.co/100x100/E8F7F7/333333?text=LAB",
-    "collectionTypes": [
-      "Home Collection",
-      "Visiting to Lab"
-    ],
+    "collectionTypes": ["Home Collection", "Visiting to Lab"],
     "timeSlots": {
-      "Morning": [
-        "-",
-        "-",
-        "-",
-        "-"
-      ],
-      "Afternoon": [
-        "-",
-        "-",
-        "-",
-        "-"
-      ],
-      "Evening": [
-        "-",
-        "-",
-        "-",
-        "-"
-      ]
+      "Morning": ["-", "-", "-", "-"],
+      "Afternoon": ["-", "-", "-", "-"],
+      "Evening": ["-", "-", "-", "-"]
     }
   },
   {
@@ -50,29 +32,11 @@
     "isAvailable": true,
     "isLoved": false,
     "image": "https://placehold.co/100x100/E8F7F7/333333?text=LAB",
-    "collectionTypes": [
-      "Home Collection",
-      "Visiting to Lab"
-    ],
+    "collectionTypes": ["Home Collection", "Visiting to Lab"],
     "timeSlots": {
-      "Morning": [
-        "05:04",
-        "08:05",
-        "-",
-        "-"
-      ],
-      "Afternoon": [
-        "-",
-        "-",
-        "-",
-        "-"
-      ],
-      "Evening": [
-        "19:28",
-        "-",
-        "-",
-        "-"
-      ]
+      "Morning": ["05:04", "08:05", "-", "-"],
+      "Afternoon": ["-", "-", "-", "-"],
+      "Evening": ["19:28", "-", "-", "-"]
     }
   },
   {
@@ -88,28 +52,11 @@
     "isAvailable": true,
     "isLoved": true,
     "image": "https://unrlzieuyrsibokkqqbm.supabase.co/storage/v1/object/public/uploads/labs/0588d1cf-777b-4550-a5c6-20d226b6b368/patient_verify.png",
-    "collectionTypes": [
-      "Home"
-    ],
+    "collectionTypes": ["Home"],
     "timeSlots": {
-      "Morning": [
-        "-",
-        "-",
-        "-",
-        "-"
-      ],
-      "Afternoon": [
-        "-",
-        "-",
-        "-",
-        "-"
-      ],
-      "Evening": [
-        "-",
-        "-",
-        "-",
-        "-"
-      ]
+      "Morning": ["-", "-", "-", "-"],
+      "Afternoon": ["-", "-", "-", "-"],
+      "Evening": ["-", "-", "-", "-"]
     }
   },
   {
@@ -125,29 +72,11 @@
     "isAvailable": true,
     "isLoved": true,
     "image": "https://unrlzieuyrsibokkqqbm.supabase.co/storage/v1/object/public/uploads/labs/f79f581b-87e6-4c87-97a6-d6a41639a64d/boys-abyss-1.webp",
-    "collectionTypes": [
-      "Clinic",
-      "Home"
-    ],
+    "collectionTypes": ["Clinic", "Home"],
     "timeSlots": {
-      "Morning": [
-        "08:00",
-        "10:00",
-        "-",
-        "-"
-      ],
-      "Afternoon": [
-        "12:30",
-        "12:00",
-        "-",
-        "-"
-      ],
-      "Evening": [
-        "21:30",
-        "-",
-        "-",
-        "-"
-      ]
+      "Morning": ["08:00", "10:00", "-", "-"],
+      "Afternoon": ["12:30", "12:00", "-", "-"],
+      "Evening": ["21:30", "-", "-", "-"]
     }
   }
 ]

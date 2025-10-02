@@ -128,7 +128,6 @@ export async function POST(req: Request) {
       });
       return response;
     } catch (e: any) {
-
       console.error('Lab Auth failed:', e.status, e.code, e.message);
       await supabase.auth.signOut();
 

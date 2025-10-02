@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 
 const Calendar = () => {
-
   return (
     <div className="p-8">
       <h1 className="text-xl font-semibold">Calendar</h1>

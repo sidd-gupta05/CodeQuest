@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const now = new Date().toISOString();
 
-    console.log("received patient details:", patientDetails);
+    console.log('received patient details:', patientDetails);
 
     // 1. Convert the date string to proper PostgreSQL format
     const convertToPostgresDate = (dateString: string) => {
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
           }
 
           return {
-            id: `BT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            id: `BT-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
             bookingId: bookingId,
             testId: testId || testName,
             createdAt: now,
@@ -226,7 +226,7 @@ export async function POST(request: NextRequest) {
 
           if (!existingAddon) {
             // Create addon if it doesn't exist
-            const newAddonId = `ADDON-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const newAddonId = `ADDON-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
             let price = 200;
             if (addonName === 'Express Delivery') price = 500;
             if (addonName === 'Superfast Delivery') price = 350;

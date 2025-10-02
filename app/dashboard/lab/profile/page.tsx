@@ -25,7 +25,7 @@ import { LabContext } from '@/app/context/LabContext';
 import ChangePasswordForm from './ChangePasswordForm';
 import NotificationSettings from './NotificationSetting';
 import LabTests from './LabTests';
-import { uuidv4 } from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 interface CheckboxFieldProps {
   label: string;

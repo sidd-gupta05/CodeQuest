@@ -4,7 +4,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Lab } from '@/components/BookApointment/Filters/types';
 
-
 export const handlePageChange = (
   page: number,
   setCurrentPage: Dispatch<SetStateAction<number>>
@@ -18,8 +17,6 @@ export const toggleLove = (
   setLabs: Dispatch<SetStateAction<Lab[]>>
 ) => {
   setLabs(
-    labs.map((lab) =>
-      lab.id === id ? { ...lab, isLoved: !lab.isLoved } : lab
-    )
+    labs.map((lab) => (lab.id === id ? { ...lab, isLoved: !lab.isLoved } : lab))
   );
 };

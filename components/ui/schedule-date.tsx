@@ -1,38 +1,38 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { parseDate } from "chrono-node"
-import { CalendarIcon } from "lucide-react"
+import * as React from 'react';
+import { parseDate } from 'chrono-node';
+import { CalendarIcon } from 'lucide-react';
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from '@/components/ui/popover';
 
 function formatDate(date: Date | undefined) {
   if (!date) {
-    return ""
+    return '';
   }
 
-  return date.toLocaleDateString("en-US", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  })
+  return date.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
 }
 
 export function Calendar29() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("Date")
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState('Date');
   const [date, setDate] = React.useState<Date | undefined>(
     parseDate(value) || undefined
-  )
-  const [month, setMonth] = React.useState<Date | undefined>(date)
+  );
+  const [month, setMonth] = React.useState<Date | undefined>(date);
 
   return (
     <div className="flex flex-col gap-3 text-black">
@@ -41,19 +41,19 @@ export function Calendar29() {
           id="date"
           value={value}
           placeholder="Tomorrow or next week"
-        //   className="bg-background pr-10"
+          //   className="bg-background pr-10"
           onChange={(e) => {
-            setValue(e.target.value)
-            const date = parseDate(e.target.value)
+            setValue(e.target.value);
+            const date = parseDate(e.target.value);
             if (date) {
-              setDate(date)
-              setMonth(date)
+              setDate(date);
+              setMonth(date);
             }
           }}
           onKeyDown={(e) => {
-            if (e.key === "ArrowDown") {
-              e.preventDefault()
-              setOpen(true)
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              setOpen(true);
             }
           }}
         />
@@ -76,15 +76,14 @@ export function Calendar29() {
               month={month}
               onMonthChange={setMonth}
               onSelect={(date) => {
-                setDate(date)
-                setValue(formatDate(date))
-                setOpen(false)
+                setDate(date);
+                setValue(formatDate(date));
+                setOpen(false);
               }}
             />
           </PopoverContent>
         </Popover>
       </div>
-
     </div>
-  )
+  );
 }

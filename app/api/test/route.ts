@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/prisma";
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/prisma';
 
 // GET /api/tests → list all tests
 export async function GET() {

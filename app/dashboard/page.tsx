@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // // app/dashboard/page.tsx
 // 'use client';
 
@@ -39,21 +40,39 @@
 //   );
 // }
 
-
 'use client';
 
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LabContext } from '../context/LabContext';
 import BookingChart from '@/components/Lab/BookingChart';
 import PaginatedBookingList from '@/components/Lab/PaginatedBookingList';
 
 export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
 
   const contextData = useContext(LabContext);
-  const bookingData = contextData?.bookingData || [];
+
+   // ✅ Properly typed states
+  const [bookingData, setBookingData] = useState<any[]>(contextData?.bookingData || []);
+  const [labData, _] = useState<{ labName?: string }>(contextData?.labData || {});
   const userData = contextData?.userData || {};
+
+
+ // ✅ Example merging logic inside useEffect (only after context updates)
+  useEffect(() => {
+    if (contextData?.bookingData && contextData?.labData?.labName) {
+      const merged = contextData.bookingData.map((b: any) => ({
+        ...b,
+        labName: contextData.labData.labName,
+      }));
+      setBookingData(merged);
+    }
+  }, [contextData?.bookingData, contextData?.labData]);
+
+  console.log('Lab Data in DashboardPage:', labData);
 
   const handleDateSelect = (date: Date | null) => {
     setSelectedDate(date);

@@ -51,8 +51,7 @@
 //   );
 // }
 
-
-import React from "react";
+import React from 'react';
 
 interface TimeSlotsProps {
   slots: string[];
@@ -78,7 +77,7 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
       )}
 
       {slots.map((slot) => {
-        const [hour, minute] = slot.split(":").map(Number);
+        const [hour, minute] = slot.split(':').map(Number);
         const slotDate = selectedDate
           ? new Date(
               selectedDate.getFullYear(),
@@ -100,10 +99,10 @@ const TimeSlots: React.FC<TimeSlotsProps> = ({
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-all
               ${
                 isPast
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   : isSelected
-                  ? "bg-[#37AFA2] text-white shadow-md"
-                  : "bg-white border hover:bg-gray-50"
+                    ? 'bg-[#37AFA2] text-white shadow-md'
+                    : 'bg-white border hover:bg-gray-50'
               }`}
           >
             {slot}
