@@ -353,14 +353,14 @@ const CreateEmployeeForm = ({ labId, onClose }: CreateEmployeeFormProps) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 px-3 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2 px-3 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
               disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 py-3 px-3 rounded-lg bg-teal-600 text-white font-medium hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg shadow-teal-600/30 flex items-center justify-center gap-2"
+              className="flex-1 py-2 px-3 rounded-lg bg-teal-600 text-white font-medium hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg shadow-teal-600/30 flex items-center justify-center gap-2"
               disabled={loading}
             >
               {loading ? (

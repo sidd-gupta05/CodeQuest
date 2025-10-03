@@ -34,7 +34,7 @@ const DashboardLayoutContent = ({ children }) => {
   const contextData = useContext(LabContext);
   const loading = contextData?.loading;
 
-  console.log('islLoading :', loading);
+  console.log('isLoading :', loading);
 
   if (loading) {
     return (
