@@ -1,7 +1,8 @@
 //app/dashboard/lab/inventory/page.tsx
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { interFont } from '@/app/fonts';
+<<<<<<< HEAD
 import {
   Card,
   CardContent,
@@ -47,171 +48,27 @@ import {
   TrendingUp,
   PackageOpen,
 } from 'lucide-react';
+=======
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 
-// Sample data for the lab inventory system
-const sampleLabs = [
-  { id: 'lab1', name: 'Central Lab - Building A' },
-  { id: 'lab2', name: 'Research Lab - Building B' },
-  { id: 'lab3', name: 'Clinical Lab - Building C' },
-];
+import { AlertTriangle, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
-const sampleTestCatalog = [
-  {
-    id: 'test1',
-    name: 'Complete Blood Count (CBC)',
-    category: 'Hematology',
-    duration: '30 min',
-    reagents: [
-      { reagentId: 'reagent1', quantity: 2, unit: 'ml' },
-      { reagentId: 'reagent2', quantity: 1, unit: 'ml' },
-    ],
-  },
-  {
-    id: 'test2',
-    name: 'COVID-19 PCR Test',
-    category: 'Molecular',
-    duration: '2 hours',
-    reagents: [
-      { reagentId: 'reagent3', quantity: 5, unit: 'ml' },
-      { reagentId: 'reagent4', quantity: 3, unit: 'ml' },
-    ],
-  },
-  {
-    id: 'test3',
-    name: 'Urine Analysis',
-    category: 'Clinical Chemistry',
-    duration: '15 min',
-    reagents: [
-      { reagentId: 'reagent5', quantity: 1, unit: 'ml' },
-      { reagentId: 'reagent1', quantity: 0.5, unit: 'ml' },
-    ],
-  },
-  {
-    id: 'test4',
-    name: 'Liver Function Test',
-    category: 'Clinical Chemistry',
-    duration: '45 min',
-    reagents: [
-      { reagentId: 'reagent2', quantity: 3, unit: 'ml' },
-      { reagentId: 'reagent6', quantity: 2, unit: 'ml' },
-    ],
-  },
-];
+import {
+  InventoryHeader,
+  InventoryMetrics,
+  SearchFilter,
+  InventoryTabs,
+  InDialogHeader,
+  InTabs,
+  TestCatalog,
+  TestExecution,
+  CustomReagents,
+  Alerts,
+} from '@/components/inventory';
+>>>>>>> bc84cb0 (final components)
 
-const sampleReagentCatalog = [
-  {
-    id: 'reagent1',
-    name: 'Hemoglobin Reagent',
-    manufacturer: 'BioTech Labs',
-    category: 'Hematology',
-  },
-  {
-    id: 'reagent2',
-    name: 'Buffer Solution pH 7.4',
-    manufacturer: 'ChemCorp',
-    category: 'General',
-  },
-  {
-    id: 'reagent3',
-    name: 'PCR Master Mix',
-    manufacturer: 'MolecularTech',
-    category: 'Molecular',
-  },
-  {
-    id: 'reagent4',
-    name: 'DNA Extraction Kit',
-    manufacturer: 'GeneticSolutions',
-    category: 'Molecular',
-  },
-  {
-    id: 'reagent5',
-    name: 'Urine Dipstick Solution',
-    manufacturer: 'DiagnosticPlus',
-    category: 'Clinical Chemistry',
-  },
-  {
-    id: 'reagent6',
-    name: 'Enzyme Substrate',
-    manufacturer: 'BioEnzymes Inc',
-    category: 'Clinical Chemistry',
-  },
-];
-
-const sampleLabInventory = [
-  {
-    id: 'inv1',
-    labId: 'lab1',
-    reagentId: 'reagent1',
-    quantity: 150,
-    unit: 'ml',
-    expiryDate: '2024-12-15',
-    reorderThreshold: 50,
-    batchNumber: 'HB2024001',
-  },
-  {
-    id: 'inv2',
-    labId: 'lab1',
-    reagentId: 'reagent2',
-    quantity: 25,
-    unit: 'ml',
-    expiryDate: '2024-11-30',
-    reorderThreshold: 100,
-    batchNumber: 'BUF2024002',
-  },
-  {
-    id: 'inv3',
-    labId: 'lab1',
-    reagentId: 'reagent3',
-    quantity: 200,
-    unit: 'ml',
-    expiryDate: '2025-03-20',
-    reorderThreshold: 75,
-    batchNumber: 'PCR2024003',
-  },
-  {
-    id: 'inv4',
-    labId: 'lab1',
-    reagentId: 'reagent4',
-    quantity: 5,
-    unit: 'kit',
-    expiryDate: '2024-10-25',
-    reorderThreshold: 10,
-    batchNumber: 'DNA2024004',
-  },
-  {
-    id: 'inv5',
-    labId: 'lab1',
-    reagentId: 'reagent5',
-    quantity: 80,
-    unit: 'ml',
-    expiryDate: '2025-01-15',
-    reorderThreshold: 30,
-    batchNumber: 'UR2024005',
-  },
-  {
-    id: 'inv6',
-    labId: 'lab1',
-    reagentId: 'reagent6',
-    quantity: 45,
-    unit: 'ml',
-    expiryDate: '2024-11-10',
-    reorderThreshold: 60,
-    batchNumber: 'ENZ2024006',
-  },
-];
-
-const sampleCustomReagents = [
-  {
-    id: 'custom1',
-    labId: 'lab1',
-    name: 'Custom Antibody Solution',
-    description: 'Lab-specific antibody for research',
-    quantity: 30,
-    unit: 'ml',
-    expiryDate: '2024-12-01',
-    reorderThreshold: 15,
-  },
-];
+import { sampleTestCatalog, sampleReagentCatalog, sampleLabInventory, sampleCustomReagents } from '@/types/metadata';
 
 // const Inventory = () => {
 //   const [pageLoading, setPageLoading] = useState(true);
@@ -448,6 +305,7 @@ const Inventory = () => {
     <div className={`min-h-screen bg-gray-50 p-6 ` + interFont.className}>
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
+<<<<<<< HEAD
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-gray-900">Inventory</h1>
@@ -574,6 +432,32 @@ const Inventory = () => {
               Alerts
             </TabsTrigger>
           </TabsList>
+=======
+        <InventoryHeader
+          lowStockCount={lowStockCount}
+          expiringCount={expiringCount}
+        />
+
+        {/* Dashboard Metrics */}
+        <InventoryMetrics
+          total={totalReagents}
+          lowStock={lowStockCount}
+          expiring={expiringCount}
+          tests={sampleTestCatalog.length}
+        />
+
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="inventory" className="space-y-6">
+          <InventoryTabs
+            tabs={[
+              { value: 'inventory', label: 'Inventory' },
+              { value: 'tests', label: 'Test Catalog' },
+              { value: 'execute', label: 'Execute Tests' },
+              { value: 'custom', label: 'Custom Reagents' },
+              { value: 'alerts', label: 'Alerts' },
+            ]}
+          />
+>>>>>>> bc84cb0 (final components)
 
           {/* Inventory Management */}
           <TabsContent
@@ -581,6 +465,7 @@ const Inventory = () => {
             className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md"
           >
             <Card className="bg-white border-[#F7F8F9]">
+<<<<<<< HEAD
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -855,6 +740,24 @@ const Inventory = () => {
                     </TableBody>
                   </Table>
                 </div>
+=======
+              <InDialogHeader
+                font={interFont}
+                sampleReagentCatalog={sampleReagentCatalog}
+              />
+              <CardContent>
+                <SearchFilter
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  filterCategory={filterCategory}
+                  setFilterCategory={setFilterCategory}
+                />
+                <InTabs
+                  loading={loading}
+                  filteredInventory={filteredInventory}
+                  sampleReagentCatalog={sampleReagentCatalog}
+                />
+>>>>>>> bc84cb0 (final components)
               </CardContent>
             </Card>
           </TabsContent>
@@ -864,80 +767,12 @@ const Inventory = () => {
             value="tests"
             className="space-y-6 bg-white border border-gray-100 p-4 rounded-md"
           >
-            <Card className="border-gray-100 ">
-              <CardHeader>
-                <CardTitle className="text-2xl font-semibold ">
-                  Available Tests
-                </CardTitle>
-                <CardDescription className="font-medium text-[#838FA2]">
-                  View test catalog and reagent requirements
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-gray-100">
-                  {sampleTestCatalog.map((test) => (
-                    <Card
-                      key={test.id}
-                      className="border-l-4 border-gray-300 border-l-blue-500"
-                    >
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-lg">{test.name}</CardTitle>
-                          <Badge
-                            className="bg-[#F3F6FA] border-gray-100"
-                            variant="outline"
-                          >
-                            {test.category}
-                          </Badge>
-                        </div>
-                        <CardDescription className="font-medium text-[#838FA2]">
-                          Duration: {test.duration}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          <h4 className="font-bold text-sm">
-                            Required Reagents:
-                          </h4>
-                          {test.reagents.map((reagent, index) => {
-                            const reagentDetails = getReagentDetails(
-                              reagent.reagentId
-                            );
-                            const inventoryItem = inventory.find(
-                              (item) =>
-                                item.reagentId === reagent.reagentId &&
-                                item.labId === selectedLab
-                            );
-                            const available = inventoryItem
-                              ? inventoryItem.quantity >= reagent.quantity
-                              : false;
-
-                            return (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between text-sm"
-                              >
-                                <span>{reagentDetails?.name}</span>
-                                <div className="flex items-center space-x-2">
-                                  <span>
-                                    {reagent.quantity} {reagent.unit}
-                                  </span>
-                                  {available ? (
-                                    <CheckCircle className="h-4 w-4 text-green-500" />
-                                  ) : (
-                                    <XCircle className="h-4 w-4 text-red-500" />
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <TestCatalog
+              sampleTestCatalog={sampleTestCatalog}
+              inventory={inventory}
+              selectedLab={selectedLab}
+              getReagentDetails={getReagentDetails}
+            />
           </TabsContent>
 
           {/* Test Execution */}
@@ -945,115 +780,14 @@ const Inventory = () => {
             value="execute"
             className="space-y-6 bg-white p-4 rounded-md"
           >
-            <Card className="border-gray-100 ">
-              <CardHeader>
-                <CardTitle className="text-2xl font-semibold ">
-                  Execute Tests
-                </CardTitle>
-                <CardDescription className="font-medium text-[#838FA2]">
-                  Perform tests and automatically deduct reagents
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {sampleTestCatalog.map((test) => {
-                    const canExecute = test.reagents.every((reagent) => {
-                      const inventoryItem = inventory.find(
-                        (item) =>
-                          item.reagentId === reagent.reagentId &&
-                          item.labId === selectedLab
-                      );
-                      return (
-                        inventoryItem &&
-                        inventoryItem.quantity >= reagent.quantity
-                      );
-                    });
-
-                    return (
-                      <Card
-                        key={test.id}
-                        className={`${canExecute ? 'border-green-200' : 'border-red-200'}`}
-                      >
-                        <CardHeader>
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">
-                              {test.name}
-                            </CardTitle>
-                            <Badge
-                              className={
-                                canExecute
-                                  ? 'bg-[#272E3F] text-white'
-                                  : 'bg-red-700 text-white'
-                              }
-                              variant={canExecute ? 'default' : 'destructive'}
-                            >
-                              {canExecute ? 'Ready' : 'Insufficient Stock'}
-                            </Badge>
-                          </div>
-                          <CardDescription className="font-medium text-[#838FA2]">
-                            {test.category} • {test.duration}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <h4 className="font-bold text-sm">
-                                Reagent Consumption:
-                              </h4>
-                              {test.reagents.map((reagent, index) => {
-                                const reagentDetails = getReagentDetails(
-                                  reagent.reagentId
-                                );
-                                const inventoryItem = inventory.find(
-                                  (item) =>
-                                    item.reagentId === reagent.reagentId &&
-                                    item.labId === selectedLab
-                                );
-
-                                return (
-                                  <div
-                                    key={index}
-                                    className="flex items-center justify-between text-sm"
-                                  >
-                                    <span>{reagentDetails?.name}</span>
-                                    <span className="text-gray-600">
-                                      -{reagent.quantity} {reagent.unit}
-                                      {inventoryItem && (
-                                        <span className="ml-2 text-xs">
-                                          (Available: {inventoryItem.quantity}{' '}
-                                          {inventoryItem.unit})
-                                        </span>
-                                      )}
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                            <Button
-                              className="w-full  hover:bg-[#272E3F] text-white bg-[#1e2530]"
-                              disabled={!canExecute || loading}
-                              onClick={() => executeTest(test.id)}
-                            >
-                              {loading ? (
-                                <>
-                                  <Activity className="h-4 w-4 mr-2 animate-spin" />
-                                  Executing...
-                                </>
-                              ) : (
-                                <>
-                                  <TestTube className="h-4 w-4 mr-2" />
-                                  Execute Test
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
+            <TestExecution
+              sampleTestCatalog={sampleTestCatalog}
+              inventory={inventory}
+              selectedLab={selectedLab}
+              loading={loading}
+              executeTest={executeTest}
+              getReagentDetails={getReagentDetails}
+            />
           </TabsContent>
 
           {/* Custom Reagents */}
@@ -1061,6 +795,7 @@ const Inventory = () => {
             value="custom"
             className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md"
           >
+<<<<<<< HEAD
             <Card className="border-gray-100">
               <CardHeader className="border-gray-100">
                 <div className="flex items-center justify-between">
@@ -1304,6 +1039,29 @@ const Inventory = () => {
             </TabsContent>
           </Tabs>
         </div>
+=======
+            <CustomReagents
+              reagents={customReagents}
+              selectedLab={selectedLab}
+              getStockStatus={getStockStatus}
+            />
+          </TabsContent>
+
+          {/* Alerts */}
+          <TabsContent
+            value="alerts"
+            className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md"
+          >
+            <Alerts
+              filteredInventory={filteredInventory}
+              getReagentDetails={getReagentDetails}
+              getStockStatus={getStockStatus}
+              lowStockCount={lowStockCount}
+              expiringCount={expiringCount}
+            />
+          </TabsContent>
+        </Tabs>
+>>>>>>> bc84cb0 (final components)
       </div>
     </div>
   );
