@@ -17,6 +17,7 @@ import { MonthlyFinancials } from './types';
 
 interface SalesChartsProps {
   timeFilter: 'monthly' | 'yearly';
+  setTimeFilter: (filter: 'monthly' | 'yearly') => void;
   filteredData: MonthlyFinancials[];
   computations: {
     totalEmployeeCosts: number;
@@ -37,6 +38,7 @@ const COLORS = [
 
 const SalesCharts: React.FC<SalesChartsProps> = ({
   timeFilter,
+  setTimeFilter,
   filteredData,
   computations,
 }) => {
@@ -87,11 +89,35 @@ const SalesCharts: React.FC<SalesChartsProps> = ({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
       {/* Revenue vs Net Profit Chart */}
       <div className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          {timeFilter === 'monthly'
-            ? 'Monthly Financial Performance'
-            : 'Annual Financial Performance'}
-        </h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-900">
+            {timeFilter === 'monthly'
+              ? 'Monthly Financial Performance'
+              : 'Annual Financial Performance'}
+          </h3>
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setTimeFilter('monthly')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                timeFilter === 'monthly'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setTimeFilter('yearly')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                timeFilter === 'yearly'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Yearly
+            </button>
+          </div>
+        </div>
         <ResponsiveContainer width="100%" height={350}>
           <BarChart
             data={filteredData}

@@ -13,9 +13,9 @@ import {
   MonthlyFinancials,
   SortConfig,
 } from '@/components/Lab/revenue/types';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { exportToPDF } from '@/components/Lab/revenue/PDFExportComponent';
 import { LabContext } from '@/app/context/LabContext';
+import { supabase } from '@/utils/supabase/client';
 
 // Fixed monthly costs (hardcoded)
 const getMonthlyFixedCosts = () => {
@@ -34,18 +34,49 @@ const SalesModule = () => {
   const [timeFilter, setTimeFilter] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [loading, setLoading] = useState(true);
-  const [isDownloading, setIsDownloading] = useState(false); 
+  const [isDownloading, setIsDownloading] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: 'month',
     direction: 'asc',
   });
+  const [labNablCertificate, setLabNablCertificate] = useState<string>('');
 
   const allbookings = useContext(LabContext)?.bookingData || [];
   const employee = useContext(LabContext)?.employeeData || [];
+  const labId = useContext(LabContext)?.labId || '';
 
   const reportRef = useRef<HTMLDivElement>(null);
   const computationsRef = useRef<any>({});
   const monthlyDataRef = useRef<MonthlyFinancials[]>([]);
+
+  useEffect(() => {
+    const fetchLabNablCertificate = async () => {
+      if (!labId) return;
+
+      try {
+        const { data: labData, error } = await supabase
+          .from('labs')
+          .select('nablCertificateNumber')
+          .eq('id', labId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching lab NABL certificate:', error);
+          return;
+        }
+
+        if (labData && labData.nablCertificateNumber) {
+          setLabNablCertificate(labData.nablCertificateNumber);
+        } else {
+          console.warn('No NABL certificate found for lab:', labId);
+        }
+      } catch (error) {
+        console.error('Error fetching lab data:', error);
+      }
+    };
+
+    fetchLabNablCertificate();
+  }, [labId]);
 
   const calculateFinancials = (bookingsData: Booking[]) => {
     const months = [
@@ -65,7 +96,6 @@ const SalesModule = () => {
 
     const monthlyFinancials: MonthlyFinancials[] = months.map(
       (month, index) => {
-
         const monthBookings = bookingsData.filter((booking) => {
           const bookingDate = new Date(booking.date);
           const bookingYear = bookingDate.getFullYear();
@@ -79,15 +109,16 @@ const SalesModule = () => {
           0
         );
         const appointmentCount = monthBookings.length;
-        
-        // FIXed: Calculate employee costs only for months when they were employed
+
         const totalEmployeeCosts = employee.reduce((sum, emp) => {
           const joinDate = new Date(emp.createdAt);
           const joinYear = joinDate.getFullYear();
           const joinMonth = joinDate.getMonth();
-          
-          // If employee joined in or before this month of the selected year
-          if (joinYear < selectedYear || (joinYear === selectedYear && joinMonth <= index)) {
+
+          if (
+            joinYear < selectedYear ||
+            (joinYear === selectedYear && joinMonth <= index)
+          ) {
             return sum + emp.monthlySalary;
           }
           return sum;
@@ -148,7 +179,7 @@ const SalesModule = () => {
     setLoading(true);
     try {
       if (allbookings.length > 0) {
-        calculateFinancials(allbookings); 
+        calculateFinancials(allbookings);
       } else {
         console.warn('No booking data available in LabContext');
         calculateFinancials([]);
@@ -158,7 +189,7 @@ const SalesModule = () => {
     } finally {
       setLoading(false);
     }
-  }, [allbookings.length, selectedYear, employee]); 
+  }, [allbookings.length, selectedYear, employee]);
 
   const monthOrder = [
     'Jan',
@@ -242,70 +273,16 @@ const SalesModule = () => {
     return monthlyDataRef.current;
   }, [timeFilter, selectedYear, monthlyDataRef.current]);
 
-  const exportToPDF = async () => {
-    setIsDownloading(true);
-    const input = reportRef.current;
+  const handleExportToPDF = async (password: string) => {
+    const pdfData = {
+      computations: computationsRef.current,
+      filteredData,
+      employee,
+      selectedYear,
+      timeFilter,
+    };
 
-    if (!input) {
-      console.error('Report content not found');
-      setIsDownloading(false);
-      return;
-    }
-
-    try {
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      let yOffset = 15;
-
-      pdf.setFontSize(20);
-      pdf.text(`Sales Report - ${selectedYear}`, pdfWidth / 2, yOffset, {
-        align: 'center',
-      });
-      yOffset += 8;
-      pdf.setFontSize(10);
-      pdf.text(
-        `Report generated on: ${new Date().toLocaleDateString()}`,
-        pdfWidth / 2,
-        yOffset,
-        {
-          align: 'center',
-        }
-      );
-      yOffset += 5;
-      pdf.line(10, yOffset, pdfWidth - 10, yOffset);
-      yOffset += 5;
-
-      const canvas = await html2canvas(input, {
-        scale: 2,
-        useCORS: true,
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgPdfWidth = pdf.internal.pageSize.getWidth();
-      const imgPdfHeight = (imgProps.height * imgPdfWidth) / imgProps.width;
-
-      let position = yOffset;
-      let heightLeft = imgPdfHeight;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgPdfWidth, imgPdfHeight);
-      heightLeft -= pdf.internal.pageSize.getHeight();
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgPdfHeight + yOffset;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgPdfWidth, imgPdfHeight);
-        heightLeft -= pdf.internal.pageSize.getHeight();
-      }
-
-      pdf.save(`Sales_Report_${selectedYear}.pdf`);
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Failed to generate PDF report.');
-    } finally {
-      setIsDownloading(false);
-    }
+    await exportToPDF(password, labNablCertificate, pdfData, setIsDownloading);
   };
 
   if (loading) {
@@ -331,19 +308,19 @@ const SalesModule = () => {
       </div>
 
       <SalesHeader
-        bookingData={allbookings}
-        timeFilter={timeFilter}
-        setTimeFilter={setTimeFilter}
         selectedYear={selectedYear}
         setSelectedYear={setSelectedYear}
-        exportToPDF={exportToPDF}
+        exportToPDF={handleExportToPDF}
         isDownloading={isDownloading}
+        bookingData={allbookings}
+        labNablCertificate={labNablCertificate}
       />
 
       <div ref={reportRef}>
         <SalesMetrics computations={computationsRef.current} />
         <SalesCharts
           timeFilter={timeFilter}
+          setTimeFilter={setTimeFilter}
           filteredData={filteredData}
           computations={computationsRef.current}
         />

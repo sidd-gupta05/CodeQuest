@@ -168,7 +168,7 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                 </Link>
               </li>
 
-              <li>
+              {/* <li>
                 <Link
                   href="/dashboard/lab/calendar"
                   onClick={(e) => {
@@ -186,7 +186,7 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <span>Calendar</span>
                   </div>
                 </Link>
-              </li>
+              </li> */}
 
               <li>
                 <Link
@@ -205,7 +205,7 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <UserCog className="h-5 w-5" />
                     <span>Employee</span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  {/* <ChevronDown className="h-4 w-4 text-gray-400" /> */}
                 </Link>
               </li>
 
@@ -270,11 +270,11 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <CreditCard className="h-5 w-5" />
                     <span>Revenue</span>
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  {/* <ChevronDown className="h-4 w-4 text-gray-400" /> */}
                 </Link>
               </li>
 
-              <li>
+              {/* <li>
                 <Link
                   href="/dashboard/lab/equipment"
                   onClick={(e) => {
@@ -292,7 +292,7 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                     <span>Equipment</span>
                   </div>
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </nav>
 
