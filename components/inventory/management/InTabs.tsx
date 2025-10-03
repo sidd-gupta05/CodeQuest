@@ -11,31 +11,17 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
-type InventoryItem = {
-  id: string;
-  labId: string;
-  reagentId: string;
-  quantity: number;
-  unit: string;
-  expiryDate: string;
-  reorderThreshold: number;
-  batchNumber: string;
-};
-interface ReagentProps {
-  id: string;
-  name: string;
-  manufacturer: string;
-  category: string;
-}
+// ---------- Types ----------
+import { InventoryItem, ReagentDetails } from '@/types/inventory';
 
-const InTabs = ({
+export const InTabs = ({
   loading,
   filteredInventory,
   sampleReagentCatalog,
 }: {
   loading: boolean;
   filteredInventory: InventoryItem[];
-  sampleReagentCatalog: ReagentProps[];
+  sampleReagentCatalog: ReagentDetails[];
 }) => {
   // Get reagent details by ID
   const getReagentDetails = (reagentId: string) => {
@@ -168,5 +154,3 @@ const InTabs = ({
     </>
   );
 };
-
-export default InTabs;

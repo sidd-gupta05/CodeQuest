@@ -21,20 +21,14 @@ import { Plus } from "lucide-react";
 import { Label } from '@/components/ui/label';
 import { NextFont } from 'next/dist/compiled/@next/font';
 
-
-interface ReagentProps {
-    id: string;
-    name: string;
-    manufacturer: string;
-    category: string;
-}
-
+// ---------- Types ----------
+import { ReagentDetails } from '@/types/inventory';
 interface DialogHeaderProps {
     font: NextFont;
-    sampleReagentCatalog: ReagentProps[];
+    sampleReagentCatalog: ReagentDetails[];
 }
 
-const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) => {
+export const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) => {
   return (
     <>
       <CardHeader>
@@ -68,7 +62,7 @@ const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) => {
                       <SelectValue placeholder="Select reagent" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-[#F7F8F9] shadow-sm">
-                      {sampleReagentCatalog.map((reagent: ReagentProps) => (
+                      {sampleReagentCatalog.map((reagent: ReagentDetails) => (
                         <SelectItem key={reagent.id} value={reagent.id}>
                           {reagent.name}
                         </SelectItem>
@@ -116,6 +110,4 @@ const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) => {
       </CardHeader>
     </>
   )
-}
-
-export default InDialogHeader;
+};

@@ -2,7 +2,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 
-export function SearchFilter({ searchTerm, setSearchTerm, filterCategory, setFilterCategory }: any) {
+export function SearchFilter({ searchTerm, setSearchTerm, filterCategory, setFilterCategory }: {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  filterCategory: string;
+  setFilterCategory: (category: string) => void;
+}) {
   return (
     <div className="flex items-center space-x-4 mb-6">
       <div className="relative flex-1">
