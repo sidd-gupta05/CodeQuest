@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import React, { useState } from 'react';
 // import { Badge } from '@/components/ui/badge';
 // import {
@@ -296,6 +297,9 @@
 // };
 
 import React, { useState } from 'react';
+=======
+import React from 'react';
+>>>>>>> 8f4a36f (inventory components)
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -306,6 +310,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
+<<<<<<< HEAD
 import {
   AlertTriangle,
   CheckCircle,
@@ -326,6 +331,11 @@ interface ReagentDetails {
 }
 
 interface InventoryItem {
+=======
+import { AlertTriangle, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+
+type InventoryItem = {
+>>>>>>> 8f4a36f (inventory components)
   id: string;
   labId: string;
   reagentId: string;
@@ -333,6 +343,7 @@ interface InventoryItem {
   unit: string;
   expiryDate: string;
   reorderThreshold: number;
+<<<<<<< HEAD
   batchNumber?: string;
 }
 
@@ -352,6 +363,26 @@ export const InTabs = ({
     direction: 'ascending' | 'descending';
   } | null>(null);
 
+=======
+  batchNumber: string;
+};
+interface ReagentProps {
+  id: string;
+  name: string;
+  manufacturer: string;
+  category: string;
+}
+
+const InTabs = ({
+  loading,
+  filteredInventory,
+  sampleReagentCatalog,
+}: {
+  loading: boolean;
+  filteredInventory: InventoryItem[];
+  sampleReagentCatalog: ReagentProps[];
+}) => {
+>>>>>>> 8f4a36f (inventory components)
   // Get reagent details by ID
   const getReagentDetails = (reagentId: string) => {
     return sampleReagentCatalog.find((r) => r.id === reagentId);
@@ -369,6 +400,7 @@ export const InTabs = ({
       (expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
     );
 
+<<<<<<< HEAD
     if (expiryDate && daysToExpiry <= 0)
       return {
         status: 'expired',
@@ -470,16 +502,32 @@ export const InTabs = ({
         <ArrowDown className="h-4 w-4 inline text-red-500 opacity-20 hover:opacity-100" />
       </>
     );
+=======
+    if (daysToExpiry <= 0)
+      return { status: 'expired', color: 'destructive', icon: XCircle };
+    if (daysToExpiry <= 7)
+      return { status: 'expiring', color: 'destructive', icon: AlertCircle };
+    if (quantity <= 0)
+      return { status: 'out-of-stock', color: 'destructive', icon: XCircle };
+    if (quantity <= threshold)
+      return { status: 'low-stock', color: 'secondary', icon: AlertTriangle };
+    return { status: 'good', color: 'default', icon: CheckCircle };
+>>>>>>> 8f4a36f (inventory components)
   };
 
   return (
     <>
       <div className="rounded-md border-[#828EA2]">
+<<<<<<< HEAD
         <Table>
+=======
+        <Table className="">
+>>>>>>> 8f4a36f (inventory components)
           <TableHeader className="border-[#e8e8e9] text-md text-[#828EA2] font-semibold">
             <TableRow className="border-[#e8e8e9]">
               <TableHead>Reagent</TableHead>
               <TableHead>Category</TableHead>
+<<<<<<< HEAD
               <TableHead
                 className="cursor-pointer"
                 onClick={() => requestSort('quantity')}
@@ -493,6 +541,12 @@ export const InTabs = ({
                 Status {getArrowIcon('status')}
               </TableHead>
               <TableHead>Expiry</TableHead>
+=======
+              <TableHead>Stock</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Expiry</TableHead>
+              {/* <TableHead>Location</TableHead> */}
+>>>>>>> 8f4a36f (inventory components)
               <TableHead>Batch</TableHead>
             </TableRow>
           </TableHeader>
@@ -516,11 +570,21 @@ export const InTabs = ({
                       <Skeleton className="h-4 w-20 " />
                     </TableCell>
                     <TableCell>
+<<<<<<< HEAD
+=======
+                      <Skeleton className="h-4 w-16 " />
+                    </TableCell>
+                    <TableCell>
+>>>>>>> 8f4a36f (inventory components)
                       <Skeleton className="h-4 w-24 " />
                     </TableCell>
                   </TableRow>
                 ))
+<<<<<<< HEAD
               : sortedInventory.map((item) => {
+=======
+              : filteredInventory.map((item) => {
+>>>>>>> 8f4a36f (inventory components)
                   const reagent = getReagentDetails(item.reagentId);
                   const stockStatus = getStockStatus(
                     item.quantity,
@@ -535,6 +599,7 @@ export const InTabs = ({
                       key={item.id}
                     >
                       <TableCell className="font-medium ">
+<<<<<<< HEAD
                         {reagent?.name || 'Unknown Reagent'}
                       </TableCell>
                       <TableCell>
@@ -551,6 +616,21 @@ export const InTabs = ({
                               Low
                             </Badge>
                           )}
+=======
+                        {reagent?.name}
+                      </TableCell>
+                      <TableCell>{reagent?.category}</TableCell>
+                      <TableCell>
+                        {item.quantity} {item.unit}
+                        {item.quantity <= item.reorderThreshold && (
+                          <Badge
+                            variant="secondary"
+                            className="ml-2 bg-[#F3F6FA]"
+                          >
+                            Low
+                          </Badge>
+                        )}
+>>>>>>> 8f4a36f (inventory components)
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -562,6 +642,7 @@ export const InTabs = ({
                               | 'outline'
                               | undefined
                           }
+<<<<<<< HEAD
                           className={`${
                             stockStatus.status === 'good'
                               ? 'bg-green-500 text-white'
@@ -569,18 +650,29 @@ export const InTabs = ({
                                 ? 'bg-orange-500 text-white'
                                 : 'bg-[#F16869] text-white'
                           } flex items-center w-fit`}
+=======
+                          className="bg-[#F16869] text-white flex items-center w-fit"
+>>>>>>> 8f4a36f (inventory components)
                         >
                           <StatusIcon className="h-3 w-3 mr-1" />
                           {stockStatus.status.replace('-', ' ')}
                         </Badge>
                       </TableCell>
                       <TableCell className="font-mono text-sm font-black">
+<<<<<<< HEAD
                         {item.expiryDate
                           ? new Date(item.expiryDate).toLocaleDateString()
                           : 'No expiry'}
                       </TableCell>
                       <TableCell className="font-mono text-sm">
                         {item.batchNumber || 'N/A'}
+=======
+                        {item.expiryDate}
+                      </TableCell>
+                      {/* <TableCell>{item.location}</TableCell> */}
+                      <TableCell className="font-mono text-sm">
+                        {item.batchNumber}
+>>>>>>> 8f4a36f (inventory components)
                       </TableCell>
                     </TableRow>
                   );
@@ -591,3 +683,8 @@ export const InTabs = ({
     </>
   );
 };
+<<<<<<< HEAD
+=======
+
+export default InTabs;
+>>>>>>> 8f4a36f (inventory components)

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -19,6 +20,13 @@ export function SearchFilter({
   filterCategory: string;
   setFilterCategory: (category: string) => void;
 }) {
+=======
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, Filter } from "lucide-react";
+
+export function SearchFilter({ searchTerm, setSearchTerm, filterCategory, setFilterCategory }: any) {
+>>>>>>> 8f4a36f (inventory components)
   return (
     <div className="flex items-center space-x-4 mb-6">
       <div className="relative flex-1">
@@ -30,12 +38,17 @@ export function SearchFilter({
           className="pl-10 border-[#e8e8e9]"
         />
       </div>
+<<<<<<< HEAD
       {/* <Select value={filterCategory} onValueChange={setFilterCategory}>
+=======
+      <Select value={filterCategory} onValueChange={setFilterCategory}>
+>>>>>>> 8f4a36f (inventory components)
         <SelectTrigger className="w-48 border-[#e8e8e9]">
           <Filter className="h-4 w-4 mr-2" />
           <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
+<<<<<<< HEAD
           {[
             'all',
             'Hematology',
@@ -49,6 +62,13 @@ export function SearchFilter({
           ))}
         </SelectContent>
       </Select> */}
+=======
+          {["all","Hematology","Molecular","Clinical Chemistry","General"].map(c => (
+            <SelectItem key={c} value={c}>{c}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+>>>>>>> 8f4a36f (inventory components)
     </div>
   );
 }
