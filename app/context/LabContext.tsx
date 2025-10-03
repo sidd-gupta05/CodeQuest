@@ -115,7 +115,9 @@ export const LabProvider = ({ children }: LabProviderProps) => {
         const { data: employees } = await supabase
           .from('employee')
           .select('id, name, role, monthlySalary, department, createdAt, updatedAt')
-          .eq('labId', currentLabId);
+          .eq('labId', currentLabId)
+          .order('createdAt', { ascending: false });
+          
         setEmployeeData(employees || []);
       } catch (err: any) {
         console.error(err);
@@ -144,7 +146,8 @@ export const LabProvider = ({ children }: LabProviderProps) => {
           const { data: employees, error } = await supabase
             .from('employee')
             .select('*')
-            .eq('labId', labId);
+            .eq('labId', labId)
+            .order('createdAt', { ascending: false });
 
           if (!error) {
             setEmployeeData(employees || []);

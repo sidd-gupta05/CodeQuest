@@ -103,6 +103,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
     return { lockedPdfBytes, password };
   }
 
+  console.log('Current report status:', reportStatus);
+
   async function handleSave(reportStatus: string) {
     try {
       setIsLoading(true);
@@ -256,7 +258,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-4 mx-4">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold flex items-center gap-2">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
             # Booking Details {getLastNum(booking)}
           </h2>
           <button
@@ -352,7 +354,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
             </h3>
 
             <p className={`text-xs mb-2`}>
-              Current Status : {confirmedStatus.replace('_', ' ')}
+              Current Status : {reportStatus.replace('_', ' ')}
             </p>
 
             <Select

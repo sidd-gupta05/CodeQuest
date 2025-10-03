@@ -37,7 +37,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
   const handleDelete = async () => {
     if (
       !confirm(
-        `Are you sure you want to delete ${employee.name}? This action cannot be undone.`
+        `Are you sure you want to delete ${employee.name}?`
       )
     )
       return;
@@ -188,8 +188,8 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
             <p className="text-sm text-gray-500 truncate">
               ID: {employee.id.slice(0, 8)}...
             </p>
-            <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
-              <Calendar size={12} />
+            <div className="flex flex-row items-center gap-1 text-xs text-gray-400 mt-1">
+              {/* <Calendar size={12} /> */}
               <span>Added: {formatDate(employee.createdAt)}</span>
             </div>
           </div>
@@ -202,7 +202,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="p-2 rounded-full hover:bg-green-100 text-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-full ml-3 hover:bg-green-100 text-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Save Changes"
               >
                 {isSaving ? (
@@ -224,7 +224,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
             <>
               <button
                 onClick={handleEdit}
-                className="p-2 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
+                className="p-2 ml-3 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
                 title="Edit Employee"
               >
                 <Edit2 size={18} />
@@ -292,20 +292,20 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
             />
           ) : (
             <span className="text-sm font-medium">
-              ₹{employee.monthlySalary.toLocaleString('en-IN')} / month
+              {employee.monthlySalary.toLocaleString('en-IN')} / month
             </span>
           )}
         </div>
       </div>
 
       {/* Edit mode indicator */}
-      {isEditing && (
+      {/* {isEditing && (
         <div className="absolute top-2 right-2">
           <div className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-medium">
-            Editing...
+            Editing
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
