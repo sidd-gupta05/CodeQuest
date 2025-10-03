@@ -334,6 +334,7 @@ interface InventoryItem {
 =======
 import { AlertTriangle, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
+<<<<<<< HEAD
 type InventoryItem = {
 >>>>>>> 8f4a36f (inventory components)
   id: string;
@@ -372,15 +373,19 @@ interface ReagentProps {
   manufacturer: string;
   category: string;
 }
+=======
+// ---------- Types ----------
+import { InventoryItem, ReagentDetails } from '@/types/inventory';
+>>>>>>> 4aabe68 (modularization of inventory)
 
-const InTabs = ({
+export const InTabs = ({
   loading,
   filteredInventory,
   sampleReagentCatalog,
 }: {
   loading: boolean;
   filteredInventory: InventoryItem[];
-  sampleReagentCatalog: ReagentProps[];
+  sampleReagentCatalog: ReagentDetails[];
 }) => {
 >>>>>>> 8f4a36f (inventory components)
   // Get reagent details by ID
@@ -684,7 +689,10 @@ const InTabs = ({
   );
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 export default InTabs;
 >>>>>>> 8f4a36f (inventory components)
+=======
+>>>>>>> 4aabe68 (modularization of inventory)

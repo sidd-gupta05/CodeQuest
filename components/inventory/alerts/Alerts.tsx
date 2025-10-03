@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import {
   Card,
@@ -30,19 +31,39 @@ interface InventoryItem {
   batchNumber?: string;
 }
 
+=======
+
+import React from 'react';
+import {
+  Card, CardHeader, CardTitle, CardDescription, CardContent,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, AlertTriangle, Clock } from "lucide-react";
+
+// ---------- Types ----------
+import { InventoryItem, ReagentDetails } from '@/types/inventory';
+>>>>>>> 4aabe68 (modularization of inventory)
 interface AlertsProps {
   filteredInventory: InventoryItem[];
   getReagentDetails: (reagentId: string) => ReagentDetails | undefined;
   getStockStatus: (
+<<<<<<< HEAD
     quantity: number,
     threshold: number,
     expiry: string
   ) => { status: string; color: string; icon: React.ElementType };
+=======
+      quantity: number,
+      threshold: number,
+      expiry: string
+    ) => { status: string; color: string; icon: React.ElementType };
+>>>>>>> 4aabe68 (modularization of inventory)
   lowStockCount: number;
   expiringCount: number;
 }
 
 // ---------- Alerts ----------
+<<<<<<< HEAD
 export function Alerts({
   filteredInventory,
   getReagentDetails,
@@ -56,6 +77,14 @@ export function Alerts({
         <CardTitle className="text-2xl font-semibold">
           Alerts & Notifications
         </CardTitle>
+=======
+export function Alerts({ filteredInventory, getReagentDetails, getStockStatus, lowStockCount, expiringCount }: AlertsProps) {
+
+  return (
+    <Card className="border-gray-100">
+      <CardHeader className="border-gray-100">
+        <CardTitle className="text-2xl font-semibold">Alerts & Notifications</CardTitle>
+>>>>>>> 4aabe68 (modularization of inventory)
         <CardDescription className="font-medium text-[#64748B]">
           Monitor stock levels and expiry dates
         </CardDescription>
@@ -66,6 +95,7 @@ export function Alerts({
           <div className="space-y-3">
             <h3 className="font-medium text-lg flex items-center">
               <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
+<<<<<<< HEAD
               Low Stock Alerts ({lowStockCount})
             </h3>
             {filteredInventory
@@ -106,11 +136,33 @@ export function Alerts({
                 <p className="text-sm">No low stock alerts</p>
               </div>
             )}
+=======
+              Low Stock Alerts
+            </h3>
+            {filteredInventory.filter((item) => {
+              const status = getStockStatus(item.quantity, item.reorderThreshold, item.expiryDate);
+              return status.status === "low-stock" || status.status === "out-of-stock";
+            }).map((item) => {
+              const reagent = getReagentDetails(item.reagentId);
+              return (
+                <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg bg-orange-50">
+                  <div>
+                    <p className="font-medium">{reagent?.name}</p>
+                    <p className="text-sm text-gray-600">
+                      Current stock: {item.quantity} {item.unit} (Threshold: {item.reorderThreshold} {item.unit})
+                    </p>
+                  </div>
+                  <Badge variant="secondary">Reorder Required</Badge>
+                </div>
+              );
+            })}
+>>>>>>> 4aabe68 (modularization of inventory)
           </div>
 
           {/* Expiry Alerts */}
           <div className="space-y-3">
             <h3 className="font-medium text-lg flex items-center">
+<<<<<<< HEAD
               <Clock className="h-5 w-5 mr-2 text-red-500" /> 
               Expiry Alerts ({expiringCount})
             </h3>
@@ -161,6 +213,33 @@ export function Alerts({
                 <p className="text-sm">No expiry alerts</p>
               </div>
             )}
+=======
+              <Clock className="h-5 w-5 mr-2 text-red-500" /> Expiry Alerts
+            </h3>
+            {filteredInventory.filter((item) => {
+              const status = getStockStatus(item.quantity, item.reorderThreshold, item.expiryDate);
+              return status.status === "expiring" || status.status === "expired";
+            }).map((item) => {
+              const reagent = getReagentDetails(item.reagentId);
+              const today = new Date();
+              const expiry = new Date(item.expiryDate);
+              const daysToExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+              return (
+                <div key={item.id} className="flex items-center justify-between p-4 border border-gray-100 rounded-lg bg-red-50">
+                  <div>
+                    <p className="font-medium">{reagent?.name}</p>
+                    <p className="text-sm text-gray-600">
+                      Expires: {item.expiryDate}
+                      {daysToExpiry <= 0 ? " (EXPIRED)" : ` (${daysToExpiry} days)`}
+                    </p>
+                  </div>
+                  <Badge className="bg-[#F16869] text-white" variant="destructive">
+                    {daysToExpiry <= 0 ? "Expired" : "Expiring Soon"}
+                  </Badge>
+                </div>
+              );
+            })}
+>>>>>>> 4aabe68 (modularization of inventory)
           </div>
 
           {/* No Alerts */}
@@ -175,4 +254,8 @@ export function Alerts({
       </CardContent>
     </Card>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4aabe68 (modularization of inventory)

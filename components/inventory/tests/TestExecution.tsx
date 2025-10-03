@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import {
   Card,
@@ -44,6 +45,20 @@ interface TestItem {
   }[];
 }
 
+=======
+
+import React from 'react';
+import {
+  Card, CardHeader, CardTitle, CardDescription, CardContent,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+import { Activity, TestTube } from "lucide-react";
+
+// ---------- Types ----------
+import { InventoryItem, ReagentDetails, TestItem } from '@/types/inventory';
+>>>>>>> 4aabe68 (modularization of inventory)
 interface TestExecutionProps {
   sampleTestCatalog: TestItem[];
   inventory: InventoryItem[];
@@ -53,6 +68,7 @@ interface TestExecutionProps {
   getReagentDetails: (reagentId: string) => ReagentDetails | undefined;
 }
 
+<<<<<<< HEAD
 // ---------- Test Execution ----------
 export function TestExecution({
   sampleTestCatalog,
@@ -62,6 +78,11 @@ export function TestExecution({
   executeTest,
   getReagentDetails,
 }: TestExecutionProps) {
+=======
+
+// ---------- Test Execution ----------
+export function TestExecution({ sampleTestCatalog, inventory, selectedLab, loading, executeTest, getReagentDetails }: TestExecutionProps) {
+>>>>>>> 4aabe68 (modularization of inventory)
   return (
     <Card className="border-gray-100 ">
       <CardHeader>
@@ -75,6 +96,7 @@ export function TestExecution({
           {sampleTestCatalog.map((test) => {
             const canExecute = test.reagents.every((reagent) => {
               const inventoryItem = inventory.find(
+<<<<<<< HEAD
                 (item) =>
                   item.reagentId === reagent.reagentId &&
                   item.labId === selectedLab
@@ -89,10 +111,20 @@ export function TestExecution({
                 key={test.id}
                 className={`${canExecute ? 'border-green-200' : 'border-red-200'}`}
               >
+=======
+                (item) => item.reagentId === reagent.reagentId && item.labId === selectedLab
+              );
+              return inventoryItem && inventoryItem.quantity >= reagent.quantity;
+            });
+
+            return (
+              <Card key={test.id} className={`${canExecute ? "border-green-200" : "border-red-200"}`}>
+>>>>>>> 4aabe68 (modularization of inventory)
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{test.name}</CardTitle>
                     <Badge
+<<<<<<< HEAD
                       className={
                         canExecute
                           ? 'bg-[#272E3F] text-white'
@@ -101,6 +133,12 @@ export function TestExecution({
                       variant={canExecute ? 'default' : 'destructive'}
                     >
                       {canExecute ? 'Ready' : 'Insufficient Stock'}
+=======
+                      className={canExecute ? "bg-[#272E3F] text-white" : "bg-red-700 text-white"}
+                      variant={canExecute ? "default" : "destructive"}
+                    >
+                      {canExecute ? "Ready" : "Insufficient Stock"}
+>>>>>>> 4aabe68 (modularization of inventory)
                     </Badge>
                   </div>
                   <CardDescription className="font-medium text-[#838FA2]">
@@ -110,6 +148,7 @@ export function TestExecution({
                 <CardContent>
                   <div className="space-y-4">
                     <div className="space-y-2">
+<<<<<<< HEAD
                       <h4 className="font-bold text-sm">
                         Reagent Consumption:
                       </h4>
@@ -144,6 +183,25 @@ export function TestExecution({
                                 </span>
                               )}
                             </div>
+=======
+                      <h4 className="font-bold text-sm">Reagent Consumption:</h4>
+                      {test.reagents.map((reagent, index) => {
+                        const reagentDetails = getReagentDetails(reagent.reagentId);
+                        const inventoryItem = inventory.find(
+                          (item) => item.reagentId === reagent.reagentId && item.labId === selectedLab
+                        );
+                        return (
+                          <div key={index} className="flex items-center justify-between text-sm">
+                            <span>{reagentDetails?.name}</span>
+                            <span className="text-gray-600">
+                              -{reagent.quantity} {reagent.unit}
+                              {inventoryItem && (
+                                <span className="ml-2 text-xs">
+                                  (Available: {inventoryItem.quantity} {inventoryItem.unit})
+                                </span>
+                              )}
+                            </span>
+>>>>>>> 4aabe68 (modularization of inventory)
                           </div>
                         );
                       })}

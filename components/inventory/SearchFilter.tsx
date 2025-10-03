@@ -25,8 +25,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 
+<<<<<<< HEAD
 export function SearchFilter({ searchTerm, setSearchTerm, filterCategory, setFilterCategory }: any) {
 >>>>>>> 8f4a36f (inventory components)
+=======
+export function SearchFilter({ searchTerm, setSearchTerm, filterCategory, setFilterCategory }: {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  filterCategory: string;
+  setFilterCategory: (category: string) => void;
+}) {
+>>>>>>> 4aabe68 (modularization of inventory)
   return (
     <div className="flex items-center space-x-4 mb-6">
       <div className="relative flex-1">

@@ -7,4 +7,8 @@ export * from './InventoryTabs';
 export * from './tests/TestCatalog';
 export * from './tests/TestExecution';
 export * from './alerts/Alerts';
+<<<<<<< HEAD
 export * from './custom/CustomReagents';
+=======
+export * from './custom/CustomReagents';
+>>>>>>> 4aabe68 (modularization of inventory)
