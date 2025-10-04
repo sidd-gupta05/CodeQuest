@@ -58,14 +58,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [reportStatus, setReportStatus] = useState(
     booking?.reportStatus || 'TEST_BOOKED'
   );
+
+  console.log('Initial reportStatus:', reportStatus);
+
+  const [currentStatus, setCurrentStatus] = useState(
+    booking?.reportStatus || 'TEST_BOOKED'
+  );
+
+  console.log('Initial currentStatus:', currentStatus);
+
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadAttemptsLeft, setUploadAttemptsLeft] = useState(3);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const [confirmedStatus, setConfirmedStatus] = useState(
-    booking?.reportStatus || 'TEST_BOOKED'
-  );
+
   const [currentReportUrl, setCurrentReportUrl] = useState<string | null>(
     booking?.reportUrl || null
   );
@@ -78,7 +85,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       );
       setUploadAttemptsLeft(storedAttempts ? parseInt(storedAttempts, 10) : 3);
       setReportStatus(booking.reportStatus || 'TEST_BOOKED');
-      setConfirmedStatus(booking.reportStatus || 'TEST_BOOKED');
+      setCurrentStatus(booking.reportStatus || 'TEST_BOOKED');
       setUploadedFile(null);
       setImagePreviewUrl(null);
       setMessage('');
@@ -155,8 +162,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
         setIsLoading(false);
       } else {
         toast.success('Report status updated successfully');
-        setConfirmedStatus(reportStatus);
+        // setConfirmedStatus(reportStatus);
         setReportStatus(reportStatus);
+        setCurrentStatus(reportStatus);
         setIsLoading(false);
         // Clear uploaded file after successful save but keep the report URL
         setUploadedFile(null);
@@ -391,10 +399,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
             </h3>
 
             <p className={`text-xs mb-2`}>
-              Current Status : {reportStatus.replace('_', ' ')}
+              Current Status : {currentStatus.replace('_', ' ')}
             </p>
 
-            <Select
+            {/* <Select
               value={reportStatus || 'TEST_BOOKED'}
               onValueChange={setReportStatus}
             >
@@ -431,18 +439,50 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   );
                 })}
               </SelectContent>
-            </Select>
+            </Select> */}
+
+            {reportStatus === 'BOOKING_PENDING' ? (
+              <p className="text-xs mb-2 text-yellow-600">
+                Please wait for the booking to be confirmed !
+              </p>
+            ) : (
+              <Select
+                value={reportStatus || 'TEST_BOOKED'}
+                onValueChange={setReportStatus}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select report status" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-100">
+                  {[
+                    'TEST_BOOKED',
+                    'SAMPLE_COLLECTED',
+                    'IN_LAB',
+                    'UNDER_REVIEW',
+                    'REPORT_READY',
+                  ].map((status) => (
+                    <SelectItem
+                      key={status}
+                      value={status}
+                      className="hover:cursor-pointer hover:bg-blue-100"
+                    >
+                      {status.replace('_', ' ')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
           </div>
 
           {/* Reports Upload */}
           <div className="w-full bg-gray-50 rounded-xl p-4">
             <label className="block text-sm font-semibold mb-2">Reports</label>
             <p
-              className={`text-xs mb-2 ${
-                uploadAttemptsLeft === 0
-                  ? 'text-red-600 font-semibold'
-                  : 'text-gray-500'
-              }`}
+              className={`text-xs mb-2 ${uploadAttemptsLeft === 0
+                ? 'text-red-600 font-semibold'
+                : 'text-gray-500'
+                }`}
             >
               Uploads remaining : {uploadAttemptsLeft}/3
             </p>
@@ -454,7 +494,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-green-600" />
                     <span className="text-sm text-green-800 font-medium">
-                      Current Report: {getFileNameFromUrl(currentReportUrl)}
+                      Current Report : {getFileNameFromUrl(currentReportUrl)}
                     </span>
                   </div>
                   <a
@@ -471,11 +511,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
             {/* File upload area */}
             <label
-              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${
-                reportStatus === 'REPORT_READY'
-                  ? 'border-gray-300 cursor-pointer'
-                  : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
-              }`}
+              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${reportStatus === 'REPORT_READY'
+                ? 'border-gray-300 cursor-pointer'
+                : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
+                }`}
             >
               <input
                 type="file"
