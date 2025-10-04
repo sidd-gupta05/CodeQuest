@@ -216,6 +216,7 @@ model tests {
   category      String
   description   String?
   price         Float
+  duration      String?
   isActive      Boolean         @default(true)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
@@ -232,6 +233,7 @@ model CustomReagent {
   name             String
   category         String?
   description      String?
+  manufacturer     String?
   unit             String
   createdAt        DateTime        @default(now())
   updatedAt        DateTime
@@ -248,6 +250,7 @@ model ReagentCatalog {
   name          String
   category      String?
   description   String?
+  manufacturer  String?
   unit          String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
