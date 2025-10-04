@@ -1171,7 +1171,7 @@ const LabForm: React.FC = () => {
                             Weekly Schedule
                           </h3>
                           <p className="text-sm text-gray-600">
-                            Set your lab's operating hours for each day
+                            Set your lab&apos;s operating hours for each day
                           </p>
                         </div>
                       </div>
