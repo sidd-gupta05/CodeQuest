@@ -27,8 +27,13 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+<<<<<<< HEAD
     ".next/types/**/*.ts",
     "app/api/lab/[id]/tests/route.js"
   ],
+=======
+    ".next/types/**/*.ts"
+, "app/api/lab/[id]/tests/route.js"  ],
+>>>>>>> a9d48ee (misc)
   "exclude": ["node_modules", ".next", "dist"]
 }
