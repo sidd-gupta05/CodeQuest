@@ -3,16 +3,17 @@ import { db } from '@/lib/prisma';
 import { v4 as uuid } from 'uuid';
 
 export async function POST(
-  req: NextRequest
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
   try {
-;
-    const { labId, name, category, duration, description, reagents, price } = await req.json();
+    const { id: labId } = await context.params;
+    const { name, category, duration, description, reagents, price } = await req.json();
 
     // Validate required fields
-    if (!name || !category) {
+    if (!name || !category || price === undefined) {
       return NextResponse.json(
-        { error: "Name and category are required" },
+        { error: "Name, category, and price are required" },
         { status: 400 }
       );
     }
@@ -31,7 +32,7 @@ export async function POST(
 
     // Use transaction to ensure both operations succeed or fail together
     const result = await db.$transaction(async (tx) => {
-      // Create or update test (upsert)
+      // Create test
       const test = await tx.tests.upsert({
         where: { name }, // Using id as unique identifier
         update: {
@@ -57,16 +58,15 @@ export async function POST(
         },
       });
 
-      // Handle reagents - delete existing and create new ones
+      // Handle reagents & custom reagents association
       if (reagents && reagents.length > 0) {
         // Delete existing reagents for this test
         await tx.testReagent.deleteMany({
           where: { testId: test.id }
         });
 
-        // Create new reagents
-        for (const reagent of reagents) {
-          await tx.testReagent.create({
+        const reagentPromises = reagents.map((reagent: any) => 
+          tx.testReagent.create({
             data: {
               id: uuid(),
               testId: test.id,
@@ -76,8 +76,10 @@ export async function POST(
               createdAt: new Date(),
               updatedAt: new Date(),
             },
-          });
-        }
+          })
+        );
+
+        await Promise.all(reagentPromises);
       }
 
       return test;
@@ -99,6 +101,43 @@ export async function POST(
 
     return NextResponse.json(
       { error: "Failed to create test" },
+      { status: 500 }
+    );
+  }
+}
+// GET - Get all tests for a lab
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
+  try {
+    const { id: labId } = await context.params;
+
+    const tests = await db.tests.findMany({
+      where: {
+        labs: {
+          some: {
+            id: labId
+          }
+        }
+      },
+      include: {
+        TestReagent: {
+          include: {
+            ReagentCatalog: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return NextResponse.json(tests);
+  } catch (err) {
+    console.error("Error fetching tests:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch tests" },
       { status: 500 }
     );
   }
