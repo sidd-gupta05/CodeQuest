@@ -273,7 +273,8 @@ const SalesModule = () => {
     return monthlyDataRef.current;
   }, [timeFilter, selectedYear, monthlyDataRef.current]);
 
-  const handleExportToPDF = async (password: string) => {
+  // In your page.tsx, update the handleExportToPDF function:
+  const handleExportToPDF = async () => {
     const pdfData = {
       computations: computationsRef.current,
       filteredData,
@@ -282,7 +283,7 @@ const SalesModule = () => {
       timeFilter,
     };
 
-    await exportToPDF(password, labNablCertificate, pdfData, setIsDownloading);
+    await exportToPDF(labNablCertificate, pdfData, setIsDownloading);
   };
 
   if (loading) {

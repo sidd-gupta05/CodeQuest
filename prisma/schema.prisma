@@ -197,6 +197,7 @@ model bookings {
   updatedAt      DateTime
   reportStatus   ReportStatus     @default(BOOKING_PENDING)
   allocatedEmpId String?
+  reportUrl      String?   
   booking_addons booking_addons[]
   booking_tests  booking_tests[]
   allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])

@@ -1,6 +1,6 @@
 // components/Lab/BookingModal.tsx
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   User,
   Phone,
@@ -10,6 +10,8 @@ import {
   Clock,
   IndianRupee,
   Loader,
+  FileText,
+  X,
 } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import {
@@ -38,56 +40,71 @@ type Booking = {
   reportStatus?: string;
   totalAmount: number;
   status?: string;
+  reportUrl?: string; // Add this field to store the uploaded report URL
 };
 
 interface BookingModalProps {
   booking: Booking | null;
   show: boolean;
   onClose: () => void;
-  //   onUpdateStatus: (newStatus: string) => void;
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({
   booking,
   show,
   onClose,
-  //   onUpdateStatus,
 }) => {
+  // Initialize state with booking data and reset when booking changes
   const [reportStatus, setReportStatus] = useState(
     booking?.reportStatus || 'TEST_BOOKED'
   );
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const [uploadAttemptsLeft, setUploadAttemptsLeft] = useState(() => {
-    if (typeof window !== 'undefined' && booking?.bookingId) {
-      const stored = localStorage.getItem(
-        `uploadAttempts-${booking.bookingId}`
-      );
-      return stored ? parseInt(stored, 10) : 3;
-    }
-    return 3;
-  });
+  console.log('Initial reportStatus:', reportStatus);
 
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const [confirmedStatus, setConfirmedStatus] = useState(
+  const [currentStatus, setCurrentStatus] = useState(
     booking?.reportStatus || 'TEST_BOOKED'
   );
 
-    if (!show || !booking) return null;
+  console.log('Initial currentStatus:', currentStatus);
+
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadAttemptsLeft, setUploadAttemptsLeft] = useState(3);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+
+  const [currentReportUrl, setCurrentReportUrl] = useState<string | null>(
+    booking?.reportUrl || null
+  );
+
+  // Reset state when booking changes
+  useEffect(() => {
+    if (booking) {
+      const storedAttempts = localStorage.getItem(
+        `uploadAttempts-${booking.bookingId}`
+      );
+      setUploadAttemptsLeft(storedAttempts ? parseInt(storedAttempts, 10) : 3);
+      setReportStatus(booking.reportStatus || 'TEST_BOOKED');
+      setCurrentStatus(booking.reportStatus || 'TEST_BOOKED');
+      setUploadedFile(null);
+      setImagePreviewUrl(null);
+      setMessage('');
+      setCurrentReportUrl(booking.reportUrl || null);
+    }
+  }, [booking]);
+
+  if (!show || !booking) return null;
 
   async function lockPdf(file: File, booking: Booking) {
-    // Extract lab initials (first 4 uppercase letters)
     const passInitials: string = getUpperCaseName(booking).slice(0, 4);
     const passFinal: string = getLastNum(booking);
-
     const password: string = passInitials + passFinal;
 
     const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true});
+    const pdfDoc = await PDFDocument.load(arrayBuffer, {
+      ignoreEncryption: true,
+    });
 
-    // Encrypt PDF
     pdfDoc.encrypt({
       userPassword: password,
       ownerPassword: password,
@@ -103,8 +120,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
     return { lockedPdfBytes, password };
   }
 
-  console.log('Current report status:', reportStatus);
-
   async function handleSave(reportStatus: string) {
     try {
       setIsLoading(true);
@@ -116,9 +131,16 @@ const BookingModal: React.FC<BookingModalProps> = ({
         return;
       }
 
-      let reportUrl = null;
+      let reportUrl = currentReportUrl; // Keep existing report URL if no new file uploaded
       if (uploadedFile) {
         reportUrl = await handleReport();
+        if (!reportUrl) {
+          toast.error('Failed to upload report file');
+          setIsLoading(false);
+          return;
+        }
+        // Update the current report URL with the newly uploaded one
+        setCurrentReportUrl(reportUrl);
       }
 
       const response = await fetch('/api/bookings/update-report-status', {
@@ -129,7 +151,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         body: JSON.stringify({
           bookingId: booking?.bookingId,
           reportStatus,
-          reportUrl, // send uploaded file link
+          reportUrl,
         }),
       });
 
@@ -140,9 +162,13 @@ const BookingModal: React.FC<BookingModalProps> = ({
         setIsLoading(false);
       } else {
         toast.success('Report status updated successfully');
-        setConfirmedStatus(reportStatus);
+        // setConfirmedStatus(reportStatus);
         setReportStatus(reportStatus);
+        setCurrentStatus(reportStatus);
         setIsLoading(false);
+        // Clear uploaded file after successful save but keep the report URL
+        setUploadedFile(null);
+        setImagePreviewUrl(null);
       }
     } catch (err) {
       console.error(err);
@@ -158,16 +184,20 @@ const BookingModal: React.FC<BookingModalProps> = ({
       const validTypes = ['application/pdf'];
 
       if (!validTypes.includes(file.type)) {
-        toast.error('Only PDF and DOCX files are allowed');
+        toast.error('Only PDF files are allowed');
         e.target.value = ''; // clear input
         return;
       }
-      
-    const arrayBuffer = await file.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(arrayBuffer, {ignoreEncryption: true});
+
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer, {
+        ignoreEncryption: true,
+      });
 
       if (pdfDoc.isEncrypted) {
-        toast.error('Upload unprotected file! Password Protection is enabled by default');
+        toast.error(
+          'Upload unprotected file! Password Protection is enabled by default'
+        );
         e.target.value = '';
         return;
       }
@@ -179,6 +209,26 @@ const BookingModal: React.FC<BookingModalProps> = ({
       setUploadedFile(null);
       setImagePreviewUrl(null);
     }
+  };
+
+  // Function to remove uploaded file
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    setImagePreviewUrl(null);
+    // Also clear the file input
+    const fileInput = document.querySelector(
+      'input[type="file"]'
+    ) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
+  // Function to get file name from URL
+  const getFileNameFromUrl = (url: string | null) => {
+    if (!url) return null;
+    const urlParts = url.split('/');
+    return urlParts[urlParts.length - 1];
   };
 
   const parseFileName = (bookingId: string, file: File) => {
@@ -201,7 +251,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   // Report upload handler
   const handleReport = async () => {
-    if (!uploadedFile || !booking?.bookingId) return null;
+    if (!uploadedFile || !booking.bookingId) return null;
 
     try {
       const { lockedPdfBytes, password } = await lockPdf(uploadedFile, booking);
@@ -221,16 +271,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
       if (fileError) throw new Error(fileError.message);
 
-      // TODO: send email to patient with publicUrl + password hint
-
       setUploadAttemptsLeft((prev) => {
         const next = Math.max(prev - 1, 0);
-        if (booking?.bookingId) {
-          localStorage.setItem(
-            `uploadAttempts-${booking.bookingId}`,
-            next.toString()
-          );
-        }
+        localStorage.setItem(
+          `uploadAttempts-${booking.bookingId}`,
+          next.toString()
+        );
         if (next === 0) {
           toast.error('File limit is reached. Contact the administrator');
         }
@@ -240,11 +286,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
       return publicUrl;
     } catch (err) {
       console.error('Error uploading report:', err);
+      toast.error('Failed to upload report');
       return null;
     }
   };
-
-  //   console.log('Current report status:', reportStatus);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -354,10 +399,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
             </h3>
 
             <p className={`text-xs mb-2`}>
-              Current Status : {reportStatus.replace('_', ' ')}
+              Current Status : {currentStatus.replace('_', ' ')}
             </p>
 
-            <Select
+            {/* <Select
               value={reportStatus || 'TEST_BOOKED'}
               onValueChange={setReportStatus}
             >
@@ -374,7 +419,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 ].map((status, index, arr) => {
                   const confirmedIndex = arr.indexOf(confirmedStatus);
                   const currentIndex = arr.indexOf(status);
-                  // Only current status OR next status is enabled
                   const isEnabled =
                     currentIndex === confirmedIndex ||
                     currentIndex === confirmedIndex + 1;
@@ -395,28 +439,82 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   );
                 })}
               </SelectContent>
-            </Select>
+            </Select> */}
+
+            {reportStatus === 'BOOKING_PENDING' ? (
+              <p className="text-xs mb-2 text-yellow-600">
+                Please wait for the booking to be confirmed !
+              </p>
+            ) : (
+              <Select
+                value={reportStatus || 'TEST_BOOKED'}
+                onValueChange={setReportStatus}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select report status" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-100">
+                  {[
+                    'TEST_BOOKED',
+                    'SAMPLE_COLLECTED',
+                    'IN_LAB',
+                    'UNDER_REVIEW',
+                    'REPORT_READY',
+                  ].map((status) => (
+                    <SelectItem
+                      key={status}
+                      value={status}
+                      className="hover:cursor-pointer hover:bg-blue-100"
+                    >
+                      {status.replace('_', ' ')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
           </div>
 
           {/* Reports Upload */}
           <div className="w-full bg-gray-50 rounded-xl p-4">
             <label className="block text-sm font-semibold mb-2">Reports</label>
             <p
-              className={`text-xs mb-2 ${
-                uploadAttemptsLeft === 0
-                  ? 'text-red-600 font-semibold'
-                  : 'text-gray-500'
-              }`}
+              className={`text-xs mb-2 ${uploadAttemptsLeft === 0
+                ? 'text-red-600 font-semibold'
+                : 'text-gray-500'
+                }`}
             >
               Uploads remaining : {uploadAttemptsLeft}/3
             </p>
 
+            {/* Show current uploaded report */}
+            {currentReportUrl && (
+              <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-md">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-green-600" />
+                    <span className="text-sm text-green-800 font-medium">
+                      Current Report : {getFileNameFromUrl(currentReportUrl)}
+                    </span>
+                  </div>
+                  <a
+                    href={currentReportUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-800 underline"
+                  >
+                    View
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* File upload area */}
             <label
-              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${
-                reportStatus === 'REPORT_READY'
-                  ? 'border-gray-300 cursor-pointer'
-                  : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
-              }`}
+              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${reportStatus === 'REPORT_READY'
+                ? 'border-gray-300 cursor-pointer'
+                : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
+                }`}
             >
               <input
                 type="file"
@@ -428,10 +526,22 @@ const BookingModal: React.FC<BookingModalProps> = ({
               />
               <div className="flex flex-col items-center justify-center text-gray-600">
                 <p className="text-sm">Upload Reports</p>
-                {imagePreviewUrl && (
-                  <span className="mt-2 text-xs text-green-600">
-                    File ready: {uploadedFile?.name}
-                  </span>
+                {uploadedFile && (
+                  <div className="mt-2 w-full">
+                    <div className="flex items-center justify-between bg-blue-50 p-2 rounded">
+                      <span className="text-xs text-blue-700 flex items-center gap-1">
+                        <FileText className="w-3 h-3" />
+                        {uploadedFile.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleRemoveFile}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             </label>
