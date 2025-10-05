@@ -21,8 +21,7 @@ import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Download, Plus } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { NextFont } from 'next/dist/compiled/@next/font';
-import * as XLSX from 'xlsx';
-import  ExcelJS from 'exceljs';
+import  ExcelJS  from 'exceljs';
 
 interface ReagentCatalog {
   id: string;
