@@ -45,13 +45,13 @@ model Patient {
 }
 
 model Lab {
-  id                    String          @id @default(uuid())
-  userId                String          @unique
+  id                    String             @id @default(uuid())
+  userId                String             @unique
   labLocation           String
   nablCertificateNumber String
   certificateUrl        String
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
   CustomReagent         CustomReagent[]
   attendances           attendances[]
   bookings              bookings[]
@@ -59,12 +59,12 @@ model Lab {
   details               LabDetails?
   lab_inventory         lab_inventory[]
   timeSlots             LabTimeSlot[]
-  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  LeaveApplication      LeaveApplication[]
   schedules             Schedule[]
-  tests                 tests[]         @relation("AvailableTests")
+  tests                 tests[]            @relation("AvailableTests")
 
   @@map("labs")
-  LeaveApplication LeaveApplication[]
 }
 
 model LabDetails {
@@ -251,7 +251,6 @@ model ReagentCatalog {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
   manufacturer  String?
-  
   TestReagent   TestReagent[]
   lab_inventory lab_inventory[]
 }
@@ -288,19 +287,18 @@ model lab_inventory {
 }
 
 model employee {
-  id               String        @id
+  id               String             @id
   labId            String
   name             String
   role             String
   monthlySalary    Float
   department       String
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @default(now())
-  isFieldCollector Boolean?      @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isFieldCollector Boolean?           @default(false)
   attendances      attendances[]
   bookings         bookings[]
-  lab              Lab           @relation(fields: [labId], references: [id], onDelete: Cascade)
-
+  lab              Lab                @relation(fields: [labId], references: [id], onDelete: Cascade)
   LeaveApplication LeaveApplication[]
 }
 
@@ -323,22 +321,21 @@ model attendances {
 }
 
 model LeaveApplication {
-  id          String         @id @default(uuid())
-  employeeId  String
-  labId       String
-  startDate   DateTime
-  endDate     DateTime
-  leaveType   LeaveType
-  reason      String
-  status      LeaveStatus    @default(PENDING)
-  approvedBy  String?
-  notes       String?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  
-  employee    employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  lab         Lab            @relation(fields: [labId], references: [id], onDelete: Cascade)
-  
+  id         String      @id @default(uuid())
+  employeeId String
+  labId      String
+  startDate  DateTime
+  endDate    DateTime
+  leaveType  LeaveType
+  reason     String
+  status     LeaveStatus @default(PENDING)
+  approvedBy String?
+  notes      String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  employee   employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  lab        Lab         @relation(fields: [labId], references: [id], onDelete: Cascade)
+
   @@map("leave_applications")
 }
 

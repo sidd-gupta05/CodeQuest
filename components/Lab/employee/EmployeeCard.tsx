@@ -388,7 +388,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="p-2 rounded-full ml-3 hover:bg-green-100 text-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-full hover:bg-green-100 text-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Save Changes"
               >
                 {isSaving ? (
@@ -410,7 +410,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
             <>
               <button
                 onClick={handleEdit}
-                className="p-2 ml-3 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
+                className="p-2 rounded-full hover:bg-blue-100 text-blue-600 transition-colors"
                 title="Edit Employee"
               >
                 <Edit2 size={18} />
