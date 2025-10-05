@@ -65,10 +65,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
   let allocatedEmployeeId = booking?.allocatedEmpId?.id || null;
   let allocatedEmployeeName = booking?.allocatedEmpId?.name || null;
 
-  console.log('allocatedEmp id', allocatedEmployeeId)
-  console.log('allocatedEmp name', allocatedEmployeeName)
+  console.log('allocatedEmp id', allocatedEmployeeId);
+  console.log('allocatedEmp name', allocatedEmployeeName);
 
-  const [allocatedEmployee, setAllocatedEmployee] = useState<string | null>(null);
+  const [allocatedEmployee, setAllocatedEmployee] = useState<string | null>(
+    null
+  );
 
   console.log('Initial reportStatus:', reportStatus);
 
@@ -88,7 +90,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     booking?.reportUrl || null
   );
 
-  console.log(booking)
+  console.log(booking);
 
   // Reset state when booking changes
   useEffect(() => {
@@ -166,7 +168,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
           bookingId: booking?.bookingId,
           reportStatus,
           reportUrl,
-          allocatedEmployee
+          allocatedEmployee,
         }),
       });
 
@@ -390,8 +392,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         </div>
 
         {/* Tests */}
-        <div className='grid grid-cols-2 gap-4 w-full'>
-
+        <div className="grid grid-cols-2 gap-4 w-full">
           <div className="mt-4 space-y-3 bg-gray-50 rounded-xl p-4">
             <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
               Tests
@@ -406,7 +407,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 </span>
               ))}
             </div>
-
           </div>
 
           <div>
@@ -416,7 +416,13 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   Allocate Employee
                 </h3>
                 {/* <p className='text-xs mb-2'>Current Employee : {allocatedEmployeeName || "NONE"} </p> */}
-                {employees.length === 0 ? (<><p className='text-xs mb-2 text-yellow-600'>No employees available OR None is "Field Collector"</p></>) : (
+                {employees.length === 0 ? (
+                  <>
+                    <p className="text-xs mb-2 text-yellow-600">
+                      No employees available OR None is "Field Collector"
+                    </p>
+                  </>
+                ) : (
                   <Select
                     value={allocatedEmployee ?? ''}
                     onValueChange={setAllocatedEmployee}
@@ -440,7 +446,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
               </div>
             </div>
           </div>
-
         </div>
 
         {/* Report Status */}
@@ -524,17 +529,17 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 </SelectContent>
               </Select>
             )}
-
           </div>
 
           {/* Reports Upload */}
           <div className="w-full bg-gray-50 rounded-xl p-4">
             <label className="block text-sm font-semibold mb-2">Reports</label>
             <p
-              className={`text-xs mb-2 ${uploadAttemptsLeft === 0
-                ? 'text-red-600 font-semibold'
-                : 'text-gray-500'
-                }`}
+              className={`text-xs mb-2 ${
+                uploadAttemptsLeft === 0
+                  ? 'text-red-600 font-semibold'
+                  : 'text-gray-500'
+              }`}
             >
               Uploads remaining : {uploadAttemptsLeft}/3
             </p>
@@ -563,10 +568,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
             {/* File upload area */}
             <label
-              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${reportStatus === 'REPORT_READY'
-                ? 'border-gray-300 cursor-pointer'
-                : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
-                }`}
+              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${
+                reportStatus === 'REPORT_READY'
+                  ? 'border-gray-300 cursor-pointer'
+                  : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
+              }`}
             >
               <input
                 type="file"

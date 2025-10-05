@@ -1,17 +1,33 @@
-
 import React from 'react';
 import {
-  Card, CardHeader, CardTitle, CardDescription, CardContent,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
-import { Plus, Package } from "lucide-react";
+import { Plus, Package } from 'lucide-react';
 
 interface CustomReagentSample {
   id: string;
@@ -35,8 +51,11 @@ interface CustomReagentsProps {
 }
 
 // ---------- Custom Reagents ----------
-export function CustomReagents({ reagents, selectedLab, getStockStatus }: CustomReagentsProps) {
-
+export function CustomReagents({
+  reagents,
+  selectedLab,
+  getStockStatus,
+}: CustomReagentsProps) {
   const filtered = reagents.filter((r) => r.labId === selectedLab);
 
   return (
@@ -44,7 +63,9 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
       <CardHeader className="border-gray-100">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl font-semibold">Custom Reagents</CardTitle>
+            <CardTitle className="text-2xl font-semibold">
+              Custom Reagents
+            </CardTitle>
             <CardDescription className="font-medium text-[#64748B]">
               Lab-specific reagents and solutions
             </CardDescription>
@@ -57,7 +78,9 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
             </DialogTrigger>
             <DialogContent className="bg-white border-[#F7F8F9] max-w-lg">
               <DialogHeader>
-                <DialogTitle className="text-xl font-semibold">Add Custom Reagent</DialogTitle>
+                <DialogTitle className="text-xl font-semibold">
+                  Add Custom Reagent
+                </DialogTitle>
                 <DialogDescription className="font-medium text-[#838FA2]">
                   Create a lab-specific reagent
                 </DialogDescription>
@@ -65,16 +88,29 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="name">Reagent Name</Label>
-                  <Input className="border-[#dbdcdd] p-4 py-5 text-md" id="name" placeholder="Custom Antibody Solution" />
+                  <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
+                    id="name"
+                    placeholder="Custom Antibody Solution"
+                  />
                 </div>
                 <div>
                   <Label htmlFor="description">Description</Label>
-                  <Textarea className="border-[#dbdcdd] p-4 text-md" id="description" placeholder="Detailed description..." />
+                  <Textarea
+                    className="border-[#dbdcdd] p-4 text-md"
+                    id="description"
+                    placeholder="Detailed description..."
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="quantity">Initial Quantity</Label>
-                    <Input className="border-[#dbdcdd] p-4 py-5 text-md" id="quantity" type="number" placeholder="50" />
+                    <Input
+                      className="border-[#dbdcdd] p-4 py-5 text-md"
+                      id="quantity"
+                      type="number"
+                      placeholder="50"
+                    />
                   </div>
                   <div>
                     <Label htmlFor="unit">Unit</Label>
@@ -93,13 +129,24 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                 </div>
                 <div>
                   <Label htmlFor="expiry">Expiry Date</Label>
-                  <Input className="border-[#dbdcdd] text-md" id="expiry" type="date" />
+                  <Input
+                    className="border-[#dbdcdd] text-md"
+                    id="expiry"
+                    type="date"
+                  />
                 </div>
                 <div>
                   <Label htmlFor="threshold">Reorder Threshold</Label>
-                  <Input className="border-[#dbdcdd] p-4 py-5 text-md" id="threshold" type="number" placeholder="15" />
+                  <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
+                    id="threshold"
+                    type="number"
+                    placeholder="15"
+                  />
                 </div>
-                <Button className="w-full bg-black text-white hover:bg-gray-800">Add Custom Reagent</Button>
+                <Button className="w-full bg-black text-white hover:bg-gray-800">
+                  Add Custom Reagent
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

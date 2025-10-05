@@ -121,13 +121,31 @@ const CreateEmployeeForm = ({ labId, onClose }: CreateEmployeeFormProps) => {
           </div>
 
           <div>
-            <div className='flex justify-between'>
+            <div className="flex justify-between">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Briefcase size={16} className="inline mr-1" />
                 Role
               </label>
-              <div className='flex gap-2'>
-                <input className='mb-2' type="checkbox" name="isFieldCollector" id="isFieldCollector" checked={formData.isFieldCollector} onChange={e => setFormData({ ...formData, isFieldCollector: e.target.checked, role: e.target.checked ? "Field Collector" : "" })} /><span><p className='text-sm font-medium text-gray-700'>Is Field Collector ?</p></span>
+              <div className="flex gap-2">
+                <input
+                  className="mb-2"
+                  type="checkbox"
+                  name="isFieldCollector"
+                  id="isFieldCollector"
+                  checked={formData.isFieldCollector}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      isFieldCollector: e.target.checked,
+                      role: e.target.checked ? 'Field Collector' : '',
+                    })
+                  }
+                />
+                <span>
+                  <p className="text-sm font-medium text-gray-700">
+                    Is Field Collector ?
+                  </p>
+                </span>
               </div>
             </div>
 
@@ -140,7 +158,6 @@ const CreateEmployeeForm = ({ labId, onClose }: CreateEmployeeFormProps) => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
               required
             />
-
           </div>
 
           <div>

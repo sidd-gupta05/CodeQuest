@@ -366,7 +366,9 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
   const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isFieldCollector, setIsFieldCollector] = useState(employee.isFieldCollector);
+  const [isFieldCollector, setIsFieldCollector] = useState(
+    employee.isFieldCollector
+  );
 
   // Attendance states
   const [todayAttendance, setTodayAttendance] =
@@ -738,16 +740,25 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
         <div className="flex items-center gap-2 text-gray-700">
           <Briefcase size={18} className="text-teal-600 flex-shrink-0" />
           {isEditing ? (
-
-            <div className='block w-full'>
-
-              <div className='flex gap-2 mb-2'>
-                <input type="checkbox" name="isFieldCollector" id="isFieldCollector" checked={isFieldCollector} disabled={isFieldCollector} onChange={(e) => {
-                  const checked = e.target.checked;
-                  setIsFieldCollector(checked);
-                  handleChange('role', checked ? 'Field Collector' : '');
-
-                }} /><span><p className='text-sm font-medium text-gray-700'>Is Field Collector ?</p></span>
+            <div className="block w-full">
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="checkbox"
+                  name="isFieldCollector"
+                  id="isFieldCollector"
+                  checked={isFieldCollector}
+                  disabled={isFieldCollector}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setIsFieldCollector(checked);
+                    handleChange('role', checked ? 'Field Collector' : '');
+                  }}
+                />
+                <span>
+                  <p className="text-sm font-medium text-gray-700">
+                    Is Field Collector ?
+                  </p>
+                </span>
               </div>
 
               <input
@@ -758,7 +769,6 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
                 placeholder="Role"
                 disabled={isFieldCollector}
               />
-
             </div>
           ) : (
             <span className="text-sm font-medium">{employee.role}</span>

@@ -214,63 +214,64 @@ const SalesTables: React.FC<SalesTablesProps> = ({
               </th>
             </tr>
           </thead>
-          {employeeData.length === 0 ? 
-          (
-            <tbody className='text-center text-gray-500'>
+          {employeeData.length === 0 ? (
+            <tbody className="text-center text-gray-500">
               <tr>
-                <td className='py-5 text-sm' colSpan={5}>Add Employees ; No Data Available</td>
+                <td className="py-5 text-sm" colSpan={5}>
+                  Add Employees ; No Data Available
+                </td>
               </tr>
             </tbody>
           ) : (
             <tbody className="divide-y divide-gray-200">
-            {employeeData.map((employee) => (
-              <tr key={employee.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {employee.name}
+              {employeeData.map((employee) => (
+                <tr key={employee.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {employee.name}
+                      </div>
+                      <div className="text-sm text-gray-500">{employee.id}</div>
                     </div>
-                    <div className="text-sm text-gray-500">{employee.id}</div>
-                  </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {employee.role}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {employee.department}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ₹{employee.monthlySalary.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    ₹{(employee.monthlySalary * 12).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+              <tr className="bg-gray-50 font-semibold">
+                <td
+                  colSpan={3}
+                  className="px-6 py-4 text-sm text-gray-900 text-right"
+                >
+                  Total:
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {employee.role}
+                  ₹
+                  {employeeData
+                    .reduce((sum, emp) => sum + emp.monthlySalary, 0)
+                    .toLocaleString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {employee.department}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  ₹{employee.monthlySalary.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  ₹{(employee.monthlySalary * 12).toLocaleString()}
+                  ₹
+                  {(
+                    employeeData.reduce(
+                      (sum, emp) => sum + emp.monthlySalary,
+                      0
+                    ) * 12
+                  ).toLocaleString()}
                 </td>
               </tr>
-            ))}
-            <tr className="bg-gray-50 font-semibold">
-              <td
-                colSpan={3}
-                className="px-6 py-4 text-sm text-gray-900 text-right"
-              >
-                Total:
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ₹
-                {employeeData
-                  .reduce((sum, emp) => sum + emp.monthlySalary, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ₹
-                {(
-                  employeeData.reduce(
-                    (sum, emp) => sum + emp.monthlySalary,
-                    0
-                  ) * 12
-                ).toLocaleString()}
-              </td>
-            </tr>
-          </tbody>
+            </tbody>
           )}
         </table>
       </div>

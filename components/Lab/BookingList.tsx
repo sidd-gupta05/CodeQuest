@@ -2,12 +2,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-  Download,
-  Eye,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+import { Download, Eye, ChevronDown, ChevronUp } from 'lucide-react';
 import BookingModal from './BookingModal';
 
 type Booking = {
@@ -100,7 +95,6 @@ const BookingList: React.FC<BookingListProps> = ({
     const finalFileName = `${getLastNum(booking)}_report.pdf`;
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${booking.bookingId}/${finalFileName}`;
   };
-
 
   // Sort bookings: Express first, then Superfast, then others
   // const sortedBookings = useMemo(() => {
@@ -224,10 +218,11 @@ const BookingList: React.FC<BookingListProps> = ({
 
                   <div className="w-28">
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                        }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        booking.status === 'CONFIRMED'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}
                     >
                       {booking.status}
                     </span>
@@ -247,7 +242,11 @@ const BookingList: React.FC<BookingListProps> = ({
                     >
                       <Eye className="w-5 h-5" />
                     </button>
-                    <a href={getDownloadUrl(booking)} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={getDownloadUrl(booking)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Download className="w-4 h-4 text-gray-400 hover:text-gray-600" />
                     </a>
                   </div>
@@ -379,10 +378,11 @@ const BookingList: React.FC<BookingListProps> = ({
                   <div>
                     <p className="text-xs text-gray-500">Status</p>
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                        }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        booking.status === 'CONFIRMED'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}
                     >
                       {booking.status}
                     </span>
@@ -422,7 +422,7 @@ const BookingList: React.FC<BookingListProps> = ({
         employees={employees}
         show={showModal}
         onClose={() => setShowModal(false)}
-      // onUpdateStatus={(newStatus) => setSelectedBooking({ ...selectedBooking!, reportStatus: newStatus })}
+        // onUpdateStatus={(newStatus) => setSelectedBooking({ ...selectedBooking!, reportStatus: newStatus })}
       />
     </div>
   );

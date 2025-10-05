@@ -103,7 +103,11 @@ const PaginatedBookingList: React.FC<PaginatedBookingListProps> = ({
       </div>
 
       <div className="p-0">
-        <BookingList bookings={currentItems} selectedDate={selectedDate} employees={employees} />
+        <BookingList
+          bookings={currentItems}
+          selectedDate={selectedDate}
+          employees={employees}
+        />
       </div>
 
       {totalPages > 1 && (

@@ -1,8 +1,19 @@
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter } from "lucide-react";
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Search, Filter } from 'lucide-react';
 
-export function SearchFilter({ searchTerm, setSearchTerm, filterCategory, setFilterCategory }: {
+export function SearchFilter({
+  searchTerm,
+  setSearchTerm,
+  filterCategory,
+  setFilterCategory,
+}: {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   filterCategory: string;
@@ -25,8 +36,16 @@ export function SearchFilter({ searchTerm, setSearchTerm, filterCategory, setFil
           <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
-          {["all","Hematology","Molecular","Clinical Chemistry","General"].map(c => (
-            <SelectItem key={c} value={c}>{c}</SelectItem>
+          {[
+            'all',
+            'Hematology',
+            'Molecular',
+            'Clinical Chemistry',
+            'General',
+          ].map((c) => (
+            <SelectItem key={c} value={c}>
+              {c}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
