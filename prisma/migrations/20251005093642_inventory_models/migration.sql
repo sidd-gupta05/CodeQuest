@@ -1,0 +1,2 @@
+-- Placeholder migration to match Supabase state
+-- This migration was already applied on the database
