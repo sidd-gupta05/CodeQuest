@@ -154,8 +154,9 @@ const CreateEmployeeForm = ({ labId, onClose }: CreateEmployeeFormProps) => {
               name="role"
               placeholder="Lab Technician, Receptionist, etc."
               value={formData.role}
+              disabled={formData.isFieldCollector}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+              className={`w-full px-4 ${formData.isFieldCollector ? 'bg-gray-100 cursor-not-allowed' : ''} py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all`}
               required
             />
           </div>
