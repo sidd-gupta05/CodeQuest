@@ -64,6 +64,7 @@ model Lab {
   tests                 tests[]         @relation("AvailableTests")
 
   @@map("labs")
+  LeaveApplication LeaveApplication[]
 }
 
 model LabDetails {
@@ -299,6 +300,8 @@ model employee {
   attendances      attendances[]
   bookings         bookings[]
   lab              Lab           @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  LeaveApplication LeaveApplication[]
 }
 
 model attendances {
@@ -317,6 +320,43 @@ model attendances {
   labs       Lab              @relation(fields: [labId], references: [id], onDelete: Cascade)
 
   @@unique([employeeId, date])
+}
+
+model LeaveApplication {
+  id          String         @id @default(uuid())
+  employeeId  String
+  labId       String
+  startDate   DateTime
+  endDate     DateTime
+  leaveType   LeaveType
+  reason      String
+  status      LeaveStatus    @default(PENDING)
+  approvedBy  String?
+  notes       String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  
+  employee    employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  lab         Lab            @relation(fields: [labId], references: [id], onDelete: Cascade)
+  
+  @@map("leave_applications")
+}
+
+enum LeaveType {
+  SICK_LEAVE
+  CASUAL_LEAVE
+  EARNED_LEAVE
+  MATERNITY_LEAVE
+  PATERNITY_LEAVE
+  EMERGENCY_LEAVE
+  OTHER
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }
 
 enum DayOfWeek {
