@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -17,6 +17,8 @@ interface TestCatalogProps {
   inventory: InventoryItem[];
   selectedLab: string;
   getReagentDetails: (reagentId: string) => ReagentDetails | undefined;
+  onTestExecuted: (result: any) => void;
+  onAlertTriggered: (alerts: any[]) => void;
 }
 
 // ---------- Test Catalog ----------
@@ -25,7 +27,75 @@ export function TestCatalog({
   inventory,
   selectedLab,
   getReagentDetails,
+  onTestExecuted,
+  onAlertTriggered,
 }: TestCatalogProps) {
+  const [loading, setLoading] = useState<string | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState('');
+  const [selectedPatient, setSelectedPatient] = useState('');
+
+  const executeTest = async (testId: string) => {
+    if (!selectedBooking || !selectedPatient) {
+      alert('Please select a booking and patient');
+      return;
+    }
+
+    setLoading(testId);
+
+    try {
+      const response = await fetch(
+        `/api/lab/${selectedLab}/tests/${testId}/execute`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bookingId: selectedBooking,
+            patientId: selectedPatient,
+            quantity: 1,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error);
+      }
+
+      // Notify parent component about successful execution
+      onTestExecuted(result);
+
+      // Trigger alerts if any
+      if (result.lowStockAlerts && result.lowStockAlerts.length > 0) {
+        onAlertTriggered(result.lowStockAlerts);
+      }
+
+      // Show success message
+      alert(
+        `Test executed successfully! ${result.lowStockAlerts?.length ? 'Low stock alerts triggered.' : ''}`
+      );
+    } catch (error) {
+      console.error('Error executing test:', error);
+      alert(error instanceof Error ? error.message : 'Failed to execute test');
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const canExecuteTest = (test: TestItem) => {
+    return test.reagents.every((reagent) => {
+      const inventoryItem = inventory.find(
+        (item) =>
+          (item.reagentId === reagent.reagentId ||
+            item.customReagentId === reagent.reagentId) &&
+          item.labId === selectedLab
+      );
+      return inventoryItem && inventoryItem.quantity >= reagent.quantity;
+    });
+  };
+
   return (
     <Card className="border-gray-100 ">
       <CardHeader>
