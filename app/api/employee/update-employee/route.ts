@@ -4,7 +4,7 @@ import { supabase } from '@/utils/supabase/client';
 
 export async function PUT(request: NextRequest) {
   try {
-    const { id, name, role, department, monthlySalary } = await request.json();
+    const { id, name, role, department, monthlySalary, isFieldCollector } = await request.json();
 
     if (!id) {
       return NextResponse.json(
@@ -21,7 +21,8 @@ export async function PUT(request: NextRequest) {
         role,
         department,
         monthlySalary,
-        updatedAt: new Date().toISOString(), 
+        isFieldCollector,
+        updatedAt: new Date().toISOString(),
       })
       .eq('id', id)
       .select()

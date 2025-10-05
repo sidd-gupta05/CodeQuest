@@ -55,13 +55,21 @@ export default function DashboardPage() {
 
   const contextData = useContext(LabContext);
 
-   // ✅ Properly typed states
+  // ✅ Properly typed states
   const [bookingData, setBookingData] = useState<any[]>(contextData?.bookingData || []);
   const [labData, _] = useState<{ labName?: string }>(contextData?.labData || {});
   const userData = contextData?.userData || {};
 
+  const employees =
+    (contextData?.employeeData || []).filter(
+      (emp) => emp.isFieldCollector === true
+    );
 
- // ✅ Example merging logic inside useEffect (only after context updates)
+  // Log employees to verify data
+  console.log('Employees Data:', employees);
+
+
+  // ✅ Example merging logic inside useEffect (only after context updates)
   useEffect(() => {
     if (contextData?.bookingData && contextData?.labData?.labName) {
       const merged = contextData.bookingData.map((b: any) => ({
@@ -99,6 +107,7 @@ export default function DashboardPage() {
       <div className="mt-6">
         <PaginatedBookingList
           bookings={bookingData}
+          employees={employees}
           selectedDate={selectedDate}
           selectedYear={selectedYear}
         />

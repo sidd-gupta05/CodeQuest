@@ -27,6 +27,7 @@ type Booking = {
     phone?: string;
     gender?: string;
   };
+  allocatedEmpId?: { id: string; name: string };
   // firstName?: string;
   // lastName?: string;
   // address?: string;
@@ -43,11 +44,13 @@ type Booking = {
 
 interface BookingListProps {
   bookings: Booking[];
+  employees?: any[];
   selectedDate: Date | null;
 }
 
 const BookingList: React.FC<BookingListProps> = ({
   bookings,
+  employees = [],
   selectedDate,
 }) => {
   const [expandedBookings, setExpandedBookings] = useState<Set<string>>(
@@ -89,10 +92,10 @@ const BookingList: React.FC<BookingListProps> = ({
     return undefined;
   };
 
-    const getLastNum = (booking: Booking): string => {
+  const getLastNum = (booking: Booking): string => {
     return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
   };
-  
+
   const getDownloadUrl = (booking: Booking) => {
     const finalFileName = `${getLastNum(booking)}_report.pdf`;
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${booking.bookingId}/${finalFileName}`;
@@ -221,11 +224,10 @@ const BookingList: React.FC<BookingListProps> = ({
 
                   <div className="w-28">
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        booking.status === 'CONFIRMED'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                        }`}
                     >
                       {booking.status}
                     </span>
@@ -338,9 +340,9 @@ const BookingList: React.FC<BookingListProps> = ({
                       <Eye className="w-4 h-4" />
                     </button>
                     <a href={getDownloadUrl(booking)}>
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <Download className="w-4 h-4" />
-                    </button>
+                      <button className="text-gray-400 hover:text-gray-600">
+                        <Download className="w-4 h-4" />
+                      </button>
                     </a>
                   </div>
                 </div>
@@ -377,11 +379,10 @@ const BookingList: React.FC<BookingListProps> = ({
                   <div>
                     <p className="text-xs text-gray-500">Status</p>
                     <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        booking.status === 'CONFIRMED'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${booking.status === 'CONFIRMED'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                        }`}
                     >
                       {booking.status}
                     </span>
@@ -418,9 +419,10 @@ const BookingList: React.FC<BookingListProps> = ({
       {/* Modal for booking details */}
       <BookingModal
         booking={selectedBooking}
+        employees={employees}
         show={showModal}
         onClose={() => setShowModal(false)}
-        // onUpdateStatus={(newStatus) => setSelectedBooking({ ...selectedBooking!, reportStatus: newStatus })}
+      // onUpdateStatus={(newStatus) => setSelectedBooking({ ...selectedBooking!, reportStatus: newStatus })}
       />
     </div>
   );

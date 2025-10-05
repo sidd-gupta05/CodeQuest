@@ -19,6 +19,7 @@ interface Employee {
   role: string;
   department: string;
   monthlySalary: number;
+  isFieldCollector: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -33,6 +34,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
   const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isFieldCollector, setIsFieldCollector] = useState(employee.isFieldCollector);
 
   const handleDelete = async () => {
     if (
@@ -74,6 +76,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
     setIsEditing(false);
     setEditedEmployee(employee);
     setError(null);
+    setIsFieldCollector(employee.isFieldCollector);
   };
 
   const handleSave = async () => {
@@ -108,6 +111,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
           role: editedEmployee.role,
           department: editedEmployee.department,
           monthlySalary: editedEmployee.monthlySalary,
+          isFieldCollector: isFieldCollector,
         }),
       });
 
@@ -250,13 +254,28 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
         <div className="flex items-center gap-2 text-gray-700">
           <Briefcase size={18} className="text-teal-600 flex-shrink-0" />
           {isEditing ? (
-            <input
-              type="text"
-              value={editedEmployee.role}
-              onChange={(e) => handleChange('role', e.target.value)}
-              className="text-sm font-medium bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              placeholder="Role"
-            />
+
+            <div className='block w-full'>
+
+              <div className='flex gap-2 mb-2'>
+                <input type="checkbox" name="isFieldCollector" id="isFieldCollector" checked={isFieldCollector} disabled={isFieldCollector} onChange={(e) => {
+                  const checked = e.target.checked;
+                  setIsFieldCollector(checked);
+                  handleChange('role', checked ? 'Field Collector' : '');
+
+                }} /><span><p className='text-sm font-medium text-gray-700'>Is Field Collector ?</p></span>
+              </div>
+
+              <input
+                type="text"
+                value={editedEmployee.role}
+                onChange={(e) => handleChange('role', e.target.value)}
+                className={`text-sm font-medium ${isFieldCollector ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'} border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent`}
+                placeholder="Role"
+                disabled={isFieldCollector}
+              />
+
+            </div>
           ) : (
             <span className="text-sm font-medium">{employee.role}</span>
           )}
