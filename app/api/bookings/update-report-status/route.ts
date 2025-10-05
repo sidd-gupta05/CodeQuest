@@ -5,7 +5,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createSupabaseServerClient();
-    const { bookingId, reportStatus } = await request.json();
+    const { bookingId, reportStatus, allocatedEmployee } = await request.json();
 
     if (!bookingId || !reportStatus) {
       return NextResponse.json(
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     const { error } = await supabase
       .from('bookings')
-      .update({ reportStatus })
+      .update({ reportStatus, allocatedEmpId: allocatedEmployee || null })
       .eq('id', bookingId);
 
     if (error) {

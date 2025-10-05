@@ -88,7 +88,8 @@ export const LabProvider = ({ children }: LabProviderProps) => {
             `*, 
              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
              booking_tests(testId(name)),
-             booking_addons(addons(name))`
+             booking_addons(addons(name)),
+             allocatedEmpId(id, name)`
           )
           .eq('labId', currentLabId);
         setBookingData(bookings || []);
@@ -114,10 +115,10 @@ export const LabProvider = ({ children }: LabProviderProps) => {
         // 7. Employees
         const { data: employees } = await supabase
           .from('employee')
-          .select('id, name, role, monthlySalary, department, createdAt, updatedAt')
+          .select('id, name, role, monthlySalary, department, isFieldCollector, createdAt, updatedAt')
           .eq('labId', currentLabId)
           .order('createdAt', { ascending: false });
-          
+
         setEmployeeData(employees || []);
       } catch (err: any) {
         console.error(err);
@@ -172,7 +173,8 @@ export const LabProvider = ({ children }: LabProviderProps) => {
               `*, 
              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
              booking_tests(testId(name)),
-             booking_addons(addons(name))`
+             booking_addons(addons(name)),
+             allocatedEmpId(id, name)`
             )
             .eq('labId', labId);
 
