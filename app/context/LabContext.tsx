@@ -1,4 +1,4 @@
-// //app/context/LabContext.tsx
+//app/context/LabContext.tsx
 'use client';
 
 import { supabase } from '@/utils/supabase/client';
@@ -11,6 +11,20 @@ import {
   SetStateAction,
 } from 'react';
 
+interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  labId: string;
+  date: string;
+  checkIn: string | null;
+  checkOut: string | null;
+  status: string;
+  totalHours: number | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface LabContextType {
   labId: string | null;
   labData: any;
@@ -18,6 +32,7 @@ interface LabContextType {
   employeeData: any[];
   userData: any;
   patients: any[];
+  attendanceData: AttendanceRecord[];
   loading: boolean;
   error: string | null;
   setLabId?: Dispatch<SetStateAction<string | null>>;
@@ -26,6 +41,7 @@ interface LabContextType {
   setUserData?: Dispatch<SetStateAction<any>>;
   setPatients?: Dispatch<SetStateAction<any[]>>;
   setEmployeeData?: Dispatch<SetStateAction<any[]>>;
+  setAttendanceData?: Dispatch<SetStateAction<AttendanceRecord[]>>;
 }
 
 export const LabContext = createContext<LabContextType | null>(null);
@@ -41,6 +57,7 @@ export const LabProvider = ({ children }: LabProviderProps) => {
   const [userData, setUserData] = useState<any>(null);
   const [patients, setPatients] = useState<any[]>([]);
   const [employeeData, setEmployeeData] = useState<any[]>([]);
+  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,7 +105,8 @@ export const LabProvider = ({ children }: LabProviderProps) => {
             `*, 
              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
              booking_tests(testId(name)),
-             booking_addons(addons(name))`
+             booking_addons(addons(name)),
+             allocatedEmpId(id, name)`
           )
           .eq('labId', currentLabId);
         setBookingData(bookings || []);
@@ -114,11 +132,26 @@ export const LabProvider = ({ children }: LabProviderProps) => {
         // 7. Employees
         const { data: employees } = await supabase
           .from('employee')
-          .select('id, name, role, monthlySalary, department, createdAt, updatedAt')
+          .select(
+            'id, name, role, monthlySalary, department, isFieldCollector, createdAt, updatedAt'
+          )
           .eq('labId', currentLabId)
           .order('createdAt', { ascending: false });
-          
+
         setEmployeeData(employees || []);
+
+        // 8. Attendance Data (Last 30 days)
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const { data: attendances } = await supabase
+          .from('attendances')
+          .select('*')
+          .eq('labId', currentLabId)
+          .gte('date', thirtyDaysAgo.toISOString().split('T')[0])
+          .order('date', { ascending: false });
+
+        setAttendanceData(attendances || []);
       } catch (err: any) {
         console.error(err);
         setError(err.message || 'Something went wrong while fetching data');
@@ -172,7 +205,8 @@ export const LabProvider = ({ children }: LabProviderProps) => {
               `*, 
              patientId(address, firstName, lastName, dateOfBirth, phone, gender), 
              booking_tests(testId(name)),
-             booking_addons(addons(name))`
+             booking_addons(addons(name)),
+             allocatedEmpId(id, name)`
             )
             .eq('labId', labId);
 
@@ -185,29 +219,109 @@ export const LabProvider = ({ children }: LabProviderProps) => {
       )
       .subscribe();
 
+    const attendanceChannel = supabase
+      .channel('attendance-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'attendances' },
+        async (payload) => {
+          console.log('Realtime attendance change:', payload);
+
+          // Refetch attendance data for last 30 days
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+          const { data: attendances, error } = await supabase
+            .from('attendances')
+            .select('*')
+            .eq('labId', labId)
+            .gte('date', thirtyDaysAgo.toISOString().split('T')[0])
+            .order('date', { ascending: false });
+
+          if (!error) {
+            setAttendanceData(attendances || []);
+          } else {
+            console.error('Error refetching attendance:', error);
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(employeeChannel);
       supabase.removeChannel(bookingChannel);
+      supabase.removeChannel(attendanceChannel);
     };
   }, [labId]);
 
+  // Helper function to get today's attendance for an employee
+  const getTodayAttendanceForEmployee = (employeeId: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    return attendanceData.find(
+      (attendance) =>
+        attendance.employeeId === employeeId && attendance.date === today
+    );
+  };
+
+  // Helper function to get employee attendance history
+  const getEmployeeAttendanceHistory = (employeeId: string) => {
+    return attendanceData.filter(
+      (attendance) => attendance.employeeId === employeeId
+    );
+  };
+
+  // Helper function to get today's overall attendance summary
+  const getTodayAttendanceSummary = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const todayAttendances = attendanceData.filter(
+      (attendance) => attendance.date === today
+    );
+
+    const present = todayAttendances.filter(
+      (att) => att.status === 'PRESENT' || (att.checkIn && !att.checkOut)
+    ).length;
+
+    const absent = todayAttendances.filter(
+      (att) => att.status === 'ABSENT'
+    ).length;
+
+    const completed = todayAttendances.filter(
+      (att) => att.checkIn && att.checkOut
+    ).length;
+
+    return {
+      present,
+      absent,
+      completed,
+      total: employeeData.length,
+      notMarked: employeeData.length - todayAttendances.length,
+    };
+  };
+
+  const contextValue: LabContextType = {
+    labId,
+    labData,
+    bookingData,
+    employeeData,
+    userData,
+    patients,
+    attendanceData,
+    loading,
+    error,
+    setLabId,
+    setLabData,
+    setBookingData,
+    setUserData,
+    setPatients,
+    setEmployeeData,
+    setAttendanceData,
+    // Add helper functions to context if needed
+    // getTodayAttendanceForEmployee,
+    // getEmployeeAttendanceHistory,
+    // getTodayAttendanceSummary
+  };
+
   return (
-    <LabContext.Provider
-      value={{
-        employeeData,
-        labData,
-        labId,
-        bookingData,
-        userData,
-        patients,
-        loading,
-        error,
-        setEmployeeData,
-        setBookingData,
-        setLabId,
-      }}
-    >
-      {children}
-    </LabContext.Provider>
+    <LabContext.Provider value={contextValue}>{children}</LabContext.Provider>
   );
 };

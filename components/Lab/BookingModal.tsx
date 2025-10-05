@@ -40,16 +40,19 @@ type Booking = {
   reportStatus?: string;
   totalAmount: number;
   status?: string;
+  allocatedEmpId?: { id: string; name: string };
   reportUrl?: string; // Add this field to store the uploaded report URL
 };
 
 interface BookingModalProps {
+  employees?: any[];
   booking: Booking | null;
   show: boolean;
   onClose: () => void;
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({
+  employees = [],
   booking,
   show,
   onClose,
@@ -57,6 +60,16 @@ const BookingModal: React.FC<BookingModalProps> = ({
   // Initialize state with booking data and reset when booking changes
   const [reportStatus, setReportStatus] = useState(
     booking?.reportStatus || 'TEST_BOOKED'
+  );
+
+  let allocatedEmployeeId = booking?.allocatedEmpId?.id || null;
+  let allocatedEmployeeName = booking?.allocatedEmpId?.name || null;
+
+  console.log('allocatedEmp id', allocatedEmployeeId);
+  console.log('allocatedEmp name', allocatedEmployeeName);
+
+  const [allocatedEmployee, setAllocatedEmployee] = useState<string | null>(
+    null
   );
 
   console.log('Initial reportStatus:', reportStatus);
@@ -77,6 +90,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
     booking?.reportUrl || null
   );
 
+  console.log(booking);
+
   // Reset state when booking changes
   useEffect(() => {
     if (booking) {
@@ -86,6 +101,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       setUploadAttemptsLeft(storedAttempts ? parseInt(storedAttempts, 10) : 3);
       setReportStatus(booking.reportStatus || 'TEST_BOOKED');
       setCurrentStatus(booking.reportStatus || 'TEST_BOOKED');
+      setAllocatedEmployee(booking.allocatedEmpId?.id || null);
       setUploadedFile(null);
       setImagePreviewUrl(null);
       setMessage('');
@@ -152,6 +168,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
           bookingId: booking?.bookingId,
           reportStatus,
           reportUrl,
+          allocatedEmployee,
         }),
       });
 
@@ -161,7 +178,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         toast.error(`Failed: ${data.error || 'Update failed'}`);
         setIsLoading(false);
       } else {
-        toast.success('Report status updated successfully');
+        toast.success('Successfully updated');
         // setConfirmedStatus(reportStatus);
         setReportStatus(reportStatus);
         setCurrentStatus(reportStatus);
@@ -292,15 +309,15 @@ const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed  inset-0 z-50  flex items-center justify-center">
       {/* Overlay */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0  bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl p-4 mx-4">
+      <div className="relative h-[90vh] overflow-y-scroll modal-scroll bg-white rounded-sm shadow-2xl w-full max-w-4xl p-4 mx-4">
         {/* Header */}
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -375,19 +392,59 @@ const BookingModal: React.FC<BookingModalProps> = ({
         </div>
 
         {/* Tests */}
-        <div className="mt-4 bg-gray-50 rounded-xl p-4">
-          <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-            Tests
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {booking.booking_tests.map((t, i) => (
-              <span
-                key={i}
-                className="px-3 py-1 rounded-full text-xs text-blue-900 font-medium bg-blue-100"
-              >
-                {t.testId?.name || 'Unknown Test'}
-              </span>
-            ))}
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <div className="mt-4 space-y-3 bg-gray-50 rounded-xl p-4">
+            <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+              Tests
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {booking.booking_tests.map((t, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1 rounded-full text-xs text-blue-900 font-medium bg-blue-100"
+                >
+                  {t.testId?.name || 'Unknown Test'}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="space-y-3 gap-4 mt-4 w-full">
+              <div className="w-full bg-gray-50 rounded-xl p-4">
+                <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  Allocate Employee
+                </h3>
+                {/* <p className='text-xs mb-2'>Current Employee : {allocatedEmployeeName || "NONE"} </p> */}
+                {employees.length === 0 ? (
+                  <>
+                    <p className="text-xs mb-2 text-yellow-600">
+                      No employees available OR None is "Field Collector"
+                    </p>
+                  </>
+                ) : (
+                  <Select
+                    value={allocatedEmployee ?? ''}
+                    onValueChange={setAllocatedEmployee}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select employee" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-100">
+                      {employees.map((employee) => (
+                        <SelectItem
+                          key={employee.id}
+                          value={employee.id}
+                          className="hover:cursor-pointer hover:bg-blue-100"
+                        >
+                          {employee.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -472,17 +529,17 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 </SelectContent>
               </Select>
             )}
-
           </div>
 
           {/* Reports Upload */}
           <div className="w-full bg-gray-50 rounded-xl p-4">
             <label className="block text-sm font-semibold mb-2">Reports</label>
             <p
-              className={`text-xs mb-2 ${uploadAttemptsLeft === 0
-                ? 'text-red-600 font-semibold'
-                : 'text-gray-500'
-                }`}
+              className={`text-xs mb-2 ${
+                uploadAttemptsLeft === 0
+                  ? 'text-red-600 font-semibold'
+                  : 'text-gray-500'
+              }`}
             >
               Uploads remaining : {uploadAttemptsLeft}/3
             </p>
@@ -511,10 +568,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
             {/* File upload area */}
             <label
-              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${reportStatus === 'REPORT_READY'
-                ? 'border-gray-300 cursor-pointer'
-                : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
-                }`}
+              className={`border-2 border-dashed rounded-md p-2 text-center relative block ${
+                reportStatus === 'REPORT_READY'
+                  ? 'border-gray-300 cursor-pointer'
+                  : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
+              }`}
             >
               <input
                 type="file"

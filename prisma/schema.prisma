@@ -45,22 +45,24 @@ model Patient {
 }
 
 model Lab {
-  id                    String          @id @default(uuid())
-  userId                String          @unique
+  id                    String             @id @default(uuid())
+  userId                String             @unique
   labLocation           String
   nablCertificateNumber String
   certificateUrl        String
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
   CustomReagent         CustomReagent[]
+  attendances           attendances[]
   bookings              bookings[]
   employees             employee[]
   details               LabDetails?
   lab_inventory         lab_inventory[]
   timeSlots             LabTimeSlot[]
-  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  LeaveApplication      LeaveApplication[]
   schedules             Schedule[]
-  tests                 tests[]         @relation("AvailableTests")
+  tests                 tests[]            @relation("AvailableTests")
 
   @@map("labs")
 }
@@ -197,7 +199,7 @@ model bookings {
   updatedAt      DateTime
   reportStatus   ReportStatus     @default(BOOKING_PENDING)
   allocatedEmpId String?
-  reportUrl      String?   
+  reportUrl      String?
   booking_addons booking_addons[]
   booking_tests  booking_tests[]
   allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])
@@ -214,10 +216,10 @@ model tests {
   category      String
   description   String?
   price         Float
-  duration      String?
   isActive      Boolean         @default(true)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
+  duration      String?
   TestReagent   TestReagent[]
   booking_tests booking_tests[]
   labs          Lab[]           @relation("AvailableTests")
@@ -230,13 +232,13 @@ model CustomReagent {
   name             String
   category         String?
   description      String?
-  manufacturer     String?
   unit             String
   createdAt        DateTime  @default(now())
   updatedAt        DateTime
   expiryDate       DateTime?
   quantity         Float?
   reorderThreshold Float?
+  manufacturer     String?
   labs             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
 }
 
@@ -245,10 +247,10 @@ model ReagentCatalog {
   name          String
   category      String?
   description   String?
-  manufacturer  String?
   unit          String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
+  manufacturer  String?
   TestReagent   TestReagent[]
   lab_inventory lab_inventory[]
 }
@@ -285,16 +287,73 @@ model lab_inventory {
 }
 
 model employee {
-  id            String     @id
-  labId         String
-  name          String
-  role          String
-  monthlySalary Float
-  department    String
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @default(now())
-  bookings      bookings[]
-  lab           Lab        @relation(fields: [labId], references: [id], onDelete: Cascade)
+  id               String             @id
+  labId            String
+  name             String
+  role             String
+  monthlySalary    Float
+  department       String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isFieldCollector Boolean?           @default(false)
+  attendances      attendances[]
+  bookings         bookings[]
+  lab              Lab                @relation(fields: [labId], references: [id], onDelete: Cascade)
+  LeaveApplication LeaveApplication[]
+}
+
+model attendances {
+  id         String           @id
+  employeeId String
+  labId      String
+  date       DateTime
+  checkIn    DateTime?
+  checkOut   DateTime?
+  status     AttendanceStatus @default(PRESENT)
+  totalHours Float?
+  notes      String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime
+  employee   employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  labs       Lab              @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+}
+
+model LeaveApplication {
+  id         String      @id @default(uuid())
+  employeeId String
+  labId      String
+  startDate  DateTime
+  endDate    DateTime
+  leaveType  LeaveType
+  reason     String
+  status     LeaveStatus @default(PENDING)
+  approvedBy String?
+  notes      String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  employee   employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  lab        Lab         @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  @@map("leave_applications")
+}
+
+enum LeaveType {
+  SICK_LEAVE
+  CASUAL_LEAVE
+  EARNED_LEAVE
+  MATERNITY_LEAVE
+  PATERNITY_LEAVE
+  EMERGENCY_LEAVE
+  OTHER
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }
 
 enum DayOfWeek {
@@ -334,4 +393,12 @@ enum ReportStatus {
   IN_LAB
   UNDER_REVIEW
   REPORT_READY
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  LEAVE
+  HOLIDAY
 }

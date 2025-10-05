@@ -2,12 +2,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import {
-  Download,
-  Eye,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+import { Download, Eye, ChevronDown, ChevronUp } from 'lucide-react';
 import BookingModal from './BookingModal';
 
 type Booking = {
@@ -27,6 +22,7 @@ type Booking = {
     phone?: string;
     gender?: string;
   };
+  allocatedEmpId?: { id: string; name: string };
   // firstName?: string;
   // lastName?: string;
   // address?: string;
@@ -43,11 +39,13 @@ type Booking = {
 
 interface BookingListProps {
   bookings: Booking[];
+  employees?: any[];
   selectedDate: Date | null;
 }
 
 const BookingList: React.FC<BookingListProps> = ({
   bookings,
+  employees = [],
   selectedDate,
 }) => {
   const [expandedBookings, setExpandedBookings] = useState<Set<string>>(
@@ -89,15 +87,14 @@ const BookingList: React.FC<BookingListProps> = ({
     return undefined;
   };
 
-    const getLastNum = (booking: Booking): string => {
+  const getLastNum = (booking: Booking): string => {
     return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
   };
-  
+
   const getDownloadUrl = (booking: Booking) => {
     const finalFileName = `${getLastNum(booking)}_report.pdf`;
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${booking.bookingId}/${finalFileName}`;
   };
-
 
   // Sort bookings: Express first, then Superfast, then others
   // const sortedBookings = useMemo(() => {
@@ -245,7 +242,11 @@ const BookingList: React.FC<BookingListProps> = ({
                     >
                       <Eye className="w-5 h-5" />
                     </button>
-                    <a href={getDownloadUrl(booking)} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={getDownloadUrl(booking)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Download className="w-4 h-4 text-gray-400 hover:text-gray-600" />
                     </a>
                   </div>
@@ -338,9 +339,9 @@ const BookingList: React.FC<BookingListProps> = ({
                       <Eye className="w-4 h-4" />
                     </button>
                     <a href={getDownloadUrl(booking)}>
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <Download className="w-4 h-4" />
-                    </button>
+                      <button className="text-gray-400 hover:text-gray-600">
+                        <Download className="w-4 h-4" />
+                      </button>
                     </a>
                   </div>
                 </div>
@@ -418,6 +419,7 @@ const BookingList: React.FC<BookingListProps> = ({
       {/* Modal for booking details */}
       <BookingModal
         booking={selectedBooking}
+        employees={employees}
         show={showModal}
         onClose={() => setShowModal(false)}
         // onUpdateStatus={(newStatus) => setSelectedBooking({ ...selectedBooking!, reportStatus: newStatus })}

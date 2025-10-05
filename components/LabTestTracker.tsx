@@ -1,3 +1,4 @@
+//components/LabTestTracker.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -207,7 +208,7 @@ const LabTestTracker = () => {
   const getLastNum = (booking: Booking): string => {
     return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
   };
-    const getDownloadUrl = (booking: Booking) => {
+  const getDownloadUrl = (booking: Booking) => {
     const finalFileName = `${getLastNum(booking)}_report.pdf`;
     return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/uploads/bookings/${booking.bookingId}/${finalFileName}`;
   };
@@ -232,7 +233,12 @@ const LabTestTracker = () => {
 
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="mx-auto">
-            <Image width={80} height={80} src="/report-loading.gif" alt="Loading..." />
+            <Image
+              width={80}
+              height={80}
+              src="/report-loading.gif"
+              alt="Loading..."
+            />
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Gathering your bookings . . .
@@ -400,32 +406,31 @@ const LabTestTracker = () => {
                               </div>
                             </td>
                             <td className="px-6 py-5">
-  <div className="flex gap-3">
-    {/* View Details Button */}
-    <button
-      onClick={() => setSelectedBooking(booking)}
-      className="group/btn hover:cursor-pointer flex items-center justify-center w-9 h-9 text-slate-400 hover:text-[#178087] hover:bg-[#178087]/10 rounded-xl transition-all duration-200 border border-transparent hover:border-[#178087]/20"
-      title="View Details"
-    >
-      <Eye className="w-4 h-4" />
-    </button>
+                              <div className="flex gap-3">
+                                {/* View Details Button */}
+                                <button
+                                  onClick={() => setSelectedBooking(booking)}
+                                  className="group/btn hover:cursor-pointer flex items-center justify-center w-9 h-9 text-slate-400 hover:text-[#178087] hover:bg-[#178087]/10 rounded-xl transition-all duration-200 border border-transparent hover:border-[#178087]/20"
+                                  title="View Details"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
 
-    {/* Download / Open PDF */}
-  <button
-    className="group/btn flex items-center justify-center w-9 h-9 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 border border-transparent hover:border-emerald-200"
-    title="View Report"
-  >
-    <a
-  href={getDownloadUrl(booking)}
-  target="_blank"
-  rel="noopener noreferrer"
->
-    <Download className="w-4 h-4" />
-</a>
-  </button>
-  </div>
-</td>
-
+                                {/* Download / Open PDF */}
+                                <button
+                                  className="group/btn flex items-center justify-center w-9 h-9 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all duration-200 border border-transparent hover:border-emerald-200"
+                                  title="View Report"
+                                >
+                                  <a
+                                    href={getDownloadUrl(booking)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                  </a>
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         );
                       })

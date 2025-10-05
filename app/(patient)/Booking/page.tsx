@@ -150,6 +150,7 @@ export default function Booking() {
       const { data: employees, error } = await supabase
         .from('employee')
         .select('id')
+        .eq('isFieldCollector', true)
         .eq('labId', labId);
 
       if (error) console.error('Error fetching employees:', error);
@@ -158,6 +159,8 @@ export default function Booking() {
 
     fetchEmployees();
   }, [labId]);
+
+  console.log('Total Employees (Field Collectors):', totalEmployees);
 
   // ---------------- SLOT AVAILABILITY ----------------
   interface Availability {

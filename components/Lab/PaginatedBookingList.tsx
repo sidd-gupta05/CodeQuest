@@ -5,6 +5,7 @@ import BookingList from './BookingList';
 
 interface PaginatedBookingListProps {
   bookings: any[];
+  employees?: any[];
   selectedDate: Date | null;
   selectedYear: number;
 }
@@ -13,6 +14,7 @@ const PaginatedBookingList: React.FC<PaginatedBookingListProps> = ({
   bookings,
   selectedDate,
   selectedYear,
+  employees = [],
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -101,7 +103,11 @@ const PaginatedBookingList: React.FC<PaginatedBookingListProps> = ({
       </div>
 
       <div className="p-0">
-        <BookingList bookings={currentItems} selectedDate={selectedDate} />
+        <BookingList
+          bookings={currentItems}
+          selectedDate={selectedDate}
+          employees={employees}
+        />
       </div>
 
       {totalPages > 1 && (

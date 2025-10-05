@@ -52,9 +52,9 @@ const SalesInsights: React.FC<SalesInsightsProps> = ({
     const totalNetProfit = computations.totalNetProfit || 0;
     const totalCosts =
       computations.totalEmployeeCosts +
-      computations.totalOperatingCosts +
-      computations.totalEquipmentCosts +
-      computations.totalInventoryCosts || 1;
+        computations.totalOperatingCosts +
+        computations.totalEquipmentCosts +
+        computations.totalInventoryCosts || 1;
 
     return {
       profitMargin: Math.round((totalNetProfit / totalRevenue) * 100),
@@ -72,7 +72,9 @@ const SalesInsights: React.FC<SalesInsightsProps> = ({
         </h3>
         <div className="space-y-4">
           {employeeData.length === 0 ? (
-            <p className="text-center text-sm text-gray-500">Add Employees ; No Data Available</p>
+            <p className="text-center text-sm text-gray-500">
+              Add Employees ; No Data Available
+            </p>
           ) : (
             departmentBreakdown.map((dept, index) => (
               <div

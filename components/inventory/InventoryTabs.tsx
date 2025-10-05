@@ -1,8 +1,12 @@
-import { TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 
-export const InventoryTabs = ({ tabs }: { tabs: { value: string; label: string }[] }) => (
+export const InventoryTabs = ({
+  tabs,
+}: {
+  tabs: { value: string; label: string }[];
+}) => (
   <TabsList className="grid w-full grid-cols-5 bg-[#F1F5F9] text-[#64748B]">
-    {tabs.map(tab => (
+    {tabs.map((tab) => (
       <TabsTrigger
         key={tab.value}
         value={tab.value}

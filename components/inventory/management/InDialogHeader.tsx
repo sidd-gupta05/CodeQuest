@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,24 +17,29 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Plus } from "lucide-react";
+import { Plus } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { NextFont } from 'next/dist/compiled/@next/font';
 
 // ---------- Types ----------
 import { ReagentDetails } from '@/types/inventory';
 interface DialogHeaderProps {
-    font: NextFont;
-    sampleReagentCatalog: ReagentDetails[];
+  font: NextFont;
+  sampleReagentCatalog: ReagentDetails[];
 }
 
-export const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) => {
+export const InDialogHeader = ({
+  font,
+  sampleReagentCatalog,
+}: DialogHeaderProps) => {
   return (
     <>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-3xl font-bold">Reagent Inventory</CardTitle>
+            <CardTitle className="text-3xl font-bold">
+              Reagent Inventory
+            </CardTitle>
             <CardDescription className="text-[#64748B] font-normal">
               Manage stock levels and track expiry dates
             </CardDescription>
@@ -46,9 +51,13 @@ export const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) 
                 Add Stock
               </Button>
             </DialogTrigger>
-            <DialogContent className={`${font.className} bg-white border-[#F7F8F9] max-w-lg`}>
+            <DialogContent
+              className={`${font.className} bg-white border-[#F7F8F9] max-w-lg`}
+            >
               <DialogHeader>
-                <DialogTitle className="font-semibold text-xl">Add Reagent Stock</DialogTitle>
+                <DialogTitle className="font-semibold text-xl">
+                  Add Reagent Stock
+                </DialogTitle>
                 <DialogDescription className="text-gray-600">
                   Add new stock for existing reagents
                 </DialogDescription>
@@ -74,7 +83,12 @@ export const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="quantity">Quantity</Label>
-                    <Input id="quantity" type="number" placeholder="100" className="p-4 py-5 text-md border-[#dbdcdd]" />
+                    <Input
+                      id="quantity"
+                      type="number"
+                      placeholder="100"
+                      className="p-4 py-5 text-md border-[#dbdcdd]"
+                    />
                   </div>
                   <div>
                     <Label htmlFor="unit">Unit</Label>
@@ -83,8 +97,10 @@ export const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) 
                         <SelectValue placeholder="ml" />
                       </SelectTrigger>
                       <SelectContent>
-                        {["ml", "l", "kit", "vial"].map(u => (
-                          <SelectItem key={u} value={u}>{u}</SelectItem>
+                        {['ml', 'l', 'kit', 'vial'].map((u) => (
+                          <SelectItem key={u} value={u}>
+                            {u}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -93,12 +109,20 @@ export const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) 
                 {/* Expiry */}
                 <div>
                   <Label htmlFor="expiry">Expiry Date</Label>
-                  <Input id="expiry" type="date" className="border-[#dbdcdd] text-md" />
+                  <Input
+                    id="expiry"
+                    type="date"
+                    className="border-[#dbdcdd] text-md"
+                  />
                 </div>
                 {/* Batch */}
                 <div>
                   <Label htmlFor="batch">Batch Number</Label>
-                  <Input id="batch" placeholder="BATCH2024001" className="border-[#dbdcdd] p-4 py-5 text-md" />
+                  <Input
+                    id="batch"
+                    placeholder="BATCH2024001"
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
+                  />
                 </div>
                 <Button className="w-full bg-black text-white hover:bg-gray-800">
                   Add to Inventory
@@ -109,5 +133,5 @@ export const InDialogHeader = ({font, sampleReagentCatalog}: DialogHeaderProps) 
         </div>
       </CardHeader>
     </>
-  )
+  );
 };
