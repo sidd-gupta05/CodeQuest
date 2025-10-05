@@ -30,7 +30,7 @@ export function SearchFilter({
           className="pl-10 border-[#e8e8e9]"
         />
       </div>
-      <Select value={filterCategory} onValueChange={setFilterCategory}>
+      {/* <Select value={filterCategory} onValueChange={setFilterCategory}>
         <SelectTrigger className="w-48 border-[#e8e8e9]">
           <Filter className="h-4 w-4 mr-2" />
           <SelectValue placeholder="Category" />
@@ -48,7 +48,7 @@ export function SearchFilter({
             </SelectItem>
           ))}
         </SelectContent>
-      </Select>
+      </Select> */}
     </div>
   );
 }
