@@ -27,7 +27,9 @@ const Inventory = () => {
     testCatalog,
     reagentCatalog,
     loading: contextLoading,
-    fetchData,
+    // fetchData,
+    setLabId,
+    
   } = useInventory();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -254,7 +256,7 @@ const Inventory = () => {
                 reagentCatalog={reagentCatalog}
                 customReagents={customReagents}
                 selectedLab={labId!}
-                onReagentAdded={fetchData}
+                  // onReagentAdded={fetchData}
               />
               <CardContent>
                 <SearchFilter
@@ -309,7 +311,7 @@ const Inventory = () => {
               reagents={customReagents}
               selectedLab={labId!}
               getStockStatus={getStockStatus}
-              onReagentAdded={fetchData}
+              // onReagentAdded={fetchData}
             />
           </TabsContent>
 

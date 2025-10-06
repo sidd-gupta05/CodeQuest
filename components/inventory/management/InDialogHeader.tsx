@@ -46,7 +46,7 @@ interface DialogHeaderProps {
   reagentCatalog: ReagentCatalog[];
   customReagents: CustomReagent[];
   selectedLab: string;
-  onReagentAdded: () => void;
+  // onReagentAdded: () => void;
 }
 
 export const InDialogHeader = ({
@@ -54,7 +54,6 @@ export const InDialogHeader = ({
   reagentCatalog,
   customReagents,
   selectedLab,
-  onReagentAdded,
 }: DialogHeaderProps) => {
   const [reagentType, setReagentType] = React.useState<'catalog' | 'custom'>('catalog');
   const [selectedReagentId, setSelectedReagentId] = React.useState('');
@@ -76,6 +75,8 @@ export const InDialogHeader = ({
         increment: true
       };
 
+      console.log({selectedLab})
+      console.log({payload})
       const response = await fetch(`/api/lab/${selectedLab}/inventory`, {
         method: 'POST',
         headers: {
@@ -96,7 +97,7 @@ export const InDialogHeader = ({
       setExpiryDate('');
       
       // Refresh data
-      onReagentAdded();
+      // onReagentAdded();
       
       // Show success
       alert('Reagent added to inventory successfully!');
@@ -148,7 +149,7 @@ export const InDialogHeader = ({
                   <SelectTrigger className="border-[#dbdcdd] w-full p-4 py-5 text-md">
                     <SelectValue placeholder="Select reagent type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border-[#F7F8F9] shadow-sm">
                     <SelectItem value="catalog">Catalog Reagent</SelectItem>
                     <SelectItem value="custom">Custom Reagent</SelectItem>
                   </SelectContent>
@@ -189,11 +190,11 @@ export const InDialogHeader = ({
                 </div>
                 <div>
                   <Label htmlFor="unit">Unit</Label>
-                  <Select defaultValue="ml">
-                    <SelectTrigger className="border-[#dbdcdd] p-4 py-5 text-md">
+                  <Select  defaultValue="ml">
+                    <SelectTrigger className="border-[#dbdcdd] bg-white p-4 py-5 text-md">
                       <SelectValue placeholder="ml" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border-[#F7F8F9] shadow-sm">
                       {['ml', 'l', 'kit', 'vial'].map((u) => (
                         <SelectItem key={u} value={u}>
                           {u}
@@ -206,7 +207,7 @@ export const InDialogHeader = ({
 
               {/* Expiry */}
               <div>
-                <Label htmlFor="expiry">Expiry Date</Label>
+                <Label className='pb-1' htmlFor="expiry">Expiry Date</Label>
                 <Input
                   id="expiry"
                   type="date"

@@ -7,18 +7,10 @@ export default function LabLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const ContextData = useContext(InventoryContext);
-  console.log("Inventory Context Data in LabLayout:", ContextData);
-  const loading = ContextData?.loading;
+  // const ContextData = useContext(InventoryContext);
+  // console.log("Inventory Context Data in LabLayout:", ContextData);
+  // const loading = ContextData?.loading;
 
-  if (loading) {
-    //same for now
-    return (
-      <InventoryProvider>
-        {children}
-      </InventoryProvider>
-    );
-  }
 
   return (
     <InventoryProvider>

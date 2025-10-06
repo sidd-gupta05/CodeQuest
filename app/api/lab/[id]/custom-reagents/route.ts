@@ -47,6 +47,7 @@ export async function POST(
   try {
     const { id: labId } = await context.params;
     const body = await req.json();
+    console.log({ labId, body })
     
     const { name, description, quantity, unit, expiryDate, reorderThreshold, manufacturer, category, addToInventory = false } = body;
 

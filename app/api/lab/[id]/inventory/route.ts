@@ -76,11 +76,12 @@ type Body = {
 
 export async function POST(
   req: NextRequest, 
-  { params }: { params: { labId: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const { labId } = params;
-    const body: Body = await req.json();
+    const { id: labId } = await context.params;
+    const body = await req.json();
+    console.log({ labId, body })
 
     const { 
       reagentId, 
