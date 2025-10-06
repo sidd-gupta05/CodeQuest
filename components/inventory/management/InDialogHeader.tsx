@@ -46,7 +46,7 @@ interface DialogHeaderProps {
   reagentCatalog: ReagentCatalog[];
   customReagents: CustomReagent[];
   selectedLab: string;
-  // onReagentAdded: () => void;
+  onReagentAdded: () => void;
 }
 
 export const InDialogHeader = ({
@@ -54,6 +54,7 @@ export const InDialogHeader = ({
   reagentCatalog,
   customReagents,
   selectedLab,
+  onReagentAdded
 }: DialogHeaderProps) => {
   const [reagentType, setReagentType] = React.useState<'catalog' | 'custom'>('catalog');
   const [selectedReagentId, setSelectedReagentId] = React.useState('');
@@ -97,7 +98,7 @@ export const InDialogHeader = ({
       setExpiryDate('');
       
       // Refresh data
-      // onReagentAdded();
+      onReagentAdded();
       
       // Show success
       alert('Reagent added to inventory successfully!');

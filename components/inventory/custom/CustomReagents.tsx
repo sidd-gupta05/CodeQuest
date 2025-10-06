@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
+import { Package, Plus } from 'lucide-react';
 import { v4 as uuid } from 'uuid';
 
 
@@ -29,10 +29,11 @@ interface CustomReagentsProps {
   reagents: CustomReagent[];
   selectedLab: string;
   getStockStatus: (quantity: number, threshold: number, expiryDate?: string) => any;
-  // onReagentAdded: () => void;
+  onReagentAdded: () => void;
 }
 
-export function CustomReagents({ reagents, selectedLab, getStockStatus }: CustomReagentsProps) {
+export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagentAdded }: CustomReagentsProps) {
+  const filtered = reagents.filter((r) => r.labId === selectedLab);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -112,14 +113,19 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                 Add Custom Reagent
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="bg-white border-[#F7F8F9] max-w-lg">
               <DialogHeader>
-                <DialogTitle>Create Custom Reagent</DialogTitle>
+                <DialogTitle className="text-xl font-semibold">
+                  Create Custom Reagent</DialogTitle>
+                <DialogDescription className="font-medium text-[#838FA2]">
+                  Create a lab-specific reagent
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name">Reagent Name</Label>
                   <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -130,6 +136,7 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                   <div>
                     <Label htmlFor="category">Category</Label>
                     <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                       id="category"
                       value={formData.category}
                       onChange={(e) => setFormData({...formData, category: e.target.value})}
@@ -138,6 +145,7 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                   <div>
                     <Label htmlFor="unit">Unit</Label>
                     <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                       id="unit"
                       value={formData.unit}
                       onChange={(e) => setFormData({...formData, unit: e.target.value})}
@@ -148,6 +156,7 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                 <div>
                   <Label htmlFor="manufacturer">Manufacturer</Label>
                   <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                     id="manufacturer"
                     value={formData.manufacturer}
                     onChange={(e) => setFormData({...formData, manufacturer: e.target.value})}
@@ -156,6 +165,7 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                 <div>
                   <Label htmlFor="description">Description</Label>
                   <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -165,6 +175,7 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                   <div>
                     <Label htmlFor="quantity">Initial Quantity</Label>
                     <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                       id="quantity"
                       type="number"
                       step="0.01"
@@ -175,6 +186,7 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                   <div>
                     <Label htmlFor="reorderThreshold">Reorder Threshold</Label>
                     <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                       id="reorderThreshold"
                       type="number"
                       step="0.01"
@@ -186,13 +198,14 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                 <div>
                   <Label htmlFor="expiryDate">Expiry Date</Label>
                   <Input
+                    className="border-[#dbdcdd] p-4 py-5 text-md"
                     id="expiryDate"
                     type="date"
                     value={formData.expiryDate}
                     onChange={(e) => setFormData({...formData, expiryDate: e.target.value})}
                   />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full">
+                <Button type="submit" disabled={loading} className="w-full bg-black text-white hover:bg-gray-800">
                   {loading ? 'Creating...' : 'Create Custom Reagent'}
                 </Button>
               </form>
@@ -202,7 +215,7 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {reagents.map((reagent) => {
+          {filtered.length > 0 ?(filtered.map((reagent) => {
             const status = getStockStatus(
               reagent.quantity || 0,
               reagent.reorderThreshold || 0,
@@ -211,17 +224,18 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
             const StatusIcon = status.icon;
 
             return (
-              <Card key={reagent.id} className="border-l-4 border-l-blue-500">
+              <Card key={reagent.id} 
+                  className="border-l-4 border-gray-300 border-l-purple-500">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{reagent.name}</CardTitle>
+                    <CardTitle className="text-lg font-bold">{reagent.name}</CardTitle>
                     <StatusIcon className={`h-4 w-4 ${
                       status.status === 'good' ? 'text-green-500' :
                       status.status === 'low-stock' ? 'text-orange-500' :
                       'text-red-500'
                     }`} />
                   </div>
-                  <CardDescription>{reagent.category}</CardDescription>
+                  <CardDescription className="font-medium text-[#64748B]">{reagent.category}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <div className="flex justify-between">
@@ -247,7 +261,16 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus }: Custom
                 </CardContent>
               </Card>
             );
-          })}
+          })) :
+          (
+            <div className="text-center py-8 text-gray-500">
+              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No custom reagents added yet</p>
+              <p className="text-sm">
+                Add lab-specific reagents using the button above
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
