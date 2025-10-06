@@ -2,15 +2,17 @@
 import { supabase } from '@/utils/supabase/client';
 import axios from 'axios';
 
-export const handleGoogleLogin = async (role: string) => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${window.location.origin}/auth/oauth-callback?role=${role}`,
-    },
-  });
-  if (error) console.error(error);
-};
+export const handleGoogleLogin = async ({accountType}: {accountType: string}) => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `http://localhost:3000/api/auth/oauth-callback?role=${accountType}`,
+      },
+    });
+
+    if (error) console.error(error);
+    console.log('Google login initiated', data);
+  };
 
 export async function callOAuthCallback(role: string) {
   try {

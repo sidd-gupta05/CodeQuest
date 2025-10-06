@@ -8,8 +8,9 @@ import { signIn } from 'next-auth/react';
 import axios from 'axios';
 import CarouselSection from '@/components/carousel-section';
 import { AccountTypeSidebar } from '@/components/AccSidebar';
-import OneTapComponent from '@/components/OneTapComponent';
-import { supabase } from '@/utils/supabase/client';
+import { handleGoogleLogin } from './actions';
+import Link from 'next/link';
+import { object } from 'zod';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -68,18 +69,6 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // TODO: Gonna remove below handlers
-  const handleGoogleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `http://localhost:3000/api/auth/oauth-callback?role=${accountType}`,
-      },
-    });
-
-    if (error) console.error(error);
-    console.log('Google login initiated', data);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -273,7 +262,7 @@ export default function SignupPage() {
             <div className="flex gap-4 justify-center">
               <button
                 className="cursor-pointer flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-                onClick={() => handleGoogleLogin()}
+                onClick={() => handleGoogleLogin({accountType})}
               >
                 <Image src="/google.svg" alt="Google" width={20} height={20} />
                 <span className="text-sm font-medium">Sign in with Google</span>
@@ -284,9 +273,13 @@ export default function SignupPage() {
 
             <p className="text-center text-sm text-gray-600 mt-4">
               Already have an account?{' '}
-              <a href="/auth/login" className="text-teal-600">
+              <Link
+                href={{ pathname: '/auth/login', query: { object: JSON.stringify(accountType) }, }}
+                className="text-teal-600"
+              >
                 Log in
-              </a>
+              </Link>
+              
             </p>
           </div>
         )}

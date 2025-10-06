@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
+import { handleGoogleLogin } from '../sign_in/actions';
 
 const loginSchema = z.object({
   identifier: z.string().min(1, 'Email or phone is required'),
@@ -18,6 +18,12 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+
+  const objectParam = searchParams.get('object');
+  const accountType = objectParam ? JSON.parse(objectParam) : 'PATIENT';
+  console.log({ accountType });
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -168,7 +174,7 @@ export default function LoginPage() {
           <div className="flex gap-4 justify-center">
             <button
               className="flex cursor-pointer items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+              onClick={() => handleGoogleLogin({ accountType })}
             >
               <Image src="/google.svg" alt="Google" width={20} height={20} />
               <span className="text-sm font-medium">Login with Google</span>
