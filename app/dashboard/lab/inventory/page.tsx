@@ -1,7 +1,7 @@
 // app/dashboard/lab/inventory/page.tsx
 'use client';
 import React, { useState } from 'react';
-import { interFont } from '@/app/fonts';
+import { clashFontRegular } from '@/app/fonts';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { AlertTriangle, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
@@ -27,8 +27,8 @@ const Inventory = () => {
     testCatalog,
     reagentCatalog,
     loading: contextLoading,
-    // fetchData,
-    setLabId,
+    fetchData,
+    // setLabId,
     
   } = useInventory();
 
@@ -199,7 +199,7 @@ const Inventory = () => {
 
   if (contextLoading) {
     return (
-      <div className={`min-h-screen bg-gray-50 p-6 flex items-center justify-center ${interFont.className}`}>
+      <div className={`min-h-screen bg-gray-50 p-6 flex items-center justify-center ${clashFontRegular.className}`}>
         <div className="text-center">Loading inventory data...</div>
       </div>
     );
@@ -207,7 +207,7 @@ const Inventory = () => {
 
   if (!labId) {
     return (
-      <div className={`min-h-screen bg-gray-50 p-6 flex items-center justify-center ${interFont.className}`}>
+      <div className={`min-h-screen bg-gray-50 p-6 flex items-center justify-center ${clashFontRegular.className}`}>
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">No Lab Found</h2>
           <p className="text-gray-600">Please make sure you have a lab associated with your account.</p>
@@ -217,7 +217,7 @@ const Inventory = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 p-6 ` + interFont.className}>
+    <div className={`min-h-screen bg-gray-50 p-6 ` + clashFontRegular.className}>
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <InventoryHeader
@@ -252,11 +252,11 @@ const Inventory = () => {
           >
             <Card className="bg-white border-[#F7F8F9]">
               <InDialogHeader
-                font={interFont}
+                font={clashFontRegular}
                 reagentCatalog={reagentCatalog}
                 customReagents={customReagents}
                 selectedLab={labId!}
-                  // onReagentAdded={fetchData}
+                onReagentAdded={fetchData}
               />
               <CardContent>
                 <SearchFilter
@@ -311,7 +311,7 @@ const Inventory = () => {
               reagents={customReagents}
               selectedLab={labId!}
               getStockStatus={getStockStatus}
-              // onReagentAdded={fetchData}
+              onReagentAdded={fetchData}
             />
           </TabsContent>
 

@@ -1,5 +1,5 @@
 // components/inventory/in-dialog-header.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -63,8 +63,71 @@ export const InDialogHeader = ({
   const [expiryDate, setExpiryDate] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
+  const availableReagents = reagentType === 'catalog' ? reagentCatalog : customReagents;
+  const selectedReagent = availableReagents.find(reagent => reagent.id === selectedReagentId);
+
+
+// Add this useEffect to reset selected reagent when type changes
+useEffect(() => {
+  setSelectedReagentId('');
+  setBatchNumber('');
+  setQuantity('');
+  setExpiryDate('');
+}, [reagentType]);
+
+// Then modify your existing batch fetch useEffect to check if the selected reagent exists
+useEffect(() => {
+  const fetchExistingBatch = async () => {
+    // Check if selected reagent exists in available reagents
+    const reagentExists = availableReagents.some(reagent => reagent.id === selectedReagentId);
+    
+    if (selectedReagentId && reagentExists) {
+      try {
+        // Build query parameters based on reagent type
+        const params = new URLSearchParams();
+        if (reagentType === 'catalog') {
+          params.append('reagentId', selectedReagentId);
+        } else {
+          params.append('customReagentId', selectedReagentId);
+        }
+        
+        const response = await fetch(`/api/lab/${selectedLab}/inventory?${params.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          // Get the most recent batch number from existing inventory
+          if (data.length > 0) {
+            const latestBatch = data[0].batchNumber;
+            if (latestBatch) {
+              setBatchNumber(latestBatch);
+              return;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching existing batch:', error);
+      }
+    }
+    // Reset batch number if no reagent selected or no existing batch found
+    setBatchNumber('');
+  };
+
+  fetchExistingBatch();
+}, [selectedReagentId, reagentType, selectedLab, availableReagents]); // Add availableReagents dependency
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate inputs
+    if (!selectedReagentId) {
+      alert('Please select a reagent');
+      return;
+    }
+    
+    if (!quantity || parseFloat(quantity) <= 0) {
+      alert('Please enter a valid quantity');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -111,8 +174,6 @@ export const InDialogHeader = ({
     }
   };
 
-  const availableReagents = reagentType === 'catalog' ? reagentCatalog : customReagents;
-
   return (
     <CardHeader>
       <div className="flex items-center justify-between">
@@ -145,7 +206,7 @@ export const InDialogHeader = ({
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Reagent Type */}
               <div>
-                <Label htmlFor="reagentType">Reagent Type</Label>
+                <Label className='pb-1' htmlFor="reagentType">Reagent Type</Label>
                 <Select value={reagentType} onValueChange={(value: 'catalog' | 'custom') => setReagentType(value)}>
                   <SelectTrigger className="border-[#dbdcdd] w-full p-4 py-5 text-md">
                     <SelectValue placeholder="Select reagent type" />
@@ -159,7 +220,7 @@ export const InDialogHeader = ({
 
               {/* Reagent select */}
               <div>
-                <Label htmlFor="reagent">Reagent</Label>
+                <Label className='pb-1' htmlFor="reagent">Reagent</Label>
                 <Select value={selectedReagentId} onValueChange={setSelectedReagentId}>
                   <SelectTrigger className="border-[#dbdcdd] w-full p-4 py-5 text-md">
                     <SelectValue placeholder={`Select ${reagentType} reagent`} />
@@ -177,7 +238,7 @@ export const InDialogHeader = ({
               {/* Quantity + Unit */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="quantity">Quantity</Label>
+                  <Label className='pb-1' htmlFor="quantity">Quantity</Label>
                   <Input
                     id="quantity"
                     type="number"
@@ -190,10 +251,10 @@ export const InDialogHeader = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="unit">Unit</Label>
-                  <Select  defaultValue="ml">
+                  <Label className='pb-1' htmlFor="unit">Unit</Label>
+                  <Select value={selectedReagent?.unit || ''} disabled={!!selectedReagent}>
                     <SelectTrigger className="border-[#dbdcdd] bg-white p-4 py-5 text-md">
-                      <SelectValue placeholder="ml" />
+                      <SelectValue placeholder={selectedReagent?.unit || "Select reagent first"} />
                     </SelectTrigger>
                     <SelectContent className="bg-white border-[#F7F8F9] shadow-sm">
                       {['ml', 'l', 'kit', 'vial'].map((u) => (
@@ -214,13 +275,13 @@ export const InDialogHeader = ({
                   type="date"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
-                  className="border-[#dbdcdd] text-md p-4 py-5"
+                  className="border-[#dbdcdd] text-md "
                 />
               </div>
 
               {/* Batch */}
               <div>
-                <Label htmlFor="batch">Batch Number</Label>
+                <Label className='pb-1' htmlFor="batch">Batch Number</Label>
                 <Input
                   id="batch"
                   placeholder="BATCH2024001"
@@ -233,7 +294,7 @@ export const InDialogHeader = ({
               <Button 
                 type="submit" 
                 className="w-full bg-black text-white hover:bg-gray-800"
-                disabled={loading || !selectedReagentId || !quantity}
+                disabled={loading || !selectedReagentId || !quantity || parseFloat(quantity) <= 0}
               >
                 {loading ? 'Adding...' : 'Add to Inventory'}
               </Button>

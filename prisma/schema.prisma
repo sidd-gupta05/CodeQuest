@@ -241,6 +241,8 @@ model CustomReagent {
   manufacturer     String?
   labs             Lab             @relation(fields: [labId], references: [id], onDelete: Cascade)
   lab_inventory    lab_inventory[]
+
+  @@map("custom_reagents")
 }
 
 model ReagentCatalog {
@@ -254,6 +256,8 @@ model ReagentCatalog {
   manufacturer  String?
   TestReagent   TestReagent[]
   lab_inventory lab_inventory[]
+
+  @@map("reagent_catalog")
 }
 
 model TestReagent {
@@ -268,6 +272,7 @@ model TestReagent {
   tests           tests          @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@unique([testId, reagentId])
+  @@map("test_reagents")
 }
 
 model lab_inventory {
