@@ -227,19 +227,20 @@ model tests {
 }
 
 model CustomReagent {
-  id               String    @id
+  id               String          @id
   labId            String
   name             String
   category         String?
   description      String?
   unit             String
-  createdAt        DateTime  @default(now())
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime
   expiryDate       DateTime?
   quantity         Float?
   reorderThreshold Float?
   manufacturer     String?
-  labs             Lab       @relation(fields: [labId], references: [id], onDelete: Cascade)
+  labs             Lab             @relation(fields: [labId], references: [id], onDelete: Cascade)
+  lab_inventory    lab_inventory[]
 }
 
 model ReagentCatalog {
@@ -270,20 +271,23 @@ model TestReagent {
 }
 
 model lab_inventory {
-  id               String         @id
+  id               String          @id
   labId            String
-  reagentId        String
+  reagentId        String?
   quantity         Float
   unit             String
   expiryDate       DateTime?
   reorderThreshold Float?
-  createdAt        DateTime       @default(now())
+  createdAt        DateTime        @default(now())
   updatedAt        DateTime
   batchNumber      String?
-  labs             Lab            @relation(fields: [labId], references: [id], onDelete: Cascade)
-  ReagentCatalog   ReagentCatalog @relation(fields: [reagentId], references: [id], onDelete: Cascade)
+  customReagentId  String?
+  CustomReagent    CustomReagent?  @relation(fields: [customReagentId], references: [id], onDelete: Cascade)
+  labs             Lab             @relation(fields: [labId], references: [id], onDelete: Cascade)
+  ReagentCatalog   ReagentCatalog? @relation(fields: [reagentId], references: [id], onDelete: Cascade)
 
   @@unique([labId, reagentId])
+  @@unique([labId, customReagentId])
 }
 
 model employee {
@@ -337,6 +341,35 @@ model LeaveApplication {
   lab        Lab         @relation(fields: [labId], references: [id], onDelete: Cascade)
 
   @@map("leave_applications")
+}
+
+model reagent_usage_logs {
+  id               String      @id
+  labId            String
+  testId           String
+  bookingId        String
+  reagentId        String
+  quantityUsed     Float
+  unit             String
+  type             ReagentType
+  previousQuantity Float
+  newQuantity      Float
+  createdAt        DateTime    @default(now())
+}
+
+model OutbreakReport {
+  id        Int      @id @default(autoincrement()) // Auto-increment ID
+  labId     String
+  pdfUrl    String
+  week      Int
+  year      Int
+  rawOutput String // Raw JSON/text from Gemini stored directly
+  suggestions String // Suggestions from Gemini stored directly
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([labId])
+  @@map("outbreak_reports")
 }
 
 enum LeaveType {
@@ -401,4 +434,9 @@ enum AttendanceStatus {
   HALF_DAY
   LEAVE
   HOLIDAY
+}
+
+enum ReagentType {
+  CATALOG
+  CUSTOM
 }
