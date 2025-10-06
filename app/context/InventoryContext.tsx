@@ -84,12 +84,12 @@ interface InventoryContextType {
   reagentCatalog: ReagentCatalog[];
   loading: boolean;
   error: string | null;
-  // fetchData: () => Promise<void>;
-  setLabId: Dispatch<SetStateAction<string | null>>;
-  setInventory: Dispatch<SetStateAction<LabInventory[]>>;
-  setCustomReagents: Dispatch<SetStateAction<CustomReagent[]>>;
-  setTestCatalog: Dispatch<SetStateAction<Test[]>>;
-  setReagentCatalog: Dispatch<SetStateAction<ReagentCatalog[]>>;
+  fetchData: () => Promise<void>;
+  // setLabId: Dispatch<SetStateAction<string | null>>;
+  // setInventory: Dispatch<SetStateAction<LabInventory[]>>;
+  // setCustomReagents: Dispatch<SetStateAction<CustomReagent[]>>;
+  // setTestCatalog: Dispatch<SetStateAction<Test[]>>;
+  // setReagentCatalog: Dispatch<SetStateAction<ReagentCatalog[]>>;
 }
 
 export const InventoryContext = createContext<InventoryContextType | null>(null);
@@ -107,42 +107,7 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
-  useEffect(() => {
-    const initializeLab = async () => {
-      try {
-        setLoading(true);
-        
-        // Get current user
-        const { data: { user }, error: userAuthError } = await supabase.auth.getUser();
-        if (userAuthError || !user) throw new Error('User not found');
-
-        // Get lab ID for the current user
-        const { data: labRes, error: labError } = await supabase
-          .from('labs')
-          .select('id')
-          .eq('userId', user.id)
-          .single();
-
-        if (labError) throw labError;
-        
-        const currentLabId = labRes?.id || null;
-        setLabId(currentLabId);
-
-      } catch (err: any) {
-        console.error('Error initializing lab:', err);
-        setError(err.message || 'Failed to initialize lab');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeLab();
-  }, []);
-
-  // Fetch data when labId changes
-  useEffect(() => {
-      const fetchData = async () => {
+        const fetchData = async () => {
     if (!labId) return;
     
     try {
@@ -168,8 +133,49 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const initializeLab = async () => {
+      try {
+        setLoading(true);
+        
+        // Get current user
+        const { data: { user }, error: userAuthError } = await supabase.auth.getUser();
+        if (userAuthError || !user) throw new Error('User not found');
+        console.log({ user, userAuthError });
+
+        // Get lab ID for the current user
+        const { data: labRes, error: labError } = await supabase
+          .from('labs')
+          .select('id')
+          .eq('userId', user.id)
+          .single();
+
+        console.log({ labRes, labError });
+        if (labError) throw labError;
+        
+        const currentLabId = labRes?.id || null;
+        setLabId(currentLabId);
+
+      } catch (err: any) {
+        console.error('Error initializing lab:', err);
+        setError(err.message || 'Failed to initialize lab');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeLab();
+  }, []);
+
+  // Fetch data when labId changes
+  useEffect(() => {
+
     if (labId) {
       fetchData();
+    }else {
+      console.log("No labId available yet");
+      // setLoading(false);
     }
   }, [labId]);
 
@@ -184,20 +190,20 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
         { event: '*', schema: 'public', table: 'lab_inventory' },
         async (payload) => {
           console.log('Realtime inventory change:', payload);
-          // await fetchData();
-          const { data: inventoryData, error } = await supabase
-            .from('lab_inventory')
-            .select(
-              `*, 
-              ReagentCatalog(*), 
-              CustomReagent(*)`
-            )
-            .eq('labId', labId)
-            .order('createdAt', { ascending: false });
+          await fetchData();
+          // const { data: inventoryData, error } = await supabase
+          //   .from('lab_inventory')
+          //   .select(
+          //     `*, 
+          //     ReagentCatalog(*), 
+          //     CustomReagent(*)`
+          //   )
+          //   .eq('labId', labId)
+          //   .order('createdAt', { ascending: false });
             
-            if (!error) {
-              if (inventoryData) setInventory(inventoryData);
-            }
+          //   if (!error) {
+          //     if (inventoryData) setInventory(inventoryData);
+          //   }
         }
       )
       .subscribe();
@@ -209,14 +215,14 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
         { event: '*', schema: 'public', table: 'custom_reagents' },
         async (payload) => {
           console.log('Realtime custom reagent change:', payload);
-          // await fetchData();
+          await fetchData();
 
-            const { data: customReagentsData, error } = await supabase
-              .from('custom_reagents')
-              .select('*')
-              .eq('labId', labId)
-              .order('createdAt', { ascending: false });
-          if (!error)  setCustomReagents(customReagentsData);
+          //   const { data: customReagentsData, error } = await supabase
+          //     .from('custom_reagents')
+          //     .select('*')
+          //     .eq('labId', labId)
+          //     .order('createdAt', { ascending: false });
+          // if (!error)  setCustomReagents(customReagentsData);
         }
       )
       .subscribe();
@@ -228,16 +234,16 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
         { event: '*', schema: 'public', table: 'tests' },
         async (payload) => {
           console.log('Realtime test change:', payload);
-          // await fetchData();
-            const { data: testsData, error } = await supabase
-              .from('tests')
-              .select(
-                `*, 
-                TestReagent(*, ReagentCatalog(*))`
-              )
-              .eq('labId', labId)
-              .order('createdAt', { ascending: false });
-          if (!error) setTestCatalog(testsData || []);
+          await fetchData();
+          //   const { data: testsData, error } = await supabase
+          //     .from('tests')
+          //     .select(
+          //       `*, 
+          //       TestReagent(*, ReagentCatalog(*))`
+          //     )
+          //     .eq('labId', labId)
+          //     .order('createdAt', { ascending: false });
+          // if (!error) setTestCatalog(testsData || []);
           
         }
       )
@@ -258,11 +264,12 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
     reagentCatalog,
     loading,
     error,
-    setLabId,
-    setInventory,
-    setCustomReagents,
-    setTestCatalog,
-    setReagentCatalog,
+    fetchData
+    // setLabId,
+    // setInventory,
+    // setCustomReagents,
+    // setTestCatalog,
+    // setReagentCatalog,
   };
 
   return (

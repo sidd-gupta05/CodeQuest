@@ -74,7 +74,7 @@ export const InTabs = ({
   return (
     <>
       <div className="rounded-md border-[#828EA2]">
-        <Table className="">
+        <Table>
           <TableHeader className="border-[#e8e8e9] text-md text-[#828EA2] font-semibold">
             <TableRow className="border-[#e8e8e9]">
               <TableHead>Reagent</TableHead>
