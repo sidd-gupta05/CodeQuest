@@ -8,42 +8,11 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+
 import { Activity, TestTube } from 'lucide-react';
 
 // ---------- Types ----------
-interface ReagentDetails {
-  id: string;
-  name: string;
-  category?: string;
-  description?: string;
-  manufacturer?: string;
-  unit: string;
-}
-
-interface InventoryItem {
-  id: string;
-  labId: string;
-  reagentId: string;
-  quantity: number;
-  unit: string;
-  expiryDate: string;
-  reorderThreshold: number;
-  batchNumber?: string;
-}
-
-interface TestItem {
-  id: string;
-  name: string;
-  category: string;
-  description?: string;
-  duration?: string;
-  reagents: {
-    reagentId: string;
-    quantity: number;
-    unit: string;
-  }[];
-}
-
+import { InventoryItem, ReagentDetails, TestItem } from '@/types/inventory';
 interface TestExecutionProps {
   sampleTestCatalog: TestItem[];
   inventory: InventoryItem[];
@@ -122,28 +91,21 @@ export function TestExecution({
                             item.reagentId === reagent.reagentId &&
                             item.labId === selectedLab
                         );
-                        const hasSufficientStock = inventoryItem && inventoryItem.quantity >= reagent.quantity;
-                        
                         return (
                           <div
                             key={index}
-                            className={`flex items-center justify-between text-sm p-2 rounded ${
-                              hasSufficientStock ? 'bg-green-50' : 'bg-red-50'
-                            }`}
+                            className="flex items-center justify-between text-sm"
                           >
-                            <span className="font-medium">{reagentDetails?.name || 'Unknown Reagent'}</span>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-gray-600">
-                                {reagent.quantity} {reagent.unit}
-                              </span>
+                            <span>{reagentDetails?.name}</span>
+                            <span className="text-gray-600">
+                              -{reagent.quantity} {reagent.unit}
                               {inventoryItem && (
-                                <span className={`text-xs ${
-                                  hasSufficientStock ? 'text-green-600' : 'text-red-600'
-                                }`}>
-                                  (Available: {inventoryItem.quantity} {inventoryItem.unit})
+                                <span className="ml-2 text-xs">
+                                  (Available: {inventoryItem.quantity}{' '}
+                                  {inventoryItem.unit})
                                 </span>
                               )}
-                            </div>
+                            </span>
                           </div>
                         );
                       })}

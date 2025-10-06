@@ -10,26 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertTriangle, Clock } from 'lucide-react';
 
 // ---------- Types ----------
-interface ReagentDetails {
-  id: string;
-  name: string;
-  category?: string;
-  description?: string;
-  manufacturer?: string;
-  unit: string;
-}
-
-interface InventoryItem {
-  id: string;
-  labId: string;
-  reagentId: string;
-  quantity: number;
-  unit: string;
-  expiryDate: string;
-  reorderThreshold: number;
-  batchNumber?: string;
-}
-
+import { InventoryItem, ReagentDetails } from '@/types/inventory';
 interface AlertsProps {
   filteredInventory: InventoryItem[];
   getReagentDetails: (reagentId: string) => ReagentDetails | undefined;
@@ -66,7 +47,7 @@ export function Alerts({
           <div className="space-y-3">
             <h3 className="font-medium text-lg flex items-center">
               <AlertTriangle className="h-5 w-5 mr-2 text-orange-500" />
-              Low Stock Alerts ({lowStockCount})
+              Low Stock Alerts
             </h3>
             {filteredInventory
               .filter((item) => {
@@ -90,29 +71,20 @@ export function Alerts({
                     <div>
                       <p className="font-medium">{reagent?.name}</p>
                       <p className="text-sm text-gray-600">
-                        Current stock: {item.quantity} {item.unit} 
-                        {item.reorderThreshold > 0 && (
-                          <> (Threshold: {item.reorderThreshold} {item.unit})</>
-                        )}
+                        Current stock: {item.quantity} {item.unit} (Threshold:{' '}
+                        {item.reorderThreshold} {item.unit})
                       </p>
                     </div>
                     <Badge variant="secondary">Reorder Required</Badge>
                   </div>
                 );
               })}
-            {lowStockCount === 0 && (
-              <div className="text-center py-4 text-gray-500">
-                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
-                <p className="text-sm">No low stock alerts</p>
-              </div>
-            )}
           </div>
 
           {/* Expiry Alerts */}
           <div className="space-y-3">
             <h3 className="font-medium text-lg flex items-center">
-              <Clock className="h-5 w-5 mr-2 text-red-500" /> 
-              Expiry Alerts ({expiringCount})
+              <Clock className="h-5 w-5 mr-2 text-red-500" /> Expiry Alerts
             </h3>
             {filteredInventory
               .filter((item) => {
@@ -140,7 +112,7 @@ export function Alerts({
                     <div>
                       <p className="font-medium">{reagent?.name}</p>
                       <p className="text-sm text-gray-600">
-                        Expires: {new Date(item.expiryDate).toLocaleDateString()}
+                        Expires: {item.expiryDate}
                         {daysToExpiry <= 0
                           ? ' (EXPIRED)'
                           : ` (${daysToExpiry} days)`}
@@ -155,12 +127,6 @@ export function Alerts({
                   </div>
                 );
               })}
-            {expiringCount === 0 && (
-              <div className="text-center py-4 text-gray-500">
-                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
-                <p className="text-sm">No expiry alerts</p>
-              </div>
-            )}
           </div>
 
           {/* No Alerts */}

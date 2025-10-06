@@ -47,17 +47,12 @@ model Patient {
 model Lab {
   id                    String             @id @default(uuid())
   userId                String             @unique
-  id                    String             @id @default(uuid())
-  userId                String             @unique
   labLocation           String
   nablCertificateNumber String
   certificateUrl        String
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
   CustomReagent         CustomReagent[]
-  attendances           attendances[]
   attendances           attendances[]
   bookings              bookings[]
   employees             employee[]
@@ -205,7 +200,6 @@ model bookings {
   reportStatus   ReportStatus     @default(BOOKING_PENDING)
   allocatedEmpId String?
   reportUrl      String?
-  reportUrl      String?
   booking_addons booking_addons[]
   booking_tests  booking_tests[]
   allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])
@@ -226,7 +220,6 @@ model tests {
   isActive      Boolean         @default(true)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
-  duration      String?
   TestReagent   TestReagent[]
   booking_tests booking_tests[]
   labs          Lab[]           @relation("AvailableTests")
@@ -259,7 +252,6 @@ model ReagentCatalog {
   unit          String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
-  manufacturer  String?
   TestReagent   TestReagent[]
   lab_inventory lab_inventory[]
 }
