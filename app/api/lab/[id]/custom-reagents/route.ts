@@ -42,10 +42,10 @@ import { v4 as uuid } from "uuid";
 
 export async function POST(
   req: NextRequest, 
-  { params }: { params: { labId: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const { labId } = params;
+    const { id: labId } = await context.params;
     const body = await req.json();
     
     const { name, description, quantity, unit, expiryDate, reorderThreshold, manufacturer, category, addToInventory = false } = body;

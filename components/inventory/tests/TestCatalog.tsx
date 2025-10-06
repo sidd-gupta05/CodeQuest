@@ -7,18 +7,47 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
 import { CheckCircle, XCircle } from 'lucide-react';
 
 // ---------- Types ----------
-import { InventoryItem, ReagentDetails, TestItem } from '@/types/inventory';
+interface ReagentDetails {
+  id: string;
+  name: string;
+  category?: string;
+  description?: string;
+  manufacturer?: string;
+  unit: string;
+}
+
+interface InventoryItem {
+  id: string;
+  labId: string;
+  reagentId: string;
+  quantity: number;
+  unit: string;
+  expiryDate: string;
+  reorderThreshold: number;
+  batchNumber?: string;
+}
+
+interface TestItem {
+  id: string;
+  name: string;
+  category: string;
+  description?: string;
+  duration?: string;
+  reagents: {
+    reagentId: string;
+    quantity: number;
+    unit: string;
+  }[];
+}
+
 interface TestCatalogProps {
   sampleTestCatalog: TestItem[];
   inventory: InventoryItem[];
   selectedLab: string;
   getReagentDetails: (reagentId: string) => ReagentDetails | undefined;
-  onTestExecuted: (result: any) => void;
-  onAlertTriggered: (alerts: any[]) => void;
 }
 
 // ---------- Test Catalog ----------
@@ -27,75 +56,7 @@ export function TestCatalog({
   inventory,
   selectedLab,
   getReagentDetails,
-  onTestExecuted,
-  onAlertTriggered,
 }: TestCatalogProps) {
-  const [loading, setLoading] = useState<string | null>(null);
-  const [selectedBooking, setSelectedBooking] = useState('');
-  const [selectedPatient, setSelectedPatient] = useState('');
-
-  const executeTest = async (testId: string) => {
-    if (!selectedBooking || !selectedPatient) {
-      alert('Please select a booking and patient');
-      return;
-    }
-
-    setLoading(testId);
-
-    try {
-      const response = await fetch(
-        `/api/lab/${selectedLab}/tests/${testId}/execute`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            bookingId: selectedBooking,
-            patientId: selectedPatient,
-            quantity: 1,
-          }),
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error);
-      }
-
-      // Notify parent component about successful execution
-      onTestExecuted(result);
-
-      // Trigger alerts if any
-      if (result.lowStockAlerts && result.lowStockAlerts.length > 0) {
-        onAlertTriggered(result.lowStockAlerts);
-      }
-
-      // Show success message
-      alert(
-        `Test executed successfully! ${result.lowStockAlerts?.length ? 'Low stock alerts triggered.' : ''}`
-      );
-    } catch (error) {
-      console.error('Error executing test:', error);
-      alert(error instanceof Error ? error.message : 'Failed to execute test');
-    } finally {
-      setLoading(null);
-    }
-  };
-
-  const canExecuteTest = (test: TestItem) => {
-    return test.reagents.every((reagent) => {
-      const inventoryItem = inventory.find(
-        (item) =>
-          (item.reagentId === reagent.reagentId ||
-            item.customReagentId === reagent.reagentId) &&
-          item.labId === selectedLab
-      );
-      return inventoryItem && inventoryItem.quantity >= reagent.quantity;
-    });
-  };
-
   return (
     <Card className="border-gray-100 ">
       <CardHeader>
@@ -108,61 +69,103 @@ export function TestCatalog({
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-gray-100">
-          {sampleTestCatalog.map((test) => (
-            <Card
-              key={test.id}
-              className="border-l-4 border-gray-300 border-l-blue-500"
-            >
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{test.name}</CardTitle>
-                  <Badge
-                    className="bg-[#F3F6FA] border-gray-100"
-                    variant="outline"
-                  >
-                    {test.category}
-                  </Badge>
-                </div>
-                <CardDescription className="font-medium text-[#838FA2]">
-                  Duration: {test.duration}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <h4 className="font-bold text-sm">Required Reagents:</h4>
-                  {test.reagents.map((reagent, index) => {
-                    const reagentDetails = getReagentDetails(reagent.reagentId);
-                    const inventoryItem = inventory.find(
-                      (item) =>
-                        item.reagentId === reagent.reagentId &&
-                        item.labId === selectedLab
-                    );
-                    const available = inventoryItem
-                      ? inventoryItem.quantity >= reagent.quantity
-                      : false;
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between text-sm"
+          {sampleTestCatalog.map((test) => {
+            const allReagentsAvailable = test.reagents.every((reagent) => {
+              const inventoryItem = inventory.find(
+                (item) =>
+                  item.reagentId === reagent.reagentId &&
+                  item.labId === selectedLab
+              );
+              return inventoryItem && inventoryItem.quantity >= reagent.quantity;
+            });
+
+            return (
+              <Card
+                key={test.id}
+                className={`border-l-4 ${
+                  allReagentsAvailable 
+                    ? 'border-l-green-500' 
+                    : 'border-l-red-500'
+                }`}
+              >
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{test.name}</CardTitle>
+                    <div className="flex items-center space-x-2">
+                      <Badge
+                        className="bg-[#F3F6FA] border-gray-100"
+                        variant="outline"
                       >
-                        <span>{reagentDetails?.name}</span>
-                        <div className="flex items-center space-x-2">
-                          <span>
-                            {reagent.quantity} {reagent.unit}
-                          </span>
-                          {available ? (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <XCircle className="h-4 w-4 text-red-500" />
-                          )}
+                        {test.category}
+                      </Badge>
+                      <Badge
+                        variant={allReagentsAvailable ? "default" : "destructive"}
+                        className={
+                          allReagentsAvailable 
+                            ? 'bg-green-500 text-white' 
+                            : 'bg-red-500 text-white'
+                        }
+                      >
+                        {allReagentsAvailable ? 'Ready' : 'Insufficient Stock'}
+                      </Badge>
+                    </div>
+                  </div>
+                  <CardDescription className="font-medium text-[#838FA2]">
+                    {test.description && (
+                      <p className="mb-1">{test.description}</p>
+                    )}
+                    Duration: {test.duration}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-sm">Required Reagents:</h4>
+                    {test.reagents.map((reagent, index) => {
+                      const reagentDetails = getReagentDetails(reagent.reagentId);
+                      const inventoryItem = inventory.find(
+                        (item) =>
+                          item.reagentId === reagent.reagentId &&
+                          item.labId === selectedLab
+                      );
+                      const available = inventoryItem
+                        ? inventoryItem.quantity >= reagent.quantity
+                        : false;
+                      return (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between text-sm p-2 rounded bg-gray-50"
+                        >
+                          <div>
+                            <span className="font-medium">{reagentDetails?.name || 'Unknown Reagent'}</span>
+                            <div className="text-xs text-gray-500">
+                              {reagentDetails?.category}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-600">
+                              {reagent.quantity} {reagent.unit}
+                            </span>
+                            {inventoryItem && (
+                              <span className={`text-xs ${
+                                available ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                                ({inventoryItem.quantity} {inventoryItem.unit} available)
+                              </span>
+                            )}
+                            {available ? (
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <XCircle className="h-4 w-4 text-red-500" />
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
