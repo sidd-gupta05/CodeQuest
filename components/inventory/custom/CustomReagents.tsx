@@ -7,6 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
+import { v4 as uuid } from 'uuid';
+
 
 interface CustomReagent {
   id: string;
@@ -27,10 +29,10 @@ interface CustomReagentsProps {
   reagents: CustomReagent[];
   selectedLab: string;
   getStockStatus: (quantity: number, threshold: number, expiryDate?: string) => any;
-  onReagentAdded: () => void;
+  // onReagentAdded: () => void;
 }
 
-export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagentAdded }: CustomReagentsProps) {
+export function CustomReagents({ reagents, selectedLab, getStockStatus }: CustomReagentsProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -48,6 +50,9 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagen
     setLoading(true);
 
     try {
+      console.log({ formData,quantity: formData.quantity ? parseFloat(formData.quantity) : 0,
+          reorderThreshold: formData.reorderThreshold ? parseFloat(formData.reorderThreshold) : null,
+         })
       const response = await fetch(`/api/lab/${selectedLab}/custom-reagents`, {
         method: 'POST',
         headers: {

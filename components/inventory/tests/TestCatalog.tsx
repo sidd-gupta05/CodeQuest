@@ -82,7 +82,7 @@ export function TestCatalog({
             return (
               <Card
                 key={test.id}
-                className={`border-l-4 ${
+                className={`border-gray-100  border-l-4 ${
                   allReagentsAvailable 
                     ? 'border-l-green-500' 
                     : 'border-l-red-500'

@@ -60,9 +60,9 @@ model Lab {
   lab_inventory         lab_inventory[]
   timeSlots             LabTimeSlot[]
   user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  LeaveApplication      LeaveApplication[]
   schedules             Schedule[]
   tests                 tests[]            @relation("AvailableTests")
+  LeaveApplication      LeaveApplication[]
 
   @@map("labs")
 }
@@ -216,10 +216,10 @@ model tests {
   category      String
   description   String?
   price         Float
+  duration      String?
   isActive      Boolean         @default(true)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
-  duration      String?
   TestReagent   TestReagent[]
   booking_tests booking_tests[]
   labs          Lab[]           @relation("AvailableTests")
@@ -232,13 +232,13 @@ model CustomReagent {
   name             String
   category         String?
   description      String?
+  manufacturer     String?
   unit             String
   createdAt        DateTime        @default(now())
   updatedAt        DateTime
   expiryDate       DateTime?
   quantity         Float?
   reorderThreshold Float?
-  manufacturer     String?
   labs             Lab             @relation(fields: [labId], references: [id], onDelete: Cascade)
   lab_inventory    lab_inventory[]
 }
@@ -248,10 +248,10 @@ model ReagentCatalog {
   name          String
   category      String?
   description   String?
+  manufacturer  String?
   unit          String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
-  manufacturer  String?
   TestReagent   TestReagent[]
   lab_inventory lab_inventory[]
 }
@@ -274,6 +274,7 @@ model lab_inventory {
   id               String          @id
   labId            String
   reagentId        String?
+  customReagentId  String? // add this
   quantity         Float
   unit             String
   expiryDate       DateTime?
@@ -281,10 +282,9 @@ model lab_inventory {
   createdAt        DateTime        @default(now())
   updatedAt        DateTime
   batchNumber      String?
-  customReagentId  String?
-  CustomReagent    CustomReagent?  @relation(fields: [customReagentId], references: [id], onDelete: Cascade)
   labs             Lab             @relation(fields: [labId], references: [id], onDelete: Cascade)
   ReagentCatalog   ReagentCatalog? @relation(fields: [reagentId], references: [id], onDelete: Cascade)
+  CustomReagent    CustomReagent?  @relation(fields: [customReagentId], references: [id], onDelete: Cascade)
 
   @@unique([labId, reagentId])
   @@unique([labId, customReagentId])
@@ -299,7 +299,7 @@ model ReagentUsageLog {
   reagentId        String
   quantityUsed     Float
   unit             String
-  type             ReagentType
+  type             ReagentType // CATALOG or CUSTOM
   previousQuantity Float
   newQuantity      Float
   createdAt        DateTime    @default(now())
@@ -358,35 +358,6 @@ model LeaveApplication {
   lab        Lab         @relation(fields: [labId], references: [id], onDelete: Cascade)
 
   @@map("leave_applications")
-}
-
-model reagent_usage_logs {
-  id               String      @id
-  labId            String
-  testId           String
-  bookingId        String
-  reagentId        String
-  quantityUsed     Float
-  unit             String
-  type             ReagentType
-  previousQuantity Float
-  newQuantity      Float
-  createdAt        DateTime    @default(now())
-}
-
-model OutbreakReport {
-  id        Int      @id @default(autoincrement()) // Auto-increment ID
-  labId     String
-  pdfUrl    String
-  week      Int
-  year      Int
-  rawOutput String // Raw JSON/text from Gemini stored directly
-  suggestions String // Suggestions from Gemini stored directly
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([labId])
-  @@map("outbreak_reports")
 }
 
 enum LeaveType {
