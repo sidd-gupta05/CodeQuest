@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Package, Plus } from 'lucide-react';
-import { v4 as uuid } from 'uuid';
-
+import toast from 'react-hot-toast';
 
 interface CustomReagent {
   id: string;
@@ -48,6 +48,12 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagen
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+     // Validate reorder threshold
+  if (formData.reorderThreshold && parseFloat(formData.reorderThreshold) > parseFloat(formData.quantity || '0')) {
+    toast.error('Reorder threshold cannot exceed initial quantity');
+    return;
+  }
     setLoading(true);
 
     try {
@@ -125,8 +131,8 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagen
                 <div>
                   <Label htmlFor="name">Reagent Name</Label>
                   <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
-                    id="name"
+                    className="border-[#dbdcdd] p-4 py-5 mt-1 text-md"
+                    id="name" placeholder="Custom Antibody Solution"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     required
@@ -136,28 +142,37 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagen
                   <div>
                     <Label htmlFor="category">Category</Label>
                     <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
-                      id="category"
+                    className="border-[#dbdcdd] p-4 py-5 mt-1 text-md"
+                      id="category" placeholder='Haematology'
                       value={formData.category}
                       onChange={(e) => setFormData({...formData, category: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label htmlFor="unit">Unit</Label>
-                    <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
-                      id="unit"
+                    <Select 
+                      defaultValue="ml"
                       value={formData.unit}
-                      onChange={(e) => setFormData({...formData, unit: e.target.value})}
-                      required
-                    />
+                      onValueChange={(value) => setFormData({...formData, unit: value})}
+                    >
+                      <SelectTrigger className="border-[#dbdcdd] bg-white p-4 py-5 mt-1 text-md">
+                        <SelectValue placeholder="ml" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border-[#F7F8F9] shadow-sm">
+                        {['ml', 'l', 'kit', 'vial'].map((u) => (
+                          <SelectItem key={u} value={u}>
+                            {u}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="manufacturer">Manufacturer</Label>
                   <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
-                    id="manufacturer"
+                    className="mt-1 border-[#dbdcdd] p-4 py-5 text-md"
+                    id="manufacturer" placeholder='BioLabs Inc.'
                     value={formData.manufacturer}
                     onChange={(e) => setFormData({...formData, manufacturer: e.target.value})}
                   />
@@ -165,8 +180,9 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagen
                 <div>
                   <Label htmlFor="description">Description</Label>
                   <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
-                    id="description"
+                    className="border-[#dbdcdd] p-4 py-5 mt-1 text-md"
+                    id="description" 
+                    placeholder="Detailed description..."
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
                   />
@@ -175,30 +191,46 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagen
                   <div>
                     <Label htmlFor="quantity">Initial Quantity</Label>
                     <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
-                      id="quantity"
+                    className="border-[#dbdcdd] p-4 py-5 mt-1 text-md"
+                      id="quantity" 
+                      placeholder="50"
                       type="number"
                       step="0.01"
                       value={formData.quantity}
-                      onChange={(e) => setFormData({...formData, quantity: e.target.value})}
+                      onChange={(e) => {
+      const newQuantity = e.target.value;
+      setFormData(prev => {
+        // If reorder threshold is greater than new quantity, reset it
+        const newReorderThreshold = prev.reorderThreshold && parseFloat(prev.reorderThreshold) > parseFloat(newQuantity || '0') 
+          ? '' 
+          : prev.reorderThreshold;
+        return {...prev, quantity: newQuantity, reorderThreshold: newReorderThreshold};
+      });
+    }}
                     />
                   </div>
                   <div>
                     <Label htmlFor="reorderThreshold">Reorder Threshold</Label>
                     <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
-                      id="reorderThreshold"
+                    className="border-[#dbdcdd] p-4 py-5 mt-1 text-md"
+                      id="reorderThreshold" placeholder='15'
                       type="number"
                       step="0.01"
                       value={formData.reorderThreshold}
-                      onChange={(e) => setFormData({...formData, reorderThreshold: e.target.value})}
+                      onChange={(e) => {
+      const newThreshold = e.target.value;
+      // Only allow setting threshold if it's less than or equal to quantity
+      if (!newThreshold || parseFloat(newThreshold) <= parseFloat(formData.quantity || '0')) {
+        setFormData({...formData, reorderThreshold: newThreshold});
+      }
+    }}
                     />
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="expiryDate">Expiry Date</Label>
                   <Input
-                    className="border-[#dbdcdd] p-4 py-5 text-md"
+                    className="border-[#dbdcdd]   text-md"
                     id="expiryDate"
                     type="date"
                     value={formData.expiryDate}
