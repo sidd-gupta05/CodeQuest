@@ -66,6 +66,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "exceljs": "^4.4.0",
     "express": "^5.1.0",
     "framer-motion": "^12.23.9",
     "html2canvas": "^1.4.1",
