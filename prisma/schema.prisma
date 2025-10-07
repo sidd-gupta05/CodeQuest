@@ -52,9 +52,9 @@ model Lab {
   certificateUrl        String
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
-  CustomReagent         CustomReagent[]
   attendances           attendances[]
   bookings              bookings[]
+  CustomReagent         CustomReagent[]
   employees             employee[]
   details               LabDetails?
   lab_inventory         lab_inventory[]
@@ -220,8 +220,8 @@ model tests {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
   duration      String?
-  TestReagent   TestReagent[]
   booking_tests booking_tests[]
+  TestReagent   TestReagent[]
   labs          Lab[]           @relation("AvailableTests")
   bookings      bookings[]      @relation("BookingTests")
 }
@@ -254,8 +254,8 @@ model ReagentCatalog {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
   manufacturer  String?
-  TestReagent   TestReagent[]
   lab_inventory lab_inventory[]
+  TestReagent   TestReagent[]
 
   @@map("reagent_catalog")
 }
@@ -352,46 +352,29 @@ model LeaveApplication {
   labId      String
   startDate  DateTime
   endDate    DateTime
-  leaveType  LeaveType
   reason     String
   status     LeaveStatus @default(PENDING)
   approvedBy String?
   notes      String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  leaveType  LeaveType
   employee   employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   lab        Lab         @relation(fields: [labId], references: [id], onDelete: Cascade)
 
   @@map("leave_applications")
 }
 
-model reagent_usage_logs {
-  id               String      @id
-  labId            String
-  testId           String
-  bookingId        String
-  reagentId        String
-  quantityUsed     Float
-  unit             String
-  type             ReagentType
-  previousQuantity Float
-  newQuantity      Float
-  createdAt        DateTime    @default(now())
-}
-
-model OutbreakReport {
-  id        Int      @id @default(autoincrement()) // Auto-increment ID
-  labId     String
-  pdfUrl    String
-  week      Int
-  year      Int
-  rawOutput String // Raw JSON/text from Gemini stored directly
-  suggestions String // Suggestions from Gemini stored directly
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([labId])
-  @@map("outbreak_reports")
+model outbreak_reports {
+  id          Int      @id @default(autoincrement())
+  pdfUrl      String
+  week        Int
+  year        Int
+  rawOutput   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  labId       String   @unique
+  suggestions String
 }
 
 enum LeaveType {
