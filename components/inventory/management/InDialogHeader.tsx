@@ -22,6 +22,7 @@ import { Download, Plus } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { NextFont } from 'next/dist/compiled/@next/font';
 import  ExcelJS  from 'exceljs';
+import toast from 'react-hot-toast';
 
 interface ReagentCatalog {
   id: string;
@@ -120,12 +121,12 @@ useEffect(() => {
     
     // Validate inputs
     if (!selectedReagentId) {
-      alert('Please select a reagent');
+      toast('Please select a reagent');
       return;
     }
     
     if (!quantity || parseFloat(quantity) <= 0) {
-      alert('Please enter a valid quantity');
+      toast('Please enter a valid quantity');
       return;
     }
 
@@ -159,11 +160,11 @@ useEffect(() => {
       onReagentAdded();
       
       // Show success
-      alert('Reagent added to inventory successfully!');
+      toast('Reagent added to inventory successfully!');
       
     } catch (error) {
       console.error('Error adding reagent:', error);
-      alert(error instanceof Error ? error.message : 'Failed to add reagent');
+      toast(error instanceof Error ? error.message : 'Failed to add reagent');
     } finally {
       setLoading(false);
     }
@@ -292,7 +293,7 @@ useEffect(() => {
 //       document.body.removeChild(a);
 //       window.URL.revokeObjectURL(url);
 //     } catch (error) {
-//       alert('Error downloading inventory: ' + (error instanceof Error ? error.message : 'Unknown error'));
+//       toast('Error downloading inventory: ' + (error instanceof Error ? error.message : 'Unknown error'));
 //     }
 //   };
 
@@ -369,7 +370,7 @@ const handleDownload = async () => {
     worksheet.columns = columns;
 
     // Add rows from parsed data
-    parsed.forEach((item) => worksheet.addRow(item));
+    parsed.forEach((item: any) => worksheet.addRow(item));
 
     // Style the header row
     const headerRow = worksheet.getRow(1);
@@ -392,15 +393,17 @@ const handleDownload = async () => {
     // Auto-fit columns based on longest value (overwrite widths if needed)
     worksheet.columns.forEach((column) => {
       let maxLength = 10;
-      column.eachCell({ includeEmpty: true }, (cell) => {
-        const cellValue = cell.value;
-        if (cellValue) {
-          const length = cellValue.toString().length;
-          if (length > maxLength) {
-            maxLength = length;
+      if (typeof column.eachCell === 'function') {
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const cellValue = cell.value;
+          if (cellValue) {
+            const length = cellValue.toString().length;
+            if (length > maxLength) {
+              maxLength = length;
+            }
           }
-        }
-      });
+        });
+      }
       column.width = maxLength + 2;
     });
 
@@ -420,7 +423,7 @@ const handleDownload = async () => {
     window.URL.revokeObjectURL(url);
 
   } catch (error) {
-    alert('Error downloading inventory: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    toast('Error downloading inventory: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };
 
