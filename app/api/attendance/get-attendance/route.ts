@@ -1,3 +1,4 @@
+// app/api/attendance/get-attendance/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
@@ -7,11 +8,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const employeeId = searchParams.get('employeeId');
     const labId = searchParams.get('labId');
-    const month = searchParams.get('month'); // YYYY-MM format
-    const date = searchParams.get('date'); // Specific date
+    const month = searchParams.get('month'); 
+    const date = searchParams.get('date'); 
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    const year = searchParams.get('year'); // YYYY format
+    const year = searchParams.get('year'); 
 
     if (!labId) {
       return NextResponse.json(
