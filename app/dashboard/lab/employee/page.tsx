@@ -12,7 +12,6 @@ import { LabContext } from '@/app/context/LabContext';
 import EmployeeCard from '@/components/Lab/employee/EmployeeCard';
 import CreateEmployeeForm from '@/components/Lab/employee/CreateEmployeeFrom';
 import AttendanceRecords from '@/components/Lab/employee/AttendanceRecords';
-import LeaveApplicationForm from '@/components/Lab/employee/LeaveApplicationForm';
 import LeaveManagement from '@/components/Lab/employee/LeaveManagement';
 
 const Employee = () => {
