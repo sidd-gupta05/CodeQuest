@@ -1,4 +1,4 @@
-//components/Lab/employee/EmployeeCard.tsx
+// components/Lab/employee/EmployeeCard.tsx
 'use client';
 import {
   Briefcase,
@@ -45,6 +45,23 @@ interface EmployeeCardProps {
   employee: Employee;
 }
 
+// Helper function to get current India time
+const getIndiaTimeISOString = () => {
+  const now = new Date();
+  // Convert to IST (UTC+5:30)
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const indiaTime = new Date(now.getTime() + istOffset);
+  return indiaTime.toISOString();
+};
+
+// Helper function to get today's date in India timezone
+const getIndiaDateString = () => {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const indiaTime = new Date(now.getTime() + istOffset);
+  return indiaTime.toISOString().split('T')[0];
+};
+
 const EmployeeCard = ({ employee }: EmployeeCardProps) => {
   const labContext = useContext(LabContext);
   const labId = labContext?.labId || '';
@@ -74,7 +91,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
 
   const fetchTodayAttendance = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getIndiaDateString();
       const response = await fetch(
         `/api/attendance/get-attendance?employeeId=${employee.id}&labId=${labId}&date=${today}`
       );
@@ -102,8 +119,9 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
       setIsMarkingAttendance(true);
       setError(null);
 
-      const now = new Date().toISOString();
-      const today = new Date().toISOString().split('T')[0];
+      // Use India time
+      const now = getIndiaTimeISOString();
+      const today = getIndiaDateString();
 
       let payload: any = {
         employeeId: employee.id,
@@ -117,6 +135,14 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
       } else if (action === 'checkOut') {
         payload.checkOut = now;
         payload.status = 'PRESENT';
+
+        // If checkIn doesn't exist, set it to a default time (9 AM India time)
+        if (!todayAttendance?.checkIn) {
+          const defaultCheckIn = new Date(
+            today + 'T09:00:00+05:30'
+          ).toISOString();
+          payload.checkIn = defaultCheckIn;
+        }
       } else if (action === 'absent') {
         payload.status = 'ABSENT';
       } else if (action === 'halfDay') {
@@ -126,6 +152,16 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
           const checkInTime = new Date(todayAttendance.checkIn);
           checkInTime.setHours(checkInTime.getHours() + 4);
           payload.checkOut = checkInTime.toISOString();
+        } else {
+          // If no checkIn, set default times for India
+          const defaultCheckIn = new Date(
+            today + 'T09:00:00+05:30'
+          ).toISOString();
+          const defaultCheckOut = new Date(
+            today + 'T13:00:00+05:30'
+          ).toISOString();
+          payload.checkIn = defaultCheckIn;
+          payload.checkOut = defaultCheckOut;
         }
       }
 
@@ -140,7 +176,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
       if (data.success) {
         setTodayAttendance(data.attendance);
         setShowAttendanceModal(false);
-        fetchTodayAttendance();
+        fetchTodayAttendance(); // Refresh attendance data
       } else {
         setError(data.error || 'Failed to mark attendance');
       }
@@ -199,10 +235,48 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
 
   const formatTime = (timeString: string | null) => {
     if (!timeString) return '--:--';
-    return new Date(timeString).toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    try {
+      return new Date(timeString).toLocaleTimeString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return '--:--';
+    }
+  };
+
+  const formatDateForDisplay = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
+  };
+
+  // Calculate total hours worked
+  const calculateTotalHours = () => {
+    if (!todayAttendance?.checkIn || !todayAttendance?.checkOut) {
+      return null;
+    }
+
+    try {
+      const checkInTime = new Date(todayAttendance.checkIn).getTime();
+      const checkOutTime = new Date(todayAttendance.checkOut).getTime();
+      const totalHours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+      return parseFloat(totalHours.toFixed(2));
+    } catch (error) {
+      console.error('Error calculating total hours:', error);
+      return null;
+    }
   };
 
   const handleDelete = async () => {
@@ -306,6 +380,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
     if (!dateString) return 'N/A';
     try {
       return new Date(dateString).toLocaleDateString('en-IN', {
+        timeZone: 'Asia/Kolkata',
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
@@ -324,6 +399,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
   };
 
   const attendanceStatus = getAttendanceStatus();
+  const totalHours = calculateTotalHours();
 
   return (
     <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100 relative group">
@@ -443,19 +519,24 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
           {attendanceStatus === 'leave' && <Calendar size={14} />}
           {getStatusText(attendanceStatus)}
         </span>
-        {todayAttendance &&
-          (todayAttendance.checkIn || todayAttendance.checkOut) && (
-            <div className="flex gap-4 mt-2 text-xs text-gray-600">
-              {todayAttendance.checkIn && (
-                <span>In: {formatTime(todayAttendance.checkIn)}</span>
-              )}
-              {todayAttendance.checkOut && (
-                <span>Out: {formatTime(todayAttendance.checkOut)}</span>
-              )}
-            </div>
-          )}
+        {todayAttendance && (
+          <div className="flex gap-4 mt-2 text-xs text-gray-600">
+            {todayAttendance.checkIn && (
+              <span>In: {formatTime(todayAttendance.checkIn)}</span>
+            )}
+            {todayAttendance.checkOut && (
+              <span>Out: {formatTime(todayAttendance.checkOut)}</span>
+            )}
+            {/* {totalHours !== null && totalHours > 0 && (
+              <span className="font-semibold text-green-600">
+                Total: {totalHours.toFixed(2)}h
+              </span>
+            )} */}
+          </div>
+        )}
       </div>
 
+      {/* Rest of your component remains the same */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-gray-700">
           <Briefcase size={18} className="text-teal-600 flex-shrink-0" />
@@ -557,6 +638,9 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
                 </div>
                 <h3 className="font-semibold text-gray-800">{employee.name}</h3>
                 <p className="text-sm text-gray-600">{employee.role}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Today: {formatDateForDisplay(getIndiaDateString())}
+                </p>
               </div>
 
               <div className="space-y-3">
@@ -658,11 +742,11 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
                         {formatTime(todayAttendance.checkOut)}
                       </span>
                     </div>
-                    {todayAttendance.totalHours && (
-                      <div>
+                    {totalHours !== null && totalHours > 0 && (
+                      <div className="col-span-2">
                         <span className="text-gray-600">Total Hours:</span>
-                        <span className="ml-2 font-medium">
-                          {todayAttendance.totalHours}h
+                        <span className="ml-2 font-medium text-green-600">
+                          {totalHours.toFixed(2)} hours
                         </span>
                       </div>
                     )}

@@ -1,3 +1,4 @@
+// components/Lab/employee/AttendanceRecords.tsx
 'use client';
 import { useState, useEffect, useContext } from 'react';
 import { LabContext } from '@/app/context/LabContext';
@@ -44,6 +45,30 @@ const AttendanceRecords = ({ employeeId }: AttendanceRecordsProps) => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0]
   );
+
+  // Helper function to calculate total hours
+  const calculateTotalHours = (
+    checkIn: string | null,
+    checkOut: string | null
+  ): number | null => {
+    if (!checkIn || !checkOut) return null;
+
+    try {
+      const checkInTime = new Date(checkIn).getTime();
+      const checkOutTime = new Date(checkOut).getTime();
+
+      // Calculate difference in milliseconds
+      const diffMs = checkOutTime - checkInTime;
+
+      // Convert to hours and ensure it's not negative
+      const totalHours = Math.max(0, diffMs / (1000 * 60 * 60));
+
+      return parseFloat(totalHours.toFixed(2));
+    } catch (error) {
+      console.error('Error calculating total hours:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     if (labId) {
@@ -308,49 +333,56 @@ const AttendanceRecords = ({ employeeId }: AttendanceRecordsProps) => {
                 </td>
               </tr>
             ) : (
-              attendanceData.map((record) => (
-                <tr
-                  key={record.id}
-                  className="border-b border-gray-100 hover:bg-gray-50"
-                >
-                  {!employeeId && (
-                    <td className="px-4 py-3">
-                      <div>
-                        <div className="font-medium text-gray-900">
-                          {record.employee?.name || 'Unknown'}
+              attendanceData.map((record) => {
+                const totalHours = calculateTotalHours(
+                  record.checkIn,
+                  record.checkOut
+                );
+
+                return (
+                  <tr
+                    key={record.id}
+                    className="border-b border-gray-100 hover:bg-gray-50"
+                  >
+                    {!employeeId && (
+                      <td className="px-4 py-3">
+                        <div>
+                          <div className="font-medium text-gray-900">
+                            {record.employee?.name || 'Unknown'}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {record.employee?.role} •{' '}
+                            {record.employee?.department}
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-500">
-                          {record.employee?.role} •{' '}
-                          {record.employee?.department}
-                        </div>
-                      </div>
+                      </td>
+                    )}
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {formatDate(record.date)}
                     </td>
-                  )}
-                  <td className="px-4 py-3 text-sm text-gray-900">
-                    {formatDate(record.date)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(record.status)}`}
-                    >
-                      {getStatusIcon(record.status)}
-                      {record.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">
-                    {formatTime(record.checkIn)}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">
-                    {formatTime(record.checkOut)}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-900">
-                    {record.totalHours ? `${record.totalHours}h` : '--'}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate">
-                    {record.notes || '-'}
-                  </td>
-                </tr>
-              ))
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(record.status)}`}
+                      >
+                        {getStatusIcon(record.status)}
+                        {record.status.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {formatTime(record.checkIn)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {formatTime(record.checkOut)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {totalHours ? `${totalHours}h` : '--'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate">
+                      {record.notes || '-'}
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

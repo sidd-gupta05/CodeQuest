@@ -1,8 +1,7 @@
 // components/Booking/TestSelection.tsx
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, X, Filter } from 'lucide-react';
-import { allLabTests } from '@/data/labsData';
 import BookingHeader from './BookingHeader';
 import BookingNavigation from './BookingNavigation';
 import PaginationTest from './PaginationTest';
@@ -17,6 +16,15 @@ interface TestSelectionProps {
   onTestsChange: (tests: string[]) => void;
 }
 
+interface LabTest {
+  id: string;
+  name: string;
+  category: string;
+  description?: string;
+  price: number;
+  duration?: string;
+}
+
 export default function TestSelection({
   onBack,
   onNext,
@@ -29,11 +37,44 @@ export default function TestSelection({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [labTests, setLabTests] = useState<LabTest[]>([]);
+  const [loading, setLoading] = useState(true);
   const testsPerPage = 6;
 
-  const allTestsWithCategory = Object.entries(allLabTests).flatMap(
-    ([category, tests]) => tests.map((test) => ({ category, name: test }))
-  );
+  // Fetch tests created by the selected lab
+  useEffect(() => {
+    const fetchLabTests = async () => {
+      if (!selectedLab?.id) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/lab/${selectedLab.id}/tests`);
+        if (response.ok) {
+          const tests = await response.json();
+          setLabTests(tests);
+        } else {
+          console.error('Failed to fetch lab tests');
+          setLabTests([]);
+        }
+      } catch (error) {
+        console.error('Error fetching lab tests:', error);
+        setLabTests([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLabTests();
+  }, [selectedLab?.id]);
+
+  // Transform lab tests to match the existing structure
+  const allTestsWithCategory = labTests.map((test) => ({
+    category: test.category,
+    name: test.name,
+    price: test.price,
+    duration: test.duration,
+    id: test.id,
+  }));
 
   const filteredTests = allTestsWithCategory.filter(({ category, name }) => {
     const matchesSearch = name
@@ -46,12 +87,15 @@ export default function TestSelection({
   });
 
   const testsByCategory = filteredTests.reduce(
-    (acc, { category, name }) => {
+    (acc, { category, name, price, duration }) => {
       if (!acc[category]) acc[category] = [];
-      acc[category].push(name);
+      acc[category].push({ name, price, duration });
       return acc;
     },
-    {} as Record<string, string[]>
+    {} as Record<
+      string,
+      Array<{ name: string; price: number; duration?: string }>
+    >
   );
 
   const handleTestToggle = (testName: string) => {
@@ -77,6 +121,23 @@ export default function TestSelection({
     startIndex,
     startIndex + testsPerPage
   );
+
+  // Get unique categories from lab tests
+  const uniqueCategories = [...new Set(labTests.map((test) => test.category))];
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 text-black w-full max-w-4xl my-8">
+        <BookingHeader
+          selectedLab={selectedLab}
+          appointmentDate={appointmentDate}
+          appointmentTime={appointmentTime}
+        />
+        <div className="border-b border-gray-200 my-6"></div>
+        <div className="text-center py-8">Loading tests...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 text-black w-full max-w-4xl my-8">
@@ -139,7 +200,7 @@ export default function TestSelection({
             >
               All Categories
             </button>
-            {Object.keys(allLabTests).map((category) => (
+            {uniqueCategories.map((category) => (
               <button
                 key={category}
                 onClick={() => {
@@ -170,7 +231,11 @@ export default function TestSelection({
           </div>
         </div>
 
-        {selectedCategory ? (
+        {labTests.length === 0 ? (
+          <p className="text-gray-500 text-center py-8 bg-white rounded-lg border border-gray-200">
+            No tests available for this lab.
+          </p>
+        ) : selectedCategory ? (
           // Show tests by category
           Object.entries(testsByCategory).length > 0 ? (
             Object.entries(testsByCategory).map(([category, tests]) => (
@@ -179,30 +244,42 @@ export default function TestSelection({
                   {category}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {tests.map((test) => {
-                    const uniqueId = `${category}-${test.replace(/\s+/g, '-')}`;
+                  {tests.map((test, index) => {
+                    const uniqueId = `${category}-${test.name.replace(/\s+/g, '-')}-${index}`;
                     return (
                       <div
                         key={uniqueId}
-                        className={`flex items-start p-3 rounded-lg border transition-all duration-200 ${
-                          selectedTests.includes(test)
+                        className={`flex flex-col p-4 rounded-lg border transition-all duration-200 ${
+                          selectedTests.includes(test.name)
                             ? 'border-[#2A787A] bg-[#F0F7F7]'
                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                         }`}
                       >
-                        <input
-                          type="checkbox"
-                          id={uniqueId}
-                          checked={selectedTests.includes(test)}
-                          onChange={() => handleTestToggle(test)}
-                          className="mt-1 w-4 h-4 text-[#2A787A] bg-white border-gray-300 rounded focus:ring-[#2A787A]"
-                        />
-                        <label
-                          htmlFor={uniqueId}
-                          className="ml-3 text-sm text-gray-700 cursor-pointer"
-                        >
-                          {test}
-                        </label>
+                        <div className="flex items-start">
+                          <input
+                            type="checkbox"
+                            id={uniqueId}
+                            checked={selectedTests.includes(test.name)}
+                            onChange={() => handleTestToggle(test.name)}
+                            className="mt-1 w-4 h-4 text-[#2A787A] bg-white border-gray-300 rounded focus:ring-[#2A787A]"
+                          />
+                          <label
+                            htmlFor={uniqueId}
+                            className="ml-3 text-sm text-gray-700 cursor-pointer flex-1"
+                          >
+                            <div className="font-medium">{test.name}</div>
+                            {test.duration && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                Duration: {test.duration}
+                              </div>
+                            )}
+                          </label>
+                        </div>
+                        <div className="mt-2 text-right">
+                          <span className="text-lg font-bold text-[#2A787A]">
+                            ₹{test.price}
+                          </span>
+                        </div>
                       </div>
                     );
                   })}

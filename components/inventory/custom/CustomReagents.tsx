@@ -92,11 +92,11 @@ export function CustomReagents({ reagents, selectedLab, getStockStatus, onReagen
       // Refresh data
       onReagentAdded();
       
-      alert('Custom reagent created successfully!');
+      toast('Custom reagent created successfully!');
       
     } catch (error) {
       console.error('Error creating custom reagent:', error);
-      alert(error instanceof Error ? error.message : 'Failed to create custom reagent');
+      toast(error instanceof Error ? error.message : 'Failed to create custom reagent');
     } finally {
       setLoading(false);
     }

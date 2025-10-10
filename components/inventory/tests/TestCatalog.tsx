@@ -24,6 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { v4 as uuid } from 'uuid';
+import toast from 'react-hot-toast';
 
 // ---------- Types ----------
 interface ReagentDetails {
@@ -156,10 +157,10 @@ const AddTestForm = ({
       setDescription('');
       setPrice('');
       setReagents([]);
-      alert('Test added successfully!');
+      toast('Test added successfully!');
     } catch (error) {
       console.error('Error adding test:', error);
-      alert('Failed to add test. Please try again.');
+      toast('Failed to add test. Please try again.');
     } finally {
       setIsLoading(false);
     }

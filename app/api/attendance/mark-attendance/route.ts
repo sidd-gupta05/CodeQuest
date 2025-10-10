@@ -1,5 +1,47 @@
+// app/api/attendance/mark-attendance/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+
+// Helper function to get current India time in ISO format (with IST offset applied)
+function getIndiaTimeISOString() {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const indiaTime = new Date(now.getTime() + istOffset);
+
+  // Format manually to include IST offset (not UTC)
+  const isoString = indiaTime.toISOString().replace('Z', '+05:30');
+  return isoString;
+}
+
+// Helper function to format date for India timezone (YYYY-MM-DD)
+function getIndiaDateString() {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const indiaTime = new Date(now.getTime() + istOffset);
+  const indiaDate = indiaTime.toISOString().split('T')[0];
+  return indiaDate;
+}
+
+// Helper function to calculate hours between two timestamps
+function calculateTotalHours(checkIn: string, checkOut: string): number {
+  try {
+    // Parse both dates as they are (already in IST timezone)
+    const checkInTime = new Date(checkIn).getTime();
+    const checkOutTime = new Date(checkOut).getTime();
+
+    // Calculate difference in milliseconds
+    const diffMs = checkOutTime - checkInTime;
+
+    // Convert to hours
+    const totalHours = diffMs / (1000 * 60 * 60);
+
+    // Return rounded to 2 decimal places, ensure it's not negative
+    return Math.max(0, parseFloat(totalHours.toFixed(2)));
+  } catch (error) {
+    console.error('Error calculating total hours:', error);
+    return 0;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,14 +60,16 @@ export async function POST(request: NextRequest) {
     const { v4: uuidv4 } = await import('uuid');
     const attendanceId = uuidv4();
 
-    const now = new Date().toISOString();
+    // Use India time
+    const now = getIndiaTimeISOString();
+    const today = date || getIndiaDateString();
 
     // Check if attendance already exists for this employee on this date
     const { data: existingAttendance, error: fetchError } = await supabase
       .from('attendances')
       .select('*')
       .eq('employeeId', employeeId)
-      .eq('date', date)
+      .eq('date', today)
       .single();
 
     if (fetchError && fetchError.code !== 'PGRST116') {
@@ -46,10 +90,31 @@ export async function POST(request: NextRequest) {
 
       // Calculate total hours if both checkIn and checkOut are present
       if (checkIn && checkOut) {
-        const checkInTime = new Date(checkIn).getTime();
-        const checkOutTime = new Date(checkOut).getTime();
-        const totalHours = (checkOutTime - checkInTime) / (1000 * 60 * 60); // Convert ms to hours
-        updateData.totalHours = parseFloat(totalHours.toFixed(2));
+        updateData.totalHours = calculateTotalHours(checkIn, checkOut);
+      } else if (checkIn && !checkOut && existingAttendance.checkOut) {
+        // If only checkIn is being updated but checkOut exists, recalculate
+        updateData.totalHours = calculateTotalHours(
+          checkIn,
+          existingAttendance.checkOut
+        );
+      } else if (!checkIn && checkOut && existingAttendance.checkIn) {
+        // If only checkOut is being updated but checkIn exists, recalculate
+        updateData.totalHours = calculateTotalHours(
+          existingAttendance.checkIn,
+          checkOut
+        );
+      } else if (checkIn && existingAttendance.checkOut) {
+        // If checkIn is updated and checkOut already exists
+        updateData.totalHours = calculateTotalHours(
+          checkIn,
+          existingAttendance.checkOut
+        );
+      } else if (existingAttendance.checkIn && checkOut) {
+        // If checkOut is updated and checkIn already exists
+        updateData.totalHours = calculateTotalHours(
+          existingAttendance.checkIn,
+          checkOut
+        );
       }
 
       const { data: attendance, error } = await supabase
@@ -71,7 +136,7 @@ export async function POST(request: NextRequest) {
         id: attendanceId,
         employeeId,
         labId,
-        date,
+        date: today,
         status: status || 'PRESENT',
         createdAt: now,
         updatedAt: now,
@@ -83,10 +148,7 @@ export async function POST(request: NextRequest) {
 
       // Calculate total hours if both checkIn and checkOut are provided
       if (checkIn && checkOut) {
-        const checkInTime = new Date(checkIn).getTime();
-        const checkOutTime = new Date(checkOut).getTime();
-        const totalHours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
-        insertData.totalHours = parseFloat(totalHours.toFixed(2));
+        insertData.totalHours = calculateTotalHours(checkIn, checkOut);
       }
 
       const { data: attendance, error } = await supabase
