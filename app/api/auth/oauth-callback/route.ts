@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
-  const roleParam = url.searchParams.get('role')?.toUpperCase() || 'PATIENT';
+  const roleParam = url.searchParams.get('role')?.toUpperCase() || '';
 
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   }
 
   const user = sessionData.user;
-  console.log('Authenticated OAuth user:', user);
+  // console.log('Authenticated OAuth user:', user);
 
   // 2. Check if user exists in your custom users table
   const { data: existingUser, error: fetchError } = await supabase
