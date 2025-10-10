@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { connection } from 'next/server'
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
@@ -21,7 +22,7 @@ import {
 import Image from 'next/image';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
-export default function Booking() {
+export default async function Booking() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -394,6 +395,7 @@ export default function Booking() {
     </div>
   );
 
+  await connection();
   // ---------------- RENDER ----------------
   return (
     <>
