@@ -1,9 +1,17 @@
+//app/dashboard/lab/inventory/page.tsx
 'use client';
 import React, { useState } from 'react';
 import { clashFontRegular } from '@/app/fonts';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { AlertTriangle, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import {
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  TrendingUp,
+  PackageOpen,
+} from 'lucide-react';
 import {
   InventoryHeader,
   InventoryMetrics,
@@ -28,7 +36,6 @@ const Inventory = () => {
     reagentCatalog,
     loading: contextLoading,
     fetchData,
-    // setLabId,
   } = useInventory();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,11 +44,9 @@ const Inventory = () => {
 
   // Get reagent details by ID
   const getReagentDetails = (reagentId: string) => {
-    // First check reagent catalog
     const catalogReagent = reagentCatalog.find((r) => r.id === reagentId);
     if (catalogReagent) return catalogReagent;
 
-    // Then check custom reagents
     const customReagent = customReagents.find((r) => r.id === reagentId);
     if (customReagent) return customReagent;
 
@@ -119,6 +124,14 @@ const Inventory = () => {
     return status.status === 'expiring' || status.status === 'expired';
   }).length;
 
+  // Calculate additional metrics for enhanced UI
+  const totalQuantity = filteredInventory.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
+  const averageStockLevel =
+    totalReagents > 0 ? Math.round(totalQuantity / totalReagents) : 0;
+
   // Real test execution with API
   const executeTest = async (testId: string) => {
     if (!labId) {
@@ -131,9 +144,8 @@ const Inventory = () => {
       const test = testCatalog.find((t) => t.id === testId);
       if (!test) throw new Error('Test not found');
 
-      // You'll need to get bookingId and patientId from your UI state or props
-      const bookingId = 'temp-booking-id'; // Replace with actual booking selection
-      const patientId = 'temp-patient-id'; // Replace with actual patient selection
+      const bookingId = 'temp-booking-id';
+      const patientId = 'temp-patient-id';
 
       const response = await fetch(
         `/api/lab/${labId}/tests/${testId}/execute`,
@@ -156,11 +168,7 @@ const Inventory = () => {
       }
 
       const result = await response.json();
-
-      // Refresh inventory data
       await fetchData();
-
-      // Show success message
       toast(`Test "${test.name}" executed successfully!`);
     } catch (error) {
       console.error('Error executing test:', error);
@@ -189,7 +197,7 @@ const Inventory = () => {
     expiryDate: item.expiryDate || '',
     reorderThreshold: item.reorderThreshold || 0,
     batchNumber: item.batchNumber || '',
-    location: 'Main Storage', // Default value for compatibility
+    location: 'Main Storage',
   }));
 
   const compatibleReagentCatalog = [...reagentCatalog, ...customReagents].map(
@@ -206,9 +214,14 @@ const Inventory = () => {
   if (contextLoading) {
     return (
       <div
-        className={`min-h-screen bg-gray-50 p-6 flex items-center justify-center ${clashFontRegular.className}`}
+        className={`min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 flex items-center justify-center ${clashFontRegular.className}`}
       >
-        <div className="text-center">Loading inventory data...</div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="text-lg font-medium text-gray-700">
+            Loading inventory data...
+          </div>
+        </div>
       </div>
     );
   }
@@ -216,13 +229,20 @@ const Inventory = () => {
   if (!labId) {
     return (
       <div
-        className={`min-h-screen bg-gray-50 p-6 flex items-center justify-center ${clashFontRegular.className}`}
+        className={`min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 flex items-center justify-center ${clashFontRegular.className}`}
       >
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">No Lab Found</h2>
-          <p className="text-gray-600">
-            Please make sure you have a lab associated with your account.
+        <div className="text-center max-w-md p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+          <PackageOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            No Lab Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Please make sure you have a lab associated with your account to
+            access inventory management.
           </p>
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            Set Up Lab
+          </button>
         </div>
       </div>
     );
@@ -230,121 +250,128 @@ const Inventory = () => {
 
   return (
     <div
-      className={`min-h-screen bg-gray-50 p-6 ` + clashFontRegular.className}
+      className={
+        `min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 ` +
+        clashFontRegular.className
+      }
     >
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Enhanced Header */}
         <InventoryHeader
           lowStockCount={lowStockCount}
           expiringCount={expiringCount}
+          totalReagents={totalReagents}
+          averageStockLevel={averageStockLevel}
         />
 
-        {/* Dashboard Metrics */}
+        {/* Enhanced Dashboard Metrics */}
         <InventoryMetrics
           total={totalReagents}
           lowStock={lowStockCount}
           expiring={expiringCount}
           tests={testCatalog.length}
+          averageStock={averageStockLevel}
         />
 
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="inventory" className="space-y-6">
-          <InventoryTabs
-            tabs={[
-              { value: 'inventory', label: 'Inventory' },
-              { value: 'tests', label: 'Test Catalog' },
-              { value: 'execute', label: 'Execute Tests' },
-              { value: 'custom', label: 'Custom Reagents' },
-              { value: 'alerts', label: 'Alerts' },
-            ]}
-          />
+        {/* Enhanced Main Content Tabs */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <Tabs defaultValue="inventory" className="space-y-0">
+            <div className="border-b border-gray-100">
+              <InventoryTabs
+                tabs={[
+                  { value: 'inventory', label: 'Inventory', icon: PackageOpen },
+                  { value: 'tests', label: 'Test Catalog', icon: TrendingUp },
+                  {
+                    value: 'execute',
+                    label: 'Execute Tests',
+                    icon: CheckCircle,
+                  },
+                  {
+                    value: 'custom',
+                    label: 'Custom Reagents',
+                    icon: AlertCircle,
+                  },
+                  { value: 'alerts', label: 'Alerts', icon: AlertTriangle },
+                ]}
+              />
+            </div>
 
-          {/* Inventory Management */}
-          <TabsContent
-            value="inventory"
-            className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md"
-          >
-            <Card className="bg-white border-[#F7F8F9]">
-              <InDialogHeader
-                font={clashFontRegular}
-                reagentCatalog={reagentCatalog}
-                customReagents={customReagents}
+            {/* Enhanced Inventory Management */}
+            <TabsContent value="inventory" className="space-y-6 p-6 m-0">
+              <Card className="bg-white border border-gray-100 shadow-sm rounded-xl">
+                <div className="p-6 border-b border-gray-100">
+                  <InDialogHeader
+                    font={clashFontRegular}
+                    reagentCatalog={reagentCatalog}
+                    customReagents={customReagents}
+                    selectedLab={labId!}
+                    onReagentAdded={fetchData}
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <SearchFilter
+                      searchTerm={searchTerm}
+                      setSearchTerm={setSearchTerm}
+                      filterCategory={filterCategory}
+                      setFilterCategory={setFilterCategory}
+                    />
+                    <InTabs
+                      loading={executionLoading}
+                      filteredInventory={compatibleInventory}
+                      sampleReagentCatalog={compatibleReagentCatalog}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Enhanced Test Catalog */}
+            <TabsContent value="tests" className="space-y-6 p-6 m-0">
+              <TestCatalog
+                sampleTestCatalog={compatibleTestCatalog}
+                inventory={compatibleInventory}
                 selectedLab={labId!}
+                getReagentDetails={getReagentDetails}
+                onTestAdded={fetchData}
+                reagentCatalog={reagentCatalog}
+              />
+            </TabsContent>
+
+            {/* Enhanced Test Execution */}
+            <TabsContent value="execute" className="space-y-6 p-6 m-0">
+              <TestExecution
+                sampleTestCatalog={compatibleTestCatalog}
+                inventory={compatibleInventory}
+                selectedLab={labId!}
+                loading={executionLoading}
+                executeTest={executeTest}
+                getReagentDetails={getReagentDetails}
+              />
+            </TabsContent>
+
+            {/* Enhanced Custom Reagents */}
+            <TabsContent value="custom" className="space-y-6 p-6 m-0">
+              <CustomReagents
+                reagents={customReagents}
+                selectedLab={labId!}
+                getStockStatus={getStockStatus}
                 onReagentAdded={fetchData}
               />
-              <CardContent>
-                <SearchFilter
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                  filterCategory={filterCategory}
-                  setFilterCategory={setFilterCategory}
-                />
-                <InTabs
-                  loading={executionLoading}
-                  filteredInventory={compatibleInventory}
-                  sampleReagentCatalog={compatibleReagentCatalog}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
+            </TabsContent>
 
-          {/* Test Catalog */}
-          <TabsContent
-            value="tests"
-            className="space-y-6 bg-white border border-gray-100 p-4 rounded-md"
-          >
-            <TestCatalog
-              sampleTestCatalog={compatibleTestCatalog}
-              inventory={compatibleInventory}
-              selectedLab={labId!}
-              getReagentDetails={getReagentDetails}
-              onTestAdded={fetchData} // Pass fetchData to TestCatalog
-              reagentCatalog={reagentCatalog}
-            />
-          </TabsContent>
-
-          {/* Test Execution */}
-          <TabsContent
-            value="execute"
-            className="space-y-6 bg-white p-4 rounded-md"
-          >
-            <TestExecution
-              sampleTestCatalog={compatibleTestCatalog}
-              inventory={compatibleInventory}
-              selectedLab={labId!}
-              loading={executionLoading}
-              executeTest={executeTest}
-              getReagentDetails={getReagentDetails}
-            />
-          </TabsContent>
-
-          {/* Custom Reagents */}
-          <TabsContent
-            value="custom"
-            className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md"
-          >
-            <CustomReagents
-              reagents={customReagents}
-              selectedLab={labId!}
-              getStockStatus={getStockStatus}
-              onReagentAdded={fetchData}
-            />
-          </TabsContent>
-
-          {/* Alerts */}
-          <TabsContent
-            value="alerts"
-            className="space-y-6 bg-white border border-[#F7F8F9] p-4 rounded-md"
-          >
-            <Alerts
-              filteredInventory={compatibleInventory}
-              getReagentDetails={getReagentDetails}
-              getStockStatus={getStockStatus}
-              lowStockCount={lowStockCount}
-              expiringCount={expiringCount}
-            />
-          </TabsContent>
-        </Tabs>
+            {/* Enhanced Alerts */}
+            <TabsContent value="alerts" className="space-y-6 p-6 m-0">
+              <Alerts
+                filteredInventory={compatibleInventory}
+                getReagentDetails={getReagentDetails}
+                getStockStatus={getStockStatus}
+                lowStockCount={lowStockCount}
+                expiringCount={expiringCount}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
