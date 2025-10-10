@@ -1,0 +1,46 @@
+{
+  "date": "2025-10-10",
+  "project": "LabSphere",
+  "tool": "npm audit",
+  "auditReportVersion": 2,
+  "vulnerabilities_fixed": [
+    {
+      "package": "next",
+      "severity": "moderate",
+      "issues": [
+        {
+          "title": "Cache Key Confusion for Image Optimization API Routes",
+          "advisory": "GHSA-g5qg-72qw-gw5v",
+          "cwe": "CWE-524",
+          "cvss_score": 6.2,
+          "affected_range": ">=15.0.0 <=15.4.4"
+        },
+        {
+          "title": "Content Injection Vulnerability for Image Optimization",
+          "advisory": "GHSA-xv57-4mr9-wg8v",
+          "cwe": "CWE-20",
+          "cvss_score": 4.3,
+          "affected_range": ">=15.0.0 <=15.4.4"
+        },
+        {
+          "title": "Improper Middleware Redirect Handling Leads to SSRF",
+          "advisory": "GHSA-4342-x723-ch2f",
+          "cwe": "CWE-918",
+          "cvss_score": 6.5,
+          "affected_range": ">=15.0.0-canary.0 <15.4.7"
+        }
+      ],
+      "fixed_version": "15.5.4",
+      "fix_available": true,
+      "fix_command": "npm install next@15.5.4"
+    }
+  ],
+  "summary": {
+    "critical": 0,
+    "high": 0,
+    "moderate": 1,
+    "low": 0,
+    "status": "secure",
+    "notes": "All moderate vulnerabilities in Next.js were fixed by upgrading to version 15.5.4, which patches cache key confusion, content injection, and SSRF risks in image optimization routes."
+  }
+}
