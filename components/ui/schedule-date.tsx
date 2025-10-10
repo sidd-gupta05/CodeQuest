@@ -61,7 +61,7 @@ export function Calendar29() {
           <PopoverTrigger asChild>
             <Button
               id="date-picker"
-              variant=""
+              variant="default"
               className="absolute top-1/2 right-2 size-6 -translate-y-1/2"
             >
               <CalendarIcon className="size-3.5" />

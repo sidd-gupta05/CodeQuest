@@ -7,6 +7,20 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
 import { Lab } from '../Filters';
+
+// Add missing types for leaflet-routing-machine
+declare global {
+  namespace L {
+    namespace Routing {
+      class Control extends L.Control {
+        constructor(options?: any);
+        getPlan(): any;
+        setWaypoints(waypoints: L.LatLng[]): void;
+      }
+      function control(options?: any): Control;
+    }
+  }
+}
 import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';

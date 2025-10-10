@@ -3,6 +3,7 @@ import './globals.css';
 import { clashFontRegular } from './fonts';
 import { Toaster } from 'react-hot-toast';
 // import { SessionProvider } from 'next-auth/react';
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Lab-Sphere',

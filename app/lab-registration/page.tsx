@@ -5,10 +5,39 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import toast from 'react-hot-toast';
 
 export default function LabRegistration() {
   const router = useRouter();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(true); // 🔹 add loading state
+
+  useEffect(() => {
+    async function checkLab() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: lab } = await supabase
+        .from('labs')
+        .select('id')
+        .eq('userId', user.id)
+        .single();
+
+      if (lab) {
+        router.replace('/dashboard');
+      } else {
+        setLoading(false); // ✅ only stop loading when user can stay
+      }
+    }
+
+    checkLab();
+  }, [router]);
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -47,7 +76,7 @@ export default function LabRegistration() {
 
       if (fileError) {
         console.error('File upload error:', fileError.message);
-        alert('Failed to upload certificate');
+        toast.error('Failed to upload certificate');
         return;
       }
 
@@ -69,12 +98,12 @@ export default function LabRegistration() {
     });
 
     if (insertError) {
-      alert('Failed to submit registration');
+      toast('Failed to submit registration');
       console.error('Insert error:', insertError.message);
       return;
     }
 
-    alert(
+    toast.success(
       'Your application is being reviewed. You’ll hear back within 2 days.'
     );
     // router.push("/app/verify-pending"); // optional "waiting" screen
@@ -83,6 +112,22 @@ export default function LabRegistration() {
 
     router.push('/dashboard');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <div className="flex flex-col justify-center items-center my-auto">
+          <div className="mx-auto">
+            <img width={80} height={80} src="/dash-loading.gif" alt="Loading..." />
+          </div>
+          <div className="mt-2 text-center text-slate-700 font-semibold">
+            Setting up your lab . . .
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 select-none ">

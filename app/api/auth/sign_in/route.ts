@@ -10,10 +10,8 @@ export async function POST(req: Request) {
   //TODO: create all necessary interface
   console.log('Received form data:', form);
 
-  const role = form.role?.toUpperCase();
-  console.log(role);
-
-  if (!role) {
+  const formRole = form.role?.toUpperCase();
+  if (!formRole) {
     return NextResponse.json(
       { error: 'Invalid account type' },
       { status: 400 }
@@ -47,6 +45,16 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
+
+  // Get user role from database
+  const { data: userData } = await supabase
+    .from('users')
+    .select('role')
+    .eq('email', form.email)
+    .single();
+
+  const existingRole = userData?.role;
+  const role = existingRole ? existingRole : formRole;
 
   if (role === 'LAB') {
     // 1. Sign up using email/password
@@ -120,6 +128,12 @@ export async function POST(req: Request) {
       const response = NextResponse.redirect(
         new URL('/lab-registration', req.url)
       );
+      response.cookies.set('lab-registered', 'true', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+      });
       response.cookies.set('user-role', role, {
         httpOnly: true,
         sameSite: 'strict',

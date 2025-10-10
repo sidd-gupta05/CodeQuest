@@ -1,0 +1,45 @@
+{
+  "date": "2025-10-10",
+  "project": "LabSphere",
+  "tool": "npm audit",
+  "auditReportVersion": 2,
+  "vulnerabilities_fixed": [
+    {
+      "package": "dompurify",
+      "severity": "moderate",
+      "issue": "Cross-site Scripting (XSS)",
+      "advisory": "GHSA-vhxf-7vqr-mrjg",
+      "fixed_by": "jspdf@3.0.3"
+    },
+    {
+      "package": "jspdf",
+      "severity": "high",
+      "issue": "ReDoS and DoS vulnerabilities",
+      "advisories": [
+        "GHSA-w532-jxjh-hjhj",
+        "GHSA-8mvj-3j78-4qmw"
+      ],
+      "fixed_version": "3.0.3"
+    },
+    {
+      "package": "jspdf-autotable",
+      "severity": "high",
+      "issue": "Affected via jspdf vulnerability chain",
+      "fixed_version": "5.0.2"
+    },
+    {
+      "package": "pdfjs-dist",
+      "severity": "high",
+      "issue": "Arbitrary JavaScript execution",
+      "advisory": "GHSA-wgrm-67xf-hhpq",
+      "fixed_version": "5.4.296"
+    }
+  ],
+  "summary": {
+    "critical": 0,
+    "high": 3,
+    "moderate": 1,
+    "low": 0,
+    "status": "secure"
+  }
+}

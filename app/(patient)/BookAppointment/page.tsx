@@ -3,6 +3,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
@@ -292,7 +293,7 @@ const BookAppointment = () => {
 
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="w-20 h-20 mx-auto">
-            <img src="/main-loading.gif" alt="Loading..." />
+            <Image width='80' height='80' src="/main-loading.gif" alt="Loading..." />
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Setting things up for you . . .

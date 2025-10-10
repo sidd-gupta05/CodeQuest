@@ -1,0 +1,88 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "next": {
+      "name": "next",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1107228,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js Affected by Cache Key Confusion for Image Optimization API Routes",
+          "url": "https://github.com/advisories/GHSA-g5qg-72qw-gw5v",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-524"
+          ],
+          "cvss": {
+            "score": 6.2,
+            "vectorString": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          },
+          "range": ">=15.0.0 <=15.4.4"
+        },
+        {
+          "source": 1107514,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js Content Injection Vulnerability for Image Optimization",
+          "url": "https://github.com/advisories/GHSA-xv57-4mr9-wg8v",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-20"
+          ],
+          "cvss": {
+            "score": 4.3,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N"
+          },
+          "range": ">=15.0.0 <=15.4.4"
+        },
+        {
+          "source": 1107515,
+          "name": "next",
+          "dependency": "next",
+          "title": "Next.js Improper Middleware Redirect Handling Leads to SSRF",
+          "url": "https://github.com/advisories/GHSA-4342-x723-ch2f",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-918"
+          ],
+          "cvss": {
+            "score": 6.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N"
+          },
+          "range": ">=15.0.0-canary.0 <15.4.7"
+        }
+      ],
+      "effects": [],
+      "range": "15.0.0-canary.0 - 15.4.6",
+      "nodes": [
+        "node_modules/next"
+      ],
+      "fixAvailable": {
+        "name": "next",
+        "version": "15.5.4",
+        "isSemVerMajor": false
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 0,
+      "critical": 0,
+      "total": 1
+    },
+    "dependencies": {
+      "prod": 402,
+      "dev": 563,
+      "optional": 85,
+      "peer": 24,
+      "peerOptional": 0,
+      "total": 1015
+    }
+  }
+}
