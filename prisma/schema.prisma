@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../lib/generated/prisma"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -352,13 +353,13 @@ model LeaveApplication {
   labId      String
   startDate  DateTime
   endDate    DateTime
+  leaveType  LeaveType
   reason     String
   status     LeaveStatus @default(PENDING)
   approvedBy String?
   notes      String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
-  leaveType  LeaveType
   employee   employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   lab        Lab         @relation(fields: [labId], references: [id], onDelete: Cascade)
 
