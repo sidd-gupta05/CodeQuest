@@ -1,0 +1,9 @@
+node_modules
+.next
+Dockerfile
+docker-compose.yaml
+*.log
+.git
+.gitignore
+.vscode
+# .env
