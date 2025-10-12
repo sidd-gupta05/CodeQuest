@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { connection } from 'next/server'
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
@@ -22,7 +21,7 @@ import {
 import Image from 'next/image';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
-export default async function Booking() {
+export default function Booking() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
@@ -50,7 +49,10 @@ export default async function Booking() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
         if (error || !session) {
           router.push('/login');
           return;
@@ -58,7 +60,9 @@ export default async function Booking() {
 
         setAuthChecked(true);
 
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) setUser(user);
       } catch (error) {
         console.error('Error checking authentication:', error);
@@ -91,21 +95,28 @@ export default async function Booking() {
           experience: 0,
           testType: lab.testType || 'N/A',
           nextAvailable: lab.nextAvailable,
-          timeSlots: lab.timeSlots || { Morning: [], Afternoon: [], Evening: [] },
+          timeSlots: lab.timeSlots || {
+            Morning: [],
+            Afternoon: [],
+            Evening: [],
+          },
         };
 
         setSelectedLab(processedLab);
         setIsLoved(false);
 
-        if (processedLab.nextAvailable && processedLab.nextAvailable !== 'Not Available') {
+        if (
+          processedLab.nextAvailable &&
+          processedLab.nextAvailable !== 'Not Available'
+        ) {
           setSelectedDate(new Date(processedLab.nextAvailable));
         }
 
         const firstAvailableTime = Object.values(processedLab.timeSlots)
           .flat()
           .find((slot) => typeof slot === 'string' && slot !== '-');
-        if (typeof firstAvailableTime === 'string') setSelectedTime(firstAvailableTime);
-
+        if (typeof firstAvailableTime === 'string')
+          setSelectedTime(firstAvailableTime);
       } catch (error) {
         console.error('Error fetching lab data:', error);
         setSelectedLab(null);
@@ -124,7 +135,8 @@ export default async function Booking() {
 
       const { data: schedules, error } = await supabase
         .from('schedules')
-        .select(`
+        .select(
+          `
           id,
           createdAt,
           updatedAt,
@@ -134,7 +146,8 @@ export default async function Booking() {
             startTime,
             endTime
           )
-        `)
+        `
+        )
         .eq('labId', labId);
 
       if (error) console.error('Error fetching schedules:', error);
@@ -172,48 +185,15 @@ export default async function Booking() {
   }
   const availabilities: Availability[] = schedules[0]?.availabilities || [];
   const dayMap: Record<string, number> = {
-    SUNDAY: 0, MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3,
-    THURSDAY: 4, FRIDAY: 5, SATURDAY: 6,
+    SUNDAY: 0,
+    MONDAY: 1,
+    TUESDAY: 2,
+    WEDNESDAY: 3,
+    THURSDAY: 4,
+    FRIDAY: 5,
+    SATURDAY: 6,
   };
   const allowedDays = availabilities.map((a) => dayMap[a.dayOfWeek]);
-
-  //   async function isSlotAvailable(slotDate: Date) {
-  //     const { data: bookings, error } = await supabase
-  //       .from('bookings')
-  //       .select('id, allocatedEmpId')
-  //       .eq('labId', labId)
-  //       .eq('date', slotDate.toISOString());
-
-  //     if (error) {
-  //       console.error('Error checking bookings:', error);
-  //       return true;
-  //     }
-  //     const allocatedCount = bookings?.filter(b => b.allocatedEmpId !== null).length || 0;
-  //     return allocatedCount < totalEmployees;
-  //   }
-
-  //   async function generateAvailableTimeSlots(dayOfWeek: string, date: Date) {
-  //     const availability = availabilities.find((a) => a.dayOfWeek === dayOfWeek);
-  //     if (!availability) return [];
-
-  //     const { startTime, endTime } = availability;
-  //     const slots: string[] = [];
-  //     let [startHour, startMin] = startTime.split(':').map(Number);
-  //     const [endHour, endMin] = endTime.split(':').map(Number);
-
-  //     while (startHour < endHour || (startHour === endHour && startMin < endMin)) {
-  //       const timeStr = `${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}`;
-  //       const slotDate = new Date(date);
-  //       slotDate.setHours(startHour, startMin, 0, 0);
-
-  //       if (await isSlotAvailable(slotDate)) slots.push(timeStr);
-
-  //       startMin += 30;
-  //       if (startMin >= 60) { startMin = 0; startHour++; }
-  //     }
-
-  //     return slots;
-  //   }
 
   async function isSlotAvailable(date: Date, time: string) {
     // Create full DateTime object
@@ -237,32 +217,8 @@ export default async function Booking() {
     return allocatedCount < totalEmployees; // only available if some employees are free
   }
 
-  // async function generateAvailableTimeSlots(dayOfWeek: string, date: Date) {
-  //   const availability = availabilities.find((a) => a.dayOfWeek === dayOfWeek);
-  //   if (!availability) return [];
-
-  //   const slots: string[] = [];
-  //   let [hour, min] = availability.startTime.split(':').map(Number);
-  //   const [endHour, endMin] = availability.endTime.split(':').map(Number);
-
-  //   while (hour < endHour || (hour === endHour && min < endMin)) {
-  //     const timeStr = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
-  //     if (await isSlotAvailable(date, timeStr)) {
-  //       slots.push(timeStr); // only add if slot has free employee
-  //     }
-
-  //     min += 30;
-  //     if (min >= 60) {
-  //       min = 0;
-  //       hour++;
-  //     }
-  //   }
-
-  //   return slots;
-  // }
-
   async function generateAvailableTimeSlots(dayOfWeek: string, date: Date) {
-    const availability = availabilities.find(a => a.dayOfWeek === dayOfWeek);
+    const availability = availabilities.find((a) => a.dayOfWeek === dayOfWeek);
     if (!availability) return [];
 
     const slots: string[] = [];
@@ -302,7 +258,7 @@ export default async function Booking() {
     }
 
     const bookingCountByTime: Record<string, number> = {};
-    bookings?.forEach(b => {
+    bookings?.forEach((b) => {
       if (!b.allocatedEmpId) return;
       const bDate = new Date(b.date);
       const timeStr = `${String(bDate.getHours()).padStart(2, '0')}:${String(bDate.getMinutes()).padStart(2, '0')}`;
@@ -331,7 +287,9 @@ export default async function Booking() {
     if (!labId) return;
     if (!selectedDate) return;
 
-    const dayName = Object.keys(dayMap).find(d => dayMap[d] === selectedDate.getDay());
+    const dayName = Object.keys(dayMap).find(
+      (d) => dayMap[d] === selectedDate.getDay()
+    );
     if (!dayName) return;
 
     // Function to refresh available slots
@@ -351,7 +309,7 @@ export default async function Booking() {
           event: '*',
           schema: 'public',
           table: 'bookings',
-          filter: `labId=eq.${labId}`
+          filter: `labId=eq.${labId}`,
         },
         (payload) => {
           // Booking inserted / updated / deleted
@@ -367,67 +325,126 @@ export default async function Booking() {
   }, [labId, selectedDate, totalEmployees, schedules]);
 
   // ---------------- NAVIGATION ----------------
-  const handleNextStep = () => { setDirection(1); if (currentStep < 6) setCurrentStep(prev => prev + 1); };
-  const handlePrevStep = () => { setDirection(-1); if (currentStep > 1) setCurrentStep(prev => prev - 1); };
-  const formattedDate = selectedDate.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const handleNextStep = () => {
+    setDirection(1);
+    if (currentStep < 6) setCurrentStep((prev) => prev + 1);
+  };
+  const handlePrevStep = () => {
+    setDirection(-1);
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+  };
+  const formattedDate = selectedDate.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
   const isStep1Complete = selectedDate && selectedTime;
 
   const variants = {
-    enter: (direction: number) => ({ x: direction > 0 ? 1000 : -1000, opacity: 0 }),
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
     center: { x: 0, opacity: 1 },
-    exit: (direction: number) => ({ x: direction < 0 ? 1000 : -1000, opacity: 0 }),
+    exit: (direction: number) => ({
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
   };
 
   // ---------------- LOADING STATES ----------------
-  if (!authChecked || loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
-      <div className="text-center space-y-3">
-        <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-white/90 text-sm">{!authChecked ? 'Checking authentication...' : 'Loading lab details...'}</p>
+  if (!authChecked || loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#05303B] via-[#2B7C7E] to-[#91D8C1]">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-[#37AFA2] border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-white/90 text-sm">
+            {!authChecked
+              ? 'Checking authentication...'
+              : 'Loading lab details...'}
+          </p>
+        </div>
       </div>
-    </div>
-  );
+    );
 
-  if (!selectedLab) return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <p>Failed to load lab information.</p>
-      <Link href="/BookAppointment" className="text-[#2A787A] mt-4">Back to labs</Link>
-    </div>
-  );
+  if (!selectedLab)
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <p>Failed to load lab information.</p>
+        <Link href="/BookAppointment" className="text-[#2A787A] mt-4">
+          Back to labs
+        </Link>
+      </div>
+    );
 
-  await connection();
   // ---------------- RENDER ----------------
   return (
     <>
-      <main className="min-h-screen flex flex-col text-white select-none"
-        style={{ background: 'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)' }}>
+      <main
+        className="min-h-screen flex flex-col text-white select-none"
+        style={{
+          background:
+            'linear-gradient(180deg, #05303B -14.4%, #2B7C7E 11.34%, #91D8C1 55.01%, #FFF 100%)',
+        }}
+      >
         <Navbar />
         <div className="flex-grow flex flex-col items-center justify-center p-4 my-8">
           <Stepper currentStep={currentStep} />
           <AnimatePresence mode="wait" custom={direction}>
             {/* STEP 1 - Date & Time */}
             {currentStep === 1 && (
-              <motion.div key="step1" custom={direction} variants={variants} initial="enter" animate="center" exit="exit"
-                transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                className="w-full max-w-4xl">
+              <motion.div
+                key="step1"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-black w-full max-w-4xl my-8">
                   <div className="flex items-start sm:items-center">
-                    <Image src={selectedLab.image} alt={selectedLab.name} width={64} height={64}
-                      className="rounded-full mr-4 border-2 border-gray-100" />
+                    <Image
+                      src={selectedLab.image}
+                      alt={selectedLab.name}
+                      width={64}
+                      height={64}
+                      className="rounded-full mr-4 border-2 border-gray-100"
+                    />
                     <div>
                       <div className="flex flex-col sm:flex-row sm:items-center">
-                        <h2 className="text-xl font-bold text-gray-800">{selectedLab.name}</h2>
+                        <h2 className="text-xl font-bold text-gray-800">
+                          {selectedLab.name}
+                        </h2>
                         <span className="mt-1 sm:mt-0 sm:ml-3 bg-orange-400 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center w-fit">
-                          <Star size={14} className="mr-1 fill-current" />{selectedLab.rating}
+                          <Star size={14} className="mr-1 fill-current" />
+                          {selectedLab.rating}
                         </span>
                       </div>
                       <div className="flex items-center text-gray-500 mt-1">
-                        <MapPin size={16} className="mr-1.5" /><p>{selectedLab.location}</p>
-                        <button onClick={() => setIsLoved(!isLoved)} className="ml-4">
-                          <Heart size={16} className={isLoved ? 'text-red-500 fill-current' : 'text-gray-400'} />
+                        <MapPin size={16} className="mr-1.5" />
+                        <p>{selectedLab.location}</p>
+                        <button
+                          onClick={() => setIsLoved(!isLoved)}
+                          className="ml-4"
+                        >
+                          <Heart
+                            size={16}
+                            className={
+                              isLoved
+                                ? 'text-red-500 fill-current'
+                                : 'text-gray-400'
+                            }
+                          />
                         </button>
                       </div>
-                      <div className="mt-1 text-sm text-gray-500">{selectedLab.testType}</div>
+                      <div className="mt-1 text-sm text-gray-500">
+                        {selectedLab.testType}
+                      </div>
                     </div>
                   </div>
 
@@ -435,22 +452,45 @@ export default async function Booking() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                     <div>
-                      <h3 className="font-bold text-gray-800 text-lg mb-4">Select Date</h3>
-                      <Calendar selectedDate={selectedDate} onDateChange={setSelectedDate}
-                        disabled={(date: Date) => !allowedDays.includes(date.getDay())} />
+                      <h3 className="font-bold text-gray-800 text-lg mb-4">
+                        Select Date
+                      </h3>
+                      <Calendar
+                        selectedDate={selectedDate}
+                        onDateChange={setSelectedDate}
+                        disabled={(date: Date) =>
+                          !allowedDays.includes(date.getDay())
+                        }
+                      />
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-800 text-lg mb-4">Select Time Slot</h3>
-                      <TimeSlots slots={availableSlots} selectedTime={selectedTime} onTimeChange={setSelectedTime} selectedDate={selectedDate} />
+                      <h3 className="font-bold text-gray-800 text-lg mb-4">
+                        Select Time Slot
+                      </h3>
+                      <TimeSlots
+                        slots={availableSlots}
+                        selectedTime={selectedTime}
+                        onTimeChange={setSelectedTime}
+                        selectedDate={selectedDate}
+                      />
                     </div>
                   </div>
 
                   <div className="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center mt-8 px-2 select-none gap-4 sm:gap-0">
-                    <Link href="/BookAppointment" className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg cursor-pointer w-full sm:w-auto justify-center">
-                      <ChevronLeft size={22} />Back
+                    <Link
+                      href="/BookAppointment"
+                      className="bg-[#37AFA2] hover:bg-[#2f9488] transition-colors text-white font-bold py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg cursor-pointer w-full sm:w-auto justify-center"
+                    >
+                      <ChevronLeft size={22} />
+                      Back
                     </Link>
-                    <button onClick={handleNextStep} disabled={!isStep1Complete} className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer w-full sm:w-auto justify-center ${!isStep1Complete ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'}`}>
-                      Select Tests<ChevronRight size={22} />
+                    <button
+                      onClick={handleNextStep}
+                      disabled={!isStep1Complete}
+                      className={`py-3 px-6 rounded-lg flex items-center gap-1 shadow-lg font-bold transition-colors cursor-pointer w-full sm:w-auto justify-center ${!isStep1Complete ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#37AFA2] hover:bg-[#2f9488] text-white'}`}
+                    >
+                      Select Tests
+                      <ChevronRight size={22} />
                     </button>
                   </div>
                 </div>
@@ -459,9 +499,19 @@ export default async function Booking() {
 
             {/* STEP 2 - TestSelection */}
             {currentStep === 2 && (
-              <motion.div key="step2" custom={direction} variants={variants} initial="enter" animate="center" exit="exit"
-                transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                className="w-full max-w-4xl">
+              <motion.div
+                key="step2"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <TestSelection
                   onBack={handlePrevStep}
                   onNext={handleNextStep}
@@ -476,9 +526,19 @@ export default async function Booking() {
 
             {/* STEP 3 - PatientDetails */}
             {currentStep === 3 && (
-              <motion.div key="step3" custom={direction} variants={variants} initial="enter" animate="center" exit="exit"
-                transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                className="w-full max-w-4xl">
+              <motion.div
+                key="step3"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <PatientDetails
                   onBack={handlePrevStep}
                   onNext={handleNextStep}
@@ -493,9 +553,19 @@ export default async function Booking() {
 
             {/* STEP 4 - AddOns */}
             {currentStep === 4 && (
-              <motion.div key="step4" custom={direction} variants={variants} initial="enter" animate="center" exit="exit"
-                transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                className="w-full max-w-4xl">
+              <motion.div
+                key="step4"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <AddOns
                   onBack={handlePrevStep}
                   onNext={handleNextStep}
@@ -510,9 +580,19 @@ export default async function Booking() {
 
             {/* STEP 5 - Payment */}
             {currentStep === 5 && (
-              <motion.div key="step5" custom={direction} variants={variants} initial="enter" animate="center" exit="exit"
-                transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                className="w-full max-w-4xl">
+              <motion.div
+                key="step5"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <Payment
                   onBack={handlePrevStep}
                   onNext={handleNextStep}
@@ -529,9 +609,19 @@ export default async function Booking() {
 
             {/* STEP 6 - Confirmation */}
             {currentStep === 6 && (
-              <motion.div key="step6" custom={direction} variants={variants} initial="enter" animate="center" exit="exit"
-                transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
-                className="w-full max-w-4xl">
+              <motion.div
+                key="step6"
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                className="w-full max-w-4xl"
+              >
                 <Confirmation
                   selectedLab={selectedLab}
                   appointmentDate={formattedDate}
@@ -543,7 +633,6 @@ export default async function Booking() {
                 />
               </motion.div>
             )}
-
           </AnimatePresence>
         </div>
       </main>
