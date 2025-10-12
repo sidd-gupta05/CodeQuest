@@ -35,7 +35,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 # Install TypeScript globally or as production dependency
-RUN npm install -g typescript
+RUN npm install --save-dev typescript @types/node
 
 # Copy only what’s needed from builder
 COPY --from=builder /app/package*.json ./

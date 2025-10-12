@@ -1,16 +1,14 @@
-node_modules
-.next
-.husky
-.vscode
-dist
-audits
-data
-hooks
-Dockerfile
-docker-compose.yaml
-*.log
-.git
-.gitignore
-.vscode
-.env*
-.idea
+    node_modules
+    .next
+    .husky
+    .vscode
+    dist
+    audits
+    Dockerfile
+    docker-compose.yaml
+    *.log
+    .git
+    .gitignore
+    .vscode
+    .env.local
+    .idea
