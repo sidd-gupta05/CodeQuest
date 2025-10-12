@@ -14,7 +14,7 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app.
+Open [http://labsphere-three.vercel.app](http://labsphere-three.vercel.app) in your browser to see the app.
 
 You can start editing the UI by modifying files in the `app/` directory (e.g., `app/page.tsx`). The app will auto-update as you make changes.
 

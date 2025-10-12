@@ -2,17 +2,21 @@
 import { supabase } from '@/utils/supabase/client';
 import axios from 'axios';
 
-export const handleGoogleLogin = async ({accountType}: {accountType: string}) => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `http://localhost:3000/api/auth/oauth-callback?role=${accountType}`,
-      },
-    });
+export const handleGoogleLogin = async ({
+  accountType,
+}: {
+  accountType: string;
+}) => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `http://labsphere-three.vercel.app/api/auth/oauth-callback?role=${accountType}`,
+    },
+  });
 
-    if (error) console.error(error);
-    console.log('Google login initiated', data);
-  };
+  if (error) console.error(error);
+  console.log('Google login initiated', data);
+};
 
 export async function callOAuthCallback(role: string) {
   try {

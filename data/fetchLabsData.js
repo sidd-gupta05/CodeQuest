@@ -4,7 +4,7 @@ import { mapLabs } from './mapper.js';
 
 export async function fetchLabDetailsAndSave() {
   try {
-    const res = await fetch('http://localhost:3000/api/labs', {
+    const res = await fetch('http://labsphere-three.vercel.app/api/labs', {
       method: 'GET',
       headers: {
         'x-service-key': process.env.SUPABASE_SERVICE_ROLE_KEY,

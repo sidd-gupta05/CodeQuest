@@ -39,14 +39,14 @@ export async function GET() {
     await supabase.auth.signOut();
 
     return NextResponse.redirect(
-      new URL('/', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
+      new URL('/', process.env.NEXT_PUBLIC_SITE_URL || 'http://labsphere-three.vercel.app')
     );
   } catch (error) {
     console.error('Logout error:', error);
     return NextResponse.redirect(
       new URL(
         '/auth/login?error=logout_failed',
-        process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+        process.env.NEXT_PUBLIC_SITE_URL || 'http://labsphere-three.vercel.app'
       )
     );
   }
