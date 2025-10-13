@@ -24,7 +24,7 @@ import { Input } from '@/components/ui/input';
 import { LabContext } from '@/app/context/LabContext';
 import ChangePasswordForm from './ChangePasswordForm';
 import NotificationSettings from './NotificationSetting';
-import LabTests from './LabTests';
+// import LabTests from './LabTests';
 import { v4 as uuidv4 } from 'uuid';
 
 interface CheckboxFieldProps {
@@ -344,8 +344,8 @@ const LabForm: React.FC = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'lab-tests':
-        return <LabTests />;
+      // case 'lab-tests':
+      //   return <LabTests />;
 
       case 'notification-settings':
         return <NotificationSettings />;
@@ -601,7 +601,7 @@ const LabForm: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex space-x-2 mb-6 text-sm font-medium text-[#006A6A] bg-emerald-100 p-2 rounded-xl w-[570px]">
+            <div className="flex space-x-2 mb-6 text-sm font-medium text-[#006A6A] bg-emerald-100 p-2 rounded-xl w-[465px]">
               <button
                 className={`px-4 py-2 rounded-md cursor-pointer ${
                   activeTab === 'lab-settings'
@@ -611,16 +611,6 @@ const LabForm: React.FC = () => {
                 onClick={() => setActiveTab('lab-settings')}
               >
                 Lab Settings
-              </button>
-              <button
-                className={`px-4 py-2 rounded-md cursor-pointer ${
-                  activeTab === 'lab-tests'
-                    ? 'bg-[#006A6A] text-white'
-                    : 'hover:bg-[#005A5A] hover:text-white'
-                }`}
-                onClick={() => setActiveTab('lab-tests')}
-              >
-                Lab Tests
               </button>
               <button
                 className={`px-4 py-2 rounded-md cursor-pointer ${
