@@ -42,6 +42,9 @@ export default function Booking() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [totalEmployees, setTotalEmployees] = useState<number>(0);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [testPrices, setTestPrices] = useState<{ [testName: string]: number }>(
+    {}
+  );
 
   const labId = searchParams.get('labId');
 
@@ -214,7 +217,7 @@ export default function Booking() {
 
     // Count how many employees are already allocated at this slot
     const allocatedCount = bookings?.length || 0;
-    return allocatedCount < totalEmployees; // only available if some employees are free
+    return allocatedCount < totalEmployees; 
   }
 
   async function generateAvailableTimeSlots(dayOfWeek: string, date: Date) {
@@ -302,7 +305,7 @@ export default function Booking() {
 
     // Subscribe to bookings table for this lab
     const bookingSub = supabase
-      .channel('public:bookings') // You can name the channel anything
+      .channel('public:bookings')
       .on(
         'postgres_changes',
         {
@@ -496,8 +499,7 @@ export default function Booking() {
                 </div>
               </motion.div>
             )}
-
-            {/* STEP 2 - TestSelection */}
+            // In STEP 2 - TestSelection
             {currentStep === 2 && (
               <motion.div
                 key="step2"
@@ -520,10 +522,10 @@ export default function Booking() {
                   appointmentTime={selectedTime}
                   selectedTests={selectedTests}
                   onTestsChange={setSelectedTests}
+                  onTestPricesUpdate={setTestPrices} 
                 />
               </motion.div>
             )}
-
             {/* STEP 3 - PatientDetails */}
             {currentStep === 3 && (
               <motion.div
@@ -550,7 +552,6 @@ export default function Booking() {
                 />
               </motion.div>
             )}
-
             {/* STEP 4 - AddOns */}
             {currentStep === 4 && (
               <motion.div
@@ -577,7 +578,6 @@ export default function Booking() {
                 />
               </motion.div>
             )}
-
             {/* STEP 5 - Payment */}
             {currentStep === 5 && (
               <motion.div
@@ -603,10 +603,10 @@ export default function Booking() {
                   selectedAddons={selectedAddons}
                   patientDetails={patientDetails}
                   user={user}
+                  testPrices={testPrices}
                 />
               </motion.div>
             )}
-
             {/* STEP 6 - Confirmation */}
             {currentStep === 6 && (
               <motion.div
