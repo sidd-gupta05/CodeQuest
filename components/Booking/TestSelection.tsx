@@ -14,6 +14,7 @@ interface TestSelectionProps {
   appointmentTime: string;
   selectedTests: string[];
   onTestsChange: (tests: string[]) => void;
+  onTestPricesUpdate?: (prices: { [testName: string]: number }) => void; // Add this
 }
 
 interface LabTest {
@@ -33,6 +34,7 @@ export default function TestSelection({
   appointmentTime,
   selectedTests,
   onTestsChange,
+  onTestPricesUpdate, // Add this
 }: TestSelectionProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -52,6 +54,15 @@ export default function TestSelection({
         if (response.ok) {
           const tests = await response.json();
           setLabTests(tests);
+
+          // Update test prices in parent component
+          if (onTestPricesUpdate) {
+            const prices: { [testName: string]: number } = {};
+            tests.forEach((test: LabTest) => {
+              prices[test.name] = test.price;
+            });
+            onTestPricesUpdate(prices);
+          }
         } else {
           console.error('Failed to fetch lab tests');
           setLabTests([]);
@@ -65,9 +76,9 @@ export default function TestSelection({
     };
 
     fetchLabTests();
-  }, [selectedLab?.id]);
+  }, [selectedLab?.id, onTestPricesUpdate]); // Add onTestPricesUpdate to dependencies
 
-  // Transform lab tests to match the existing structure
+  // Rest of the component remains the same...
   const allTestsWithCategory = labTests.map((test) => ({
     category: test.category,
     name: test.name,

@@ -1,3 +1,4 @@
+//components/Booking/Payment.tsx
 import BookingHeader from './BookingHeader';
 import PaymentClient from './PaymentClient';
 
@@ -11,6 +12,7 @@ interface PaymentProps {
   selectedAddons: string[];
   patientDetails: any;
   user: any;
+  testPrices: { [testName: string]: number };
 }
 
 export default function Payment({
@@ -23,14 +25,19 @@ export default function Payment({
   selectedAddons,
   patientDetails,
   user,
+  testPrices,
 }: PaymentProps) {
   const calculateTotal = () => {
-    const testCost = selectedTests.length * 500;
+    const testCost = selectedTests.reduce((total, testName) => {
+      return total + (testPrices[testName] || 0);
+    }, 0);
+
     const addonCost = selectedAddons.reduce((total, addon) => {
       if (addon === 'Express Delivery') return total + 500;
       if (addon === 'Superfast Delivery') return total + 350;
       return total + 200;
     }, 0);
+
     return testCost + addonCost;
   };
 
@@ -75,7 +82,10 @@ export default function Payment({
           <ul className="list-disc list-inside pl-4">
             {selectedTests.map((test, index) => (
               <li key={index} className="text-gray-700">
-                {test} <span className="font-semibold">(₹500)</span>
+                {test}{' '}
+                <span className="font-semibold">
+                  (₹{testPrices[test] || 0})
+                </span>
               </li>
             ))}
           </ul>

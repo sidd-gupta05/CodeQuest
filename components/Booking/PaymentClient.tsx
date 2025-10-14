@@ -1,3 +1,4 @@
+//components/Booking/PaymentClient.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
