@@ -38,7 +38,6 @@ export default function LabRegistration() {
     checkLab();
   }, [router]);
 
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setUploadedFile(e.target.files[0]);
@@ -98,17 +97,17 @@ export default function LabRegistration() {
     });
 
     if (insertError) {
-      toast('Failed to submit registration');
+      toast.error('Failed to submit registration');
       console.error('Insert error:', insertError.message);
       return;
     }
 
-    toast.success(
-      'Your application is being reviewed. You’ll hear back within 2 days.'
-    );
-    // router.push("/app/verify-pending"); // optional "waiting" screen
+    // Set lab-registered cookie to true after successful registration
+    document.cookie = `lab-registered=true; path=/; secure=${process.env.NODE_ENV === 'production'}; sameSite=strict`;
 
-    // Optional: Validate fields here before redirect
+    toast.success(
+      "Your application is being reviewed. You'll hear back within 2 days."
+    );
 
     router.push('/dashboard');
   };
@@ -118,7 +117,12 @@ export default function LabRegistration() {
       <div className="min-h-screen flex flex-col">
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="mx-auto">
-            <img width={80} height={80} src="/dash-loading.gif" alt="Loading..." />
+            <img
+              width={80}
+              height={80}
+              src="/dash-loading.gif"
+              alt="Loading..."
+            />
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Setting up your lab . . .
@@ -127,7 +131,6 @@ export default function LabRegistration() {
       </div>
     );
   }
-
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 select-none ">
