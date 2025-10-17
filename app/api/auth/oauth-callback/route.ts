@@ -70,7 +70,10 @@ export async function GET(req: Request) {
   //TODO: Gotta modify labs api to redirect not yet registered labs to lab-registration
   // Set role cookie (HTTP-only)
   const response = NextResponse.redirect(
-    new URL(finalRole === 'LAB' ? '/lab-registration' : '/bookAppointment', req.url)
+    new URL(
+      finalRole === 'LAB' ? '/lab-registration' : '/bookAppointment',
+      req.url
+    )
   );
   response.cookies.set('user-role', finalRole, {
     httpOnly: true,

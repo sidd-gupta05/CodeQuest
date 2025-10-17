@@ -1,4 +1,4 @@
-// /api/auth/verify-otp
+// /api/auth/verify-otp/route.ts
 import { cookies } from 'next/headers';
 import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 const verifyOtpSchema = z.object({
   phone: z.string().min(10),
   code: z.string().length(6),
-  email: z.email().optional(),
+  email: z.string().email().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   role: z.enum(['PATIENT', 'DOCTOR']),

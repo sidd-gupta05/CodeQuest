@@ -4,10 +4,10 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
-  const supabase = await createClient(cookies());
+  const cookieStore = cookies();
+  const supabase = await createClient(cookieStore);
   const form = await req.json();
 
-  //TODO: create all necessary interface
   console.log('Received form data:', form);
 
   const formRole = form.role?.toUpperCase();
@@ -46,20 +46,12 @@ export async function POST(req: Request) {
     );
   }
 
-  // Get user role from database
-  const { data: userData } = await supabase
-    .from('users')
-    .select('role')
-    .eq('email', form.email)
-    .single();
-
-  const existingRole = userData?.role;
-  const role = existingRole ? existingRole : formRole;
+  const role = formRole;
 
   if (role === 'LAB') {
-    // 1. Sign up using email/password
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
+      // 1. Sign up using email/password
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
@@ -69,66 +61,54 @@ export async function POST(req: Request) {
             phone: form.phone,
             role,
           },
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/lab-registration`,
         },
       });
 
       if (signUpError) {
-        console.log(signUpError.message);
+        console.log('Signup error:', signUpError.message);
         return NextResponse.json(
           { error: signUpError.message },
           { status: 400 }
         );
       }
 
-      // 2. Get authenticated user
-      const {
-        data: { user },
-        error: getUserError,
-      } = await supabase.auth.getUser();
-
-      // 2. Check if user exists in your custom users table
-      const { data: existingUser, error: fetchError } = await supabase
-        .from('users')
-        .select('id, role')
-        .eq('id', user?.id)
-        .single();
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        return NextResponse.redirect(
-          new URL('/auth/sign_in?error=oauth_failed', req.url)
+      const user = signUpData.user;
+      if (!user) {
+        return NextResponse.json(
+          { error: 'User creation failed' },
+          { status: 400 }
         );
       }
 
-      // 3. Insert into users table (optional - use your own table schema)
-      if (!existingUser) {
-        const { error: insertUserError } = await supabase.from('users').upsert({
-          id: user?.id,
-          email: form.email,
-          firstName: form.firstName,
-          lastName: form.lastName,
-          phone: form.phone,
-          role,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
+      // 2. Insert into users table
+      const { error: insertUserError } = await supabase.from('users').insert({
+        id: user.id,
+        email: form.email,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        role,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
 
-        if (insertUserError) {
-          console.log(insertUserError);
-          return NextResponse.json(
-            {
-              error: 'User signup succeeded but DB insert failed',
-              dbError: insertUserError.message,
-            },
-            { status: 500 }
-          );
-        }
+      if (insertUserError) {
+        console.log('User insert error:', insertUserError);
+        // Don't return error here - user was created in auth, just DB insert failed
       }
 
-      const response = NextResponse.redirect(
-        new URL('/lab-registration', req.url)
+      // For new LAB users, set lab-registered as false
+      const response = NextResponse.json(
+        { 
+          success: true, 
+          message: 'Lab user created successfully',
+          user: { id: user.id, email: user.email }
+        },
+        { status: 200 }
       );
-      response.cookies.set('lab-registered', 'true', {
+
+      // Set lab-registered as false to indicate they need to complete registration
+      response.cookies.set('lab-registered', 'false', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -140,9 +120,10 @@ export async function POST(req: Request) {
         secure: process.env.NODE_ENV === 'production',
         path: '/',
       });
+      
       return response;
     } catch (e: any) {
-      console.error('Lab Auth failed:', e.status, e.code, e.message);
+      console.error('Lab Auth failed:', e);
       await supabase.auth.signOut();
 
       return NextResponse.json(
@@ -153,7 +134,7 @@ export async function POST(req: Request) {
   }
 
   if (role === 'PATIENT') {
-    // 4. Sign in with OTP (phone-based)
+    // ... existing PATIENT code ...
     const { error: otpError } = await supabase.auth.signInWithOtp({
       phone: `+91${form.phone}`,
       options: {

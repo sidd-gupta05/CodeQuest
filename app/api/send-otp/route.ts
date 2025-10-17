@@ -1,4 +1,4 @@
-// /api/send-otp
+// app/api/send-otp
 import { supabase } from '@/utils/supabase/client';
 
 export async function POST(req: Request) {

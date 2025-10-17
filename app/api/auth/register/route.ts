@@ -1,28 +1,24 @@
+// app/api/register/route.ts
 import { NextResponse } from 'next/server';
-import { supabase } from '@/utils/supabase/client';
-import bcrypt from 'bcryptjs';
+import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { firstName, lastName, phone, email, password, role, supabaseId } =
-    body;
+  const cookieStore = cookies();
+  const supabase = await createClient(cookieStore);
 
-  const user = await supabase.auth.getUser();
-  if (user) {
-    console.error('User already exists:', user.data.user?.id);
-  }
-  const hashed = await bcrypt.hash(password, 10);
+  const body = await req.json();
+  const { firstName, lastName, phone, email, role, supabaseId } = body;
 
   const { error: insertError } = await supabase.from('users').insert({
     id: supabaseId,
     email,
-    password: hashed,
+    password: '', // optional: or hash if needed
     firstName,
     lastName,
     phone,
     role,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   });
 
   if (insertError) {
