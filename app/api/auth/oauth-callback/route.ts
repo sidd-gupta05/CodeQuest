@@ -71,7 +71,7 @@ export async function GET(req: Request) {
   // Set role cookie (HTTP-only)
   const response = NextResponse.redirect(
     new URL(
-      finalRole === 'LAB' ? '/lab-registration' : '/bookAppointment',
+      finalRole === 'LAB' ? '/lab-registration' : '/BookAppointment',
       req.url
     )
   );
