@@ -1,4 +1,3 @@
-//app/auth/sign_in/page.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -69,7 +68,6 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setApiError(null);
@@ -86,11 +84,12 @@ export default function SignupPage() {
       });
 
       const data = res.data;
-      console.log(res.data.message);
+      console.log('Sign in response:', data);
+
       if (form.role === 'PATIENT') {
         router.push(`/auth/verify-otp?phone=${form.phone}`);
       } else if (form.role === 'LAB') {
-        router.push(`/lab-registration?email=${form.email}`);
+        router.push('/lab-registration');
       }
     } catch (err: any) {
       setApiError(err.response?.data?.error || 'Failed to sign up');
@@ -262,7 +261,7 @@ export default function SignupPage() {
             <div className="flex gap-4 justify-center">
               <button
                 className="cursor-pointer flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-                onClick={() => handleGoogleLogin({accountType})}
+                onClick={() => handleGoogleLogin({ accountType })}
               >
                 <Image src="/google.svg" alt="Google" width={20} height={20} />
                 <span className="text-sm font-medium">Sign in with Google</span>
@@ -274,12 +273,14 @@ export default function SignupPage() {
             <p className="text-center text-sm text-gray-600 mt-4">
               Already have an account?{' '}
               <Link
-                href={{ pathname: '/auth/login', query: { object: JSON.stringify(accountType) }, }}
+                href={{
+                  pathname: '/auth/login',
+                  query: { object: JSON.stringify(accountType) },
+                }}
                 className="text-teal-600"
               >
                 Log in
               </Link>
-              
             </p>
           </div>
         )}
