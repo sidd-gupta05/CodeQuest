@@ -1,6 +1,6 @@
 [
   {
-    "key": "ctrl+alt+v",
+    "key": "alt+v",
     "command": "workbench.action.tasks.runTask",
     "when": "terminalFocus",
     "args": "Run Dev"
