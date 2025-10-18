@@ -1,18 +1,18 @@
+// app/auth/sign_in/page.tsx
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import { signIn } from 'next-auth/react';
 import axios from 'axios';
 import CarouselSection from '@/components/carousel-section';
 import { AccountTypeSidebar } from '@/components/AccSidebar';
 import { handleGoogleLogin } from './actions';
 import Link from 'next/link';
-import { object } from 'zod';
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [accountType, setAccountType] = useState<string>('');
   const [form, setForm] = useState({
     firstName: '',
@@ -26,6 +26,9 @@ export default function SignupPage() {
   const [errors, setErrors] = useState<Partial<typeof form>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Get error from URL params
+  const errorParam = searchParams.get('error');
 
   const handleAccountSelect = (type: string) => {
     setAccountType(type);
@@ -89,6 +92,7 @@ export default function SignupPage() {
       if (form.role === 'PATIENT') {
         router.push(`/auth/verify-otp?phone=${form.phone}`);
       } else if (form.role === 'LAB') {
+        // For LAB, always redirect to lab registration page first
         router.push('/lab-registration');
       }
     } catch (err: any) {
@@ -111,6 +115,15 @@ export default function SignupPage() {
     });
     setErrors({});
     setApiError(null);
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await handleGoogleLogin({ accountType });
+    } catch (error: any) {
+      setApiError('Google sign-in failed. Please try again.');
+      console.error('Google sign-in error:', error);
+    }
   };
 
   return (
@@ -143,10 +156,22 @@ export default function SignupPage() {
               </p>
             </div>
 
+            {/* Display errors from URL params */}
+            {errorParam && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm text-center">
+                  {errorParam === 'oauth_failed'
+                    ? 'Google sign-in failed. Please try again.'
+                    : 'Authentication failed. Please try again.'}
+                </p>
+              </div>
+            )}
+
+            {/* Display API errors */}
             {apiError && (
-              <p className="text-red-500 text-sm text-center mb-4">
-                {apiError}
-              </p>
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm text-center">{apiError}</p>
+              </div>
             )}
 
             <form className="space-y-4" onSubmit={handleSubmit}>
@@ -158,10 +183,12 @@ export default function SignupPage() {
                     placeholder="Enter your first name"
                     value={form.firstName}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-md px-4 py-2"
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-teal-500"
                   />
                   {errors.firstName && (
-                    <p className="text-xs text-red-500">{errors.firstName}</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.firstName}
+                    </p>
                   )}
                 </div>
                 <div className="w-1/2">
@@ -171,10 +198,12 @@ export default function SignupPage() {
                     placeholder="Enter your last name"
                     value={form.lastName}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-md px-4 py-2"
+                    className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-teal-500"
                   />
                   {errors.lastName && (
-                    <p className="text-xs text-red-500">{errors.lastName}</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {errors.lastName}
+                    </p>
                   )}
                 </div>
               </div>
@@ -185,10 +214,10 @@ export default function SignupPage() {
                   placeholder="Enter your e-mail"
                   value={form.email}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-teal-500"
                 />
                 {errors.email && (
-                  <p className="text-xs text-red-500">{errors.email}</p>
+                  <p className="text-xs text-red-500 mt-1">{errors.email}</p>
                 )}
               </div>
               <div>
@@ -198,10 +227,10 @@ export default function SignupPage() {
                   placeholder="Enter your phone number (10 digits)"
                   value={form.phone}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-teal-500"
                 />
                 {errors.phone && (
-                  <p className="text-xs text-red-500">{errors.phone}</p>
+                  <p className="text-xs text-red-500 mt-1">{errors.phone}</p>
                 )}
               </div>
               <div>
@@ -211,10 +240,10 @@ export default function SignupPage() {
                   placeholder="Enter your password"
                   value={form.password}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-teal-500"
                 />
                 {errors.password && (
-                  <p className="text-xs text-red-500">{errors.password}</p>
+                  <p className="text-xs text-red-500 mt-1">{errors.password}</p>
                 )}
               </div>
               <div>
@@ -224,10 +253,10 @@ export default function SignupPage() {
                   placeholder="Confirm your password"
                   value={form.confirmPassword}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:border-teal-500"
                 />
                 {errors.confirmPassword && (
-                  <p className="text-xs text-red-500">
+                  <p className="text-xs text-red-500 mt-1">
                     {errors.confirmPassword}
                   </p>
                 )}
@@ -235,17 +264,15 @@ export default function SignupPage() {
               <div className="flex gap-4">
                 <button
                   type="button"
-                  onClick={() => {
-                    handleReset();
-                  }}
-                  className="w-1/2 bg-gray-200 text-gray-800 rounded-md py-2 font-semibold cursor-pointer"
+                  onClick={handleReset}
+                  className="w-1/2 bg-gray-200 text-gray-800 rounded-md py-2 font-semibold cursor-pointer hover:bg-gray-300 transition duration-200"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-1/2 bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer disabled:opacity-50"
+                  className="w-1/2 bg-teal-600 text-white rounded-md py-2 font-semibold cursor-pointer hover:bg-teal-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Submitting...' : 'Next'}
                 </button>
@@ -261,13 +288,11 @@ export default function SignupPage() {
             <div className="flex gap-4 justify-center">
               <button
                 className="cursor-pointer flex items-center gap-2 px-5 py-2 border border-black rounded-full shadow-sm hover:bg-gray-100 transition duration-200"
-                onClick={() => handleGoogleLogin({ accountType })}
+                onClick={handleGoogleSignIn}
               >
                 <Image src="/google.svg" alt="Google" width={20} height={20} />
                 <span className="text-sm font-medium">Sign in with Google</span>
               </button>
-
-              {/* <OneTapComponent /> */}
             </div>
 
             <p className="text-center text-sm text-gray-600 mt-4">
@@ -277,7 +302,7 @@ export default function SignupPage() {
                   pathname: '/auth/login',
                   query: { object: JSON.stringify(accountType) },
                 }}
-                className="text-teal-600"
+                className="text-teal-600 hover:text-teal-700 font-medium"
               >
                 Log in
               </Link>

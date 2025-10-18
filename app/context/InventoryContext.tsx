@@ -92,7 +92,9 @@ interface InventoryContextType {
   // setReagentCatalog: Dispatch<SetStateAction<ReagentCatalog[]>>;
 }
 
-export const InventoryContext = createContext<InventoryContextType | null>(null);
+export const InventoryContext = createContext<InventoryContextType | null>(
+  null
+);
 
 interface InventoryProviderProps {
   children: ReactNode;
@@ -107,25 +109,53 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-        const fetchData = async () => {
+  // In your InventoryContext.tsx, update the fetchData function:
+  const fetchData = async () => {
     if (!labId) return;
-    
+
     try {
       setLoading(true);
-      
+
       // Fetch all data in parallel
-      const [inventoryRes, customReagentsRes, testsRes, reagentsRes] = await Promise.all([
-        fetch(`/api/lab/${labId}/inventory`),
-        fetch(`/api/lab/${labId}/custom-reagents`),
-        fetch(`/api/lab/${labId}/tests`),
-        fetch('/api/reagents/')
-      ]);
+      const [inventoryRes, customReagentsRes, testsRes, reagentsRes] =
+        await Promise.all([
+          fetch(`/api/lab/${labId}/inventory`),
+          fetch(`/api/lab/${labId}/custom-reagents`),
+          fetch(`/api/lab/${labId}/tests`), // This should now work with the new API route
+          fetch('/api/reagents/'),
+        ]);
 
-      if (inventoryRes.ok) setInventory(await inventoryRes.json());
-      if (customReagentsRes.ok) setCustomReagents(await customReagentsRes.json());
-      if (testsRes.ok) setTestCatalog(await testsRes.json());
-      if (reagentsRes.ok) setReagentCatalog(await reagentsRes.json());
+      // Check if responses are ok and parse JSON
+      if (inventoryRes.ok) {
+        const inventoryData = await inventoryRes.json();
+        setInventory(inventoryData);
+      } else {
+        console.error('Failed to fetch inventory:', inventoryRes.status);
+      }
 
+      if (customReagentsRes.ok) {
+        const customData = await customReagentsRes.json();
+        setCustomReagents(customData);
+      } else {
+        console.error(
+          'Failed to fetch custom reagents:',
+          customReagentsRes.status
+        );
+      }
+
+      if (testsRes.ok) {
+        const testsData = await testsRes.json();
+        setTestCatalog(testsData);
+      } else {
+        console.error('Failed to fetch tests:', testsRes.status);
+      }
+
+      if (reagentsRes.ok) {
+        const reagentsData = await reagentsRes.json();
+        setReagentCatalog(reagentsData);
+      } else {
+        console.error('Failed to fetch reagents:', reagentsRes.status);
+      }
     } catch (err: any) {
       console.error('Error fetching inventory data:', err);
       setError(err.message || 'Failed to fetch inventory data');
@@ -138,9 +168,12 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
     const initializeLab = async () => {
       try {
         setLoading(true);
-        
+
         // Get current user
-        const { data: { user }, error: userAuthError } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error: userAuthError,
+        } = await supabase.auth.getUser();
         if (userAuthError || !user) throw new Error('User not found');
         console.log({ user, userAuthError });
 
@@ -153,10 +186,9 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
 
         console.log({ labRes, labError });
         if (labError) throw labError;
-        
+
         const currentLabId = labRes?.id || null;
         setLabId(currentLabId);
-
       } catch (err: any) {
         console.error('Error initializing lab:', err);
         setError(err.message || 'Failed to initialize lab');
@@ -170,11 +202,10 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
 
   // Fetch data when labId changes
   useEffect(() => {
-
     if (labId) {
       fetchData();
-    }else {
-      console.log("No labId available yet");
+    } else {
+      console.log('No labId available yet');
       // setLoading(false);
     }
   }, [labId]);
@@ -194,13 +225,13 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
           // const { data: inventoryData, error } = await supabase
           //   .from('lab_inventory')
           //   .select(
-          //     `*, 
-          //     ReagentCatalog(*), 
+          //     `*,
+          //     ReagentCatalog(*),
           //     CustomReagent(*)`
           //   )
           //   .eq('labId', labId)
           //   .order('createdAt', { ascending: false });
-            
+
           //   if (!error) {
           //     if (inventoryData) setInventory(inventoryData);
           //   }
@@ -238,13 +269,12 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
           //   const { data: testsData, error } = await supabase
           //     .from('tests')
           //     .select(
-          //       `*, 
+          //       `*,
           //       TestReagent(*, ReagentCatalog(*))`
           //     )
           //     .eq('labId', labId)
           //     .order('createdAt', { ascending: false });
           // if (!error) setTestCatalog(testsData || []);
-          
         }
       )
       .subscribe();
@@ -264,7 +294,7 @@ export const InventoryProvider = ({ children }: InventoryProviderProps) => {
     reagentCatalog,
     loading,
     error,
-    fetchData
+    fetchData,
     // setLabId,
     // setInventory,
     // setCustomReagents,

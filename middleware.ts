@@ -60,7 +60,7 @@ export async function middleware(request: NextRequest) {
   const protectedPaths = [
     '/dashboard',
     '/lab-registration',
-    '/bookAppointment',
+    '/BookAppointment',
   ];
 
   const isProtected = protectedPaths.some(
@@ -93,7 +93,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Prevent LAB from accessing patient routes
-    if (pathname === '/bookAppointment') {
+    if (pathname === '/BookAppointment') {
       const url = request.nextUrl.clone();
       url.pathname = '/dashboard';
       return NextResponse.redirect(url);
@@ -105,7 +105,7 @@ export async function middleware(request: NextRequest) {
     // Prevent patients from accessing lab routes
     if (pathname === '/dashboard' || pathname === '/lab-registration') {
       const url = request.nextUrl.clone();
-      url.pathname = '/bookAppointment';
+      url.pathname = '/BookAppointment';
       return NextResponse.redirect(url);
     }
   }
@@ -113,7 +113,7 @@ export async function middleware(request: NextRequest) {
   // 🔁 Redirect authenticated users away from auth pages
   if (user && ['/auth/sign_in', '/auth/login'].includes(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = role === 'LAB' ? '/dashboard' : '/bookAppointment';
+    url.pathname = role === 'LAB' ? '/dashboard' : '/BookAppointment';
     return NextResponse.redirect(url);
   }
 
