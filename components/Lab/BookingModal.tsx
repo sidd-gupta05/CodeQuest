@@ -62,8 +62,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
     booking?.reportStatus || 'TEST_BOOKED'
   );
 
-  let allocatedEmployeeId = booking?.allocatedEmpId?.id || null;
-  let allocatedEmployeeName = booking?.allocatedEmpId?.name || null;
+  const allocatedEmployeeId = booking?.allocatedEmpId?.id || null;
+  const allocatedEmployeeName = booking?.allocatedEmpId?.name || null;
 
   console.log('allocatedEmp id', allocatedEmployeeId);
   console.log('allocatedEmp name', allocatedEmployeeName);
