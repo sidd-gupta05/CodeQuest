@@ -2,7 +2,8 @@
 import './globals.css';
 import { clashFontRegular } from './fonts';
 import { Toaster } from 'react-hot-toast';
-// import { SessionProvider } from 'next-auth/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -26,6 +27,8 @@ export default function RootLayout({
       >
         {/* <SessionProvider> */}
         {children}
+        <SpeedInsights />
+        <Analytics />
         <Toaster position="top-right" />
         {/* </SessionProvider> */}
       </body>
