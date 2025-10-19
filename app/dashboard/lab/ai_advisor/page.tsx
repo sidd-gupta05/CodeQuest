@@ -331,7 +331,7 @@ function AI_AD() {
         return;
       }
 
-      let updatedAtDate = data.updatedAt ? new Date(data.updatedAt).toLocaleDateString() : "N/A";
+      const updatedAtDate = data.updatedAt ? new Date(data.updatedAt).toLocaleDateString() : "N/A";
       setUpdatedAt(updatedAtDate);
 
       const parsedOutbreaks = JSON.parse(data.rawOutput);

@@ -350,7 +350,7 @@ export default function PatientDetails({
   ) => {
     const { name, value } = e.target;
 
-    let updatedData = { ...patientData, [name]: value };
+    const updatedData = { ...patientData, [name]: value };
 
     // If DOB changes, calculate age
     if (name === 'dob' && value) {
