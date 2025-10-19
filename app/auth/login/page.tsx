@@ -20,7 +20,6 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
 
   const objectParam = searchParams.get('object');
   const accountType = objectParam ? JSON.parse(objectParam) : 'PATIENT';
@@ -53,6 +52,7 @@ export default function LoginPage() {
         );
 
         if (!isNoRowsError) {
+          console.error('Error looking up user:', lookupError);
         }
       }
 

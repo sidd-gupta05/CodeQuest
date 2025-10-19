@@ -1,7 +1,7 @@
 // app/api/lab/[labId]/inventory/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/prisma";
-import { v4 as uuid } from "uuid";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/prisma';
+import { v4 as uuid } from 'uuid';
 
 type Body = {
   reagentId?: string;
@@ -73,45 +73,44 @@ type Body = {
 //   }
 // }
 
-
 export async function POST(
-  req: NextRequest, 
+  req: NextRequest,
   context: { params: { id: string } }
 ) {
   try {
     const { id: labId } = await context.params;
     const body = await req.json();
-    console.log({ labId, body })
+    console.log({ labId, body });
 
-    const { 
-      reagentId, 
-      customReagentId, 
-      quantity, 
-      unit = "unit", 
-      expiryDate = null, 
-      reorderThreshold = null, 
-      batchNumber = null, 
-      increment = true 
+    const {
+      reagentId,
+      customReagentId,
+      quantity,
+      unit = 'unit',
+      expiryDate = null,
+      reorderThreshold = null,
+      batchNumber = null,
+      increment = true,
     } = body;
 
     // Validate that only one reagent type is provided
     if (!reagentId && !customReagentId) {
       return NextResponse.json(
-        { error: "Either reagentId or customReagentId is required" }, 
+        { error: 'Either reagentId or customReagentId is required' },
         { status: 400 }
       );
     }
 
     if (reagentId && customReagentId) {
       return NextResponse.json(
-        { error: "Provide either reagentId OR customReagentId, not both" }, 
+        { error: 'Provide either reagentId OR customReagentId, not both' },
         { status: 400 }
       );
     }
 
-    if (typeof quantity !== "number") {
+    if (typeof quantity !== 'number') {
       return NextResponse.json(
-        { error: "Numeric quantity is required" }, 
+        { error: 'Numeric quantity is required' },
         { status: 400 }
       );
     }
@@ -119,7 +118,7 @@ export async function POST(
     // Check if lab exists
     const lab = await db.lab.findUnique({ where: { id: labId } });
     if (!lab) {
-      return NextResponse.json({ error: "Lab not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Lab not found' }, { status: 404 });
     }
 
     let existing;
@@ -127,10 +126,12 @@ export async function POST(
 
     if (reagentId) {
       // Handle regular reagent catalog item
-      const reagent = await db.reagentCatalog.findUnique({ where: { id: reagentId } });
+      const reagent = await db.reagentCatalog.findUnique({
+        where: { id: reagentId },
+      });
       if (!reagent) {
         return NextResponse.json(
-          { error: "Reagent not found in ReagentCatalog" }, 
+          { error: 'Reagent not found in ReagentCatalog' },
           { status: 404 }
         );
       }
@@ -169,12 +170,12 @@ export async function POST(
       }
     } else if (customReagentId) {
       // Handle custom reagent
-      const customReagent = await db.customReagent.findUnique({ 
-        where: { id: customReagentId } 
+      const customReagent = await db.customReagent.findUnique({
+        where: { id: customReagentId },
       });
       if (!customReagent) {
         return NextResponse.json(
-          { error: "Custom reagent not found" }, 
+          { error: 'Custom reagent not found' },
           { status: 404 }
         );
       }
@@ -182,7 +183,7 @@ export async function POST(
       // Verify custom reagent belongs to this lab
       if (customReagent.labId !== labId) {
         return NextResponse.json(
-          { error: "Custom reagent does not belong to this lab" }, 
+          { error: 'Custom reagent does not belong to this lab' },
           { status: 403 }
         );
       }
@@ -223,9 +224,9 @@ export async function POST(
 
     return NextResponse.json(created, { status: existing ? 200 : 201 });
   } catch (err) {
-    console.error("Error stocking inventory:", err);
+    console.error('Error stocking inventory:', err);
     return NextResponse.json(
-      { error: "Failed to stock inventory", details: (err as Error).message }, 
+      { error: 'Failed to stock inventory', details: (err as Error).message },
       { status: 500 }
     );
   }
@@ -243,16 +244,16 @@ export async function GET(
       where: { labId },
       include: {
         ReagentCatalog: true,
-        CustomReagent: true
+        CustomReagent: true,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return NextResponse.json(inventory);
   } catch (err) {
-    console.error("Error fetching inventory:", err);
+    console.error('Error fetching inventory:', err);
     return NextResponse.json(
-      { error: "Failed to fetch inventory" },
+      { error: 'Failed to fetch inventory' },
       { status: 500 }
     );
   }

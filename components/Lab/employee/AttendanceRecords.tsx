@@ -93,22 +93,25 @@ const AttendanceRecords = ({ employeeId }: AttendanceRecordsProps) => {
         case 'daily':
           url += `&date=${selectedDate}`;
           break;
-        case 'weekly':
+        case 'weekly': {
           const startOfWeek = new Date(today);
           startOfWeek.setDate(today.getDate() - today.getDay());
           const endOfWeek = new Date(today);
           endOfWeek.setDate(today.getDate() + (6 - today.getDay()));
           url += `&startDate=${startOfWeek.toISOString().split('T')[0]}&endDate=${endOfWeek.toISOString().split('T')[0]}`;
           break;
-        case 'monthly':
+        }
+        case 'monthly': {
           const year = today.getFullYear();
           const month = String(today.getMonth() + 1).padStart(2, '0');
           url += `&month=${year}-${month}`;
           break;
-        case 'yearly':
+        }
+        case 'yearly': {
           const currentYear = today.getFullYear();
           url += `&year=${currentYear}`;
           break;
+        }
       }
 
       const response = await fetch(url);

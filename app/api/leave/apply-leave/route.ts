@@ -1,6 +1,7 @@
 // app/api/leave/apply-leave/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,7 +32,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { v4: uuidv4 } = require('uuid');
     const leaveId = uuidv4();
 
     const now = new Date().toISOString();

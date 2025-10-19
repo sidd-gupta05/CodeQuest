@@ -24,7 +24,11 @@ export async function GET(
     const d = lab.details;
 
     // Group slots into Morning/Afternoon/Evening, filtering exceptions
-    const groupedSlots: { Morning: string[]; Afternoon: string[]; Evening: string[] } = {
+    const groupedSlots: {
+      Morning: string[];
+      Afternoon: string[];
+      Evening: string[];
+    } = {
       Morning: [],
       Afternoon: [],
       Evening: [],

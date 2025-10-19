@@ -8,19 +8,41 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
 import { Lab } from '../Filters';
 
-// Add missing types for leaflet-routing-machine
-declare global {
-  namespace L {
-    namespace Routing {
-      class Control extends L.Control {
-        constructor(options?: any);
-        getPlan(): any;
-        setWaypoints(waypoints: L.LatLng[]): void;
-      }
-      function control(options?: any): Control;
-    }
+// Add missing types for leaflet-routing-machine using module augmentation
+declare module 'leaflet' {
+  interface RoutingOptions {
+    waypoints?: LatLng[] | LatLngTuple[];
+    lineOptions?: {
+      styles?: Array<{
+        color?: string;
+        weight?: number;
+        opacity?: number;
+      }>;
+    };
+    // createMarker returns either a Leaflet Marker or null
+    createMarker?: (
+      i: number,
+      wp: { latLng: LatLng } | LatLng,
+      n?: number
+    ) => Marker | null;
+    addWaypoints?: boolean;
+    draggableWaypoints?: boolean;
+    fitSelectedRoutes?: boolean;
+    show?: boolean;
   }
+
+  class RoutingControl extends Control {
+    constructor(options?: RoutingOptions);
+    getPlan(): unknown;
+    setWaypoints(waypoints: LatLng[]): void;
+  }
+
+  export const Routing: {
+    Control: typeof RoutingControl;
+    control(options?: RoutingOptions): RoutingControl;
+  };
 }
+
 import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -58,7 +80,9 @@ function Routing({
   to: [number, number] | null;
 }) {
   const map = useMap();
-  const controlRef = useRef<L.Routing.Control | null>(null);
+  const controlRef = useRef<InstanceType<typeof L.Routing.Control> | null>(
+    null
+  );
   const lineRef = useRef<L.LayerGroup | null>(null);
 
   useEffect(() => {
@@ -134,8 +158,8 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
         // Center the map on the lab location
         const mapElement = document.querySelector('.leaflet-container');
         if (mapElement) {
-          // @ts-ignore
-          const map = mapElement._leaflet_map;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const map = (mapElement as any)._leaflet_map;
           if (map) {
             map.setView([labToRoute.latitude, labToRoute.longitude], 15);
           }
@@ -162,8 +186,8 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
       // Center the map on the lab location
       const mapElement = document.querySelector('.leaflet-container');
       if (mapElement) {
-        // @ts-ignore
-        const map = mapElement._leaflet_map;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const map = (mapElement as any)._leaflet_map;
         if (map) {
           map.setView([labToRoute.latitude, labToRoute.longitude], 15);
         }

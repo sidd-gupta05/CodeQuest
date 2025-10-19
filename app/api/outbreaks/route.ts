@@ -248,9 +248,7 @@
 //   }
 // }
 
-
 //-------------------------------------------------------------------------------------//
-
 
 // // app/api/outbreaks/route.ts
 // import { NextRequest, NextResponse } from "next/server";
@@ -420,7 +418,6 @@
 //       .select()
 //       .maybeSingle(); // <-- use maybeSingle() instead of single() to avoid TS errors
 
-
 //     if (error) throw error;
 
 //     return NextResponse.json({ message: "Outbreak report saved", report: data });
@@ -430,24 +427,22 @@
 //   }
 // }
 
-
-
 // app/api/outbreaks/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import * as cheerio from "cheerio";
-import { GoogleGenAI } from "@google/genai";
-import { createRequire } from "module";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from 'next/server';
+import * as cheerio from 'cheerio';
+import { GoogleGenAI } from '@google/genai';
+import { createRequire } from 'module';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 const require = createRequire(import.meta.url);
-const pdf = require("pdf-parse");
+const pdf = require('pdf-parse');
 
 // Node.js runtime required for pdf-parse
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 // Google GenAI client
-const API_KEY = process.env.GOOGLE_GENAI_API_KEY || " ";
+const API_KEY = process.env.GOOGLE_GENAI_API_KEY || ' ';
 const client = new GoogleGenAI({ apiKey: API_KEY });
 
 // ---------------------- Helper: Extract text from PDF ----------------------
@@ -458,18 +453,21 @@ async function extractTextFromPdfBuffer(buffer: Buffer) {
 
 // ---------------------- Scrape PDF links ----------------------
 async function getAllPdfLinks() {
-  const indexUrl = "https://idsp.mohfw.gov.in/index4.php?lang=1&level=0&linkid=406&lid=3689";
+  const indexUrl =
+    'https://idsp.mohfw.gov.in/index4.php?lang=1&level=0&linkid=406&lid=3689';
   const res = await fetch(indexUrl);
-  if (!res.ok) throw new Error("Failed to fetch IDSP page");
+  if (!res.ok) throw new Error('Failed to fetch IDSP page');
 
   const html = await res.text();
   const $ = cheerio.load(html);
   const pdfLinks: string[] = [];
 
-  $("a").each((_, el) => {
-    const href = $(el).attr("href");
-    if (href && href.includes("WriteReadData/l892s") && href.endsWith(".pdf")) {
-      const fullUrl = href.startsWith("http") ? href : `https://idsp.mohfw.gov.in/${href.replace(/^\/+/, "")}`;
+  $('a').each((_, el) => {
+    const href = $(el).attr('href');
+    if (href && href.includes('WriteReadData/l892s') && href.endsWith('.pdf')) {
+      const fullUrl = href.startsWith('http')
+        ? href
+        : `https://idsp.mohfw.gov.in/${href.replace(/^\/+/, '')}`;
       pdfLinks.push(fullUrl);
     }
   });
@@ -483,7 +481,9 @@ function getCurrentWeekMinus10() {
   const start = new Date(now.getFullYear(), 0, 1);
   const diff = now.getTime() - start.getTime();
   const oneWeek = 1000 * 60 * 60 * 24 * 7;
-  const weekNumber = Math.ceil((diff + start.getDay() * 24 * 60 * 60 * 1000) / oneWeek);
+  const weekNumber = Math.ceil(
+    (diff + start.getDay() * 24 * 60 * 60 * 1000) / oneWeek
+  );
   return weekNumber - 10;
 }
 
@@ -493,21 +493,28 @@ async function findPdfForWeek(pdfLinks: string[]) {
   const targetWeek = getCurrentWeekMinus10();
 
   function normalizePdfText(input: string) {
-    if (!input) return "";
-    return input.replace(/[\u200B-\u200D\uFEFF]/g, "").replace(/[\u0000-\u001F\u007F]/g, " ").replace(/\s+/g, " ").toLowerCase();
+    if (!input) return '';
+    return (
+      input
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')
+        // eslint-disable-next-line no-control-regex
+        .replace(/[\u0000-\u001F\u007F]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .toLowerCase()
+    );
   }
 
   function buildWeekYearPatterns(week: number, year: number): RegExp[] {
     const w = String(week);
     const y = String(year);
-    const ord = "(?:st|nd|rd|th)?";
-    const wsp = "\\s*";
+    const ord = '(?:st|nd|rd|th)?';
+    const wsp = '\\s*';
     return [
-      new RegExp(`${w}${wsp}${ord}${wsp}week${wsp}${y}`, "i"),
-      new RegExp(`week${wsp}${w}${wsp}${y}`, "i"),
-      new RegExp(`week${wsp}no\\.?${wsp}${w}${wsp}${y}`, "i"),
-      new RegExp(`week${wsp}number${wsp}${w}${wsp}${y}`, "i"),
-      new RegExp(`${y}${wsp}week${wsp}${w}${wsp}${ord}`, "i"),
+      new RegExp(`${w}${wsp}${ord}${wsp}week${wsp}${y}`, 'i'),
+      new RegExp(`week${wsp}${w}${wsp}${y}`, 'i'),
+      new RegExp(`week${wsp}no\\.?${wsp}${w}${wsp}${y}`, 'i'),
+      new RegExp(`week${wsp}number${wsp}${w}${wsp}${y}`, 'i'),
+      new RegExp(`${y}${wsp}week${wsp}${w}${wsp}${ord}`, 'i'),
     ];
   }
 
@@ -523,20 +530,20 @@ async function findPdfForWeek(pdfLinks: string[]) {
         const data = await pdf(Buffer.from(buffer), { max: 1 });
         const text = normalizePdfText(data.text);
 
-        if (patterns.some(rx => rx.test(text))) return url;
+        if (patterns.some((rx) => rx.test(text))) return url;
       } catch {
         continue;
       }
     }
   }
 
-  throw new Error("No PDF found for target week/year");
+  throw new Error('No PDF found for target week/year');
 }
 
 // ---------------------- Download full PDF text ----------------------
 async function parsePdfText(pdfUrl: string) {
   const res = await fetch(pdfUrl);
-  if (!res.ok) throw new Error("Failed to download PDF");
+  if (!res.ok) throw new Error('Failed to download PDF');
   const buffer = Buffer.from(await res.arrayBuffer());
   return await extractTextFromPdfBuffer(buffer);
 }
@@ -555,12 +562,15 @@ ${text}
 `;
 
   const response = await client.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: 'gemini-2.5-flash',
     contents: prompt,
   });
 
-  let output = response?.text?.trim() || "";
-  output = output.replace(/^```json/, "").replace(/```$/, "").trim();
+  let output = response?.text?.trim() || '';
+  output = output
+    .replace(/^```json/, '')
+    .replace(/```$/, '')
+    .trim();
   return JSON.parse(output);
 }
 
@@ -578,12 +588,15 @@ Do not include district names or anything else. Focus on practical actions a lab
 `;
 
   const response = await client.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: 'gemini-2.5-flash',
     contents: prompt,
   });
 
-  let output = response?.text?.trim() || "";
-  output = output.replace(/^```json/, "").replace(/```$/, "").trim();
+  let output = response?.text?.trim() || '';
+  output = output
+    .replace(/^```json/, '')
+    .replace(/```$/, '')
+    .trim();
   return JSON.parse(output);
 }
 
@@ -593,7 +606,8 @@ export async function POST(req: NextRequest) {
     const supabase = await createSupabaseServerClient();
     const { labId } = await req.json();
 
-    if (!labId) return NextResponse.json({ error: "labId is required" }, { status: 400 });
+    if (!labId)
+      return NextResponse.json({ error: 'labId is required' }, { status: 400 });
 
     // Fetch latest outbreak PDF and parse
     const pdfLinks = await getAllPdfLinks();
@@ -609,7 +623,7 @@ export async function POST(req: NextRequest) {
 
     // ---------------------- Upsert into Supabase ----------------------
     const { data, error } = await supabase
-      .from("outbreak_reports")
+      .from('outbreak_reports')
       .upsert(
         {
           labId,
@@ -620,14 +634,17 @@ export async function POST(req: NextRequest) {
           suggestions: JSON.stringify(suggestions.Suggestions),
           updatedAt: new Date().toISOString(),
         },
-        { onConflict: "labId" } // labId must be unique
+        { onConflict: 'labId' } // labId must be unique
       )
       .select()
       .maybeSingle();
 
     if (error) throw error;
 
-    return NextResponse.json({ message: "Outbreak report saved", report: data });
+    return NextResponse.json({
+      message: 'Outbreak report saved',
+      report: data,
+    });
   } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });

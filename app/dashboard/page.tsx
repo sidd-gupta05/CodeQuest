@@ -56,18 +56,20 @@ export default function DashboardPage() {
   const contextData = useContext(LabContext);
 
   // ✅ Properly typed states
-  const [bookingData, setBookingData] = useState<any[]>(contextData?.bookingData || []);
-  const [labData, _] = useState<{ labName?: string }>(contextData?.labData || {});
+  const [bookingData, setBookingData] = useState<any[]>(
+    contextData?.bookingData || []
+  );
+  const [labData, _] = useState<{ labName?: string }>(
+    contextData?.labData || {}
+  );
   const userData = contextData?.userData || {};
 
-  const employees =
-    (contextData?.employeeData || []).filter(
-      (emp) => emp.isFieldCollector === true
-    );
+  const employees = (contextData?.employeeData || []).filter(
+    (emp) => emp.isFieldCollector === true
+  );
 
   // Log employees to verify data
   console.log('Employees Data:', employees);
-
 
   // ✅ Example merging logic inside useEffect (only after context updates)
   useEffect(() => {

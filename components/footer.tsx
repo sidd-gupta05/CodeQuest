@@ -1,5 +1,6 @@
 import React from 'react';
 import { Twitter, Instagram, Linkedin } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -24,7 +25,7 @@ const Footer = () => {
           </h3>
           <ul className="space-y-3 text-base">
             <li>
-              <a href="/">Home</a>
+              <Link href="/">Home</Link>
             </li>
             <li>
               <a href="/BookAppointment">Book Appointment</a>
