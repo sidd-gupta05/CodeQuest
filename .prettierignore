@@ -2,3 +2,8 @@ node_modules
 .next
 .vscode
 .husky
+.vercel
+app/prisma/generated
+app/prisma/migrations
+audits
+public
