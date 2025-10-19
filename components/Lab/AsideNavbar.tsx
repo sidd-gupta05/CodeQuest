@@ -3,19 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import {
-  Menu,
   X,
   LayoutGrid,
   Users,
-  Calendar,
   UserCog,
   Warehouse,
   BarChart3,
   CreditCard,
-  Wrench,
   Settings,
   LogOut,
-  ChevronDown,
   Flame,
   HelpCircle,
   ChevronRight,
@@ -23,6 +19,7 @@ import {
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface AsideNavbarProps {
   isOpen: boolean;
@@ -74,15 +71,15 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
       {/* Mobile Header with Logo and Toggle Button on Right - Only for mobile */}
       <div className="md:hidden bg-gray-50 p-4 flex justify-between items-center shadow-sm sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <a href="/" className="block">
-            <img
+          <Link href="/" className="block">
+            <Image
               src="/logo3.svg"
               alt="Labsphere Logo"
               width={100}
               height={100}
               className="cursor-pointer"
             />
-          </a>
+          </Link>
         </div>
         <button
           onClick={onToggle}
@@ -107,14 +104,14 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
           {/* Logo for desktop - No close button since we don't have toggle on desktop */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3 px-2">
-              <a href="/" className="block">
-                <img
+              <Link href="/" className="block">
+                <Image
                   src="/logo3.svg"
                   alt="Labsphere Logo"
                   width={150}
                   height={150}
                 />
-              </a>
+              </Link>
             </div>
             {/* Close button only for mobile inside sidebar */}
             <button

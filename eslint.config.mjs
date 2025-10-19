@@ -1,11 +1,12 @@
 // eslint.config.mjs
 import js from '@eslint/js';
-import typescript from '@typescript-eslint/eslint-plugin';
-import typescriptParser from '@typescript-eslint/parser';
-import next from '@next/eslint-plugin-next';
+import nextPlugin from '@next/eslint-plugin-next';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import prettierPlugin from 'eslint-plugin-prettier';
+import globals from 'globals';
 
 export default [
-  // Ignore patterns
   {
     ignores: [
       '**/node_modules/**',
@@ -19,29 +20,75 @@ export default [
       '**/*.config.js',
       '**/*.config.mjs',
       '**/coverage/**',
-      '**/.turbo/**'
+      '**/.turbo/**',
     ],
   },
-  
-  // JavaScript/TypeScript base config
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
-    plugins: {
-      '@typescript-eslint': typescript,
-      '@next/next': next,
-    },
     languageOptions: {
-      parser: typescriptParser,
+      parser: tsParser,
       ecmaVersion: 'latest',
       sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2020,
+        // Your custom globals
+        module: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        fetch: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        CustomEvent: 'readonly',
+        EventListener: 'readonly',
+        HTMLInputElement: 'readonly',
+        HTMLFormElement: 'readonly',
+        HTMLSelectElement: 'readonly',
+        HTMLTextAreaElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        HTMLImageElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        SVGSVGElement: 'readonly',
+        Event: 'readonly',
+        File: 'readonly',
+        Blob: 'readonly',
+        Buffer: 'readonly',
+        React: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        navigator: 'readonly',
+        alert: 'readonly',
+        confirm: 'readonly',
+        btoa: 'readonly',
+        crypto: 'readonly',
+        TextEncoder: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+      '@next/next': nextPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
       ...js.configs.recommended.rules,
-      ...typescript.configs.recommended.rules,
-      ...next.configs.recommended.rules,
-      ...next.configs['core-web-vitals'].rules,
+      ...tsPlugin.configs.recommended.rules,
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
+      'prettier/prettier': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'no-console': 'warn',
       'prefer-const': 'error',
+      'no-undef': 'off', // TypeScript handles this
     },
   },
 ];

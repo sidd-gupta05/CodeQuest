@@ -57,7 +57,7 @@ export function InventoryHeader({
           <Filter className="h-4 w-4" />
           Filter
         </Button> */}
-        
+
         <Button
           className="relative bg-white border border-gray-300 hover:bg-gray-50 p-3 rounded-xl transition-colors"
           variant="outline"

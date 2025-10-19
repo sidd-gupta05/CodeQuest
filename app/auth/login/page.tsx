@@ -20,7 +20,6 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
 
   const objectParam = searchParams.get('object');
   const accountType = objectParam ? JSON.parse(objectParam) : 'PATIENT';
@@ -40,7 +39,7 @@ export default function LoginPage() {
 
     //TODO: krrish - fetch user by email/phone and check if provider is google, if yes show error to login with google
     try {
-      let { data: userByEmail, error: lookupError } = await supabase
+      const { data: userByEmail, error: lookupError } = await supabase
         .from('users')
         .select('id, provider')
         .eq('email', identifier)
@@ -53,6 +52,7 @@ export default function LoginPage() {
         );
 
         if (!isNoRowsError) {
+          console.error('Error looking up user:', lookupError);
         }
       }
 

@@ -2,31 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/prisma';
 import { v4 as uuid } from 'uuid';
 
-export async function POST(
-  req: NextRequest
-) {
+export async function POST(req: NextRequest) {
   try {
-;
-    const { labId, name, category, duration, description, reagents, price } = await req.json();
+    const { labId, name, category, duration, description, reagents, price } =
+      await req.json();
 
     // Validate required fields
     if (!name || !category) {
       return NextResponse.json(
-        { error: "Name and category are required" },
+        { error: 'Name and category are required' },
         { status: 400 }
       );
     }
 
     // Validate lab exists
     const lab = await db.lab.findUnique({
-      where: { id: labId }
+      where: { id: labId },
     });
 
     if (!lab) {
-      return NextResponse.json(
-        { error: "Lab not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Lab not found' }, { status: 404 });
     }
 
     // Use transaction to ensure both operations succeed or fail together
@@ -50,7 +45,7 @@ export async function POST(
           price,
           isActive: true,
           labs: {
-            connect: { id: labId }
+            connect: { id: labId },
           },
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -61,7 +56,7 @@ export async function POST(
       if (reagents && reagents.length > 0) {
         // Delete existing reagents for this test
         await tx.testReagent.deleteMany({
-          where: { testId: test.id }
+          where: { testId: test.id },
         });
 
         // Create new reagents
@@ -85,20 +80,20 @@ export async function POST(
 
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
-    console.error("Error creating test:", err);
-    
+    console.error('Error creating test:', err);
+
     // Handle specific Prisma errors
     if (err instanceof Error) {
       if (err.message.includes('Unique constraint')) {
         return NextResponse.json(
-          { error: "A test with this name already exists" },
+          { error: 'A test with this name already exists' },
           { status: 409 }
         );
       }
     }
 
     return NextResponse.json(
-      { error: "Failed to create test" },
+      { error: 'Failed to create test' },
       { status: 500 }
     );
   }

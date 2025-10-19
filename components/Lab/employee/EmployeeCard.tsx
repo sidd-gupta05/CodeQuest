@@ -123,7 +123,7 @@ const EmployeeCard = ({ employee }: EmployeeCardProps) => {
       const now = getIndiaTimeISOString();
       const today = getIndiaDateString();
 
-      let payload: any = {
+      const payload: any = {
         employeeId: employee.id,
         labId,
         date: today,

@@ -81,7 +81,7 @@ export const LabAvailability: React.FC<LabAvailabilityProps> = ({ lab }) => {
                         >
                           {slot}
                         </span>
-                      ) : null 
+                      ) : null
                     )}
                   </div>
                 </div>

@@ -234,14 +234,23 @@
 
 // export default App;
 
+'use client';
 
-"use client";
-
-import React, { useEffect, useState, useContext } from "react";
-import { Activity, AlertTriangle, TrendingUp, MapPin, Users, FileText, Lightbulb, AlertCircle, Zap } from "lucide-react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { LabContext } from "@/app/context/LabContext";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import React, { useEffect, useState, useContext } from 'react';
+import {
+  Activity,
+  AlertTriangle,
+  TrendingUp,
+  MapPin,
+  Users,
+  FileText,
+  Lightbulb,
+  AlertCircle,
+  Zap,
+} from 'lucide-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { LabContext } from '@/app/context/LabContext';
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 interface Outbreak {
   State: string;
@@ -262,9 +271,9 @@ function AI_AD() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [updatedAt, setUpdatedAt] = useState<string>("N/A");
+  const [updatedAt, setUpdatedAt] = useState<string>('N/A');
   const [disabled, setDisabled] = useState(false);
-  const [nextUpdate, setNextUpdate] = useState<string>("");
+  const [nextUpdate, setNextUpdate] = useState<string>('');
 
   //Real-time data fetch from DB
   useEffect(() => {
@@ -274,7 +283,12 @@ function AI_AD() {
       .channel(`outbreak_reports_lab_${labId}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'outbreak_reports', filter: `labId=eq.${labId}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'outbreak_reports',
+          filter: `labId=eq.${labId}`,
+        },
         (payload: RealtimePostgresChangesPayload<any>) => {
           console.log('New report inserted:', payload.new);
           updateStateFromDB(payload.new);
@@ -282,7 +296,12 @@ function AI_AD() {
       )
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'outbreak_reports', filter: `labId=eq.${labId}` },
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'outbreak_reports',
+          filter: `labId=eq.${labId}`,
+        },
         (payload: RealtimePostgresChangesPayload<any>) => {
           console.log('Report updated:', payload.new);
           updateStateFromDB(payload.new);
@@ -301,29 +320,33 @@ function AI_AD() {
 
   const updateStateFromDB = (data: any) => {
     const parsedOutbreaks = data.rawOutput ? JSON.parse(data.rawOutput) : [];
-    const parsedSuggestions = data.suggestions ? JSON.parse(data.suggestions) : [];
+    const parsedSuggestions = data.suggestions
+      ? JSON.parse(data.suggestions)
+      : [];
 
     setOutbreaks(Array.isArray(parsedOutbreaks) ? parsedOutbreaks : []);
     setSuggestions(Array.isArray(parsedSuggestions) ? parsedSuggestions : []);
-    setUpdatedAt(data.updatedAt ? new Date(data.updatedAt).toLocaleDateString() : "N/A");
+    setUpdatedAt(
+      data.updatedAt ? new Date(data.updatedAt).toLocaleDateString() : 'N/A'
+    );
   };
 
   // Fetch outbreak data from DB
   const fetchFromDB = async () => {
-    if (!labId) return setError("Lab ID not found");
+    if (!labId) return setError('Lab ID not found');
     setLoading(true);
     setError(null);
 
     try {
       const { data, error: dbError } = await supabase
-        .from("outbreak_reports")
-        .select("rawOutput, suggestions, updatedAt")
-        .eq("labId", labId)
+        .from('outbreak_reports')
+        .select('rawOutput, suggestions, updatedAt')
+        .eq('labId', labId)
         .maybeSingle();
 
       if (dbError) throw dbError;
 
-      console.log("Fetched outbreak data from DB:", data);
+      console.log('Fetched outbreak data from DB:', data);
 
       if (!data?.rawOutput) {
         setOutbreaks([]);
@@ -331,23 +354,26 @@ function AI_AD() {
         return;
       }
 
-      let updatedAtDate = data.updatedAt ? new Date(data.updatedAt).toLocaleDateString() : "N/A";
+      const updatedAtDate = data.updatedAt
+        ? new Date(data.updatedAt).toLocaleDateString()
+        : 'N/A';
       setUpdatedAt(updatedAtDate);
 
       const parsedOutbreaks = JSON.parse(data.rawOutput);
 
       const parsedSuggestions = JSON.parse(data.suggestions);
 
-      console.log("Parsed suggestions data :", parsedSuggestions);
+      console.log('Parsed suggestions data :', parsedSuggestions);
 
       if (Array.isArray(parsedOutbreaks)) setOutbreaks(parsedOutbreaks);
       else setOutbreaks([]);
 
-      if (parsedSuggestions && Array.isArray(parsedSuggestions)) setSuggestions(parsedSuggestions);
+      if (parsedSuggestions && Array.isArray(parsedSuggestions))
+        setSuggestions(parsedSuggestions);
       else setSuggestions([]);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to fetch outbreak data");
+      setError(err.message || 'Failed to fetch outbreak data');
     } finally {
       setLoading(false);
     }
@@ -355,14 +381,14 @@ function AI_AD() {
 
   // Refresh: call API to fetch latest PDF, update DB, and return new data
   const refreshData = async () => {
-    if (!labId) return setError("Lab ID not found");
+    if (!labId) return setError('Lab ID not found');
     setRefreshing(true);
     setError(null);
 
     try {
-      const res = await fetch("/api/outbreaks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/outbreaks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ labId }),
       });
 
@@ -378,7 +404,7 @@ function AI_AD() {
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to refresh data");
+      setError(err.message || 'Failed to refresh data');
     } finally {
       setRefreshing(false);
     }
@@ -390,31 +416,34 @@ function AI_AD() {
 
   const activeOutbreaks = outbreaks.length;
   const totalDeaths = outbreaks.reduce((sum, o) => sum + o.Deaths, 0);
-  const affectedDistricts = new Set(outbreaks.map(o => o.District)).size;
+  const affectedDistricts = new Set(outbreaks.map((o) => o.District)).size;
 
   //refresh button disable logic
 
-
   useEffect(() => {
-    if ((!outbreaks || outbreaks.length === 0) && (!suggestions || suggestions.length === 0)) {
+    if (
+      (!outbreaks || outbreaks.length === 0) &&
+      (!suggestions || suggestions.length === 0)
+    ) {
       setDisabled(false);
-      setNextUpdate("");
+      setNextUpdate('');
       return;
     }
 
     const lastUpdated = new Date(updatedAt);
-    const nextWeekDate = new Date(lastUpdated.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const nextWeekDate = new Date(
+      lastUpdated.getTime() + 7 * 24 * 60 * 60 * 1000
+    );
     const now = new Date();
 
     if (now >= nextWeekDate) {
       setDisabled(false);
-      setNextUpdate("");
+      setNextUpdate('');
     } else {
       setDisabled(true);
       setNextUpdate(nextWeekDate.toLocaleDateString());
     }
   }, [updatedAt, outbreaks, suggestions]);
-
 
   //----------------------------
 
@@ -435,7 +464,9 @@ function AI_AD() {
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full border-l-4 border-red-500">
           <div className="flex items-center mb-4">
             <AlertCircle className="w-8 h-8 text-red-500 mr-3" />
-            <h2 className="text-xl font-bold text-slate-800">Error Loading Data</h2>
+            <h2 className="text-xl font-bold text-slate-800">
+              Error Loading Data
+            </h2>
           </div>
           <p className="text-slate-600">{error}</p>
           <button
@@ -450,10 +481,8 @@ function AI_AD() {
   }
 
   return (
-
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 ">
-
         <div className="flex items-center gap-3">
           <div className="bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-lg p-1.5">
             <Zap className="w-4 h-4 text-white" />
@@ -475,13 +504,16 @@ function AI_AD() {
           <button
             onClick={refreshData}
             disabled={refreshing || disabled}
-            title={disabled && nextUpdate ? `Next update available on ${nextUpdate}` : ""}
+            title={
+              disabled && nextUpdate
+                ? `Next update available on ${nextUpdate}`
+                : ''
+            }
             className="ml-auto disabled:cursor-not-allowed bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition disabled:opacity-50"
           >
-            {refreshing ? "Refreshing . . ." : "Refresh"}
+            {refreshing ? 'Refreshing . . .' : 'Refresh'}
           </button>
         </div>
-
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
@@ -490,8 +522,12 @@ function AI_AD() {
           <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-500 text-xs font-medium uppercase tracking-wide">Active Outbreaks</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{activeOutbreaks}</p>
+                <p className="text-slate-500 text-xs font-medium uppercase tracking-wide">
+                  Active Outbreaks
+                </p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">
+                  {activeOutbreaks}
+                </p>
               </div>
               <div className="bg-blue-100 rounded-full p-2">
                 <AlertTriangle className="w-5 h-5 text-blue-600" />
@@ -502,8 +538,12 @@ function AI_AD() {
           <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-red-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-500 text-xs font-medium uppercase tracking-wide">Total Deaths</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{totalDeaths.toLocaleString()}</p>
+                <p className="text-slate-500 text-xs font-medium uppercase tracking-wide">
+                  Total Deaths
+                </p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">
+                  {totalDeaths.toLocaleString()}
+                </p>
               </div>
               <div className="bg-red-100 rounded-full p-2">
                 <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -514,8 +554,12 @@ function AI_AD() {
           <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-amber-500 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-slate-500 text-xs font-medium uppercase tracking-wide">Affected Districts</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{affectedDistricts}</p>
+                <p className="text-slate-500 text-xs font-medium uppercase tracking-wide">
+                  Affected Districts
+                </p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">
+                  {affectedDistricts}
+                </p>
               </div>
               <div className="bg-amber-100 rounded-full p-2">
                 <MapPin className="w-5 h-5 text-amber-600" />
@@ -531,7 +575,9 @@ function AI_AD() {
               <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg p-1.5">
                 <Lightbulb className="w-4 h-4 text-white" />
               </div>
-              <h2 className="text-lg font-bold text-slate-900">AI-Powered Recommendations</h2>
+              <h2 className="text-lg font-bold text-slate-900">
+                AI-Powered Recommendations
+              </h2>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {suggestions.map((s, idx) => (
@@ -544,7 +590,9 @@ function AI_AD() {
                       <TrendingUp className="w-4 h-4 text-amber-600" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-slate-800 text-sm font-medium leading-relaxed">{s}</p>
+                      <p className="text-slate-800 text-sm font-medium leading-relaxed">
+                        {s}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -559,7 +607,9 @@ function AI_AD() {
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg p-1.5">
               <AlertTriangle className="w-4 h-4 text-white" />
             </div>
-            <h2 className="text-lg font-bold text-slate-900">Active Outbreaks in Maharashtra</h2>
+            <h2 className="text-lg font-bold text-slate-900">
+              Active Outbreaks in Maharashtra
+            </h2>
           </div>
 
           {outbreaks.length === 0 ? (
@@ -567,8 +617,12 @@ function AI_AD() {
               <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
                 <Activity className="w-6 h-6 text-green-600" />
               </div>
-              <p className="text-slate-600 text-base font-medium">No active outbreaks reported for the current week</p>
-              <p className="text-slate-400 text-xs mt-1">Try refreshing the data</p>
+              <p className="text-slate-600 text-base font-medium">
+                No active outbreaks reported for the current week
+              </p>
+              <p className="text-slate-400 text-xs mt-1">
+                Try refreshing the data
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -584,41 +638,57 @@ function AI_AD() {
                         {o.District}
                       </h3>
                       <div className="bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">
-                        <span className="text-white text-xs font-semibold">{o.Week}</span>
+                        <span className="text-white text-xs font-semibold">
+                          {o.Week}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-4 space-y-3">
                     <div className="bg-red-50 rounded-lg p-2.5 border border-red-100">
-                      <p className="text-red-900 font-bold text-base">{o.Disease}</p>
+                      <p className="text-red-900 font-bold text-base">
+                        {o.Disease}
+                      </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
                       <div className="bg-slate-50 rounded-lg p-2.5">
                         <div className="flex items-center space-x-1.5 mb-1">
                           <Users className="w-3.5 h-3.5 text-blue-600" />
-                          <p className="text-slate-500 text-xs font-medium uppercase">Cases</p>
+                          <p className="text-slate-500 text-xs font-medium uppercase">
+                            Cases
+                          </p>
                         </div>
-                        <p className="text-xl font-bold text-slate-900">{o.Cases}</p>
+                        <p className="text-xl font-bold text-slate-900">
+                          {o.Cases}
+                        </p>
                       </div>
 
                       <div className="bg-slate-50 rounded-lg p-2.5">
                         <div className="flex items-center space-x-1.5 mb-1">
                           <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
-                          <p className="text-slate-500 text-xs font-medium uppercase">Deaths</p>
+                          <p className="text-slate-500 text-xs font-medium uppercase">
+                            Deaths
+                          </p>
                         </div>
-                        <p className="text-xl font-bold text-slate-900">{o.Deaths}</p>
+                        <p className="text-xl font-bold text-slate-900">
+                          {o.Deaths}
+                        </p>
                       </div>
                     </div>
 
-                    {o.Remarks && o.Remarks !== "-" && (
+                    {o.Remarks && o.Remarks !== '-' && (
                       <div className="bg-amber-50 rounded-lg p-2.5 border border-amber-100">
                         <div className="flex items-start space-x-2">
                           <FileText className="w-3.5 h-3.5 text-amber-600 mt-0.5 flex-shrink-0" />
                           <div>
-                            <p className="text-xs font-semibold text-amber-900 uppercase mb-0.5">Remarks</p>
-                            <p className="text-xs text-amber-800">{o.Remarks}</p>
+                            <p className="text-xs font-semibold text-amber-900 uppercase mb-0.5">
+                              Remarks
+                            </p>
+                            <p className="text-xs text-amber-800">
+                              {o.Remarks}
+                            </p>
                           </div>
                         </div>
                       </div>

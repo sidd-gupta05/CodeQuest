@@ -87,7 +87,7 @@ const PaginatedBookingList: React.FC<PaginatedBookingListProps> = ({
     const pages: number[] = [];
     const maxVisiblePages = 5;
     let start = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let end = Math.min(totalPages, start + maxVisiblePages - 1);
+    const end = Math.min(totalPages, start + maxVisiblePages - 1);
     if (end - start + 1 < maxVisiblePages)
       start = Math.max(1, end - maxVisiblePages + 1);
     for (let i = start; i <= end; i++) pages.push(i);
