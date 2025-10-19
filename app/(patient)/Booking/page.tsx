@@ -68,7 +68,7 @@ export default function Booking() {
         } = await supabase.auth.getUser();
         if (user) setUser(user);
       } catch (error) {
-        console.error('Error checking authentication:', error);
+        // console.error('Error checking authentication:', error);
         router.push('/login');
       }
     };
@@ -121,7 +121,7 @@ export default function Booking() {
         if (typeof firstAvailableTime === 'string')
           setSelectedTime(firstAvailableTime);
       } catch (error) {
-        console.error('Error fetching lab data:', error);
+        // console.error('Error fetching lab data:', error);
         setSelectedLab(null);
       } finally {
         setLoading(false);
@@ -153,7 +153,7 @@ export default function Booking() {
         )
         .eq('labId', labId);
 
-      if (error) console.error('Error fetching schedules:', error);
+      // if (error) console.error('Error fetching schedules:', error);
       if (schedules) setSchedules(schedules);
     }
 
@@ -170,14 +170,14 @@ export default function Booking() {
         .eq('isFieldCollector', true)
         .eq('labId', labId);
 
-      if (error) console.error('Error fetching employees:', error);
+      // if (error) console.error('Error fetching employees:', error);
       setTotalEmployees(employees?.length || 0);
     }
 
     fetchEmployees();
   }, [labId]);
 
-  console.log('Total Employees (Field Collectors):', totalEmployees);
+  // console.log('Total Employees (Field Collectors):', totalEmployees);
 
   // ---------------- SLOT AVAILABILITY ----------------
   interface Availability {
@@ -211,13 +211,13 @@ export default function Booking() {
       .eq('date', slotDate.toISOString());
 
     if (error) {
-      console.error('Error checking bookings:', error);
+      // console.error('Error checking bookings:', error);
       return false; // safer to assume unavailable
     }
 
     // Count how many employees are already allocated at this slot
     const allocatedCount = bookings?.length || 0;
-    return allocatedCount < totalEmployees; 
+    return allocatedCount < totalEmployees;
   }
 
   async function generateAvailableTimeSlots(dayOfWeek: string, date: Date) {
@@ -256,7 +256,7 @@ export default function Booking() {
       .lte('date', endOfDay.toISOString());
 
     if (error) {
-      console.error('Error fetching bookings:', error);
+      // console.error('Error fetching bookings:', error);
       return [];
     }
 
@@ -316,7 +316,7 @@ export default function Booking() {
         },
         (payload) => {
           // Booking inserted / updated / deleted
-          console.log('Realtime booking update:', payload);
+          // console.log('Realtime booking update:', payload);
           refreshSlots();
         }
       )
@@ -522,7 +522,7 @@ export default function Booking() {
                   appointmentTime={selectedTime}
                   selectedTests={selectedTests}
                   onTestsChange={setSelectedTests}
-                  onTestPricesUpdate={setTestPrices} 
+                  onTestPricesUpdate={setTestPrices}
                 />
               </motion.div>
             )}

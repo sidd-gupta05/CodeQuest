@@ -24,7 +24,7 @@ export async function POST(
     }
 
     // Get all test IDs from the booking
-    const testIds = booking.booking_tests.map(bt => bt.testId);
+    const testIds = booking.booking_tests.map((bt) => bt.testId);
 
     // Get test reagents for all tests in the booking
     const testReagents = await db.testReagent.findMany({
@@ -37,40 +37,42 @@ export async function POST(
     });
 
     // Group reagents by test for processing
-    const reagentsByTest = testReagents.reduce((acc, tr) => {
-      if (!acc[tr.testId]) acc[tr.testId] = [];
-      acc[tr.testId].push(tr);
-      return acc;
-    }, {} as Record<string, typeof testReagents>);
+    const reagentsByTest = testReagents.reduce(
+      (acc, tr) => {
+        if (!acc[tr.testId]) acc[tr.testId] = [];
+        acc[tr.testId].push(tr);
+        return acc;
+      },
+      {} as Record<string, typeof testReagents>
+    );
 
     // Process inventory updates
     for (const bookingTest of booking.booking_tests) {
       const reagents = reagentsByTest[bookingTest.testId] || [];
-      
+
       for (const reagent of reagents) {
         await db.lab_inventory.updateMany({
-          where: { 
-            labId: booking.labId, 
-            reagentId: reagent.reagentId 
+          where: {
+            labId: booking.labId,
+            reagentId: reagent.reagentId,
           },
-          data: { 
-            quantity: { 
-              decrement: reagent.quantityPerTest 
-            } 
+          data: {
+            quantity: {
+              decrement: reagent.quantityPerTest,
+            },
           },
         });
       }
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Inventory updated successfully' 
+    return NextResponse.json({
+      success: true,
+      message: 'Inventory updated successfully',
     });
-
   } catch (error) {
     console.error('Error deducting inventory:', error);
     return NextResponse.json(
-      { error: 'Failed to update inventory' }, 
+      { error: 'Failed to update inventory' },
       { status: 500 }
     );
   }

@@ -6,9 +6,17 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createSupabaseServerClient();
 
-    const { labId, name, role, monthlySalary, department, isFieldCollector } = await request.json();
+    const { labId, name, role, monthlySalary, department, isFieldCollector } =
+      await request.json();
 
-    if (!labId || !name || !role || !monthlySalary || !department || isFieldCollector === undefined) {
+    if (
+      !labId ||
+      !name ||
+      !role ||
+      !monthlySalary ||
+      !department ||
+      isFieldCollector === undefined
+    ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }

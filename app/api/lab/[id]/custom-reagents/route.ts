@@ -1,9 +1,9 @@
 // app/api/lab/[labId]/custom-reagents/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/prisma";
-import { v4 as uuid } from "uuid";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/prisma';
+import { v4 as uuid } from 'uuid';
 
-// export async function POST(req: NextRequest, 
+// export async function POST(req: NextRequest,
 //   context: { params: { id: string } }) {
 //   try {
 //     const body = await req.json();
@@ -41,18 +41,31 @@ import { v4 as uuid } from "uuid";
 // }
 
 export async function POST(
-  req: NextRequest, 
+  req: NextRequest,
   context: { params: { id: string } }
 ) {
   try {
     const { id: labId } = await context.params;
     const body = await req.json();
-    console.log({ labId, body })
-    
-    const { name, description, quantity, unit, expiryDate, reorderThreshold, manufacturer, category, addToInventory = false } = body;
+    console.log({ labId, body });
+
+    const {
+      name,
+      description,
+      quantity,
+      unit,
+      expiryDate,
+      reorderThreshold,
+      manufacturer,
+      category,
+      addToInventory = false,
+    } = body;
 
     if (!name || !unit) {
-      return NextResponse.json({ error: "name and unit required" }, { status: 400 });
+      return NextResponse.json(
+        { error: 'name and unit required' },
+        { status: 400 }
+      );
     }
 
     const result = await db.$transaction(async (tx) => {
@@ -67,8 +80,9 @@ export async function POST(
           manufacturer: manufacturer ?? null,
           unit,
           expiryDate: expiryDate ? new Date(expiryDate) : null,
-          quantity: typeof quantity === "number" ? quantity : 0,
-          reorderThreshold: typeof reorderThreshold === "number" ? reorderThreshold : null,
+          quantity: typeof quantity === 'number' ? quantity : 0,
+          reorderThreshold:
+            typeof reorderThreshold === 'number' ? reorderThreshold : null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -84,7 +98,8 @@ export async function POST(
             quantity,
             unit,
             expiryDate: expiryDate ? new Date(expiryDate) : null,
-            reorderThreshold: typeof reorderThreshold === "number" ? reorderThreshold : null,
+            reorderThreshold:
+              typeof reorderThreshold === 'number' ? reorderThreshold : null,
             createdAt: new Date(),
             updatedAt: new Date(),
           },
@@ -96,9 +111,12 @@ export async function POST(
 
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
-    console.error("Error creating custom reagent:", err);
+    console.error('Error creating custom reagent:', err);
     return NextResponse.json(
-      { error: "Failed to create custom reagent", details: (err as Error).message }, 
+      {
+        error: 'Failed to create custom reagent',
+        details: (err as Error).message,
+      },
       { status: 500 }
     );
   }
@@ -115,16 +133,16 @@ export async function GET(
     const customReagents = await db.customReagent.findMany({
       where: { labId },
       include: {
-        lab_inventory: true // Include inventory status
+        lab_inventory: true, // Include inventory status
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     return NextResponse.json(customReagents);
   } catch (err) {
-    console.error("Error fetching custom reagents:", err);
+    console.error('Error fetching custom reagents:', err);
     return NextResponse.json(
-      { error: "Failed to fetch custom reagents" },
+      { error: 'Failed to fetch custom reagents' },
       { status: 500 }
     );
   }

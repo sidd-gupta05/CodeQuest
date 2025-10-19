@@ -51,18 +51,19 @@ export async function POST(req: Request) {
   if (role === 'LAB') {
     try {
       // 1. Sign up using email/password
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: form.email,
-        password: form.password,
-        options: {
-          data: {
-            firstName: form.firstName,
-            lastName: form.lastName,
-            phone: form.phone,
-            role,
+      const { data: signUpData, error: signUpError } =
+        await supabase.auth.signUp({
+          email: form.email,
+          password: form.password,
+          options: {
+            data: {
+              firstName: form.firstName,
+              lastName: form.lastName,
+              phone: form.phone,
+              role,
+            },
           },
-        },
-      });
+        });
 
       if (signUpError) {
         console.log('Signup error:', signUpError.message);
@@ -99,10 +100,10 @@ export async function POST(req: Request) {
 
       // For new LAB users, set lab-registered as false
       const response = NextResponse.json(
-        { 
-          success: true, 
+        {
+          success: true,
           message: 'Lab user created successfully',
-          user: { id: user.id, email: user.email }
+          user: { id: user.id, email: user.email },
         },
         { status: 200 }
       );
@@ -120,7 +121,7 @@ export async function POST(req: Request) {
         secure: process.env.NODE_ENV === 'production',
         path: '/',
       });
-      
+
       return response;
     } catch (e: any) {
       console.error('Lab Auth failed:', e);

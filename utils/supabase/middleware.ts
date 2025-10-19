@@ -61,7 +61,7 @@ export const createClient = async (request: NextRequest) => {
   }
 
   let role = request.cookies.get('user-role')?.value;
-  console.log('User role from cookie:', role);
+  // console.log('User role from cookie:', role);
   const labRegistered = request.cookies.get('lab-registered')?.value === 'true';
 
   // 🔒 Prevent lab users who are already registered from accessing lab-registration
@@ -72,7 +72,7 @@ export const createClient = async (request: NextRequest) => {
     labRegistered
   ) {
     // toast.success('Lab already registered, redirecting to dashboard');
-    const url = request.nextUrl.clone();  
+    const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
@@ -117,7 +117,7 @@ export const createClient = async (request: NextRequest) => {
 
     // 🔁 Redirect authenticated users trying to access auth pages
     if (user && ['/auth/sign_in', '/register'].includes(pathname)) {
-      console.log('Redirecting authenticated user:', pathname, 'Role:', role);
+      // console.log('Redirecting authenticated user:', pathname, 'Role:', role);
       const url = request.nextUrl.clone();
       url.pathname = role === 'LAB' ? '/dashboard' : '/BookAppointment';
       return NextResponse.redirect(url);

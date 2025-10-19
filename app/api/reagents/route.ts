@@ -1,7 +1,7 @@
 // app/api/reagents/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/prisma";
-import { v4 as uuid } from "uuid";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/prisma';
+import { v4 as uuid } from 'uuid';
 
 // export async function POST(req: NextRequest) {
 //   try {
@@ -42,16 +42,27 @@ import { v4 as uuid } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, name, category, description, manufacturer, unit, addToAllLabs = false } = await req.json();
+    const {
+      id,
+      name,
+      category,
+      description,
+      manufacturer,
+      unit,
+      addToAllLabs = false,
+    } = await req.json();
 
     if (!name || !unit) {
-      return NextResponse.json({ error: "name and unit are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: 'name and unit are required' },
+        { status: 400 }
+      );
     }
 
     const result = await db.$transaction(async (tx) => {
       // Create or update reagent catalog
       const reagent = await tx.reagentCatalog.upsert({
-        where: { id: id ?? "" },
+        where: { id: id ?? '' },
         update: {
           name,
           category,
@@ -78,7 +89,7 @@ export async function POST(req: NextRequest) {
         for (const lab of allLabs) {
           await tx.lab_inventory.upsert({
             where: {
-              labId_reagentId: { labId: lab.id, reagentId: reagent.id }
+              labId_reagentId: { labId: lab.id, reagentId: reagent.id },
             },
             update: {
               unit: reagent.unit,
@@ -102,9 +113,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
-    console.error("Error creating reagent:", err);
+    console.error('Error creating reagent:', err);
     return NextResponse.json(
-      { error: "Failed to create reagent", details: (err as Error).message }, 
+      { error: 'Failed to create reagent', details: (err as Error).message },
       { status: 500 }
     );
   }
@@ -114,33 +125,35 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const labId = searchParams.get("labId");
+    const labId = searchParams.get('labId');
 
     const reagents = await db.reagentCatalog.findMany({
       include: {
-        lab_inventory: labId ? {
-          where: { labId }
-        } : false,
+        lab_inventory: labId
+          ? {
+              where: { labId },
+            }
+          : false,
         TestReagent: {
           include: {
-            tests: true
-          }
+            tests: true,
+          },
         },
         _count: {
           select: {
             TestReagent: true,
-            lab_inventory: true
-          }
-        }
+            lab_inventory: true,
+          },
+        },
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
     });
 
     return NextResponse.json(reagents);
   } catch (err) {
-    console.error("Error fetching reagents:", err);
+    console.error('Error fetching reagents:', err);
     return NextResponse.json(
-      { error: "Failed to fetch reagents" },
+      { error: 'Failed to fetch reagents' },
       { status: 500 }
     );
   }
