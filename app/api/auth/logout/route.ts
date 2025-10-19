@@ -22,7 +22,7 @@ export async function POST() {
     res.cookies.set('user-aud', '', { maxAge: 0, path: '/' });
     return res;
   } catch (error) {
-    console.error('Logout error:', error);
+    // console.error('Logout error:', error);
     return NextResponse.json(
       { success: false, message: 'Failed to logout' },
       { status: 500 }
@@ -41,7 +41,7 @@ export async function GET() {
     return NextResponse.redirect(
       new URL(
         '/',
-        process.env.NEXT_PUBLIC_SITE_URL || 'http://labsphere-three.vercel.app'
+        process.env.NEXT_PUBLIC_SITE_URL || ''
       )
     );
   } catch (error) {
@@ -49,7 +49,7 @@ export async function GET() {
     return NextResponse.redirect(
       new URL(
         '/auth/login?error=logout_failed',
-        process.env.NEXT_PUBLIC_SITE_URL || 'http://labsphere-three.vercel.app'
+        process.env.NEXT_PUBLIC_SITE_URL || ''
       )
     );
   }

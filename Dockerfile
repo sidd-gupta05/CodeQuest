@@ -53,8 +53,8 @@ COPY .env .env
 EXPOSE 3000
 
 # Healthcheck to verify Next.js server
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --spider http://labsphere-three.vercel.app || exit 1
+# HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+#   CMD wget --spider http://labsphere-three.vercel.app || exit 1
 
 # Start Next.js
 CMD ["npm", "start"]
