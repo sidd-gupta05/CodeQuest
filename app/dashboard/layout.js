@@ -28,6 +28,7 @@
 import { useState, useContext } from 'react';
 import { LabProvider, LabContext } from '../context/LabContext';
 import AsideNavbar from '@/components/Lab/AsideNavbar';
+import Image from 'next/image';
 
 const DashboardLayoutContent = ({ children }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -41,7 +42,12 @@ const DashboardLayoutContent = ({ children }) => {
       <div className="min-h-screen flex flex-col">
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="w-20 h-20 mx-auto">
-            <img src="/dash-loading.gif" alt="Loading..." />
+            <Image
+              src="/dash-loading.gif"
+              alt="Loading..."
+              width={80}
+              height={80}
+            />
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Setting up your dashboard . . .

@@ -117,7 +117,7 @@ export default function LabRegistration() {
       <div className="min-h-screen flex flex-col">
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="mx-auto">
-            <img
+            <Image
               width={80}
               height={80}
               src="/dash-loading.gif"

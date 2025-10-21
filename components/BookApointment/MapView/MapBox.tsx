@@ -158,7 +158,6 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
         // Center the map on the lab location
         const mapElement = document.querySelector('.leaflet-container');
         if (mapElement) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const map = (mapElement as any)._leaflet_map;
           if (map) {
             map.setView([labToRoute.latitude, labToRoute.longitude], 15);
@@ -186,7 +185,6 @@ export default function MapBox({ labs }: { labs: Lab[] }) {
       // Center the map on the lab location
       const mapElement = document.querySelector('.leaflet-container');
       if (mapElement) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const map = (mapElement as any)._leaflet_map;
         if (map) {
           map.setView([labToRoute.latitude, labToRoute.longitude], 15);

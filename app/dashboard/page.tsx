@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// // app/dashboard/page.tsx
 // 'use client';
 
 // import { useContext, useState } from 'react';
@@ -40,6 +38,7 @@
 //   );
 // }
 
+// /app/dashboard/page.tsx
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
