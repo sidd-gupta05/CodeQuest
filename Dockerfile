@@ -3,12 +3,14 @@
 # -------------------------------
 FROM node:20-alpine AS builder
 
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
 COPY prisma ./prisma
-RUN npx prisma generate
+RUN npx prisma generate --no-engine
 COPY . .
 
 # Adding Build requirements environment variables
@@ -32,9 +34,6 @@ FROM node:20-alpine AS runner
 # Create non-root user and group properly
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# # Install TypeScript globally or as production dependency
-# RUN npm install --save-dev typescript @types/node
-
 WORKDIR /app
 # Copy everything with ownership set
 COPY --chown=appuser:appgroup --from=builder /app/package*.json ./
@@ -51,4 +50,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -q --spider http://localhost:3000 || exit 1
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm run db:deploy && npm run dev"]

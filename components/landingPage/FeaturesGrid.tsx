@@ -231,7 +231,13 @@ export default function FeaturesGrid() {
           className="bg-gradient-to-br from-[#2B7C7E] to-[#91D8C1] rounded-4xl p-4 shadow-2xl flex flex-col justify-center items-center text-white text-center"
         >
           <h2 className="font-bold text-3xl">Mobile Compatible</h2>
-          <Image src="/iphone.svg" alt="iphone" width={200} height={250} />
+          <Image
+            src="/iphone.svg"
+            alt="iphone"
+            width={200}
+            height={250}
+            unoptimized
+          />
         </motion.div>
 
         {/* Dashboard & Appointment Row */}

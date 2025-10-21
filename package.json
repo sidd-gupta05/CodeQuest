@@ -23,8 +23,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "type-check": "tsc --noEmit",
-    "prisma-generate": "prisma generate",
-    "prisma-migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
     "test": "echo \"No tests yet\" && exit 0",
     "prepare": "husky"
   },
