@@ -111,20 +111,34 @@ export const LabProvider = ({ children }: LabProviderProps) => {
           .eq('labId', currentLabId);
         setBookingData(bookings || []);
 
-        // 6. Patients
+        // 6. Patients with their bookings including reportUrl
         const { data: patientsRes } = await supabase
           .from('patients')
           .select(
             `
-            id,
-            firstName,
-            lastName,
-            age,
-            gender,
-            phone,
-            address,
-            bookings!inner(labId)
-          `
+    id,
+    firstName,
+    lastName,
+    age,
+    gender,
+    phone,
+    address,
+    bookings!inner(
+      id,
+      bookingId,
+      date,
+      status,
+      reportStatus,
+      reportUrl,
+      totalAmount,
+      labId,
+      booking_tests(
+        testId(
+          name
+        )
+      )
+    )
+  `
           )
           .eq('bookings.labId', currentLabId);
         setPatients(patientsRes || []);
