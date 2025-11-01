@@ -120,7 +120,7 @@ export default function LabRegistration() {
             <img
               width={80}
               height={80}
-              src="/dash-loading.gif"
+              src="/dash-loading.webm"
               alt="Loading..."
             />
           </div>

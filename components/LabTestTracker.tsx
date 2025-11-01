@@ -236,7 +236,7 @@ const LabTestTracker = () => {
             <Image
               width={80}
               height={80}
-              src="/report-loading.gif"
+              src="/report-loading.webm"
               alt="Loading..."
             />
           </div>
