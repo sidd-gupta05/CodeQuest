@@ -117,12 +117,16 @@ export default function LabRegistration() {
       <div className="min-h-screen flex flex-col">
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="mx-auto">
-            <img
+            <video
               width={80}
               height={80}
               src="/dash-loading.webm"
-              alt="Loading..."
-            />
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="object-contain"
+            ></video>
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Setting up your lab . . .
