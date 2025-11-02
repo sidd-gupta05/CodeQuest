@@ -41,7 +41,14 @@ const DashboardLayoutContent = ({ children }) => {
       <div className="min-h-screen flex flex-col">
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="w-20 h-20 mx-auto">
-            <img src="/dash-loading.webm" alt="Loading..." />
+            <video
+              src="/dash-loading.webm"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-contain"
+            />
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Setting up your dashboard . . .
