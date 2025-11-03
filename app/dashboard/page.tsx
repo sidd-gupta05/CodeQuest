@@ -1,45 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// // app/dashboard/page.tsx
-// 'use client';
-
-// import { useContext, useState } from 'react';
-// import { LabContext } from '../context/LabContext';
-// import BookingChart from '@/components/Lab/BookingChart';
-// import PaginatedBookingList from '@/components/Lab/PaginatedBookingList';
-
-// export default function DashboardPage() {
-//   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-//   const contextData = useContext(LabContext);
-//   const bookingData = contextData?.bookingData || [];
-//   const userData = contextData?.userData || {};
-
-//   const handleDateSelect = (date: Date | null) => {
-//     setSelectedDate(date);
-//   };
-
-//   return (
-//     <div className="p-4 md:p-8">
-//       <h2 className="text-xl font-semibold">Hey, {userData.firstName} 👋</h2>
-
-//       <div>
-//         <div className="my-6">
-//           <BookingChart
-//             bookings={bookingData}
-//             onDateSelect={handleDateSelect}
-//           />
-//         </div>
-//         <div className="mt-6">
-//           <PaginatedBookingList
-//             bookings={bookingData}
-//             selectedDate={selectedDate}
-//           />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
+// app/dashboard/page.tsx
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
@@ -80,6 +39,27 @@ export default function DashboardPage() {
       }));
       setBookingData(merged);
     }
+  }, [contextData?.bookingData, contextData?.labData]);
+
+  //event listener to refresh booking data when reports are updated
+  useEffect(() => {
+    const handleBookingUpdate = () => {
+      console.log('Booking updated, refreshing data...');
+      // Refresh booking data from context
+      if (contextData?.bookingData && contextData?.labData?.labName) {
+        const merged = contextData.bookingData.map((b: any) => ({
+          ...b,
+          labName: contextData.labData.labName,
+        }));
+        setBookingData(merged);
+      }
+    };
+
+    window.addEventListener('bookingUpdated', handleBookingUpdate);
+
+    return () => {
+      window.removeEventListener('bookingUpdated', handleBookingUpdate);
+    };
   }, [contextData?.bookingData, contextData?.labData]);
 
   console.log('Lab Data in DashboardPage:', labData);
