@@ -1,9 +1,9 @@
-//app/dashboard/lab/inventory/page.tsx
+// app/dashboard/lab/inventory/page.tsx
 'use client';
 import React, { useState } from 'react';
 import { clashFontRegular } from '@/app/fonts';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs'; 
 import {
   AlertTriangle,
   CheckCircle,
@@ -41,6 +41,7 @@ const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [executionLoading, setExecutionLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('inventory');
 
   // Get reagent details by ID
   const getReagentDetails = (reagentId: string) => {
@@ -131,6 +132,11 @@ const Inventory = () => {
   );
   const averageStockLevel =
     totalReagents > 0 ? Math.round(totalQuantity / totalReagents) : 0;
+
+  // Handle bell icon click
+  const handleAlertClick = () => {
+    setActiveTab('alerts');
+  };
 
   // Real test execution with API
   const executeTest = async (testId: string) => {
@@ -262,6 +268,7 @@ const Inventory = () => {
           expiringCount={expiringCount}
           totalReagents={totalReagents}
           averageStockLevel={averageStockLevel}
+          onAlertClick={handleAlertClick} 
         />
 
         {/* Enhanced Dashboard Metrics */}
@@ -275,7 +282,11 @@ const Inventory = () => {
 
         {/* Enhanced Main Content Tabs */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <Tabs defaultValue="inventory" className="space-y-0">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="space-y-0"
+          >
             <div className="border-b border-gray-100">
               <InventoryTabs
                 tabs={[
