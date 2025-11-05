@@ -8,11 +8,13 @@ export function InventoryHeader({
   expiringCount,
   totalReagents,
   averageStockLevel,
+  onAlertClick,
 }: {
   lowStockCount: number;
   expiringCount: number;
   totalReagents?: number;
   averageStockLevel?: number;
+  onAlertClick?: () => void;
 }) {
   const totalAlerts = lowStockCount + expiringCount;
 
@@ -62,6 +64,7 @@ export function InventoryHeader({
           className="relative bg-white border border-gray-300 hover:bg-gray-50 p-3 rounded-xl transition-colors"
           variant="outline"
           size="icon"
+          onClick={onAlertClick}
         >
           <Bell className="h-5 w-5 text-gray-600" />
           {totalAlerts > 0 && (
