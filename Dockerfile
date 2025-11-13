@@ -36,11 +36,11 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 # Copy everything with ownership set
-COPY --chown=appuser:appgroup --chmod=555 --from=builder /app/package*.json ./
-COPY --chown=appuser:appgroup --chmod=555 --from=builder /app/node_modules ./node_modules
-COPY --chown=appuser:appgroup --chmod=555 --from=builder /app/.next ./.next
-COPY --chown=appuser:appgroup --chmod=555 --from=builder /app/public ./public
-COPY --chown=appuser:appgroup --chmod=555 --from=builder /app/prisma ./prisma
+COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/package*.json ./
+COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/.next ./.next
+COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/public ./public
+COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/prisma ./prisma
 
 USER appuser
 
