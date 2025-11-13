@@ -1,3 +1,4 @@
+//components/Lab/PaginatedBookingList.tsx
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';

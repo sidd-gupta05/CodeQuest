@@ -41,7 +41,7 @@ type Booking = {
   totalAmount: number;
   status?: string;
   allocatedEmpId?: { id: string; name: string };
-  reportUrl?: string; // Add this field to store the uploaded report URL
+  reportUrl?: string;
 };
 
 interface BookingModalProps {
@@ -57,7 +57,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
   show,
   onClose,
 }) => {
-  // Initialize state with booking data and reset when booking changes
   const [reportStatus, setReportStatus] = useState(
     booking?.reportStatus || 'TEST_BOOKED'
   );
@@ -141,21 +140,36 @@ const BookingModal: React.FC<BookingModalProps> = ({
       setIsLoading(true);
 
       // ✅ Restrict REPORT_READY without file
-      if (reportStatus === 'REPORT_READY' && !uploadedFile) {
+      if (
+        reportStatus === 'REPORT_READY' &&
+        !uploadedFile &&
+        !currentReportUrl
+      ) {
         toast.error('Please upload a report file before saving REPORT_READY');
         setIsLoading(false);
         return;
       }
 
-      let reportUrl = currentReportUrl; // Keep existing report URL if no new file uploaded
-      if (uploadedFile) {
+      let reportUrl = currentReportUrl;
+
+      // Only upload new file if one is selected
+      if (uploadedFile && booking) {
+        // Decrement attempts when user tries to upload a new file
+        setUploadAttemptsLeft((prev) => {
+          const next = Math.max(prev - 1, 0);
+          localStorage.setItem(
+            `uploadAttempts-${booking.bookingId}`,
+            next.toString()
+          );
+          return next;
+        });
+
         reportUrl = await handleReport();
         if (!reportUrl) {
           toast.error('Failed to upload report file');
           setIsLoading(false);
           return;
         }
-        // Update the current report URL with the newly uploaded one
         setCurrentReportUrl(reportUrl);
       }
 
@@ -167,7 +181,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         body: JSON.stringify({
           bookingId: booking?.bookingId,
           reportStatus,
-          reportUrl,
+          reportUrl: reportUrl || currentReportUrl, // Ensure reportUrl is always sent
           allocatedEmployee,
         }),
       });
@@ -179,13 +193,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
         setIsLoading(false);
       } else {
         toast.success('Successfully updated');
-        // setConfirmedStatus(reportStatus);
-        setReportStatus(reportStatus);
         setCurrentStatus(reportStatus);
         setIsLoading(false);
-        // Clear uploaded file after successful save but keep the report URL
-        setUploadedFile(null);
-        setImagePreviewUrl(null);
+
+        // Only clear uploaded file if it was successfully processed
+        if (uploadedFile) {
+          setUploadedFile(null);
+          setImagePreviewUrl(null);
+        }
+
+        // Refresh the booking data to get the updated report URL
+        if (booking) {
+          // Trigger a refresh of the booking data in parent component
+          // This will ensure the latest report is shown everywhere
+          window.dispatchEvent(new Event('bookingUpdated'));
+        }
       }
     } catch (err) {
       console.error(err);
@@ -202,7 +224,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
       if (!validTypes.includes(file.type)) {
         toast.error('Only PDF files are allowed');
-        e.target.value = ''; // clear input
+        e.target.value = '';
         return;
       }
 
@@ -232,7 +254,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const handleRemoveFile = () => {
     setUploadedFile(null);
     setImagePreviewUrl(null);
-    // Also clear the file input
     const fileInput = document.querySelector(
       'input[type="file"]'
     ) as HTMLInputElement;
@@ -266,9 +287,9 @@ const BookingModal: React.FC<BookingModalProps> = ({
     return booking.bookingId ? booking.bookingId.slice(-4).toUpperCase() : '';
   };
 
-  // Report upload handler
+  // Report upload handler - Only handles the actual upload, no attempt decrement here
   const handleReport = async () => {
-    if (!uploadedFile || !booking.bookingId) return null;
+    if (!uploadedFile || !booking?.bookingId) return null;
 
     try {
       const { lockedPdfBytes, password } = await lockPdf(uploadedFile, booking);
@@ -282,25 +303,16 @@ const BookingModal: React.FC<BookingModalProps> = ({
       const { error: fileError } = await supabase.storage
         .from('uploads')
         .upload(path, lockedPdfBytes, {
-          upsert: true,
+          upsert: true, // This ensures the file is overwritten if it exists
           contentType: 'application/pdf',
         });
 
       if (fileError) throw new Error(fileError.message);
 
-      setUploadAttemptsLeft((prev) => {
-        const next = Math.max(prev - 1, 0);
-        localStorage.setItem(
-          `uploadAttempts-${booking.bookingId}`,
-          next.toString()
-        );
-        if (next === 0) {
-          toast.error('File limit is reached. Contact the administrator');
-        }
-        return next;
-      });
+      const timestamp = new Date().getTime();
+      const freshUrl = `${publicUrl}?t=${timestamp}`;
 
-      return publicUrl;
+      return freshUrl;
     } catch (err) {
       console.error('Error uploading report:', err);
       toast.error('Failed to upload report');
@@ -415,7 +427,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
                   Allocate Employee
                 </h3>
-                {/* <p className='text-xs mb-2'>Current Employee : {allocatedEmployeeName || "NONE"} </p> */}
                 {employees.length === 0 ? (
                   <>
                     <p className="text-xs mb-2 text-yellow-600">
@@ -459,7 +470,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
               Current Status : {currentStatus.replace('_', ' ')}
             </p>
 
-            {/* <Select
+            <Select
               value={reportStatus || 'TEST_BOOKED'}
               onValueChange={setReportStatus}
             >
@@ -474,11 +485,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   'UNDER_REVIEW',
                   'REPORT_READY',
                 ].map((status, index, arr) => {
-                  const confirmedIndex = arr.indexOf(confirmedStatus);
-                  const currentIndex = arr.indexOf(status);
+                  const currentIndex = arr.indexOf(currentStatus);
+                  const statusIndex = arr.indexOf(status);
                   const isEnabled =
-                    currentIndex === confirmedIndex ||
-                    currentIndex === confirmedIndex + 1;
+                    statusIndex === currentIndex ||
+                    statusIndex === currentIndex + 1;
 
                   return (
                     <SelectItem
@@ -496,39 +507,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   );
                 })}
               </SelectContent>
-            </Select> */}
-
-            {reportStatus === 'BOOKING_PENDING' ? (
-              <p className="text-xs mb-2 text-yellow-600">
-                Please wait for the booking to be confirmed !
-              </p>
-            ) : (
-              <Select
-                value={reportStatus || 'TEST_BOOKED'}
-                onValueChange={setReportStatus}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select report status" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-100">
-                  {[
-                    'TEST_BOOKED',
-                    'SAMPLE_COLLECTED',
-                    'IN_LAB',
-                    'UNDER_REVIEW',
-                    'REPORT_READY',
-                  ].map((status) => (
-                    <SelectItem
-                      key={status}
-                      value={status}
-                      className="hover:cursor-pointer hover:bg-blue-100"
-                    >
-                      {status.replace('_', ' ')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            </Select>
           </div>
 
           {/* Reports Upload */}
@@ -541,7 +520,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   : 'text-gray-500'
               }`}
             >
-              Uploads remaining : {uploadAttemptsLeft}/3
+              Upload attempts remaining : {uploadAttemptsLeft}/3
             </p>
 
             {/* Show current uploaded report */}
@@ -569,7 +548,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
             {/* File upload area */}
             <label
               className={`border-2 border-dashed rounded-md p-2 text-center relative block ${
-                reportStatus === 'REPORT_READY'
+                reportStatus === 'REPORT_READY' && uploadAttemptsLeft > 0
                   ? 'border-gray-300 cursor-pointer'
                   : 'border-gray-200 cursor-not-allowed bg-gray-100 opacity-50'
               }`}

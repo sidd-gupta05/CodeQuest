@@ -233,12 +233,17 @@ const LabTestTracker = () => {
 
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="mx-auto">
-            <Image
+            <video
               width={80}
               height={80}
-              src="/report-loading.gif"
-              alt="Loading..."
-            />
+              src="/report-loading.webm"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="object-contain"
+            >
+            </video>
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Gathering your bookings . . .

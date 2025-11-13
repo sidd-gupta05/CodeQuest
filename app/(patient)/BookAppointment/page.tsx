@@ -293,12 +293,18 @@ const BookAppointment = () => {
 
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="w-20 h-20 mx-auto">
-            <Image
-              width="80"
-              height="80"
-              src="/main-loading.gif"
-              alt="Loading..."
-            />
+            <video
+              width={80}
+              height={80}
+              src="/main-loading.webm"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="object-contain"
+            >
+              Your browser does not support the video tag.
+            </video>
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Setting things up for you . . .

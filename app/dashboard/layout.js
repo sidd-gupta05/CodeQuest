@@ -42,11 +42,13 @@ const DashboardLayoutContent = ({ children }) => {
       <div className="min-h-screen flex flex-col">
         <div className="flex flex-col justify-center items-center my-auto">
           <div className="w-20 h-20 mx-auto">
-            <Image
-              src="/dash-loading.gif"
-              alt="Loading..."
-              width={80}
-              height={80}
+            <video
+              src="/dash-loading.webm"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-contain"
             />
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
