@@ -127,7 +127,7 @@ const PatientHistoryModal: React.FC<PatientHistoryModalProps> = ({
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
+        onClick={onClose} onKeyDown={this.handleKeyDown}
       />
 
       {/* Modal */}

@@ -499,7 +499,7 @@ export default function Booking() {
                 </div>
               </motion.div>
             )}
-            // In STEP 2 - TestSelection
+
             {currentStep === 2 && (
               <motion.div
                 key="step2"
