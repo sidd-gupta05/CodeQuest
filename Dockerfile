@@ -31,17 +31,20 @@ RUN npm prune --production
 # -------------------------------
 FROM node:20-alpine AS runner
 
-# Create non-root user and group properly
+# Create non-root user and group properly (for runtime)
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
-# Copy everything with ownership set
-COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/package*.json ./
-COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/node_modules ./node_modules
-COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/.next ./.next
-COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/public ./public
-COPY --from=builder --chown=appuser:appgroup --chmod=555 /app/prisma ./prisma
 
+
+# Copy everything with ROOT ownership and read-only permissions
+COPY --from=builder --chown=root:root --chmod=555 /app/package*.json ./
+COPY --from=builder --chown=root:root --chmod=555 /app/node_modules ./node_modules
+COPY --from=builder --chown=root:root --chmod=555 /app/.next ./.next
+COPY --from=builder --chown=root:root --chmod=555 /app/public ./public
+COPY --from=builder --chown=root:root --chmod=555 /app/prisma ./prisma
+
+# Switch to non-root for running app (best practice)
 USER appuser
 
 ENV NODE_ENV=production
