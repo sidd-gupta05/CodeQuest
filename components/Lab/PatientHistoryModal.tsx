@@ -122,12 +122,17 @@ const PatientHistoryModal: React.FC<PatientHistoryModalProps> = ({
   const fullName =
     `${patient.firstName || ''} ${patient.lastName || ''}`.trim() || 'Unknown';
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') onClose();
+  };
+
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose} onKeyDown={this.handleKeyDown}
+        onClick={onClose} onKeyDown={handleKeyDown}
       />
 
       {/* Modal */}
