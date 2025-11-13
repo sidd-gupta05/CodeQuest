@@ -3,28 +3,27 @@
 # -------------------------------
 FROM node:20-alpine AS builder
 
-# Set working directory
+RUN apk add --no-cache openssl
+
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Install all dependencies
 RUN npm ci
 
-# Copy Prisma schema
 COPY prisma ./prisma
-
-# Generate Prisma Client for the correct platform
-RUN npx prisma generate
-
-# Copy project files
+RUN npx prisma generate --no-engine
 COPY . .
 
-# Build the Next.js app
-RUN npm run build --no-lint
+# Adding Build requirements environment variables
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG NEXT_PUBLIC_RAZORPAY_KEY_ID
+ARG NEXT_PUBLIC_SITE_URL
+ARG RAZORPAY_KEY_ID
+ARG RAZORPAY_KEY_SECRET
 
-# Remove dev dependencies to reduce size
+RUN echo "Building app for $NEXT_PUBLIC_SITE_URL"
+
+RUN npm run build 
 RUN npm prune --production
 
 # -------------------------------
@@ -32,29 +31,23 @@ RUN npm prune --production
 # -------------------------------
 FROM node:20-alpine AS runner
 
+# Create non-root user and group properly
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /app
+# Copy everything with ownership set
+COPY --chown=appuser:appgroup --from=builder /app/package*.json ./
+COPY --chown=appuser:appgroup --from=builder /app/node_modules ./node_modules
+COPY --chown=appuser:appgroup --from=builder /app/.next ./.next
+COPY --chown=appuser:appgroup --from=builder /app/public ./public
+COPY --chown=appuser:appgroup --from=builder /app/prisma ./prisma
 
-# Install TypeScript globally or as production dependency
-RUN npm install typescript @types/node
+USER appuser
 
-# Copy only what’s needed from builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.ts ./next.config.ts
-COPY --from=builder /app/prisma ./prisma
-
-# Copy your environment variables file
-# (You can comment this out in production if you're using Docker secrets)
-COPY .env .env
-
-# Expose the app port
+ENV NODE_ENV=production
 EXPOSE 3000
 
-# Healthcheck to verify Next.js server
-# HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-#   CMD wget --spider http://labsphere-three.vercel.app || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -q --spider http://localhost:3000 || exit 1
 
-# Start Next.js
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm run db:deploy && npm run dev"]

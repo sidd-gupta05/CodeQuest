@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Script from 'next/script';
 import { CreditCard, Loader2 } from 'lucide-react';
 
 interface PaymentClientProps {
@@ -217,12 +216,6 @@ export default function PaymentClient({
 
   return (
     <>
-      <Script
-        id="razorpay-checkout-js"
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        strategy="beforeInteractive"
-      />
-
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
         <button
           onClick={onBack}

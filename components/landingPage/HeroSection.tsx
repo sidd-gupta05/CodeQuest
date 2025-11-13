@@ -73,6 +73,7 @@ export default function HeroSection() {
               alt="Labsphere App"
               width={500}
               height={500}
+              unoptimized
               className="w-full relative z-20"
             />
 

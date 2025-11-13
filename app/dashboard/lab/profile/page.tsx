@@ -26,6 +26,7 @@ import ChangePasswordForm from './ChangePasswordForm';
 import NotificationSettings from './NotificationSetting';
 // import LabTests from './LabTests';
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
 
 interface CheckboxFieldProps {
   label: string;
@@ -377,7 +378,9 @@ const LabForm: React.FC = () => {
                   <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
                     <div className="relative w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                       {imagePreviewUrl || formData.imageUrl ? (
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           src={imagePreviewUrl || formData.imageUrl}
                           alt="Profile Preview"
                           className="w-full h-full object-cover"

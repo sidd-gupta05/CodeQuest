@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   labsphere:
     container_name: labsphere_app

@@ -28,6 +28,7 @@
 import { useState, useContext } from 'react';
 import { LabProvider, LabContext } from '../context/LabContext';
 import AsideNavbar from '@/components/Lab/AsideNavbar';
+import Image from 'next/image';
 
 const DashboardLayoutContent = ({ children }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);

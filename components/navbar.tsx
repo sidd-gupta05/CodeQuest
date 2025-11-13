@@ -126,6 +126,7 @@ function Navbar() {
                 alt="Labsphere Logo"
                 width={28}
                 height={28}
+                unoptimized
               />
               Labsphere
             </Link>

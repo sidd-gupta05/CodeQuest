@@ -1,8 +1,12 @@
 // app/api/employee/update-employee/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/utils/supabase/client';
 
 export async function PUT(request: NextRequest) {
+  const { createClient } = await import('@supabase/supabase-js');
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   try {
     const { id, name, role, department, monthlySalary, isFieldCollector } =
       await request.json();
