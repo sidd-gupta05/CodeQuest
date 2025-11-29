@@ -147,7 +147,7 @@ async function generateTestResults(bookingTests: any[]) {
     const test = bt.tests;
     const category = test.category.toLowerCase();
 
-    let result: any = {
+    const result: any = {
       testName: test.name,
       category: test.category,
       status: 'completed',

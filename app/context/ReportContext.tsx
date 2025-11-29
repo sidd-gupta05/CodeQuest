@@ -135,10 +135,9 @@ export const ReportProvider = ({ children }: { children: ReactNode }) => {
       if (!response.ok) {
         throw new Error(data.error || 'Failed to generate report');
       }
-
       return data;
     } catch (error: any) {
-      throw error;
+      return { error: error.message || 'Error generating report' };
     }
   };
 
