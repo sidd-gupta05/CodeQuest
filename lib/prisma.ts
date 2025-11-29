@@ -1,10 +1,16 @@
-import { PrismaClient } from './generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const db = globalForPrisma.prisma ?? new PrismaClient();
+// Fix: Add proper initialization
+export const db =
+  globalForPrisma.prisma ??
+  (() => {
+    console.log('Creating new PrismaClient instance');
+    return new PrismaClient();
+  })();
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = db;
