@@ -1,12 +1,11 @@
+// schema.prisma
 generator client {
   provider      = "prisma-client-js"
-  output        = "../lib/generated/prisma"
-  binaryTargets = ["native", "linux-musl"]
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  url      = env("DATABASE_URL") 
   directUrl = env("DIRECT_URL")
 }
 
@@ -46,13 +45,13 @@ model Patient {
 }
 
 model Lab {
-  id                    String             @id @default(uuid())
-  userId                String             @unique
+  id                    String               @id @default(uuid())
+  userId                String               @unique
   labLocation           String
   nablCertificateNumber String
   certificateUrl        String
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
   attendances           attendances[]
   bookings              bookings[]
   CustomReagent         CustomReagent[]
@@ -60,12 +59,25 @@ model Lab {
   details               LabDetails?
   lab_inventory         lab_inventory[]
   timeSlots             LabTimeSlot[]
-  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   LeaveApplication      LeaveApplication[]
   schedules             Schedule[]
-  tests                 tests[]            @relation("AvailableTests")
+  tests                 tests[]              @relation("AvailableTests")
+  reportCustomization   ReportCustomization?
 
   @@map("labs")
+}
+
+model ReportCustomization {
+  id        String   @id @default(uuid())
+  labId     String   @unique
+  settings  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  lab       Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
+
+  @@map("report_customizations")
 }
 
 model LabDetails {
