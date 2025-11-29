@@ -15,6 +15,7 @@ import {
   Flame,
   HelpCircle,
   ChevronRight,
+  ClipboardPlus,
 } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
@@ -266,6 +267,47 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                   <div className="flex items-center gap-3">
                     <CreditCard className="h-5 w-5" />
                     <span>Revenue</span>
+                  </div>
+                  {/* <ChevronDown className="h-4 w-4 text-gray-400" /> */}
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/dashboard/lab/lab_report"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('/dashboard/lab/lab_report');
+                  }}
+                  className={`flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                    pathname === '/dashboard/lab/lab_report'
+                      ? 'bg-[#e0f5f5] text-[#006A6A]'
+                      : 'text-black hover:bg-gray-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <ClipboardPlus className="h-5 w-5" />
+                    <span>Lab Report</span>
+                  </div>
+                  {/* <ChevronDown className="h-4 w-4 text-gray-400" /> */}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/dashboard/lab/customization"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavigation('/dashboard/lab/customization');
+                  }}
+                  className={`flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                    pathname === '/dashboard/lab/customization'
+                      ? 'bg-[#e0f5f5] text-[#006A6A]'
+                      : 'text-black hover:bg-gray-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <ClipboardPlus className="h-5 w-5" />
+                    <span>Report Customization</span>
                   </div>
                   {/* <ChevronDown className="h-4 w-4 text-gray-400" /> */}
                 </Link>
