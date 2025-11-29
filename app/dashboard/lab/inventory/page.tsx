@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { clashFontRegular } from '@/app/fonts';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs'; 
+import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
 import {
   AlertTriangle,
   CheckCircle,
@@ -268,7 +268,7 @@ const Inventory = () => {
           expiringCount={expiringCount}
           totalReagents={totalReagents}
           averageStockLevel={averageStockLevel}
-          onAlertClick={handleAlertClick} 
+          onAlertClick={handleAlertClick}
         />
 
         {/* Enhanced Dashboard Metrics */}
