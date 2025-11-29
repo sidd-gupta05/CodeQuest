@@ -242,8 +242,7 @@ const LabTestTracker = () => {
               muted
               playsInline
               className="object-contain"
-            >
-            </video>
+            ></video>
           </div>
           <div className="mt-2 text-center text-slate-700 font-semibold">
             Gathering your bookings . . .

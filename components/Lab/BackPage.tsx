@@ -9,7 +9,6 @@ export const BackPage = ({ customization }: { customization: any }) => {
     >
       <div className="text-center max-w-2xl print:max-w-none">
         <div className="mb-8 print:mb-6">
-          
           <h1 className="text-4xl font-bold text-gray-800 mb-2 print:text-3xl print:mb-1">
             LabSphere
           </h1>
