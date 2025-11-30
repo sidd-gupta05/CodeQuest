@@ -2,7 +2,7 @@
 'use client';
 
 import { ReportProvider } from '@/app/context/ReportContext';
-import { ReportCustomization } from '@/components/Lab/ReportCustomization';
+import { ReportCustomization } from '@/components/Lab/customization/ReportCustomization';
 
 const CustomizationPage = () => {
   return (
