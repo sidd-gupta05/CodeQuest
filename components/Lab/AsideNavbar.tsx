@@ -16,6 +16,7 @@ import {
   HelpCircle,
   ChevronRight,
   ClipboardPlus,
+  FileText,
 } from 'lucide-react';
 import { supabase } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
@@ -286,7 +287,7 @@ const AsideNavbar = ({ isOpen, onToggle }: AsideNavbarProps) => {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <ClipboardPlus className="h-5 w-5" />
+                    <FileText className="h-5 w-5" />
                     <span>Lab Report</span>
                   </div>
                   {/* <ChevronDown className="h-4 w-4 text-gray-400" /> */}
