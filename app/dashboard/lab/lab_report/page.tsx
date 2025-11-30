@@ -1,10 +1,10 @@
-// app/lab-report/page.tsx
+// app/dashboard/lab/lab_report/page.tsx
 'use client';
 
 import { useContext } from 'react';
 import { LabContext } from '@/app/context/LabContext';
 import { ReportProvider } from '@/app/context/ReportContext';
-import LabReport from '@/components/Lab/LabReport';
+import LabReport from '@/components/Lab/report/LabReport';
 
 const LabReportPage = () => {
   const labContext = useContext(LabContext);
