@@ -1,7 +1,15 @@
 //components/Lab/report/TestResults.tsx
+import { useState } from 'react';
+import { Edit2, Save, X } from 'lucide-react';
+
 export const TestResults = ({ booking, customization, testResults }: any) => {
   const tests = booking.tests || [];
   const addons = booking.addons || [];
+  const [isEditing, setIsEditing] = useState(false);
+  const [interpretation, setInterpretation] = useState(
+    customization.interpretationText ||
+      'All investigated parameters are within normal physiological limits. No significant abnormalities detected in the laboratory findings. Results are consistent with normal health status.'
+  );
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -16,6 +24,12 @@ export const TestResults = ({ booking, customization, testResults }: any) => {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleSaveInterpretation = () => {
+    // Here you would typically save to your backend
+    console.log('Saving interpretation:', interpretation);
+    setIsEditing(false);
   };
 
   return (
@@ -126,23 +140,170 @@ export const TestResults = ({ booking, customization, testResults }: any) => {
       {/* Interpretation */}
       {customization.includeInterpretation && (
         <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 print:p-3">
-          <h4 className="font-semibold text-blue-800 mb-2 text-base print:text-sm">
-            INTERPRETATION
-          </h4>
-          <p className="text-blue-700 text-sm print:text-xs leading-relaxed">
-            All investigated parameters are within normal physiological limits.
-            No significant abnormalities detected in the laboratory findings.
-            Results are consistent with normal health status.
-          </p>
+          <div className="flex justify-between items-center mb-3">
+            <h4 className="font-semibold text-blue-800 text-base print:text-sm">
+              Clicnical Note :
+            </h4>
+            {!isEditing ? (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium px-3 py-1.5 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors print:hidden"
+              >
+                <Edit2 size={14} />
+                Edit Notes
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 print:hidden">
+                <button
+                  onClick={handleSaveInterpretation}
+                  className="flex items-center gap-1 text-green-600 hover:text-green-800 text-sm font-medium px-3 py-1.5 bg-green-100 hover:bg-green-200 rounded-md transition-colors"
+                >
+                  <Save size={14} />
+                  Save
+                </button>
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    // Reset to original if needed
+                    setInterpretation(
+                      customization.interpretationText ||
+                        'All investigated parameters are within normal physiological limits. No significant abnormalities detected in the laboratory findings. Results are consistent with normal health status.'
+                    );
+                  }}
+                  className="flex items-center gap-1 text-red-600 hover:text-red-800 text-sm font-medium px-3 py-1.5 bg-red-100 hover:bg-red-200 rounded-md transition-colors"
+                >
+                  <X size={14} />
+                  Cancel
+                </button>
+              </div>
+            )}
+          </div>
+
+          {isEditing ? (
+            <div className="space-y-4 print:hidden">
+              {/* Rich Text Editor */}
+              <textarea
+                value={interpretation}
+                onChange={(e) => setInterpretation(e.target.value)}
+                className="w-full h-48 p-3 text-gray-800 border border-blue-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                placeholder="Enter interpretation notes. You can add:
+• Abnormal findings
+• Clinical correlations
+• Recommendations
+• Follow-up instructions
+• Any specific observations"
+              />
+
+              {/* Quick Templates */}
+              <div className="space-y-2">
+                <p className="text-xs text-gray-600 font-medium">
+                  Quick Templates:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() =>
+                      setInterpretation(
+                        'All parameters are within normal limits. No significant abnormalities detected.'
+                      )
+                    }
+                    className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md"
+                  >
+                    Normal Report
+                  </button>
+                  <button
+                    onClick={() =>
+                      setInterpretation(
+                        'Mild abnormalities noted. Clinical correlation recommended.'
+                      )
+                    }
+                    className="px-3 py-1.5 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-700 rounded-md"
+                  >
+                    Mild Abnormalities
+                  </button>
+                  <button
+                    onClick={() =>
+                      setInterpretation(
+                        'Significant abnormalities detected. Immediate clinical attention advised.'
+                      )
+                    }
+                    className="px-3 py-1.5 text-xs bg-red-100 hover:bg-red-200 text-red-700 rounded-md"
+                  >
+                    Critical Findings
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Display Mode */}
+              <div className="text-blue-700 text-sm print:text-xs leading-relaxed whitespace-pre-line">
+                {interpretation}
+              </div>
+
+              {/* Notes Table (Optional - can be part of interpretation) */}
+              {customization.includeNotesTable && (
+                <div className="mt-4 overflow-x-auto">
+                  <table className="min-w-full border border-blue-200 text-sm">
+                    <thead>
+                      <tr className="bg-blue-100">
+                        <th className="px-3 py-2 text-left font-medium text-blue-800 border border-blue-200">
+                          Parameter
+                        </th>
+                        <th className="px-3 py-2 text-left font-medium text-blue-800 border border-blue-200">
+                          Observation
+                        </th>
+                        <th className="px-3 py-2 text-left font-medium text-blue-800 border border-blue-200">
+                          Recommendation
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {testResults?.flatMap((testResult: any) =>
+                        testResult.values
+                          ?.filter((value: any) => value.status !== 'normal')
+                          ?.map((value: any, index: number) => (
+                            <tr key={index} className="even:bg-blue-50">
+                              <td className="px-3 py-2 border border-blue-200 text-blue-800 font-medium">
+                                {value.parameter}
+                              </td>
+                              <td className="px-3 py-2 border border-blue-200">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                  {value.status?.toUpperCase()}
+                                </span>
+                                <span className="ml-2">
+                                  Value: {value.value} {value.unit}
+                                </span>
+                              </td>
+                              <td className="px-3 py-2 border border-blue-200">
+                                {value.status === 'critical'
+                                  ? 'Immediate medical attention required'
+                                  : value.status === 'abnormal'
+                                    ? 'Consult with physician'
+                                    : 'Monitor and repeat test if needed'}
+                              </td>
+                            </tr>
+                          ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
       {/* Comments */}
       {customization.includeComments && (
         <div className="mt-4 p-4 bg-gray-50 rounded-lg border print:p-3">
-          <h4 className="font-semibold text-gray-700 mb-2 text-base print:text-sm">
-            REMARKS
-          </h4>
+          <div className="flex justify-between items-center mb-2">
+            <h4 className="font-semibold text-gray-700 text-base print:text-sm">
+              REMARKS
+            </h4>
+            {/* <button className="text-gray-500 hover:text-gray-700 text-sm font-medium px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-md print:hidden">
+              Add Custom Note
+            </button> */}
+          </div>
           <p className="text-gray-600 text-sm print:text-xs leading-relaxed">
             Results are clinically correlated and verified by automated
             analyzers. Please consult with your healthcare provider for detailed
