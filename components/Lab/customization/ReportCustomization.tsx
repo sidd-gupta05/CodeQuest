@@ -4,6 +4,7 @@
 import { useReport } from '@/app/context/ReportContext';
 import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
+import { Plus, Trash2 } from 'lucide-react';
 
 export const ReportCustomization = () => {
   const { customization, updateCustomization, saveCustomization, loading } =
@@ -14,6 +15,12 @@ export const ReportCustomization = () => {
     message: string;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const signatureFileInputs = useRef<Record<number, HTMLInputElement | null>>(
+    {}
+  );
+
+  // Initialize signatories if not exists
+  const signatories = customization.signatories || [];
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -36,6 +43,70 @@ export const ReportCustomization = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleSignatureUpload = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 1 * 1024 * 1024) {
+        toast.error('Signature image must be less than 1MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const updatedSignatories = [...signatories];
+        updatedSignatories[index] = {
+          ...updatedSignatories[index],
+          signatureImage: e.target?.result as string,
+        };
+        updateCustomization({ signatories: updatedSignatories });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveSignature = (index: number) => {
+    const updatedSignatories = [...signatories];
+    updatedSignatories[index] = {
+      ...updatedSignatories[index],
+      signatureImage: '',
+    };
+    updateCustomization({ signatories: updatedSignatories });
+
+    const input = signatureFileInputs.current[index];
+    if (input) {
+      input.value = '';
+    }
+  };
+
+  const addSignatory = () => {
+    const newSignatory = {
+      name: '',
+      designation: '',
+      qualification: '',
+      licenseNumber: '',
+      signatureImage: '',
+    };
+    const updatedSignatories = [...signatories, newSignatory];
+    updateCustomization({ signatories: updatedSignatories });
+  };
+
+  const removeSignatory = (index: number) => {
+    const updatedSignatories = signatories.filter((_, i) => i !== index);
+    updateCustomization({ signatories: updatedSignatories });
+  };
+
+  const updateSignatory = (index: number, field: string, value: string) => {
+    const updatedSignatories = [...signatories];
+    updatedSignatories[index] = {
+      ...updatedSignatories[index],
+      [field]: value,
+    };
+    updateCustomization({ signatories: updatedSignatories });
   };
 
   const handleSave = async () => {
@@ -85,6 +156,15 @@ export const ReportCustomization = () => {
       pageSize: 'a4',
       fontSize: 'medium',
       printMargins: 'normal',
+      signatories: [
+        {
+          name: 'Dr. John Smith',
+          designation: 'Laboratory Director',
+          qualification: 'MD, Pathologist',
+          licenseNumber: 'MED-12345',
+          signatureImage: '',
+        },
+      ],
     });
     toast.success('Reset to default settings');
   };
@@ -196,18 +276,6 @@ export const ReportCustomization = () => {
         </h2>
       </div>
 
-      {/* {saveMessage && (
-        <div
-          className={`mb-4 p-3 rounded-md ${
-            saveMessage.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
-          }`}
-        >
-          {saveMessage.message}
-        </div>
-      )} */}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Lab Information */}
         <div className="space-y-6">
@@ -315,6 +383,177 @@ export const ReportCustomization = () => {
             </div>
           </div>
 
+          {/* Signatories Section */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-700">
+                Signatories
+              </h3>
+              <button
+                onClick={addSignatory}
+                className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors cursor-pointer text-sm"
+              >
+                <Plus size={16} />
+                Add Signatory
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {signatories.map((signatory: any, index: number) => (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-lg p-4 bg-white"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-medium text-gray-700">
+                      Signatory #{index + 1}
+                    </h4>
+                    <button
+                      onClick={() => removeSignatory(index)}
+                      className="text-red-500 hover:text-red-700 cursor-pointer"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Name *
+                        </label>
+                        <input
+                          type="text"
+                          value={signatory.name}
+                          onChange={(e) =>
+                            updateSignatory(index, 'name', e.target.value)
+                          }
+                          className="w-full p-2 border border-gray-300 rounded text-sm"
+                          placeholder="Dr. John Smith"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Designation *
+                        </label>
+                        <input
+                          type="text"
+                          value={signatory.designation}
+                          onChange={(e) =>
+                            updateSignatory(
+                              index,
+                              'designation',
+                              e.target.value
+                            )
+                          }
+                          className="w-full p-2 border border-gray-300 rounded text-sm"
+                          placeholder="Laboratory Director"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Qualification
+                        </label>
+                        <input
+                          type="text"
+                          value={signatory.qualification}
+                          onChange={(e) =>
+                            updateSignatory(
+                              index,
+                              'qualification',
+                              e.target.value
+                            )
+                          }
+                          className="w-full p-2 border border-gray-300 rounded text-sm"
+                          placeholder="MD, Pathologist"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          License Number
+                        </label>
+                        <input
+                          type="text"
+                          value={signatory.licenseNumber}
+                          onChange={(e) =>
+                            updateSignatory(
+                              index,
+                              'licenseNumber',
+                              e.target.value
+                            )
+                          }
+                          className="w-full p-2 border border-gray-300 rounded text-sm"
+                          placeholder="MED-12345"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Signature Image
+                      </label>
+                      <div className="flex items-center space-x-3">
+                        {signatory.signatureImage ? (
+                          <div className="relative">
+                            <img
+                              src={signatory.signatureImage}
+                              alt={`${signatory.name}'s signature`}
+                              className="h-12 object-contain border rounded"
+                            />
+                            <button
+                              onClick={() => handleRemoveSignature(index)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="h-12 w-32 border border-dashed border-gray-300 rounded flex items-center justify-center">
+                            <span className="text-xs text-gray-400">
+                              No signature
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <input
+                            ref={(el) => {
+                              signatureFileInputs.current[index] = el;
+                            }}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleSignatureUpload(index, e)}
+                            className="w-full p-1 border border-gray-300 rounded text-xs"
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Upload signature image (transparent PNG recommended)
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {signatories.length === 0 && (
+                <div className="text-center py-6 border border-dashed border-gray-300 rounded-lg">
+                  <p className="text-gray-500 text-sm">
+                    No signatories added yet.
+                  </p>
+                  <p className="text-gray-400 text-xs mt-1">
+                    Click "Add Signatory" to add authorized signatories to your
+                    reports.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Design Settings, Layout Options, Live Preview */}
+        <div className="space-y-6">
           {/* Design Settings */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
@@ -396,10 +635,8 @@ export const ReportCustomization = () => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Layout Options */}
-        <div className="space-y-6">
+          {/* Layout Options */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
               Layout Options
@@ -524,7 +761,6 @@ export const ReportCustomization = () => {
             </div>
           </div>
 
-          {/* Live Preview */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
               Live Preview
@@ -534,39 +770,148 @@ export const ReportCustomization = () => {
                 className="p-4 text-white rounded-t-lg"
                 style={{ backgroundColor: customization.headerColor }}
               >
-                <div className="flex items-center space-x-3">
-                  {customization.labLogo && (
-                    <img
-                      src={customization.labLogo}
-                      alt="Lab Logo"
-                      className="h-12 w-12 object-contain bg-white rounded p-1"
-                    />
-                  )}
-                  <div>
-                    <h4 className="font-bold text-lg">
-                      {customization.labName}
-                    </h4>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    {customization.labLogo && (
+                      <img
+                        src={customization.labLogo}
+                        alt="Lab Logo"
+                        className="h-12 w-12 object-contain bg-white rounded p-1"
+                      />
+                    )}
+                    <div>
+                      <h4 className="font-bold text-lg">
+                        {customization.labName || 'Your Lab Name'}
+                      </h4>
+                      <p className="text-white/80 text-sm">
+                        {customization.labAddress || 'Lab Address Here'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white/90 text-sm">
+                      {customization.labPhone || '+1 234 567 890'}
+                    </p>
                     <p className="text-white/80 text-sm">
-                      {customization.labAddress}
+                      {customization.labEmail || 'contact@lab.com'}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="p-4 border-b">
-                <p className="text-gray-600 text-sm">
-                  Patient: John Doe • Report ID: RPT-12345
-                </p>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-600 text-sm font-medium">
+                      Patient: John Doe • Report ID: RPT-12345
+                    </p>
+                    <p className="text-gray-500 text-xs mt-1">
+                      Collection Date: {new Date().toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-gray-500 text-xs">
+                      Generated: {new Date().toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="p-4">
-                <p className="text-xs text-gray-500">
-                  Preview of your report header with current customization
+                <div className="mb-4">
+                  <h5 className="font-semibold text-gray-700 text-sm mb-2">
+                    Test Results Preview
+                  </h5>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">
+                        Complete Blood Count
+                      </span>
+                      <span
+                        className="font-medium"
+                        style={{ color: customization.accentColor }}
+                      >
+                        Completed
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Lipid Profile</span>
+                      <span
+                        className="font-medium"
+                        style={{ color: customization.accentColor }}
+                      >
+                        Completed
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mb-4">
+                  This is a preview of how your report will look with current
+                  settings.
                 </p>
               </div>
-              <div className="p-2 bg-gray-50 border-t text-center">
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-xs text-gray-500">
-                    Powered by LabSphere
-                  </span>
+              <div className="p-4 bg-gray-50 border-t">
+                {/* Footer Preview with Inline Signatures */}
+                <div className="mb-3">
+                  <div className="flex flex-row items-start justify-between gap-4">
+                    {customization.signatories &&
+                    customization.signatories.length > 0 ? (
+                      customization.signatories.slice(0, 3).map((sig, idx) => (
+                        <div key={idx} className="flex-1 text-center">
+                          <div className="h-8 mb-1 flex items-center justify-center">
+                            {sig.signatureImage ? (
+                              <img
+                                src={sig.signatureImage}
+                                alt="Signature"
+                                className="h-8 mx-auto object-contain"
+                              />
+                            ) : (
+                              <div className="w-16 h-px bg-gray-300"></div>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-600 font-medium truncate">
+                            {sig.name || 'Dr. John Smith'}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {sig.designation || 'Laboratory Director'}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex-1 text-center">
+                        <div className="h-8 mb-1 flex items-center justify-center">
+                          <div className="w-16 h-px bg-gray-300"></div>
+                        </div>
+                        <p className="text-xs text-gray-600 font-medium">
+                          Authorized Signatory
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Laboratory Director
+                        </p>
+                      </div>
+                    )}
+                    {customization.includeQRCode && (
+                      <div className="text-center">
+                        <div className="w-10 h-10 bg-white border rounded flex items-center justify-center mx-auto mb-1">
+                          <div className="text-center">
+                            <div className="text-[6px] text-gray-400">QR</div>
+                          </div>
+                        </div>
+                        <p className="text-[8px] text-gray-500">
+                          Scan to Verify
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="text-center pt-3 border-t">
+                  <p className="text-xs text-gray-500 truncate">
+                    {customization.footerText ||
+                      'This report is generated electronically and valid without signature'}
+                  </p>
+                  {customization.showWatermark && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      Powered by LabSphere • www.labsphere.com
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
