@@ -9,6 +9,15 @@ import {
   useEffect,
 } from 'react';
 
+// Define Signatory interface
+export interface Signatory {
+  name: string;
+  designation: string;
+  qualification?: string;
+  licenseNumber?: string;
+  signatureImage?: string;
+}
+
 export interface ReportCustomization {
   labName: string;
   labLogo: string;
@@ -26,6 +35,7 @@ export interface ReportCustomization {
   pageSize: 'a4' | 'letter';
   fontSize: 'small' | 'medium' | 'large';
   printMargins: 'narrow' | 'normal' | 'wide';
+  signatories: Signatory[]; // Add this line
 }
 
 interface ReportContextType {
@@ -38,6 +48,7 @@ interface ReportContextType {
   setPreviewMode: (mode: boolean) => void;
 }
 
+// Update defaultCustomization to include signatories
 const defaultCustomization: ReportCustomization = {
   labName: 'Your Lab Name',
   labLogo: '',
@@ -56,6 +67,16 @@ const defaultCustomization: ReportCustomization = {
   pageSize: 'a4',
   fontSize: 'medium',
   printMargins: 'normal',
+  signatories: [
+    // Add this default signatory
+    {
+      name: 'Dr. John Smith',
+      designation: 'Laboratory Director',
+      qualification: 'MD, Pathologist',
+      licenseNumber: 'MED-12345',
+      signatureImage: '',
+    },
+  ],
 };
 
 export const ReportContext = createContext<ReportContextType | undefined>(
@@ -72,15 +93,18 @@ export const ReportProvider = ({ children }: { children: ReactNode }) => {
     loadCustomization();
   }, []);
 
+  // In your ReportContext.tsx, update the loadCustomization function:
   const loadCustomization = async () => {
     try {
       const response = await fetch('/api/report-customization');
       if (response.ok) {
         const data = await response.json();
-        if (data.customization?.settings) {
+        if (data.success && data.customization) {
+          // Extract settings from the customization object
+          const loadedSettings = data.customization.settings;
           setCustomization({
             ...defaultCustomization,
-            ...data.customization.settings,
+            ...loadedSettings,
           });
         }
       }
@@ -128,7 +152,11 @@ export const ReportProvider = ({ children }: { children: ReactNode }) => {
       const response = await fetch('/api/reports/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ patientId, bookingId }),
+        body: JSON.stringify({
+          patientId,
+          bookingId,
+          customization, // Pass customization settings including signatories
+        }),
       });
 
       const data = await response.json();
