@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   // Check for env vars during build
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
   ) {
     // During build, return a dummy response
     if (process.env.NODE_ENV === 'production') {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const { createClient } = await import('@supabase/supabase-js');
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!
   );
   const { phone } = await req.json();
   const { error } = await supabase.auth.signInWithOtp({

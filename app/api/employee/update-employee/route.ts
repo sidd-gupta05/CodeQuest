@@ -5,7 +5,7 @@ export async function PUT(request: NextRequest) {
   const { createClient } = await import('@supabase/supabase-js');
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!
   );
   try {
     const { id, name, role, department, monthlySalary, isFieldCollector } =

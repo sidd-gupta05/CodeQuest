@@ -10,12 +10,12 @@ COPY package*.json ./
 RUN npm ci
 
 COPY prisma ./prisma
-RUN npx prisma generate --no-engine
+RUN npx prisma generate
 COPY . .
 
 # Adding Build requirements environment variables
 ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
 ARG NEXT_PUBLIC_RAZORPAY_KEY_ID
 ARG NEXT_PUBLIC_SITE_URL
 ARG RAZORPAY_KEY_ID
