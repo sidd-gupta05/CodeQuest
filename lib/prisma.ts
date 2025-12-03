@@ -1,16 +1,21 @@
-import { PrismaClient } from './prisma/generated/client'
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+import { PrismaClient } from '../prisma/generated/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient;
 };
 
-// Fix: Add proper initialization
-export const db =
-  globalForPrisma.prisma ??
-  (() => {
-    console.log('Creating new PrismaClient instance');
-    return new PrismaClient();
-  })();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = db;
-}
+const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    adapter,
+    log: ['query', 'info', 'warn', 'error'],
+  });
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+
+export { prisma as db };
