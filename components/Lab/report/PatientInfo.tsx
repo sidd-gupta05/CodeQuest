@@ -20,106 +20,106 @@ export const PatientInfo = ({ patient, booking }: any) => {
   };
 
   return (
-    <div className="p-6 border-b print:p-4">
-      <h3 className="text-lg font-semibold mb-6 text-gray-800 print:text-base">
+    <div className="p-4 border-b print:p-3 font-inter">
+      {/* <h3 className="text-base font-semibold mb-4 text-gray-800 print:text-sm">
         PATIENT INFORMATION
-      </h3>
+      </h3> */}
 
       <div className="flex flex-row justify-between">
         {/* First Section - Patient Details */}
-        <div className="flex-1 pr-6 space-y-4">
-          {/* Patient Name - Keep as before */}
+        <div className="flex-1 pr-4 space-y-0.5 ">
+          {/* Patient Name */}
           <div>
-            <p className="text-gray-800 font-semibold text-lg">
+            <p className="text-gray-800 font-bold text-2xl leading-tight">
               {patient.firstName} {patient.lastName}
             </p>
           </div>
 
-          <div className="space-y-4">
-            {/* Age / Gender - Inline */}
+          <div className="">
+            {/* Age / Gender */}
             <div>
-              <span className="font-medium text-gray-600 text-sm">
+              <span className="font-medium text-gray-600 text-xs">
                 Age / Gender :{' '}
               </span>
-              <span className="text-gray-800 text-sm">
+              <span className="text-gray-800 text-xs">
                 {patient.age || calculateAge(patient.dateOfBirth) || 'N/A'} /{' '}
                 {patient.gender || 'N/A'}
               </span>
             </div>
 
-            {/* Referred By - Inline */}
+            {/* Referred By */}
             <div>
-              <span className="font-medium text-gray-600 text-sm">
+              <span className="font-medium text-gray-600 text-xs">
                 Referred By :{' '}
               </span>
-              <span className="text-gray-800 text-sm">
+              <span className="text-gray-800 text-xs">
                 {booking.referredBy || booking.doctorName || 'N/A'}
               </span>
             </div>
 
-            {/* Phone - Inline */}
-            <div>
-              <span className="font-medium text-gray-600 text-sm">
+            {/* Phone */}
+            {/* <div>
+              <span className="font-medium text-gray-600 text-xs">
                 Phone :{' '}
               </span>
-              <span className="text-gray-800 text-sm">
+              <span className="text-gray-800 text-xs">
                 {patient.phone || 'N/A'}
               </span>
-            </div>
+            </div> */}
 
-            {/* Patient ID - Inline */}
+            {/* Patient ID */}
             <div>
-              <span className="font-medium text-gray-600 text-sm">
+              <span className="font-medium text-gray-600 text-xs">
                 Patient ID :{' '}
               </span>
-              <span className="text-gray-800 text-sm font-mono">
+              <span className="text-gray-800 text-xs font-mono leading-tight">
                 {patient.id}
               </span>
             </div>
 
-            {/* Address - Inline */}
+            {/* Address */}
             {patient.address && (
               <div>
-                <span className="font-medium text-gray-600 text-sm">
+                <span className="font-medium text-gray-600 text-xs">
                   Address :{' '}
                 </span>
-                <span className="text-gray-800 text-sm">{patient.address}</span>
+                <span className="text-gray-800 text-xs">{patient.address}</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Vertical Separator */}
-        <div className="w-px bg-gray-300 mx-2" />
+        <div className="w-px bg-gray-300 mx-1" />
 
         {/* Second Section - Barcode & Dates */}
-        <div className="flex-1 px-6 flex flex-col items-center">
+        <div className="flex-1 px-4 flex flex-col items-center">
           {/* Barcode Placeholder */}
-          <div className="mb-6 p-2 border border-gray-300 bg-white rounded">
-            <div className="h-16 w-48 bg-gray-100 flex items-center justify-center">
-              <span className="text-gray-500 text-xs font-mono">
+          <div className="mb-4 p-2 border border-gray-300 bg-white rounded">
+            <div className="h-14 w-40 bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-500 text-xs font-mono leading-tight">
                 BARCODE PLACEHOLDER
               </span>
             </div>
           </div>
 
-          <div className="space-y-4 w-full">
-            {/* Collection Date - Inline */}
+          <div className="space-y-1 w-full">
+            {/* Collection Date */}
             <div className="text-center">
-              <span className="font-medium text-gray-600 text-sm">
+              <span className="font-medium text-gray-600 text-xs">
                 Collection Date :{' '}
               </span>
-              <span className="text-gray-800 text-sm">
+              <span className="text-gray-800 text-xs">
                 {formatDate(booking.date)}
               </span>
             </div>
 
-            {/* Report Date - Inline */}
+            {/* Report Date */}
             <div className="text-center">
-              <span className="font-medium text-gray-600 text-sm">
+              <span className="font-medium text-gray-600 text-xs">
                 Report Date :{' '}
               </span>
-              <span className="text-gray-800 text-sm">
+              <span className="text-gray-800 text-xs">
                 {formatDate(new Date().toISOString())}
               </span>
             </div>
@@ -127,13 +127,13 @@ export const PatientInfo = ({ patient, booking }: any) => {
         </div>
 
         {/* Vertical Separator */}
-        <div className="w-px bg-gray-300 mx-2" />
+        <div className="w-px bg-gray-300 mx-1" />
 
         {/* Third Section - QR Code */}
-        <div className="flex-1 pl-6 flex flex-col items-center justify-center">
+        <div className="flex-1 pl-4 flex flex-col items-center justify-center">
           <div className="p-2 border border-gray-300 bg-white rounded">
-            <div className="h-32 w-32 bg-gray-100 flex items-center justify-center">
-              <span className="text-gray-500 text-xs text-center">
+            <div className="h-28 w-28 bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-500 text-xs text-center leading-tight">
                 QR CODE
                 <br />
                 PLACEHOLDER
@@ -142,27 +142,6 @@ export const PatientInfo = ({ patient, booking }: any) => {
           </div>
         </div>
       </div>
-
-      {/* Status Section - Keep commented part as is */}
-      {/* <div>
-          <label className="font-medium text-gray-600 block mb-1">
-            Booking ID
-          </label>
-          <p className="text-gray-800 font-mono">{booking.bookingId}</p>
-        </div> */}
-
-      {/* <div>
-          <label className="font-medium text-gray-600 block mb-1">Status</label>
-          <span
-            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-              booking.reportStatus === 'COMPLETED'
-                ? 'bg-green-100 text-green-800'
-                : 'bg-yellow-100 text-yellow-800'
-            }`}
-          >
-            {booking.reportStatus || 'Completed'}
-          </span>
-        </div> */}
     </div>
   );
 };

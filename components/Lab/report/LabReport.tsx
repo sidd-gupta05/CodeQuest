@@ -68,7 +68,7 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
           margin: 0;
           padding: 0;
           background: white;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         .print-container {
           width: 210mm;
@@ -108,8 +108,9 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
           <title>Laboratory Report - ${reportData?.patient?.firstName} ${reportData?.patient?.lastName}</title>
           <meta charset="utf-8">
           <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         </head>
-        <body class="bg-white">
+        <body class="bg-white font-inter">
           <div class="print-container">
             ${printContent.outerHTML}
           </div>
@@ -132,12 +133,9 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
 
   const handleDownloadPDF = async () => {
     try {
-      // For now, we'll use the print functionality as PDF generation is complex
-      // In a production environment, you would use a server-side PDF generation service
       const reportElement = reportRef.current;
       if (!reportElement) return;
 
-      // Create a print-friendly version
       const printContent = reportElement.cloneNode(true) as HTMLElement;
       const noPrintElements = printContent.querySelectorAll('.no-print');
       noPrintElements.forEach((el) => el.remove());
@@ -155,6 +153,7 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
             <title>Laboratory Report - ${reportData?.patient?.firstName} ${reportData?.patient?.lastName}</title>
             <meta charset="utf-8">
             <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
             <style>
               @page {
                 size: A4;
@@ -164,7 +163,7 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
                 margin: 0;
                 padding: 0;
                 background: white;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
               }
               .print-container {
                 width: 210mm;
@@ -183,13 +182,12 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
               }
             </style>
           </head>
-          <body class="bg-white">
+          <body class="bg-white font-inter">
             <div class="print-container">
               ${printContent.outerHTML}
             </div>
             <script>
               window.onload = function() {
-                // Use browser's "Save as PDF" functionality
                 window.print();
                 setTimeout(() => {
                   window.close();
@@ -246,13 +244,13 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
     <div className="min-h-screen bg-gray-100 p-4">
       {/* Print Controls - Hidden during print */}
       <div className="max-w-6xl mx-auto mb-6 no-print">
-        <div className="bg-white rounded-lg shadow-sm p-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 font-inter">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">
+              <h1 className="text-2xl font-bold text-gray-800 mb-0.5">
                 Laboratory Report
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 leading-tight">
                 Preview and print professional medical reports
               </p>
             </div>
@@ -279,7 +277,7 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
       {/* Report Container - A4 Size for Print */}
       <div
         ref={reportRef}
-        className="max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none print:max-w-none"
+        className="max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none print:max-w-none font-inter"
         style={{
           background: 'white',
           boxShadow:
@@ -312,9 +310,27 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
 
       {/* Global Print Styles */}
       <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+          font-family:
+            'Inter',
+            -apple-system,
+            BlinkMacSystemFont,
+            'Segoe UI',
+            Roboto,
+            sans-serif !important;
+        }
+
         @media print {
-          /* Hide everything except the report */
           body * {
+            font-family:
+              'Inter',
+              -apple-system,
+              BlinkMacSystemFont,
+              'Segoe UI',
+              Roboto,
+              sans-serif !important;
             visibility: hidden;
             margin: 0 !important;
             padding: 0 !important;
@@ -322,6 +338,13 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
 
           .max-w-\\[210mm\\],
           .max-w-\\[210mm\\] * {
+            font-family:
+              'Inter',
+              -apple-system,
+              BlinkMacSystemFont,
+              'Segoe UI',
+              Roboto,
+              sans-serif !important;
             visibility: visible;
           }
 
@@ -338,37 +361,31 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
             box-shadow: none !important;
           }
 
-          /* Remove all other content */
           .no-print,
           .no-print * {
             display: none !important;
           }
 
-          /* Ensure proper page breaks */
           .page-break {
             page-break-after: always !important;
             break-after: page !important;
           }
 
-          /* A4 page size */
           @page {
             size: A4;
             margin: 15mm;
           }
 
-          /* Force background colors in print */
           * {
             -webkit-print-color-adjust: exact !important;
             color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
 
-          /* Remove shadows for print */
           .shadow-lg {
             box-shadow: none !important;
           }
 
-          /* Ensure gradients work in print */
           .bg-gradient-to-br {
             background: linear-gradient(
               135deg,
@@ -378,7 +395,6 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
           }
         }
 
-        /* Ensure proper sizing for screen display */
         .max-w-\\[210mm\\] {
           width: 100%;
           max-width: 210mm;
