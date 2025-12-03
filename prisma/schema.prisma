@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"  
+  provider = "postgresql"
 }
 
 model User {
@@ -59,9 +59,9 @@ model Lab {
   timeSlots             LabTimeSlot[]
   user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   LeaveApplication      LeaveApplication[]
+  reportCustomization   ReportCustomization?
   schedules             Schedule[]
   tests                 tests[]              @relation("AvailableTests")
-  reportCustomization   ReportCustomization?
 
   @@map("labs")
 }
@@ -72,8 +72,7 @@ model ReportCustomization {
   settings  Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  lab Lab @relation(fields: [labId], references: [id], onDelete: Cascade)
+  lab       Lab      @relation(fields: [labId], references: [id], onDelete: Cascade)
 
   @@map("report_customizations")
 }
@@ -199,22 +198,22 @@ model booking_tests {
 model bookings {
   id             String           @id @default(uuid())
   bookingId      String           @unique
-  invoiceNumber  Int?             @default(autoincrement()) // new: POS invoice number
   patientId      String
   labId          String
   timeSlotId     String?
   date           DateTime
   status         BookingStatus    @default(PENDING)
   totalAmount    Float
-  discount       Float?           @default(0)    // new
-  tax            Float?           @default(0)    // new
-  netAmount      Float?                       // new: final amount after discount+tax
   qrCodeData     String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime
   reportStatus   ReportStatus     @default(BOOKING_PENDING)
   allocatedEmpId String?
   reportUrl      String?
+  discount       Float?           @default(0)
+  invoiceNumber  Int              @default(autoincrement())
+  netAmount      Float?
+  tax            Float?           @default(0)
   booking_addons booking_addons[]
   booking_tests  booking_tests[]
   allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])
@@ -222,12 +221,11 @@ model bookings {
   patients       Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
   lab_time_slots LabTimeSlot?     @relation(fields: [timeSlotId], references: [id])
   payments       Payment[]
+  tests          tests[]          @relation("BookingTests")
 
+  @@unique([labId, invoiceNumber])
   @@map("bookings")
-  @@unique([labId, invoiceNumber]) // ensure lab has independent sequence if desired (optional)
-  tests tests[] @relation("BookingTests")
 }
-
 
 model tests {
   id            String          @id
@@ -464,3 +462,5 @@ enum ReagentType {
   CATALOG
   CUSTOM
 }
+
+
