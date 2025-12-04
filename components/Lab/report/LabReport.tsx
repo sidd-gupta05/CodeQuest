@@ -9,7 +9,7 @@ import { TestResults } from './TestResults';
 import { ReportFooter } from './ReportFooter';
 // import { BackPage } from './BackPage';
 import { POSReport } from './POSReport';
-import { Download, Printer, RefreshCw, Receipt } from 'lucide-react';
+import { Download, Printer, RefreshCw } from 'lucide-react';
 
 interface LabReportProps {
   patientId: string;
@@ -22,7 +22,7 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
   const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [includePOS, setIncludePOS] = useState(false); 
+  const [includePOS] = useState(true);
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,50 +53,60 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
     const noPrintElements = printContent.querySelectorAll('.no-print');
     noPrintElements.forEach((el) => el.remove());
 
-    // Hide the POS report toggle button for printing
-    const posToggle = printContent.querySelector('.pos-toggle');
-    if (posToggle) posToggle.remove();
-
     const style = document.createElement('style');
     style.textContent = `
       @media print {
         @page {
           size: A4;
-          margin: 15mm;
+          margin: 0mm !important;
         }
+        
         body {
-          margin: 0;
-          padding: 0;
-          background: white;
-          font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          margin: 0 !important;
+          padding: 0 !important;
+          background: white !important;
+          font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
+        
+        @page {
+          margin: 0mm !important;
+        }
+        
         .print-container {
-          width: 210mm;
-          min-height: 297mm;
-          margin: 0 auto;
-          background: white;
+          width: 210mm !important;
+          min-height: 297mm !important;
+          margin: 0 auto !important;
+          padding: 0 !important;
+          background: white !important;
+          box-shadow: none !important;
         }
+        
         .page-break {
-          page-break-after: always;
-          break-after: page;
+          page-break-after: always !important;
+          break-after: page !important;
+          page-break-inside: avoid !important;
         }
+        
         * {
           -webkit-print-color-adjust: exact !important;
           color-adjust: exact !important;
           print-color-adjust: exact !important;
-        }
-        .shadow-lg {
           box-shadow: none !important;
         }
-        .bg-gradient-to-br {
-          background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf4 100%) !important;
+        
+        .shadow-lg {
+          box-shadow: none !important;
         }
       }
     `;
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
+      document.head.appendChild(style);
       window.print();
+      document.head.removeChild(style);
       return;
     }
 
@@ -104,22 +114,99 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
       <!DOCTYPE html>
       <html>
         <head>
+          <title>Laboratory Report</title>
           <meta charset="utf-8">
           <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+          <style>
+            @media print {
+              html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 100% !important;
+                width: 100% !important;
+                overflow: hidden !important;
+                background: white !important;
+              }
+              
+              @page {
+                margin: 0mm !important;
+                padding: 0mm !important;
+                size: A4 portrait;
+              }
+              
+              @page :first {
+                margin-top: 0mm !important;
+              }
+              
+              @page :left {
+                margin-left: 0mm !important;
+              }
+              
+              @page :right {
+                margin-right: 0mm !important;
+              }
+              
+              body * {
+                visibility: hidden;
+              }
+              
+              .print-content,
+              .print-content * {
+                visibility: visible;
+              }
+              
+              .print-content {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 210mm !important;
+                min-height: 297mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+              }
+              
+              .page-break {
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+              }
+              
+              .page-break:last-child {
+                page-break-after: auto !important;
+              }
+              
+              * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+            }
+          </style>
         </head>
-        <body class="bg-white font-inter">
-          <div class="print-container">
+        <body class="bg-white font-inter" style="margin: 0; padding: 0;">
+          <div class="print-content">
             ${printContent.outerHTML}
           </div>
           <script>
             window.onload = function() {
+              window.focus();
               setTimeout(function() {
                 window.print();
                 setTimeout(function() {
                   window.close();
-                }, 1000);
-              }, 500);
+                }, 100);
+              }, 250);
+            };
+            
+            window.onbeforeprint = function() {
+              document.body.classList.add('printing');
+            };
+            
+            window.onafterprint = function() {
+              document.body.classList.remove('printing');
+              window.close();
             };
           </script>
         </body>
@@ -138,10 +225,6 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
       const noPrintElements = printContent.querySelectorAll('.no-print');
       noPrintElements.forEach((el) => el.remove());
 
-      // Hide the POS report toggle button for PDF
-      const posToggle = printContent.querySelector('.pos-toggle');
-      if (posToggle) posToggle.remove();
-
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
         alert('Please allow popups to download PDF');
@@ -152,48 +235,71 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
         <!DOCTYPE html>
         <html>
           <head>
-            <title>Laboratory Report - ${reportData?.patient?.firstName} ${reportData?.patient?.lastName}</title>
+            <title>Laboratory Report</title>
             <meta charset="utf-8">
             <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
             <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
             <style>
-              @page {
-                size: A4;
-                margin: 15mm;
-              }
-              body {
-                margin: 0;
-                padding: 0;
-                background: white;
-                font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              }
-              .print-container {
-                width: 210mm;
-                min-height: 297mm;
-                margin: 0 auto;
-                background: white;
-              }
-              .page-break {
-                page-break-after: always;
-                break-after: page;
-              }
-              * {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-                print-color-adjust: exact !important;
+              @media print {
+                @page {
+                  margin: 0mm !important;
+                  size: A4;
+                }
+                
+                html, body {
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  background: white !important;
+                }
+                
+                @page {
+                  marks: none;
+                }
+                
+                body * {
+                  visibility: hidden;
+                }
+                
+                .print-content,
+                .print-content * {
+                  visibility: visible;
+                }
+                
+                .print-content {
+                  position: absolute !important;
+                  left: 0 !important;
+                  top: 0 !important;
+                  width: 210mm !important;
+                  min-height: 297mm !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  background: white !important;
+                }
+                
+                .page-break {
+                  page-break-after: always !important;
+                  break-after: page !important;
+                  page-break-inside: avoid !important;
+                }
+                
+                * {
+                  -webkit-print-color-adjust: exact !important;
+                  color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
               }
             </style>
           </head>
-          <body class="bg-white font-inter">
-            <div class="print-container">
+          <body class="bg-white font-inter" style="margin: 0; padding: 0;">
+            <div class="print-content">
               ${printContent.outerHTML}
             </div>
             <script>
               window.onload = function() {
                 window.print();
-                setTimeout(() => {
+                setTimeout(function() {
                   window.close();
-                }, 3000);
+                }, 1000);
               };
             </script>
           </body>
@@ -242,12 +348,34 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
 
   const { patient, booking, testResults } = reportData;
 
+  const testPages = testResults?.map((testResult: any, index: number) => (
+    <div
+      key={index}
+      className="min-h-[297mm] print:min-h-[297mm] print-page"
+      style={{
+        minHeight: '297mm',
+        pageBreakAfter:
+          index === testResults.length - 1 && !includePOS ? 'auto' : 'always',
+        breakAfter:
+          index === testResults.length - 1 && !includePOS ? 'auto' : 'page',
+      }}
+    >
+      <ReportHeader customization={customization} />
+      <PatientInfo patient={patient} booking={booking} />
+      <TestResults
+        booking={booking}
+        customization={customization}
+        testResults={[testResult]}
+      />
+      <ReportFooter customization={customization} />
+    </div>
+  ));
+
   return (
     <div className="min-h-screen bg-gray-100 p-4">
-      {/* Print Controls - Hidden during print */}
       <div className="max-w-6xl mx-auto mb-6 no-print">
         <div className="bg-white rounded-lg shadow-sm p-4 font-inter">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-800 mb-0.5">
                 Laboratory Report
@@ -273,71 +401,26 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
               </button>
             </div>
           </div>
-
-          {/* POS Report Toggle */}
-          <div className="border-t pt-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-gray-800">Include POS Bill</h3>
-                <p className="text-sm text-gray-600">
-                  Add a separate billing page with payment details and cashier
-                  signature
-                </p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={includePOS}
-                  onChange={(e) => setIncludePOS(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Report Container - A4 Size for Print */}
       <div
         ref={reportRef}
-        className="max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none print:max-w-none font-inter"
+        className="max-w-[210mm] mx-auto bg-white font-inter print:shadow-none print:max-w-none"
         style={{
           background: 'white',
-          boxShadow:
-            '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         }}
       >
-        {/* Front Page - Main Report */}
-        <div
-          className="min-h-[297mm] page-break print:min-h-[297mm]"
-          style={{ minHeight: '297mm', pageBreakAfter: 'always' }}
-        >
-          <ReportHeader customization={customization} />
-          <PatientInfo patient={patient} booking={booking} />
-          <TestResults
-            booking={booking}
-            customization={customization}
-            testResults={testResults}
-          />
-          <ReportFooter customization={customization} />
-        </div>
+        {testPages}
 
-        {/* Back Page - Fixed Content */}
-        {/*
-        <div
-          className="min-h-[297mm] page-break print:min-h-[297mm]"
-          style={{ minHeight: '297mm', pageBreakAfter: 'always' }}
-        >
-          <BackPage customization={customization} />
-        </div>
-        */}
-
-        {/* POS Report - Separate Page (only when included) */}
         {includePOS && (
           <div
-            className="min-h-[297mm] page-break print:min-h-[297mm]"
-            style={{ minHeight: '297mm' }}
+            className="min-h-[297mm] print:min-h-[297mm] print-page"
+            style={{
+              minHeight: '297mm',
+              pageBreakAfter: 'auto',
+              breakAfter: 'auto',
+            }}
           >
             <POSReport
               patient={patient}
@@ -348,7 +431,6 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
         )}
       </div>
 
-      {/* Global Print Styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -363,7 +445,24 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
         }
 
         @media print {
-          body * {
+          @page {
+            margin: 0mm !important;
+            padding: 0mm !important;
+            size: A4;
+            marks: none;
+          }
+
+          @page :first, @page :left, @page :right {
+            margin-top: 0mm !important;
+            margin-bottom: 0mm !important;
+            margin-left: 0mm !important;
+            margin-right: 0mm !important;
+          }
+
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
             font-family:
               'Inter',
               -apple-system,
@@ -371,34 +470,38 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
               'Segoe UI',
               Roboto,
               sans-serif !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            width: 210mm !important;
+            min-height: 297mm !important;
+          }
+
+          body * {
             visibility: hidden;
             margin: 0 !important;
             padding: 0 !important;
           }
 
           .max-w-\\[210mm\\],
-          .max-w-\\[210mm\\] * {
-            font-family:
-              'Inter',
-              -apple-system,
-              BlinkMacSystemFont,
-              'Segoe UI',
-              Roboto,
-              sans-serif !important;
-            visibility: visible;
+          .max-w-\\[210mm\\] *,
+          .print-page,
+          .print-page * {
+            visibility: visible !important;
+            box-shadow: none !important;
           }
 
           .max-w-\\[210mm\\] {
             position: absolute !important;
-            left: 50% !important;
+            left: 0 !important;
             top: 0 !important;
-            transform: translateX(-50%) !important;
             width: 210mm !important;
+            min-height: 297mm !important;
             max-width: none !important;
-            margin: 0 auto !important;
+            margin: 0 !important;
             padding: 0 !important;
             background: white !important;
             box-shadow: none !important;
+            overflow: visible !important;
           }
 
           .no-print,
@@ -406,38 +509,54 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
             display: none !important;
           }
 
-          .page-break {
+          .print-page {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            min-height: 297mm !important;
+            height: 297mm !important;
+            position: relative !important;
+          }
+
+          .print-page:not(:last-child) {
             page-break-after: always !important;
             break-after: page !important;
           }
 
-          @page {
-            size: A4;
-            margin: 15mm;
+          .print-page:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
           }
 
           * {
             -webkit-print-color-adjust: exact !important;
             color-adjust: exact !important;
             print-color-adjust: exact !important;
+            box-shadow: none !important;
           }
 
           .shadow-lg {
             box-shadow: none !important;
           }
 
-          .bg-gradient-to-br {
-            background: linear-gradient(
-              135deg,
-              #f0f9ff 0%,
-              #f0fdf4 100%
-            ) !important;
+          body::before,
+          body::after {
+            display: none !important;
+            content: none !important;
           }
         }
 
         .max-w-\\[210mm\\] {
           width: 100%;
           max-width: 210mm;
+          box-shadow:
+            0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        @media print {
+          .max-w-\\[210mm\\] {
+            box-shadow: none !important;
+          }
         }
       `}</style>
     </div>
