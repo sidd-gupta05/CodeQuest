@@ -27,163 +27,163 @@ export type AggregateBookings = {
 }
 
 export type BookingsAvgAggregateOutputType = {
-  invoiceNumber: number | null
   totalAmount: number | null
   discount: number | null
-  tax: number | null
+  invoiceNumber: number | null
   netAmount: number | null
+  tax: number | null
 }
 
 export type BookingsSumAggregateOutputType = {
-  invoiceNumber: number | null
   totalAmount: number | null
   discount: number | null
-  tax: number | null
+  invoiceNumber: number | null
   netAmount: number | null
+  tax: number | null
 }
 
 export type BookingsMinAggregateOutputType = {
   id: string | null
   bookingId: string | null
-  invoiceNumber: number | null
   patientId: string | null
   labId: string | null
   timeSlotId: string | null
   date: Date | null
   status: $Enums.BookingStatus | null
   totalAmount: number | null
-  discount: number | null
-  tax: number | null
-  netAmount: number | null
   qrCodeData: string | null
   createdAt: Date | null
   updatedAt: Date | null
   reportStatus: $Enums.ReportStatus | null
   allocatedEmpId: string | null
   reportUrl: string | null
+  discount: number | null
+  invoiceNumber: number | null
+  netAmount: number | null
+  tax: number | null
 }
 
 export type BookingsMaxAggregateOutputType = {
   id: string | null
   bookingId: string | null
-  invoiceNumber: number | null
   patientId: string | null
   labId: string | null
   timeSlotId: string | null
   date: Date | null
   status: $Enums.BookingStatus | null
   totalAmount: number | null
-  discount: number | null
-  tax: number | null
-  netAmount: number | null
   qrCodeData: string | null
   createdAt: Date | null
   updatedAt: Date | null
   reportStatus: $Enums.ReportStatus | null
   allocatedEmpId: string | null
   reportUrl: string | null
+  discount: number | null
+  invoiceNumber: number | null
+  netAmount: number | null
+  tax: number | null
 }
 
 export type BookingsCountAggregateOutputType = {
   id: number
   bookingId: number
-  invoiceNumber: number
   patientId: number
   labId: number
   timeSlotId: number
   date: number
   status: number
   totalAmount: number
-  discount: number
-  tax: number
-  netAmount: number
   qrCodeData: number
   createdAt: number
   updatedAt: number
   reportStatus: number
   allocatedEmpId: number
   reportUrl: number
+  discount: number
+  invoiceNumber: number
+  netAmount: number
+  tax: number
   _all: number
 }
 
 
 export type BookingsAvgAggregateInputType = {
-  invoiceNumber?: true
   totalAmount?: true
   discount?: true
-  tax?: true
+  invoiceNumber?: true
   netAmount?: true
+  tax?: true
 }
 
 export type BookingsSumAggregateInputType = {
-  invoiceNumber?: true
   totalAmount?: true
   discount?: true
-  tax?: true
+  invoiceNumber?: true
   netAmount?: true
+  tax?: true
 }
 
 export type BookingsMinAggregateInputType = {
   id?: true
   bookingId?: true
-  invoiceNumber?: true
   patientId?: true
   labId?: true
   timeSlotId?: true
   date?: true
   status?: true
   totalAmount?: true
-  discount?: true
-  tax?: true
-  netAmount?: true
   qrCodeData?: true
   createdAt?: true
   updatedAt?: true
   reportStatus?: true
   allocatedEmpId?: true
   reportUrl?: true
+  discount?: true
+  invoiceNumber?: true
+  netAmount?: true
+  tax?: true
 }
 
 export type BookingsMaxAggregateInputType = {
   id?: true
   bookingId?: true
-  invoiceNumber?: true
   patientId?: true
   labId?: true
   timeSlotId?: true
   date?: true
   status?: true
   totalAmount?: true
-  discount?: true
-  tax?: true
-  netAmount?: true
   qrCodeData?: true
   createdAt?: true
   updatedAt?: true
   reportStatus?: true
   allocatedEmpId?: true
   reportUrl?: true
+  discount?: true
+  invoiceNumber?: true
+  netAmount?: true
+  tax?: true
 }
 
 export type BookingsCountAggregateInputType = {
   id?: true
   bookingId?: true
-  invoiceNumber?: true
   patientId?: true
   labId?: true
   timeSlotId?: true
   date?: true
   status?: true
   totalAmount?: true
-  discount?: true
-  tax?: true
-  netAmount?: true
   qrCodeData?: true
   createdAt?: true
   updatedAt?: true
   reportStatus?: true
   allocatedEmpId?: true
   reportUrl?: true
+  discount?: true
+  invoiceNumber?: true
+  netAmount?: true
+  tax?: true
   _all?: true
 }
 
@@ -276,22 +276,22 @@ export type bookingsGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type BookingsGroupByOutputType = {
   id: string
   bookingId: string
-  invoiceNumber: number | null
   patientId: string
   labId: string
   timeSlotId: string | null
   date: Date
   status: $Enums.BookingStatus
   totalAmount: number
-  discount: number | null
-  tax: number | null
-  netAmount: number | null
   qrCodeData: string | null
   createdAt: Date
   updatedAt: Date
   reportStatus: $Enums.ReportStatus
   allocatedEmpId: string | null
   reportUrl: string | null
+  discount: number | null
+  invoiceNumber: number
+  netAmount: number | null
+  tax: number | null
   _count: BookingsCountAggregateOutputType | null
   _avg: BookingsAvgAggregateOutputType | null
   _sum: BookingsSumAggregateOutputType | null
@@ -320,22 +320,22 @@ export type bookingsWhereInput = {
   NOT?: Prisma.bookingsWhereInput | Prisma.bookingsWhereInput[]
   id?: Prisma.StringFilter<"bookings"> | string
   bookingId?: Prisma.StringFilter<"bookings"> | string
-  invoiceNumber?: Prisma.IntNullableFilter<"bookings"> | number | null
   patientId?: Prisma.StringFilter<"bookings"> | string
   labId?: Prisma.StringFilter<"bookings"> | string
   timeSlotId?: Prisma.StringNullableFilter<"bookings"> | string | null
   date?: Prisma.DateTimeFilter<"bookings"> | Date | string
   status?: Prisma.EnumBookingStatusFilter<"bookings"> | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFilter<"bookings"> | number
-  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
   qrCodeData?: Prisma.StringNullableFilter<"bookings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"bookings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"bookings"> | Date | string
   reportStatus?: Prisma.EnumReportStatusFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableFilter<"bookings"> | string | null
+  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
+  invoiceNumber?: Prisma.IntFilter<"bookings"> | number
+  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
+  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
   booking_addons?: Prisma.Booking_addonsListRelationFilter
   booking_tests?: Prisma.Booking_testsListRelationFilter
   allocatedEmp?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.employeeWhereInput> | null
@@ -349,22 +349,22 @@ export type bookingsWhereInput = {
 export type bookingsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   bookingId?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   patientId?: Prisma.SortOrder
   labId?: Prisma.SortOrder
   timeSlotId?: Prisma.SortOrderInput | Prisma.SortOrder
   date?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
-  discount?: Prisma.SortOrderInput | Prisma.SortOrder
-  tax?: Prisma.SortOrderInput | Prisma.SortOrder
-  netAmount?: Prisma.SortOrderInput | Prisma.SortOrder
   qrCodeData?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrderInput | Prisma.SortOrder
   reportUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  discount?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoiceNumber?: Prisma.SortOrder
+  netAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  tax?: Prisma.SortOrderInput | Prisma.SortOrder
   booking_addons?: Prisma.booking_addonsOrderByRelationAggregateInput
   booking_tests?: Prisma.booking_testsOrderByRelationAggregateInput
   allocatedEmp?: Prisma.employeeOrderByWithRelationInput
@@ -382,22 +382,22 @@ export type bookingsWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.bookingsWhereInput | Prisma.bookingsWhereInput[]
   OR?: Prisma.bookingsWhereInput[]
   NOT?: Prisma.bookingsWhereInput | Prisma.bookingsWhereInput[]
-  invoiceNumber?: Prisma.IntNullableFilter<"bookings"> | number | null
   patientId?: Prisma.StringFilter<"bookings"> | string
   labId?: Prisma.StringFilter<"bookings"> | string
   timeSlotId?: Prisma.StringNullableFilter<"bookings"> | string | null
   date?: Prisma.DateTimeFilter<"bookings"> | Date | string
   status?: Prisma.EnumBookingStatusFilter<"bookings"> | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFilter<"bookings"> | number
-  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
   qrCodeData?: Prisma.StringNullableFilter<"bookings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"bookings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"bookings"> | Date | string
   reportStatus?: Prisma.EnumReportStatusFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableFilter<"bookings"> | string | null
+  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
+  invoiceNumber?: Prisma.IntFilter<"bookings"> | number
+  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
+  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
   booking_addons?: Prisma.Booking_addonsListRelationFilter
   booking_tests?: Prisma.Booking_testsListRelationFilter
   allocatedEmp?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.employeeWhereInput> | null
@@ -411,22 +411,22 @@ export type bookingsWhereUniqueInput = Prisma.AtLeast<{
 export type bookingsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   bookingId?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   patientId?: Prisma.SortOrder
   labId?: Prisma.SortOrder
   timeSlotId?: Prisma.SortOrderInput | Prisma.SortOrder
   date?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
-  discount?: Prisma.SortOrderInput | Prisma.SortOrder
-  tax?: Prisma.SortOrderInput | Prisma.SortOrder
-  netAmount?: Prisma.SortOrderInput | Prisma.SortOrder
   qrCodeData?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrderInput | Prisma.SortOrder
   reportUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  discount?: Prisma.SortOrderInput | Prisma.SortOrder
+  invoiceNumber?: Prisma.SortOrder
+  netAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  tax?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.bookingsCountOrderByAggregateInput
   _avg?: Prisma.bookingsAvgOrderByAggregateInput
   _max?: Prisma.bookingsMaxOrderByAggregateInput
@@ -440,39 +440,39 @@ export type bookingsScalarWhereWithAggregatesInput = {
   NOT?: Prisma.bookingsScalarWhereWithAggregatesInput | Prisma.bookingsScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"bookings"> | string
   bookingId?: Prisma.StringWithAggregatesFilter<"bookings"> | string
-  invoiceNumber?: Prisma.IntNullableWithAggregatesFilter<"bookings"> | number | null
   patientId?: Prisma.StringWithAggregatesFilter<"bookings"> | string
   labId?: Prisma.StringWithAggregatesFilter<"bookings"> | string
   timeSlotId?: Prisma.StringNullableWithAggregatesFilter<"bookings"> | string | null
   date?: Prisma.DateTimeWithAggregatesFilter<"bookings"> | Date | string
   status?: Prisma.EnumBookingStatusWithAggregatesFilter<"bookings"> | $Enums.BookingStatus
   totalAmount?: Prisma.FloatWithAggregatesFilter<"bookings"> | number
-  discount?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
-  netAmount?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
   qrCodeData?: Prisma.StringNullableWithAggregatesFilter<"bookings"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"bookings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"bookings"> | Date | string
   reportStatus?: Prisma.EnumReportStatusWithAggregatesFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableWithAggregatesFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableWithAggregatesFilter<"bookings"> | string | null
+  discount?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
+  invoiceNumber?: Prisma.IntWithAggregatesFilter<"bookings"> | number
+  netAmount?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
+  tax?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
 }
 
 export type bookingsCreateInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -486,22 +486,22 @@ export type bookingsCreateInput = {
 export type bookingsUncheckedCreateInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -511,18 +511,18 @@ export type bookingsUncheckedCreateInput = {
 export type bookingsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -536,22 +536,22 @@ export type bookingsUpdateInput = {
 export type bookingsUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -561,60 +561,60 @@ export type bookingsUncheckedUpdateInput = {
 export type bookingsCreateManyInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
 }
 
 export type bookingsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BookingsListRelationFilter = {
@@ -640,80 +640,80 @@ export type bookingsLabIdInvoiceNumberCompoundUniqueInput = {
 export type bookingsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bookingId?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
   patientId?: Prisma.SortOrder
   labId?: Prisma.SortOrder
   timeSlotId?: Prisma.SortOrder
   date?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
   qrCodeData?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrder
   reportUrl?: Prisma.SortOrder
+  discount?: Prisma.SortOrder
+  invoiceNumber?: Prisma.SortOrder
+  netAmount?: Prisma.SortOrder
+  tax?: Prisma.SortOrder
 }
 
 export type bookingsAvgOrderByAggregateInput = {
-  invoiceNumber?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   discount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
+  invoiceNumber?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
+  tax?: Prisma.SortOrder
 }
 
 export type bookingsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bookingId?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
   patientId?: Prisma.SortOrder
   labId?: Prisma.SortOrder
   timeSlotId?: Prisma.SortOrder
   date?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
   qrCodeData?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrder
   reportUrl?: Prisma.SortOrder
+  discount?: Prisma.SortOrder
+  invoiceNumber?: Prisma.SortOrder
+  netAmount?: Prisma.SortOrder
+  tax?: Prisma.SortOrder
 }
 
 export type bookingsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bookingId?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
   patientId?: Prisma.SortOrder
   labId?: Prisma.SortOrder
   timeSlotId?: Prisma.SortOrder
   date?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
   qrCodeData?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrder
   reportUrl?: Prisma.SortOrder
+  discount?: Prisma.SortOrder
+  invoiceNumber?: Prisma.SortOrder
+  netAmount?: Prisma.SortOrder
+  tax?: Prisma.SortOrder
 }
 
 export type bookingsSumOrderByAggregateInput = {
-  invoiceNumber?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   discount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
+  invoiceNumber?: Prisma.SortOrder
   netAmount?: Prisma.SortOrder
+  tax?: Prisma.SortOrder
 }
 
 export type bookingsCreateNestedManyWithoutPatientsInput = {
@@ -975,18 +975,18 @@ export type bookingsUncheckedUpdateManyWithoutAllocatedEmpNestedInput = {
 export type bookingsCreateWithoutPatientsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -999,21 +999,21 @@ export type bookingsCreateWithoutPatientsInput = {
 export type bookingsUncheckedCreateWithoutPatientsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1052,39 +1052,39 @@ export type bookingsScalarWhereInput = {
   NOT?: Prisma.bookingsScalarWhereInput | Prisma.bookingsScalarWhereInput[]
   id?: Prisma.StringFilter<"bookings"> | string
   bookingId?: Prisma.StringFilter<"bookings"> | string
-  invoiceNumber?: Prisma.IntNullableFilter<"bookings"> | number | null
   patientId?: Prisma.StringFilter<"bookings"> | string
   labId?: Prisma.StringFilter<"bookings"> | string
   timeSlotId?: Prisma.StringNullableFilter<"bookings"> | string | null
   date?: Prisma.DateTimeFilter<"bookings"> | Date | string
   status?: Prisma.EnumBookingStatusFilter<"bookings"> | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFilter<"bookings"> | number
-  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
   qrCodeData?: Prisma.StringNullableFilter<"bookings"> | string | null
   createdAt?: Prisma.DateTimeFilter<"bookings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"bookings"> | Date | string
   reportStatus?: Prisma.EnumReportStatusFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableFilter<"bookings"> | string | null
+  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
+  invoiceNumber?: Prisma.IntFilter<"bookings"> | number
+  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
+  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
 }
 
 export type bookingsCreateWithoutLabsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1097,21 +1097,21 @@ export type bookingsCreateWithoutLabsInput = {
 export type bookingsUncheckedCreateWithoutLabsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1147,18 +1147,18 @@ export type bookingsUpdateManyWithWhereWithoutLabsInput = {
 export type bookingsCreateWithoutLab_time_slotsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1171,21 +1171,21 @@ export type bookingsCreateWithoutLab_time_slotsInput = {
 export type bookingsUncheckedCreateWithoutLab_time_slotsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1221,18 +1221,18 @@ export type bookingsUpdateManyWithWhereWithoutLab_time_slotsInput = {
 export type bookingsCreateWithoutPaymentsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1245,22 +1245,22 @@ export type bookingsCreateWithoutPaymentsInput = {
 export type bookingsUncheckedCreateWithoutPaymentsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutBookingsInput
@@ -1285,18 +1285,18 @@ export type bookingsUpdateToOneWithWhereWithoutPaymentsInput = {
 export type bookingsUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1309,22 +1309,22 @@ export type bookingsUpdateWithoutPaymentsInput = {
 export type bookingsUncheckedUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1333,18 +1333,18 @@ export type bookingsUncheckedUpdateWithoutPaymentsInput = {
 export type bookingsCreateWithoutBooking_addonsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
   labs: Prisma.LabCreateNestedOneWithoutBookingsInput
@@ -1357,22 +1357,22 @@ export type bookingsCreateWithoutBooking_addonsInput = {
 export type bookingsUncheckedCreateWithoutBooking_addonsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutBookingsInput
@@ -1397,18 +1397,18 @@ export type bookingsUpdateToOneWithWhereWithoutBooking_addonsInput = {
 export type bookingsUpdateWithoutBooking_addonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
   labs?: Prisma.LabUpdateOneRequiredWithoutBookingsNestedInput
@@ -1421,22 +1421,22 @@ export type bookingsUpdateWithoutBooking_addonsInput = {
 export type bookingsUncheckedUpdateWithoutBooking_addonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1445,18 +1445,18 @@ export type bookingsUncheckedUpdateWithoutBooking_addonsInput = {
 export type bookingsCreateWithoutBooking_testsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
   labs: Prisma.LabCreateNestedOneWithoutBookingsInput
@@ -1469,22 +1469,22 @@ export type bookingsCreateWithoutBooking_testsInput = {
 export type bookingsUncheckedCreateWithoutBooking_testsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutBookingsInput
@@ -1509,18 +1509,18 @@ export type bookingsUpdateToOneWithWhereWithoutBooking_testsInput = {
 export type bookingsUpdateWithoutBooking_testsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
   labs?: Prisma.LabUpdateOneRequiredWithoutBookingsNestedInput
@@ -1533,22 +1533,22 @@ export type bookingsUpdateWithoutBooking_testsInput = {
 export type bookingsUncheckedUpdateWithoutBooking_testsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1557,18 +1557,18 @@ export type bookingsUncheckedUpdateWithoutBooking_testsInput = {
 export type bookingsCreateWithoutTestsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1581,22 +1581,22 @@ export type bookingsCreateWithoutTestsInput = {
 export type bookingsUncheckedCreateWithoutTestsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1626,18 +1626,18 @@ export type bookingsUpdateManyWithWhereWithoutTestsInput = {
 export type bookingsCreateWithoutAllocatedEmpInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   labs: Prisma.LabCreateNestedOneWithoutBookingsInput
@@ -1650,21 +1650,21 @@ export type bookingsCreateWithoutAllocatedEmpInput = {
 export type bookingsUncheckedCreateWithoutAllocatedEmpInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1700,38 +1700,38 @@ export type bookingsUpdateManyWithWhereWithoutAllocatedEmpInput = {
 export type bookingsCreateManyPatientsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
 }
 
 export type bookingsUpdateWithoutPatientsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1744,21 +1744,21 @@ export type bookingsUpdateWithoutPatientsInput = {
 export type bookingsUncheckedUpdateWithoutPatientsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1768,58 +1768,58 @@ export type bookingsUncheckedUpdateWithoutPatientsInput = {
 export type bookingsUncheckedUpdateManyWithoutPatientsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsCreateManyLabsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
 }
 
 export type bookingsUpdateWithoutLabsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1832,21 +1832,21 @@ export type bookingsUpdateWithoutLabsInput = {
 export type bookingsUncheckedUpdateWithoutLabsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1856,58 +1856,58 @@ export type bookingsUncheckedUpdateWithoutLabsInput = {
 export type bookingsUncheckedUpdateManyWithoutLabsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsCreateManyLab_time_slotsInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
 }
 
 export type bookingsUpdateWithoutLab_time_slotsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1920,21 +1920,21 @@ export type bookingsUpdateWithoutLab_time_slotsInput = {
 export type bookingsUncheckedUpdateWithoutLab_time_slotsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1944,38 +1944,38 @@ export type bookingsUncheckedUpdateWithoutLab_time_slotsInput = {
 export type bookingsUncheckedUpdateManyWithoutLab_time_slotsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsUpdateWithoutTestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1988,22 +1988,22 @@ export type bookingsUpdateWithoutTestsInput = {
 export type bookingsUncheckedUpdateWithoutTestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -2012,59 +2012,59 @@ export type bookingsUncheckedUpdateWithoutTestsInput = {
 export type bookingsUncheckedUpdateManyWithoutTestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsCreateManyAllocatedEmpInput = {
   id?: string
   bookingId: string
-  invoiceNumber?: number | null
   patientId: string
   labId: string
   timeSlotId?: string | null
   date: Date | string
   status?: $Enums.BookingStatus
   totalAmount: number
-  discount?: number | null
-  tax?: number | null
-  netAmount?: number | null
   qrCodeData?: string | null
   createdAt?: Date | string
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
+  discount?: number | null
+  invoiceNumber?: number
+  netAmount?: number | null
+  tax?: number | null
 }
 
 export type bookingsUpdateWithoutAllocatedEmpInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   labs?: Prisma.LabUpdateOneRequiredWithoutBookingsNestedInput
@@ -2077,21 +2077,21 @@ export type bookingsUpdateWithoutAllocatedEmpInput = {
 export type bookingsUncheckedUpdateWithoutAllocatedEmpInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -2101,21 +2101,21 @@ export type bookingsUncheckedUpdateWithoutAllocatedEmpInput = {
 export type bookingsUncheckedUpdateManyWithoutAllocatedEmpInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   bookingId?: Prisma.StringFieldUpdateOperationsInput | string
-  invoiceNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   patientId?: Prisma.StringFieldUpdateOperationsInput | string
   labId?: Prisma.StringFieldUpdateOperationsInput | string
   timeSlotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   qrCodeData?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 
@@ -2179,22 +2179,22 @@ export type BookingsCountOutputTypeCountTestsArgs<ExtArgs extends runtime.Types.
 export type bookingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   bookingId?: boolean
-  invoiceNumber?: boolean
   patientId?: boolean
   labId?: boolean
   timeSlotId?: boolean
   date?: boolean
   status?: boolean
   totalAmount?: boolean
-  discount?: boolean
-  tax?: boolean
-  netAmount?: boolean
   qrCodeData?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
+  discount?: boolean
+  invoiceNumber?: boolean
+  netAmount?: boolean
+  tax?: boolean
   booking_addons?: boolean | Prisma.bookings$booking_addonsArgs<ExtArgs>
   booking_tests?: boolean | Prisma.bookings$booking_testsArgs<ExtArgs>
   allocatedEmp?: boolean | Prisma.bookings$allocatedEmpArgs<ExtArgs>
@@ -2209,22 +2209,22 @@ export type bookingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 export type bookingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   bookingId?: boolean
-  invoiceNumber?: boolean
   patientId?: boolean
   labId?: boolean
   timeSlotId?: boolean
   date?: boolean
   status?: boolean
   totalAmount?: boolean
-  discount?: boolean
-  tax?: boolean
-  netAmount?: boolean
   qrCodeData?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
+  discount?: boolean
+  invoiceNumber?: boolean
+  netAmount?: boolean
+  tax?: boolean
   allocatedEmp?: boolean | Prisma.bookings$allocatedEmpArgs<ExtArgs>
   labs?: boolean | Prisma.LabDefaultArgs<ExtArgs>
   patients?: boolean | Prisma.PatientDefaultArgs<ExtArgs>
@@ -2234,22 +2234,22 @@ export type bookingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type bookingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   bookingId?: boolean
-  invoiceNumber?: boolean
   patientId?: boolean
   labId?: boolean
   timeSlotId?: boolean
   date?: boolean
   status?: boolean
   totalAmount?: boolean
-  discount?: boolean
-  tax?: boolean
-  netAmount?: boolean
   qrCodeData?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
+  discount?: boolean
+  invoiceNumber?: boolean
+  netAmount?: boolean
+  tax?: boolean
   allocatedEmp?: boolean | Prisma.bookings$allocatedEmpArgs<ExtArgs>
   labs?: boolean | Prisma.LabDefaultArgs<ExtArgs>
   patients?: boolean | Prisma.PatientDefaultArgs<ExtArgs>
@@ -2259,25 +2259,25 @@ export type bookingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type bookingsSelectScalar = {
   id?: boolean
   bookingId?: boolean
-  invoiceNumber?: boolean
   patientId?: boolean
   labId?: boolean
   timeSlotId?: boolean
   date?: boolean
   status?: boolean
   totalAmount?: boolean
-  discount?: boolean
-  tax?: boolean
-  netAmount?: boolean
   qrCodeData?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
+  discount?: boolean
+  invoiceNumber?: boolean
+  netAmount?: boolean
+  tax?: boolean
 }
 
-export type bookingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bookingId" | "invoiceNumber" | "patientId" | "labId" | "timeSlotId" | "date" | "status" | "totalAmount" | "discount" | "tax" | "netAmount" | "qrCodeData" | "createdAt" | "updatedAt" | "reportStatus" | "allocatedEmpId" | "reportUrl", ExtArgs["result"]["bookings"]>
+export type bookingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bookingId" | "patientId" | "labId" | "timeSlotId" | "date" | "status" | "totalAmount" | "qrCodeData" | "createdAt" | "updatedAt" | "reportStatus" | "allocatedEmpId" | "reportUrl" | "discount" | "invoiceNumber" | "netAmount" | "tax", ExtArgs["result"]["bookings"]>
 export type bookingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   booking_addons?: boolean | Prisma.bookings$booking_addonsArgs<ExtArgs>
   booking_tests?: boolean | Prisma.bookings$booking_testsArgs<ExtArgs>
@@ -2317,22 +2317,22 @@ export type $bookingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     bookingId: string
-    invoiceNumber: number | null
     patientId: string
     labId: string
     timeSlotId: string | null
     date: Date
     status: $Enums.BookingStatus
     totalAmount: number
-    discount: number | null
-    tax: number | null
-    netAmount: number | null
     qrCodeData: string | null
     createdAt: Date
     updatedAt: Date
     reportStatus: $Enums.ReportStatus
     allocatedEmpId: string | null
     reportUrl: string | null
+    discount: number | null
+    invoiceNumber: number
+    netAmount: number | null
+    tax: number | null
   }, ExtArgs["result"]["bookings"]>
   composites: {}
 }
@@ -2766,22 +2766,22 @@ export interface Prisma__bookingsClient<T, Null = never, ExtArgs extends runtime
 export interface bookingsFieldRefs {
   readonly id: Prisma.FieldRef<"bookings", 'String'>
   readonly bookingId: Prisma.FieldRef<"bookings", 'String'>
-  readonly invoiceNumber: Prisma.FieldRef<"bookings", 'Int'>
   readonly patientId: Prisma.FieldRef<"bookings", 'String'>
   readonly labId: Prisma.FieldRef<"bookings", 'String'>
   readonly timeSlotId: Prisma.FieldRef<"bookings", 'String'>
   readonly date: Prisma.FieldRef<"bookings", 'DateTime'>
   readonly status: Prisma.FieldRef<"bookings", 'BookingStatus'>
   readonly totalAmount: Prisma.FieldRef<"bookings", 'Float'>
-  readonly discount: Prisma.FieldRef<"bookings", 'Float'>
-  readonly tax: Prisma.FieldRef<"bookings", 'Float'>
-  readonly netAmount: Prisma.FieldRef<"bookings", 'Float'>
   readonly qrCodeData: Prisma.FieldRef<"bookings", 'String'>
   readonly createdAt: Prisma.FieldRef<"bookings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"bookings", 'DateTime'>
   readonly reportStatus: Prisma.FieldRef<"bookings", 'ReportStatus'>
   readonly allocatedEmpId: Prisma.FieldRef<"bookings", 'String'>
   readonly reportUrl: Prisma.FieldRef<"bookings", 'String'>
+  readonly discount: Prisma.FieldRef<"bookings", 'Float'>
+  readonly invoiceNumber: Prisma.FieldRef<"bookings", 'Int'>
+  readonly netAmount: Prisma.FieldRef<"bookings", 'Float'>
+  readonly tax: Prisma.FieldRef<"bookings", 'Float'>
 }
     
 

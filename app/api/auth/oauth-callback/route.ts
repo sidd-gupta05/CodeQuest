@@ -1,4 +1,5 @@
 // app/api/auth/oauth-callback/route.ts
+import { auth } from '@/app/auth';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
