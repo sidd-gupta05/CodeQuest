@@ -207,9 +207,9 @@ export type LabWhereInput = {
   timeSlots?: Prisma.LabTimeSlotListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   LeaveApplication?: Prisma.LeaveApplicationListRelationFilter
+  reportCustomization?: Prisma.XOR<Prisma.ReportCustomizationNullableScalarRelationFilter, Prisma.ReportCustomizationWhereInput> | null
   schedules?: Prisma.ScheduleListRelationFilter
   tests?: Prisma.TestsListRelationFilter
-  reportCustomization?: Prisma.XOR<Prisma.ReportCustomizationNullableScalarRelationFilter, Prisma.ReportCustomizationWhereInput> | null
 }
 
 export type LabOrderByWithRelationInput = {
@@ -229,9 +229,9 @@ export type LabOrderByWithRelationInput = {
   timeSlots?: Prisma.LabTimeSlotOrderByRelationAggregateInput
   user?: Prisma.UserOrderByWithRelationInput
   LeaveApplication?: Prisma.LeaveApplicationOrderByRelationAggregateInput
+  reportCustomization?: Prisma.ReportCustomizationOrderByWithRelationInput
   schedules?: Prisma.ScheduleOrderByRelationAggregateInput
   tests?: Prisma.testsOrderByRelationAggregateInput
-  reportCustomization?: Prisma.ReportCustomizationOrderByWithRelationInput
 }
 
 export type LabWhereUniqueInput = Prisma.AtLeast<{
@@ -254,9 +254,9 @@ export type LabWhereUniqueInput = Prisma.AtLeast<{
   timeSlots?: Prisma.LabTimeSlotListRelationFilter
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   LeaveApplication?: Prisma.LeaveApplicationListRelationFilter
+  reportCustomization?: Prisma.XOR<Prisma.ReportCustomizationNullableScalarRelationFilter, Prisma.ReportCustomizationWhereInput> | null
   schedules?: Prisma.ScheduleListRelationFilter
   tests?: Prisma.TestsListRelationFilter
-  reportCustomization?: Prisma.XOR<Prisma.ReportCustomizationNullableScalarRelationFilter, Prisma.ReportCustomizationWhereInput> | null
 }, "id" | "userId">
 
 export type LabOrderByWithAggregationInput = {
@@ -301,9 +301,9 @@ export type LabCreateInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateInput = {
@@ -322,9 +322,9 @@ export type LabUncheckedCreateInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabUpdateInput = {
@@ -343,9 +343,9 @@ export type LabUpdateInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateInput = {
@@ -364,9 +364,9 @@ export type LabUncheckedUpdateInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateManyInput = {
@@ -673,9 +673,9 @@ export type LabCreateWithoutUserInput = {
   lab_inventory?: Prisma.lab_inventoryCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutUserInput = {
@@ -693,9 +693,9 @@ export type LabUncheckedCreateWithoutUserInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutUserInput = {
@@ -729,9 +729,9 @@ export type LabUpdateWithoutUserInput = {
   lab_inventory?: Prisma.lab_inventoryUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutUserInput = {
@@ -749,9 +749,9 @@ export type LabUncheckedUpdateWithoutUserInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutReportCustomizationInput = {
@@ -865,9 +865,9 @@ export type LabCreateWithoutDetailsInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutDetailsInput = {
@@ -885,9 +885,9 @@ export type LabUncheckedCreateWithoutDetailsInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutDetailsInput = {
@@ -921,9 +921,9 @@ export type LabUpdateWithoutDetailsInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutDetailsInput = {
@@ -941,9 +941,9 @@ export type LabUncheckedUpdateWithoutDetailsInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutTimeSlotsInput = {
@@ -961,9 +961,9 @@ export type LabCreateWithoutTimeSlotsInput = {
   lab_inventory?: Prisma.lab_inventoryCreateNestedManyWithoutLabsInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutTimeSlotsInput = {
@@ -981,9 +981,9 @@ export type LabUncheckedCreateWithoutTimeSlotsInput = {
   details?: Prisma.LabDetailsUncheckedCreateNestedOneWithoutLabInput
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutTimeSlotsInput = {
@@ -1017,9 +1017,9 @@ export type LabUpdateWithoutTimeSlotsInput = {
   lab_inventory?: Prisma.lab_inventoryUpdateManyWithoutLabsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutTimeSlotsInput = {
@@ -1037,9 +1037,9 @@ export type LabUncheckedUpdateWithoutTimeSlotsInput = {
   details?: Prisma.LabDetailsUncheckedUpdateOneWithoutLabNestedInput
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutSchedulesInput = {
@@ -1058,8 +1058,8 @@ export type LabCreateWithoutSchedulesInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
-  tests?: Prisma.testsCreateNestedManyWithoutLabsInput
   reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
+  tests?: Prisma.testsCreateNestedManyWithoutLabsInput
 }
 
 export type LabUncheckedCreateWithoutSchedulesInput = {
@@ -1078,8 +1078,8 @@ export type LabUncheckedCreateWithoutSchedulesInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
-  tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
   reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
+  tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
 }
 
 export type LabCreateOrConnectWithoutSchedulesInput = {
@@ -1114,8 +1114,8 @@ export type LabUpdateWithoutSchedulesInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
-  tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
   reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
+  tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
 }
 
 export type LabUncheckedUpdateWithoutSchedulesInput = {
@@ -1134,8 +1134,8 @@ export type LabUncheckedUpdateWithoutSchedulesInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
-  tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
   reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
+  tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
 }
 
 export type LabCreateWithoutBookingsInput = {
@@ -1153,9 +1153,9 @@ export type LabCreateWithoutBookingsInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutBookingsInput = {
@@ -1173,9 +1173,9 @@ export type LabUncheckedCreateWithoutBookingsInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutBookingsInput = {
@@ -1209,9 +1209,9 @@ export type LabUpdateWithoutBookingsInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutBookingsInput = {
@@ -1229,9 +1229,9 @@ export type LabUncheckedUpdateWithoutBookingsInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutTestsInput = {
@@ -1250,8 +1250,8 @@ export type LabCreateWithoutTestsInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
-  schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
+  schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutTestsInput = {
@@ -1270,8 +1270,8 @@ export type LabUncheckedCreateWithoutTestsInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
-  schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
+  schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutTestsInput = {
@@ -1323,9 +1323,9 @@ export type LabCreateWithoutCustomReagentInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutCustomReagentInput = {
@@ -1343,9 +1343,9 @@ export type LabUncheckedCreateWithoutCustomReagentInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutCustomReagentInput = {
@@ -1379,9 +1379,9 @@ export type LabUpdateWithoutCustomReagentInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutCustomReagentInput = {
@@ -1399,9 +1399,9 @@ export type LabUncheckedUpdateWithoutCustomReagentInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutLab_inventoryInput = {
@@ -1419,9 +1419,9 @@ export type LabCreateWithoutLab_inventoryInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutLab_inventoryInput = {
@@ -1439,9 +1439,9 @@ export type LabUncheckedCreateWithoutLab_inventoryInput = {
   details?: Prisma.LabDetailsUncheckedCreateNestedOneWithoutLabInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutLab_inventoryInput = {
@@ -1475,9 +1475,9 @@ export type LabUpdateWithoutLab_inventoryInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutLab_inventoryInput = {
@@ -1495,9 +1495,9 @@ export type LabUncheckedUpdateWithoutLab_inventoryInput = {
   details?: Prisma.LabDetailsUncheckedUpdateOneWithoutLabNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutEmployeesInput = {
@@ -1515,9 +1515,9 @@ export type LabCreateWithoutEmployeesInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutEmployeesInput = {
@@ -1535,9 +1535,9 @@ export type LabUncheckedCreateWithoutEmployeesInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutEmployeesInput = {
@@ -1571,9 +1571,9 @@ export type LabUpdateWithoutEmployeesInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutEmployeesInput = {
@@ -1591,9 +1591,9 @@ export type LabUncheckedUpdateWithoutEmployeesInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutAttendancesInput = {
@@ -1611,9 +1611,9 @@ export type LabCreateWithoutAttendancesInput = {
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutAttendancesInput = {
@@ -1631,9 +1631,9 @@ export type LabUncheckedCreateWithoutAttendancesInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutAttendancesInput = {
@@ -1667,9 +1667,9 @@ export type LabUpdateWithoutAttendancesInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutAttendancesInput = {
@@ -1687,9 +1687,9 @@ export type LabUncheckedUpdateWithoutAttendancesInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabCreateWithoutLeaveApplicationInput = {
@@ -1707,9 +1707,9 @@ export type LabCreateWithoutLeaveApplicationInput = {
   lab_inventory?: Prisma.lab_inventoryCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotCreateNestedManyWithoutLabInput
   user: Prisma.UserCreateNestedOneWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleCreateNestedManyWithoutLabInput
   tests?: Prisma.testsCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationCreateNestedOneWithoutLabInput
 }
 
 export type LabUncheckedCreateWithoutLeaveApplicationInput = {
@@ -1727,9 +1727,9 @@ export type LabUncheckedCreateWithoutLeaveApplicationInput = {
   details?: Prisma.LabDetailsUncheckedCreateNestedOneWithoutLabInput
   lab_inventory?: Prisma.lab_inventoryUncheckedCreateNestedManyWithoutLabsInput
   timeSlots?: Prisma.LabTimeSlotUncheckedCreateNestedManyWithoutLabInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
   schedules?: Prisma.ScheduleUncheckedCreateNestedManyWithoutLabInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutLabsInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedCreateNestedOneWithoutLabInput
 }
 
 export type LabCreateOrConnectWithoutLeaveApplicationInput = {
@@ -1763,9 +1763,9 @@ export type LabUpdateWithoutLeaveApplicationInput = {
   lab_inventory?: Prisma.lab_inventoryUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutLeaveApplicationInput = {
@@ -1783,9 +1783,9 @@ export type LabUncheckedUpdateWithoutLeaveApplicationInput = {
   details?: Prisma.LabDetailsUncheckedUpdateOneWithoutLabNestedInput
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
+  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
   schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutLabsNestedInput
-  reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
 }
 
 export type LabUpdateWithoutTestsInput = {
@@ -1804,8 +1804,8 @@ export type LabUpdateWithoutTestsInput = {
   timeSlots?: Prisma.LabTimeSlotUpdateManyWithoutLabNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUpdateManyWithoutLabNestedInput
-  schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
   reportCustomization?: Prisma.ReportCustomizationUpdateOneWithoutLabNestedInput
+  schedules?: Prisma.ScheduleUpdateManyWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateWithoutTestsInput = {
@@ -1824,8 +1824,8 @@ export type LabUncheckedUpdateWithoutTestsInput = {
   lab_inventory?: Prisma.lab_inventoryUncheckedUpdateManyWithoutLabsNestedInput
   timeSlots?: Prisma.LabTimeSlotUncheckedUpdateManyWithoutLabNestedInput
   LeaveApplication?: Prisma.LeaveApplicationUncheckedUpdateManyWithoutLabNestedInput
-  schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
   reportCustomization?: Prisma.ReportCustomizationUncheckedUpdateOneWithoutLabNestedInput
+  schedules?: Prisma.ScheduleUncheckedUpdateManyWithoutLabNestedInput
 }
 
 export type LabUncheckedUpdateManyWithoutTestsInput = {
@@ -1958,9 +1958,9 @@ export type LabSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   timeSlots?: boolean | Prisma.Lab$timeSlotsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   LeaveApplication?: boolean | Prisma.Lab$LeaveApplicationArgs<ExtArgs>
+  reportCustomization?: boolean | Prisma.Lab$reportCustomizationArgs<ExtArgs>
   schedules?: boolean | Prisma.Lab$schedulesArgs<ExtArgs>
   tests?: boolean | Prisma.Lab$testsArgs<ExtArgs>
-  reportCustomization?: boolean | Prisma.Lab$reportCustomizationArgs<ExtArgs>
   _count?: boolean | Prisma.LabCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lab"]>
 
@@ -2007,9 +2007,9 @@ export type LabInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   timeSlots?: boolean | Prisma.Lab$timeSlotsArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   LeaveApplication?: boolean | Prisma.Lab$LeaveApplicationArgs<ExtArgs>
+  reportCustomization?: boolean | Prisma.Lab$reportCustomizationArgs<ExtArgs>
   schedules?: boolean | Prisma.Lab$schedulesArgs<ExtArgs>
   tests?: boolean | Prisma.Lab$testsArgs<ExtArgs>
-  reportCustomization?: boolean | Prisma.Lab$reportCustomizationArgs<ExtArgs>
   _count?: boolean | Prisma.LabCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LabIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2031,9 +2031,9 @@ export type $LabPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     timeSlots: Prisma.$LabTimeSlotPayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs>
     LeaveApplication: Prisma.$LeaveApplicationPayload<ExtArgs>[]
+    reportCustomization: Prisma.$ReportCustomizationPayload<ExtArgs> | null
     schedules: Prisma.$SchedulePayload<ExtArgs>[]
     tests: Prisma.$testsPayload<ExtArgs>[]
-    reportCustomization: Prisma.$ReportCustomizationPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2446,9 +2446,9 @@ export interface Prisma__LabClient<T, Null = never, ExtArgs extends runtime.Type
   timeSlots<T extends Prisma.Lab$timeSlotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lab$timeSlotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LabTimeSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   LeaveApplication<T extends Prisma.Lab$LeaveApplicationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lab$LeaveApplicationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportCustomization<T extends Prisma.Lab$reportCustomizationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lab$reportCustomizationArgs<ExtArgs>>): Prisma.Prisma__ReportCustomizationClient<runtime.Types.Result.GetResult<Prisma.$ReportCustomizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   schedules<T extends Prisma.Lab$schedulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lab$schedulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tests<T extends Prisma.Lab$testsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lab$testsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$testsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reportCustomization<T extends Prisma.Lab$reportCustomizationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lab$reportCustomizationArgs<ExtArgs>>): Prisma.Prisma__ReportCustomizationClient<runtime.Types.Result.GetResult<Prisma.$ReportCustomizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3068,6 +3068,25 @@ export type Lab$LeaveApplicationArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
+ * Lab.reportCustomization
+ */
+export type Lab$reportCustomizationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReportCustomization
+   */
+  select?: Prisma.ReportCustomizationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReportCustomization
+   */
+  omit?: Prisma.ReportCustomizationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportCustomizationInclude<ExtArgs> | null
+  where?: Prisma.ReportCustomizationWhereInput
+}
+
+/**
  * Lab.schedules
  */
 export type Lab$schedulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3113,25 +3132,6 @@ export type Lab$testsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   take?: number
   skip?: number
   distinct?: Prisma.TestsScalarFieldEnum | Prisma.TestsScalarFieldEnum[]
-}
-
-/**
- * Lab.reportCustomization
- */
-export type Lab$reportCustomizationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ReportCustomization
-   */
-  select?: Prisma.ReportCustomizationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ReportCustomization
-   */
-  omit?: Prisma.ReportCustomizationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ReportCustomizationInclude<ExtArgs> | null
-  where?: Prisma.ReportCustomizationWhereInput
 }
 
 /**

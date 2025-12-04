@@ -266,22 +266,22 @@ export type Booking_testsScalarFieldEnum = (typeof Booking_testsScalarFieldEnum)
 export const BookingsScalarFieldEnum = {
   id: 'id',
   bookingId: 'bookingId',
-  invoiceNumber: 'invoiceNumber',
   patientId: 'patientId',
   labId: 'labId',
   timeSlotId: 'timeSlotId',
   date: 'date',
   status: 'status',
   totalAmount: 'totalAmount',
-  discount: 'discount',
-  tax: 'tax',
-  netAmount: 'netAmount',
   qrCodeData: 'qrCodeData',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   reportStatus: 'reportStatus',
   allocatedEmpId: 'allocatedEmpId',
-  reportUrl: 'reportUrl'
+  reportUrl: 'reportUrl',
+  discount: 'discount',
+  invoiceNumber: 'invoiceNumber',
+  netAmount: 'netAmount',
+  tax: 'tax'
 } as const
 
 export type BookingsScalarFieldEnum = (typeof BookingsScalarFieldEnum)[keyof typeof BookingsScalarFieldEnum]

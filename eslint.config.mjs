@@ -5,7 +5,7 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierPlugin from 'eslint-plugin-prettier';
 import globals from 'globals';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 
 export default [
   {
@@ -79,7 +79,7 @@ export default [
       '@next/next': nextPlugin,
       prettier: prettierPlugin,
     },
-    eslintPluginPrettierRecommended,
+    eslintConfigPrettier,
     rules: {
       ...js.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
