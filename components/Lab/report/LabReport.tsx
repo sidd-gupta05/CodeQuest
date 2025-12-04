@@ -1,4 +1,3 @@
-//components/Lab/report/LabReport.tsx
 'use client';
 
 import { useReport } from '@/app/context/ReportContext';
@@ -8,8 +7,9 @@ import { ReportHeader } from './ReportHeader';
 import { PatientInfo } from './PatientInfo';
 import { TestResults } from './TestResults';
 import { ReportFooter } from './ReportFooter';
-import { BackPage } from './BackPage';
-import { Download, Printer, RefreshCw } from 'lucide-react';
+// import { BackPage } from './BackPage';
+import { POSReport } from './POSReport';
+import { Download, Printer, RefreshCw, Receipt } from 'lucide-react';
 
 interface LabReportProps {
   patientId: string;
@@ -22,6 +22,7 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
   const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [includePOS, setIncludePOS] = useState(false); 
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,18 +46,17 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
   }, [patientId, bookingId, generateReport]);
 
   const handlePrint = () => {
-    // Create a clean version of the report for printing
     const reportElement = reportRef.current;
     if (!reportElement) return;
 
-    // Create a clone of the report element
     const printContent = reportElement.cloneNode(true) as HTMLElement;
-
-    // Remove any elements with no-print class
     const noPrintElements = printContent.querySelectorAll('.no-print');
     noPrintElements.forEach((el) => el.remove());
 
-    // Add print-specific styles
+    // Hide the POS report toggle button for printing
+    const posToggle = printContent.querySelector('.pos-toggle');
+    if (posToggle) posToggle.remove();
+
     const style = document.createElement('style');
     style.textContent = `
       @media print {
@@ -96,7 +96,6 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      // Fallback to browser print
       window.print();
       return;
     }
@@ -105,7 +104,6 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Laboratory Report - ${reportData?.patient?.firstName} ${reportData?.patient?.lastName}</title>
           <meta charset="utf-8">
           <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -139,6 +137,10 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
       const printContent = reportElement.cloneNode(true) as HTMLElement;
       const noPrintElements = printContent.querySelectorAll('.no-print');
       noPrintElements.forEach((el) => el.remove());
+
+      // Hide the POS report toggle button for PDF
+      const posToggle = printContent.querySelector('.pos-toggle');
+      if (posToggle) posToggle.remove();
 
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
@@ -245,7 +247,7 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
       {/* Print Controls - Hidden during print */}
       <div className="max-w-6xl mx-auto mb-6 no-print">
         <div className="bg-white rounded-lg shadow-sm p-4 font-inter">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-800 mb-0.5">
                 Laboratory Report
@@ -269,6 +271,28 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
                 <Printer className="w-5 h-5" />
                 <span>Print Report</span>
               </button>
+            </div>
+          </div>
+
+          {/* POS Report Toggle */}
+          <div className="border-t pt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-gray-800">Include POS Bill</h3>
+                <p className="text-sm text-gray-600">
+                  Add a separate billing page with payment details and cashier
+                  signature
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includePOS}
+                  onChange={(e) => setIncludePOS(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
             </div>
           </div>
         </div>
@@ -300,12 +324,28 @@ const LabReport = ({ patientId, bookingId }: LabReportProps) => {
         </div>
 
         {/* Back Page - Fixed Content */}
+        {/*
         <div
           className="min-h-[297mm] page-break print:min-h-[297mm]"
-          style={{ minHeight: '297mm' }}
+          style={{ minHeight: '297mm', pageBreakAfter: 'always' }}
         >
           <BackPage customization={customization} />
         </div>
+        */}
+
+        {/* POS Report - Separate Page (only when included) */}
+        {includePOS && (
+          <div
+            className="min-h-[297mm] page-break print:min-h-[297mm]"
+            style={{ minHeight: '297mm' }}
+          >
+            <POSReport
+              patient={patient}
+              booking={booking}
+              customization={customization}
+            />
+          </div>
+        )}
       </div>
 
       {/* Global Print Styles */}
