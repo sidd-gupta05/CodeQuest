@@ -111,7 +111,7 @@ export const TestResults = ({ booking, customization, testResults }: any) => {
       </div>
 
       {/* Additional Services */}
-      {addons.length > 0 && (
+      {/* {addons.length > 0 && (
         <div className="mb-4">
           <h4
             className="font-semibold text-gray-700 mb-2 text-sm print:text-xs"
@@ -135,7 +135,7 @@ export const TestResults = ({ booking, customization, testResults }: any) => {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Interpretation */}
       {customization.includeInterpretation && (
