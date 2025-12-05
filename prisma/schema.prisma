@@ -210,10 +210,6 @@ model bookings {
   reportStatus   ReportStatus     @default(BOOKING_PENDING)
   allocatedEmpId String?
   reportUrl      String?
-  discount       Float?           @default(0)
-  invoiceNumber  Int              @default(autoincrement())
-  netAmount      Float?
-  tax            Float?           @default(0)
   booking_addons booking_addons[]
   booking_tests  booking_tests[]
   allocatedEmp   employee?        @relation(fields: [allocatedEmpId], references: [id])
@@ -223,7 +219,6 @@ model bookings {
   payments       Payment[]
   tests          tests[]          @relation("BookingTests")
 
-  @@unique([labId, invoiceNumber])
   @@map("bookings")
 }
 
@@ -462,5 +457,3 @@ enum ReagentType {
   CATALOG
   CUSTOM
 }
-
-

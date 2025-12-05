@@ -28,18 +28,10 @@ export type AggregateBookings = {
 
 export type BookingsAvgAggregateOutputType = {
   totalAmount: number | null
-  discount: number | null
-  invoiceNumber: number | null
-  netAmount: number | null
-  tax: number | null
 }
 
 export type BookingsSumAggregateOutputType = {
   totalAmount: number | null
-  discount: number | null
-  invoiceNumber: number | null
-  netAmount: number | null
-  tax: number | null
 }
 
 export type BookingsMinAggregateOutputType = {
@@ -57,10 +49,6 @@ export type BookingsMinAggregateOutputType = {
   reportStatus: $Enums.ReportStatus | null
   allocatedEmpId: string | null
   reportUrl: string | null
-  discount: number | null
-  invoiceNumber: number | null
-  netAmount: number | null
-  tax: number | null
 }
 
 export type BookingsMaxAggregateOutputType = {
@@ -78,10 +66,6 @@ export type BookingsMaxAggregateOutputType = {
   reportStatus: $Enums.ReportStatus | null
   allocatedEmpId: string | null
   reportUrl: string | null
-  discount: number | null
-  invoiceNumber: number | null
-  netAmount: number | null
-  tax: number | null
 }
 
 export type BookingsCountAggregateOutputType = {
@@ -99,28 +83,16 @@ export type BookingsCountAggregateOutputType = {
   reportStatus: number
   allocatedEmpId: number
   reportUrl: number
-  discount: number
-  invoiceNumber: number
-  netAmount: number
-  tax: number
   _all: number
 }
 
 
 export type BookingsAvgAggregateInputType = {
   totalAmount?: true
-  discount?: true
-  invoiceNumber?: true
-  netAmount?: true
-  tax?: true
 }
 
 export type BookingsSumAggregateInputType = {
   totalAmount?: true
-  discount?: true
-  invoiceNumber?: true
-  netAmount?: true
-  tax?: true
 }
 
 export type BookingsMinAggregateInputType = {
@@ -138,10 +110,6 @@ export type BookingsMinAggregateInputType = {
   reportStatus?: true
   allocatedEmpId?: true
   reportUrl?: true
-  discount?: true
-  invoiceNumber?: true
-  netAmount?: true
-  tax?: true
 }
 
 export type BookingsMaxAggregateInputType = {
@@ -159,10 +127,6 @@ export type BookingsMaxAggregateInputType = {
   reportStatus?: true
   allocatedEmpId?: true
   reportUrl?: true
-  discount?: true
-  invoiceNumber?: true
-  netAmount?: true
-  tax?: true
 }
 
 export type BookingsCountAggregateInputType = {
@@ -180,10 +144,6 @@ export type BookingsCountAggregateInputType = {
   reportStatus?: true
   allocatedEmpId?: true
   reportUrl?: true
-  discount?: true
-  invoiceNumber?: true
-  netAmount?: true
-  tax?: true
   _all?: true
 }
 
@@ -288,10 +248,6 @@ export type BookingsGroupByOutputType = {
   reportStatus: $Enums.ReportStatus
   allocatedEmpId: string | null
   reportUrl: string | null
-  discount: number | null
-  invoiceNumber: number
-  netAmount: number | null
-  tax: number | null
   _count: BookingsCountAggregateOutputType | null
   _avg: BookingsAvgAggregateOutputType | null
   _sum: BookingsSumAggregateOutputType | null
@@ -332,10 +288,6 @@ export type bookingsWhereInput = {
   reportStatus?: Prisma.EnumReportStatusFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableFilter<"bookings"> | string | null
-  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  invoiceNumber?: Prisma.IntFilter<"bookings"> | number
-  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
   booking_addons?: Prisma.Booking_addonsListRelationFilter
   booking_tests?: Prisma.Booking_testsListRelationFilter
   allocatedEmp?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.employeeWhereInput> | null
@@ -361,10 +313,6 @@ export type bookingsOrderByWithRelationInput = {
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrderInput | Prisma.SortOrder
   reportUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  discount?: Prisma.SortOrderInput | Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrderInput | Prisma.SortOrder
-  tax?: Prisma.SortOrderInput | Prisma.SortOrder
   booking_addons?: Prisma.booking_addonsOrderByRelationAggregateInput
   booking_tests?: Prisma.booking_testsOrderByRelationAggregateInput
   allocatedEmp?: Prisma.employeeOrderByWithRelationInput
@@ -378,7 +326,6 @@ export type bookingsOrderByWithRelationInput = {
 export type bookingsWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   bookingId?: string
-  labId_invoiceNumber?: Prisma.bookingsLabIdInvoiceNumberCompoundUniqueInput
   AND?: Prisma.bookingsWhereInput | Prisma.bookingsWhereInput[]
   OR?: Prisma.bookingsWhereInput[]
   NOT?: Prisma.bookingsWhereInput | Prisma.bookingsWhereInput[]
@@ -394,10 +341,6 @@ export type bookingsWhereUniqueInput = Prisma.AtLeast<{
   reportStatus?: Prisma.EnumReportStatusFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableFilter<"bookings"> | string | null
-  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  invoiceNumber?: Prisma.IntFilter<"bookings"> | number
-  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
   booking_addons?: Prisma.Booking_addonsListRelationFilter
   booking_tests?: Prisma.Booking_testsListRelationFilter
   allocatedEmp?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.employeeWhereInput> | null
@@ -406,7 +349,7 @@ export type bookingsWhereUniqueInput = Prisma.AtLeast<{
   lab_time_slots?: Prisma.XOR<Prisma.LabTimeSlotNullableScalarRelationFilter, Prisma.LabTimeSlotWhereInput> | null
   payments?: Prisma.PaymentListRelationFilter
   tests?: Prisma.TestsListRelationFilter
-}, "id" | "bookingId" | "labId_invoiceNumber">
+}, "id" | "bookingId">
 
 export type bookingsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -423,10 +366,6 @@ export type bookingsOrderByWithAggregationInput = {
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrderInput | Prisma.SortOrder
   reportUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  discount?: Prisma.SortOrderInput | Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrderInput | Prisma.SortOrder
-  tax?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.bookingsCountOrderByAggregateInput
   _avg?: Prisma.bookingsAvgOrderByAggregateInput
   _max?: Prisma.bookingsMaxOrderByAggregateInput
@@ -452,10 +391,6 @@ export type bookingsScalarWhereWithAggregatesInput = {
   reportStatus?: Prisma.EnumReportStatusWithAggregatesFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableWithAggregatesFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableWithAggregatesFilter<"bookings"> | string | null
-  discount?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
-  invoiceNumber?: Prisma.IntWithAggregatesFilter<"bookings"> | number
-  netAmount?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableWithAggregatesFilter<"bookings"> | number | null
 }
 
 export type bookingsCreateInput = {
@@ -469,10 +404,6 @@ export type bookingsCreateInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -498,10 +429,6 @@ export type bookingsUncheckedCreateInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -519,10 +446,6 @@ export type bookingsUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -548,10 +471,6 @@ export type bookingsUncheckedUpdateInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -573,10 +492,6 @@ export type bookingsCreateManyInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
 }
 
 export type bookingsUpdateManyMutationInput = {
@@ -590,10 +505,6 @@ export type bookingsUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsUncheckedUpdateManyInput = {
@@ -611,10 +522,6 @@ export type bookingsUncheckedUpdateManyInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type BookingsListRelationFilter = {
@@ -632,11 +539,6 @@ export type BookingsScalarRelationFilter = {
   isNot?: Prisma.bookingsWhereInput
 }
 
-export type bookingsLabIdInvoiceNumberCompoundUniqueInput = {
-  labId: string
-  invoiceNumber: number
-}
-
 export type bookingsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   bookingId?: Prisma.SortOrder
@@ -652,18 +554,10 @@ export type bookingsCountOrderByAggregateInput = {
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrder
   reportUrl?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
 }
 
 export type bookingsAvgOrderByAggregateInput = {
   totalAmount?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
 }
 
 export type bookingsMaxOrderByAggregateInput = {
@@ -681,10 +575,6 @@ export type bookingsMaxOrderByAggregateInput = {
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrder
   reportUrl?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
 }
 
 export type bookingsMinOrderByAggregateInput = {
@@ -702,18 +592,10 @@ export type bookingsMinOrderByAggregateInput = {
   reportStatus?: Prisma.SortOrder
   allocatedEmpId?: Prisma.SortOrder
   reportUrl?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
 }
 
 export type bookingsSumOrderByAggregateInput = {
   totalAmount?: Prisma.SortOrder
-  discount?: Prisma.SortOrder
-  invoiceNumber?: Prisma.SortOrder
-  netAmount?: Prisma.SortOrder
-  tax?: Prisma.SortOrder
 }
 
 export type bookingsCreateNestedManyWithoutPatientsInput = {
@@ -983,10 +865,6 @@ export type bookingsCreateWithoutPatientsInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1010,10 +888,6 @@ export type bookingsUncheckedCreateWithoutPatientsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1064,10 +938,6 @@ export type bookingsScalarWhereInput = {
   reportStatus?: Prisma.EnumReportStatusFilter<"bookings"> | $Enums.ReportStatus
   allocatedEmpId?: Prisma.StringNullableFilter<"bookings"> | string | null
   reportUrl?: Prisma.StringNullableFilter<"bookings"> | string | null
-  discount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  invoiceNumber?: Prisma.IntFilter<"bookings"> | number
-  netAmount?: Prisma.FloatNullableFilter<"bookings"> | number | null
-  tax?: Prisma.FloatNullableFilter<"bookings"> | number | null
 }
 
 export type bookingsCreateWithoutLabsInput = {
@@ -1081,10 +951,6 @@ export type bookingsCreateWithoutLabsInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1108,10 +974,6 @@ export type bookingsUncheckedCreateWithoutLabsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1155,10 +1017,6 @@ export type bookingsCreateWithoutLab_time_slotsInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1182,10 +1040,6 @@ export type bookingsUncheckedCreateWithoutLab_time_slotsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1229,10 +1083,6 @@ export type bookingsCreateWithoutPaymentsInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1257,10 +1107,6 @@ export type bookingsUncheckedCreateWithoutPaymentsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutBookingsInput
@@ -1293,10 +1139,6 @@ export type bookingsUpdateWithoutPaymentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1321,10 +1163,6 @@ export type bookingsUncheckedUpdateWithoutPaymentsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1341,10 +1179,6 @@ export type bookingsCreateWithoutBooking_addonsInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
   labs: Prisma.LabCreateNestedOneWithoutBookingsInput
@@ -1369,10 +1203,6 @@ export type bookingsUncheckedCreateWithoutBooking_addonsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutBookingsInput
@@ -1405,10 +1235,6 @@ export type bookingsUpdateWithoutBooking_addonsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
   labs?: Prisma.LabUpdateOneRequiredWithoutBookingsNestedInput
@@ -1433,10 +1259,6 @@ export type bookingsUncheckedUpdateWithoutBooking_addonsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1453,10 +1275,6 @@ export type bookingsCreateWithoutBooking_testsInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
   labs: Prisma.LabCreateNestedOneWithoutBookingsInput
@@ -1481,10 +1299,6 @@ export type bookingsUncheckedCreateWithoutBooking_testsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
   tests?: Prisma.testsUncheckedCreateNestedManyWithoutBookingsInput
@@ -1517,10 +1331,6 @@ export type bookingsUpdateWithoutBooking_testsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
   labs?: Prisma.LabUpdateOneRequiredWithoutBookingsNestedInput
@@ -1545,10 +1355,6 @@ export type bookingsUncheckedUpdateWithoutBooking_testsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
   tests?: Prisma.testsUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1565,10 +1371,6 @@ export type bookingsCreateWithoutTestsInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   allocatedEmp?: Prisma.employeeCreateNestedOneWithoutBookingsInput
@@ -1593,10 +1395,6 @@ export type bookingsUncheckedCreateWithoutTestsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1634,10 +1432,6 @@ export type bookingsCreateWithoutAllocatedEmpInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsCreateNestedManyWithoutBookingsInput
   labs: Prisma.LabCreateNestedOneWithoutBookingsInput
@@ -1661,10 +1455,6 @@ export type bookingsUncheckedCreateWithoutAllocatedEmpInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
   booking_addons?: Prisma.booking_addonsUncheckedCreateNestedManyWithoutBookingsInput
   booking_tests?: Prisma.booking_testsUncheckedCreateNestedManyWithoutBookingsInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutBookingsInput
@@ -1711,10 +1501,6 @@ export type bookingsCreateManyPatientsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
 }
 
 export type bookingsUpdateWithoutPatientsInput = {
@@ -1728,10 +1514,6 @@ export type bookingsUpdateWithoutPatientsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1755,10 +1537,6 @@ export type bookingsUncheckedUpdateWithoutPatientsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1779,10 +1557,6 @@ export type bookingsUncheckedUpdateManyWithoutPatientsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsCreateManyLabsInput = {
@@ -1799,10 +1573,6 @@ export type bookingsCreateManyLabsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
 }
 
 export type bookingsUpdateWithoutLabsInput = {
@@ -1816,10 +1586,6 @@ export type bookingsUpdateWithoutLabsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1843,10 +1609,6 @@ export type bookingsUncheckedUpdateWithoutLabsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1867,10 +1629,6 @@ export type bookingsUncheckedUpdateManyWithoutLabsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsCreateManyLab_time_slotsInput = {
@@ -1887,10 +1645,6 @@ export type bookingsCreateManyLab_time_slotsInput = {
   reportStatus?: $Enums.ReportStatus
   allocatedEmpId?: string | null
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
 }
 
 export type bookingsUpdateWithoutLab_time_slotsInput = {
@@ -1904,10 +1658,6 @@ export type bookingsUpdateWithoutLab_time_slotsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -1931,10 +1681,6 @@ export type bookingsUncheckedUpdateWithoutLab_time_slotsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -1955,10 +1701,6 @@ export type bookingsUncheckedUpdateManyWithoutLab_time_slotsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsUpdateWithoutTestsInput = {
@@ -1972,10 +1714,6 @@ export type bookingsUpdateWithoutTestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   allocatedEmp?: Prisma.employeeUpdateOneWithoutBookingsNestedInput
@@ -2000,10 +1738,6 @@ export type bookingsUncheckedUpdateWithoutTestsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -2024,10 +1758,6 @@ export type bookingsUncheckedUpdateManyWithoutTestsInput = {
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   allocatedEmpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type bookingsCreateManyAllocatedEmpInput = {
@@ -2044,10 +1774,6 @@ export type bookingsCreateManyAllocatedEmpInput = {
   updatedAt: Date | string
   reportStatus?: $Enums.ReportStatus
   reportUrl?: string | null
-  discount?: number | null
-  invoiceNumber?: number
-  netAmount?: number | null
-  tax?: number | null
 }
 
 export type bookingsUpdateWithoutAllocatedEmpInput = {
@@ -2061,10 +1787,6 @@ export type bookingsUpdateWithoutAllocatedEmpInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUpdateManyWithoutBookingsNestedInput
   labs?: Prisma.LabUpdateOneRequiredWithoutBookingsNestedInput
@@ -2088,10 +1810,6 @@ export type bookingsUncheckedUpdateWithoutAllocatedEmpInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   booking_addons?: Prisma.booking_addonsUncheckedUpdateManyWithoutBookingsNestedInput
   booking_tests?: Prisma.booking_testsUncheckedUpdateManyWithoutBookingsNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutBookingsNestedInput
@@ -2112,10 +1830,6 @@ export type bookingsUncheckedUpdateManyWithoutAllocatedEmpInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reportStatus?: Prisma.EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
   reportUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  invoiceNumber?: Prisma.IntFieldUpdateOperationsInput | number
-  netAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  tax?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 
@@ -2191,10 +1905,6 @@ export type bookingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
-  discount?: boolean
-  invoiceNumber?: boolean
-  netAmount?: boolean
-  tax?: boolean
   booking_addons?: boolean | Prisma.bookings$booking_addonsArgs<ExtArgs>
   booking_tests?: boolean | Prisma.bookings$booking_testsArgs<ExtArgs>
   allocatedEmp?: boolean | Prisma.bookings$allocatedEmpArgs<ExtArgs>
@@ -2221,10 +1931,6 @@ export type bookingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
-  discount?: boolean
-  invoiceNumber?: boolean
-  netAmount?: boolean
-  tax?: boolean
   allocatedEmp?: boolean | Prisma.bookings$allocatedEmpArgs<ExtArgs>
   labs?: boolean | Prisma.LabDefaultArgs<ExtArgs>
   patients?: boolean | Prisma.PatientDefaultArgs<ExtArgs>
@@ -2246,10 +1952,6 @@ export type bookingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
-  discount?: boolean
-  invoiceNumber?: boolean
-  netAmount?: boolean
-  tax?: boolean
   allocatedEmp?: boolean | Prisma.bookings$allocatedEmpArgs<ExtArgs>
   labs?: boolean | Prisma.LabDefaultArgs<ExtArgs>
   patients?: boolean | Prisma.PatientDefaultArgs<ExtArgs>
@@ -2271,13 +1973,9 @@ export type bookingsSelectScalar = {
   reportStatus?: boolean
   allocatedEmpId?: boolean
   reportUrl?: boolean
-  discount?: boolean
-  invoiceNumber?: boolean
-  netAmount?: boolean
-  tax?: boolean
 }
 
-export type bookingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bookingId" | "patientId" | "labId" | "timeSlotId" | "date" | "status" | "totalAmount" | "qrCodeData" | "createdAt" | "updatedAt" | "reportStatus" | "allocatedEmpId" | "reportUrl" | "discount" | "invoiceNumber" | "netAmount" | "tax", ExtArgs["result"]["bookings"]>
+export type bookingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bookingId" | "patientId" | "labId" | "timeSlotId" | "date" | "status" | "totalAmount" | "qrCodeData" | "createdAt" | "updatedAt" | "reportStatus" | "allocatedEmpId" | "reportUrl", ExtArgs["result"]["bookings"]>
 export type bookingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   booking_addons?: boolean | Prisma.bookings$booking_addonsArgs<ExtArgs>
   booking_tests?: boolean | Prisma.bookings$booking_testsArgs<ExtArgs>
@@ -2329,10 +2027,6 @@ export type $bookingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     reportStatus: $Enums.ReportStatus
     allocatedEmpId: string | null
     reportUrl: string | null
-    discount: number | null
-    invoiceNumber: number
-    netAmount: number | null
-    tax: number | null
   }, ExtArgs["result"]["bookings"]>
   composites: {}
 }
@@ -2778,10 +2472,6 @@ export interface bookingsFieldRefs {
   readonly reportStatus: Prisma.FieldRef<"bookings", 'ReportStatus'>
   readonly allocatedEmpId: Prisma.FieldRef<"bookings", 'String'>
   readonly reportUrl: Prisma.FieldRef<"bookings", 'String'>
-  readonly discount: Prisma.FieldRef<"bookings", 'Float'>
-  readonly invoiceNumber: Prisma.FieldRef<"bookings", 'Int'>
-  readonly netAmount: Prisma.FieldRef<"bookings", 'Float'>
-  readonly tax: Prisma.FieldRef<"bookings", 'Float'>
 }
     
 
